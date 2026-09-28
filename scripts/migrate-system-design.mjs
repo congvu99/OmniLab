@@ -214,30 +214,8 @@ function main() {
   const globalImages = new Map(); // basename -> absSourcePath
   let lessonCount = 0;
 
-  // README.md -> kien-truc/nen-tang/00-gioi-thieu.mdx
-  {
-    const absPath = path.join(SOURCE_DIR, 'README.md');
-    const result = transformFile({ absPath, moduleDir: '.', isReadme: true });
-    for (const [, { basename, absSourcePath }] of result.usedImages) globalImages.set(basename, absSourcePath);
-    const frontmatterData = buildFrontmatter({
-      moduleId: 'nen-tang',
-      order: 0,
-      title: result.title,
-      summary: result.summary,
-      origFrontmatter: {},
-      snapshotRel: 'system-design/README.md',
-      isReadme: true,
-      readingMinutes: result.readingMinutes,
-    });
-    const outFilePath = path.join(LESSONS_OUT_DIR, 'nen-tang', '00-gioi-thieu.mdx');
-    writeLessonFile({
-      frontmatterData,
-      finalBody: result.finalBody,
-      usedImages: result.usedImages,
-      outFilePath,
-    });
-    lessonCount += 1;
-  }
+  // README.md (translator index: conventions + progress table) is kept in the
+  // snapshot for attribution but is not a lesson; /gioi-thieu covers it.
 
   // 27 translated .md files.
   for (const moduleDir of Object.keys(MODULE_DIR_TO_ID)) {

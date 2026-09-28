@@ -51,7 +51,7 @@ Nguyên tắc cốt lõi: **nội dung gốc bất biến** (chứng minh bằng
 ## Acceptance Criteria (v1)
 
 1. iPhone Safari → "Thêm vào màn hình chính" → mở standalone, tab bar 4 mục hoạt động, safe-area đúng.
-2. Đủ 28 bài Kiến trúc + toàn bộ bài Tài chính; `pnpm verify:fidelity` pass.
+2. Đủ 27 bài Kiến trúc + 23 bài Tài chính (README bản dịch không phải bài học); `pnpm verify:fidelity` pass.
 3. Đánh dấu hoàn thành → % lĩnh vực cập nhật; đóng/mở app vẫn giữ; "Học tiếp" mở đúng bài + vị trí cuộn.
 4. Tìm "cache" và "bộ nhớ đệm" (và "bo nho dem") đều ra bài Cache.
 5. Mọi bài: có `<RealLife>` + ≥1 SVG, `examplesReviewed: true` sau fact-check agent (user uỷ quyền 2026-09-28), đạt ở light + dark.

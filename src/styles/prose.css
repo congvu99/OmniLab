@@ -111,6 +111,19 @@
   font-size: inherit;
 }
 
+/* Shiki dual theme: light colors are inline; dark colors come from the
+   --shiki-dark vars that astro.config.mjs (shikiConfig.themes) emits. */
+@media (prefers-color-scheme: dark) {
+  .prose pre.astro-code,
+  .prose pre.astro-code span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+  }
+  .prose pre.astro-code span {
+    background-color: transparent !important;
+  }
+}
+
 /* Blockquote */
 .prose blockquote {
   margin: 0 0 var(--space-4);
