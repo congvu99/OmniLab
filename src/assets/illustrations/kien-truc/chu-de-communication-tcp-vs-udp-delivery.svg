@@ -1,0 +1,51 @@
+<svg viewBox="0 0 360 260" width="100%" role="img" aria-labelledby="svg-comm-tvu-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-comm-tvu-title">TCP giao gói đúng thứ tự có xác nhận, UDP không đảm bảo</title>
+  <defs>
+    <marker id="svg-comm-tvu-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)" />
+    </marker>
+    <marker id="svg-comm-tvu-arrow-ink2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
+    </marker>
+  </defs>
+
+  <text x="8" y="16" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink-2)">TCP</text>
+  <rect x="8" y="26" width="66" height="30" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="41" y="46" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Client</text>
+  <rect x="286" y="26" width="66" height="30" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="319" y="46" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Server</text>
+
+  <circle cx="140" cy="41" r="13" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="140" y="45" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink)">1</text>
+  <circle cx="180" cy="41" r="13" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="180" y="45" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink)">2</text>
+  <circle cx="220" cy="41" r="13" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="220" y="45" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink)">3</text>
+  <path d="M74 41 H127" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" />
+  <path d="M153 41 H167" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" />
+  <path d="M193 41 H207" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" />
+  <path d="M233 41 H286" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-comm-tvu-arrow)" />
+  <path d="M319 56 V66 C 319 74, 200 74, 200 66" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" marker-end="url(#svg-comm-tvu-arrow-ink2)" />
+  <text x="255" y="86" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">ACK — đúng thứ tự, gói mất được gửi lại</text>
+
+  <line x1="0" y1="118" x2="360" y2="118" stroke="var(--line)" stroke-width="1" />
+
+  <text x="8" y="144" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink-2)">UDP</text>
+  <rect x="8" y="154" width="66" height="30" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="41" y="174" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Client</text>
+  <rect x="286" y="154" width="66" height="30" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="319" y="174" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Server</text>
+
+  <circle cx="140" cy="169" r="13" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="140" y="173" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink)">1</text>
+  <circle cx="180" cy="169" r="13" fill="none" stroke="var(--danger)" stroke-width="2" stroke-dasharray="3 3" />
+  <path d="M174 163 L186 175 M186 163 L174 175" stroke="var(--danger)" stroke-width="2" stroke-linecap="round" />
+  <circle cx="220" cy="169" r="13" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="220" y="173" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink)">3</text>
+  <path d="M74 169 H127" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" />
+  <path d="M153 169 H167" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+  <path d="M193 169 H207" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" />
+  <path d="M233 169 H286" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-comm-tvu-arrow)" />
+
+  <text x="255" y="212" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">không bắt tay, không ACK — gói 2 có thể mất</text>
+</svg>

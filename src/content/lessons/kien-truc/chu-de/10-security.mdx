@@ -15,6 +15,9 @@ examplesReviewed: false
 readingMinutes: 11
 ---
 
+import svgSecMaHoaTruyenVsLuu from '../../../../assets/illustrations/kien-truc/chu-de-security-ma-hoa-khi-truyen-vs-khi-luu.svg?raw';
+import svgSecTruyVanThamSoHoa from '../../../../assets/illustrations/kien-truc/chu-de-security-truy-van-tham-so-hoa.svg?raw';
+
 
 # Bảo mật (Security)
 
@@ -28,6 +31,44 @@ Bảo mật là một chủ đề rộng. Trừ khi bạn có nhiều kinh nghi�
 - Làm sạch (sanitize) mọi dữ liệu người dùng nhập vào, hoặc bất kỳ tham số đầu vào nào phơi ra cho người dùng, để ngăn [XSS](https://en.wikipedia.org/wiki/Cross-site_scripting) và [SQL injection](https://en.wikipedia.org/wiki/SQL_injection).
 - Dùng truy vấn tham số hóa (parameterized query) để ngăn SQL injection.
 - Áp dụng nguyên tắc [đặc quyền tối thiểu (least privilege)](https://en.wikipedia.org/wiki/Principle_of_least_privilege).
+
+<Figure
+  added
+  svg={svgSecMaHoaTruyenVsLuu}
+  alt="Mã hóa khi truyền và khi lưu bảo vệ hai điểm khác nhau"
+  caption="Khi truyền: dữ liệu đi qua mạng được gói kín trong một 'phong bì' TLS. Khi lưu: dữ liệu trên đĩa được mã hóa, ai lấy được ổ đĩa vẫn không đọc được nếu thiếu khóa."
+/>
+
+<RealLife title="Két sắt trong nhà">
+
+Đồ quý bạn không để hớ hênh trên bàn mà cất trong két sắt có khóa riêng. Trộm bê nguyên cái két đi, vẫn không mở ra dùng được nếu không có chìa — chỉ có được cái vỏ, không có được thứ bên trong. Mã hóa dữ liệu khi lưu (at rest) y hệt: dù ai đó lấy được ổ đĩa chứa dữ liệu, không có khóa giải mã thì dữ liệu vẫn chỉ là một đống ký tự vô nghĩa. → Đây là lớp bảo vệ cuối cùng khi mọi lớp phòng thủ khác đã bị vượt qua.
+
+</RealLife>
+
+<RealLife title="Danh sách khách mời ở cổng sự kiện">
+
+Sự kiện chỉ cho vào những ai có tên trong danh sách khách mời đã duyệt trước — bảo vệ không cố "sửa" tên sai chính tả cho khớp, mà từ chối thẳng nếu tên không có trong danh sách. Kiểm tra dữ liệu người dùng nhập vào cũng nên vậy: định nghĩa trước những gì hợp lệ (đúng kiểu, đúng định dạng) và từ chối mọi thứ không khớp, thay vì cố "dọn dẹp" dữ liệu lạ. → Từ chối cái sai luôn chắc chắn hơn là đoán cách sửa nó.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgSecTruyVanThamSoHoa}
+  alt="Truy vấn tham số hóa tách dữ liệu người dùng khỏi cấu trúc câu lệnh"
+  caption="Câu lệnh SQL được viết cố định trước; dữ liệu người dùng chỉ được đặt vào đúng 'ô trống' dành cho giá trị, không bao giờ ghép thẳng vào phần cấu trúc lệnh."
+/>
+
+<RealLife title="Ô trống điền sẵn trên biểu mẫu">
+
+Biểu mẫu ngân hàng in sẵn khung: "Số tiền: ___", "Người nhận: ___". Dù bạn viết gì vào ô trống, nó vẫn chỉ được hiểu là nội dung của đúng ô đó — không thể viết đè thành một dòng lệnh mới. Truy vấn tham số hóa hoạt động theo nguyên tắc này: câu lệnh SQL được viết cố định trước, dữ liệu người dùng chỉ được đặt vào đúng "ô trống" dành cho dữ liệu, không bao giờ ghép vào phần cấu trúc. → Đó là lý do nó ngăn SQL injection hiệu quả hơn việc "làm sạch" chuỗi nhập vào.
+
+</RealLife>
+
+<RealLife title="Chìa khóa riêng từng phòng">
+
+Một tòa nhà văn phòng không phát cho mỗi nhân viên một chìa khóa vạn năng mở được mọi phòng, mà chỉ phát chìa phòng ban của họ — kế toán không cầm được chìa phòng server. Mất một chìa khóa chỉ lộ một phòng, không lộ cả tòa nhà. Đặc quyền tối thiểu áp dụng y hệt cho hệ thống: tài khoản ứng dụng chỉ nên có đúng quyền nó cần, để nếu bị chiếm, thiệt hại cũng chỉ giới hạn trong phạm vi quyền đó. → Càng ít quyền dư thừa, "bán kính ảnh hưởng" khi có sự cố càng nhỏ.
+
+</RealLife>
 
 ### Nguồn và đọc thêm
 

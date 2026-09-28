@@ -1,0 +1,36 @@
+<svg viewBox="0 0 360 300" width="100%" role="img" aria-labelledby="svg-db-msmm-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-db-msmm-title">So sánh nhân bản master-slave và master-master</title>
+  <defs>
+    <marker id="svg-db-msmm-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)" />
+    </marker>
+  </defs>
+
+  <text x="8" y="16" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink-2)">Master-slave</text>
+
+  <rect x="8" y="46" width="90" height="38" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="53" y="70" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Master</text>
+
+  <rect x="200" y="26" width="90" height="34" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="245" y="48" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Slave</text>
+
+  <rect x="200" y="78" width="90" height="34" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="245" y="100" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Slave</text>
+
+  <path d="M98 60 C 150 60, 150 43, 200 43" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-db-msmm-arrow)" />
+  <path d="M98 68 C 150 68, 150 95, 200 95" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-db-msmm-arrow)" />
+  <text x="150" y="128" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">chỉ đọc, nhân bản từ master</text>
+
+  <line x1="0" y1="148" x2="360" y2="148" stroke="var(--line)" stroke-width="1" />
+
+  <text x="8" y="174" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink-2)">Master-master</text>
+
+  <rect x="20" y="196" width="100" height="38" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="70" y="220" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Master A</text>
+
+  <rect x="240" y="196" width="100" height="38" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="290" y="220" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Master B</text>
+
+  <path d="M120 215 H240" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-db-msmm-arrow)" marker-start="url(#svg-db-msmm-arrow)" />
+  <text x="180" y="258" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">cả hai đều đọc + ghi, tự phối hợp</text>
+</svg>

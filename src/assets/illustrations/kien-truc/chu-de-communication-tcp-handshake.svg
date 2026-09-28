@@ -1,0 +1,28 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-comm-tcphs-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-comm-tcphs-title">Bắt tay ba bước của TCP trước khi truyền dữ liệu</title>
+  <defs>
+    <marker id="svg-comm-tcphs-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)" />
+    </marker>
+  </defs>
+
+  <rect x="16" y="16" width="88" height="34" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="60" y="38" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Client</text>
+
+  <rect x="256" y="16" width="88" height="34" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="300" y="38" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Server</text>
+
+  <line x1="60" y1="50" x2="60" y2="206" stroke="var(--ink-2)" stroke-width="1" stroke-dasharray="3 4" />
+  <line x1="300" y1="50" x2="300" y2="206" stroke="var(--ink-2)" stroke-width="1" stroke-dasharray="3 4" />
+
+  <path d="M60 90 H300" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-comm-tcphs-arrow)" />
+  <text x="180" y="83" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--accent)">SYN</text>
+
+  <path d="M300 130 H60" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-comm-tcphs-arrow)" />
+  <text x="180" y="123" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--accent)">SYN-ACK</text>
+
+  <path d="M60 170 H300" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-comm-tcphs-arrow)" />
+  <text x="180" y="163" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--accent)">ACK</text>
+
+  <text x="180" y="200" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">sau đó mới truyền dữ liệu</text>
+</svg>

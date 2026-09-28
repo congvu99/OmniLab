@@ -23,6 +23,9 @@ import img_wU8x5Id from '../../../../assets/legacy/system-design/wU8x5Id.png';
 import img_n16iOGk from '../../../../assets/legacy/system-design/n16iOGk.png';
 import img_fNcl65g from '../../../../assets/legacy/system-design/fNcl65g.png';
 import img_wXGqG5f from '../../../../assets/legacy/system-design/wXGqG5f.png';
+import svgDbMasterSlaveVsMaster from '../../../../assets/illustrations/kien-truc/chu-de-database-master-slave-vs-master-master.svg?raw';
+import svgDbFederationVsSharding from '../../../../assets/illustrations/kien-truc/chu-de-database-federation-vs-sharding.svg?raw';
+import svgDbSqlVsNosqlSchema from '../../../../assets/illustrations/kien-truc/chu-de-database-sql-vs-nosql-schema.svg?raw';
 
 
 # Cơ sở dữ liệu (Database)
@@ -48,6 +51,12 @@ Có nhiều kỹ thuật để mở rộng một cơ sở dữ liệu quan hệ:
 
 Master phục vụ cả đọc lẫn ghi, đồng thời nhân bản các thao tác ghi sang một hoặc nhiều slave; các slave chỉ phục vụ đọc. Slave cũng có thể nhân bản tiếp sang các slave khác theo dạng cây. Nếu master ngừng hoạt động, hệ thống có thể tiếp tục chạy ở chế độ chỉ đọc cho tới khi một slave được nâng cấp thành master hoặc một master mới được cấp phát.
 
+<RealLife title="Nhà xuất bản và các hiệu sách">
+
+Một nhà xuất bản in sách mới (ghi) rồi phát hành bản sao tới nhiều hiệu sách (đọc). Khách mua sách ra hiệu sách gần nhà, không cần tới tận nhà xuất bản. Nhưng muốn sửa nội dung, chỉ nhà xuất bản làm được — hiệu sách không tự thêm chữ. Nhân bản master-slave y hệt: master nhận mọi thao tác ghi, slave chỉ phục vụ đọc, giảm tải cho master. → Nhà xuất bản ngừng hoạt động, hiệu sách vẫn bán được sách cũ, chỉ là không có sách mới.
+
+</RealLife>
+
 <Figure src={img_C9ioGtn} alt="Sơ đồ nhân bản master-slave" credit={`Nguồn: <a href="http://www.slideshare.net/jboner/scalability-availability-stability-patterns/">Scalability, availability, stability, patterns</a>`} />
 
 ##### Nhược điểm: nhân bản master-slave
@@ -59,6 +68,12 @@ Master phục vụ cả đọc lẫn ghi, đồng thời nhân bản các thao t
 
 Cả hai master đều phục vụ đọc và ghi, và phối hợp với nhau khi ghi. Nếu một trong hai master ngừng hoạt động, hệ thống vẫn tiếp tục chạy với cả đọc lẫn ghi.
 
+<RealLife title="Sổ chung chỉnh sửa từ hai nơi">
+
+Hai kế toán ở hai chi nhánh cùng có quyền sửa một bảng chi phí chung. Cả hai đọc và ghi bình thường, nhưng nếu cùng lúc sửa một ô, phải có quy tắc rõ ràng, không thì số liệu lệch nhau. Nhân bản master-master cho phép cả hai node cùng ghi để không ai chờ ai, đổi lại phải giải quyết xung đột khi hai bên ghi trùng thời điểm. → Càng nhiều "kế toán" cùng ghi, xung đột càng dễ xảy ra.
+
+</RealLife>
+
 <Figure src={img_krAHLGg} alt="Sơ đồ nhân bản master-master" credit={`Nguồn: <a href="http://www.slideshare.net/jboner/scalability-availability-stability-patterns/">Scalability, availability, stability, patterns</a>`} />
 
 ##### Nhược điểm: nhân bản master-master
@@ -67,6 +82,13 @@ Cả hai master đều phục vụ đọc và ghi, và phối hợp với nhau k
 - Hầu hết hệ thống master-master hoặc chỉ nhất quán lỏng lẻo (vi phạm ACID), hoặc có độ trễ ghi tăng lên do phải đồng bộ.
 - Việc giải quyết xung đột (conflict resolution) càng trở nên quan trọng khi thêm nhiều node ghi và khi độ trễ tăng.
 - Xem [Nhược điểm: nhân bản](#nhược-điểm-nhân-bản) cho các điểm liên quan tới **cả** master-slave lẫn master-master.
+
+<Figure
+  added
+  svg={svgDbMasterSlaveVsMaster}
+  alt="So sánh nhân bản master-slave và master-master"
+  caption="Master-slave: một node ghi, các slave chỉ đọc. Master-master: cả hai node cùng đọc và ghi, tự phối hợp khi trùng thời điểm."
+/>
 
 ##### Nhược điểm: nhân bản
 
@@ -86,6 +108,12 @@ Cả hai master đều phục vụ đọc và ghi, và phối hợp với nhau k
 <Figure src={img_U3qV33e} alt="Sơ đồ federation - tách cơ sở dữ liệu theo chức năng" credit={`Nguồn: <a href="https://www.youtube.com/watch?v=kKjm4ehYiMs">Scaling up to your first 10 million users</a>`} />
 
 Federation (hay phân vùng theo chức năng - functional partitioning) tách cơ sở dữ liệu theo chức năng. Ví dụ, thay vì một cơ sở dữ liệu nguyên khối duy nhất, bạn có thể có ba cơ sở dữ liệu: **forums**, **users** và **products**, nhờ đó lưu lượng đọc và ghi vào mỗi cơ sở dữ liệu ít hơn, và vì vậy độ trễ nhân bản cũng thấp hơn. Cơ sở dữ liệu nhỏ hơn thì nhiều dữ liệu vừa trong bộ nhớ hơn, từ đó tăng tỉ lệ trúng cache (cache hit) nhờ tính cục bộ của cache (cache locality) tốt hơn. Vì không còn một master trung tâm duy nhất phải tuần tự hóa các thao tác ghi, bạn có thể ghi song song, tăng thông lượng (throughput).
+
+<RealLife title="Phòng khám tách quầy theo chuyên khoa">
+
+Một phòng khám đông bệnh nhân tách riêng quầy tiếp nhận cho khoa Mắt, khoa Răng và khoa Da liễu, thay vì dồn hết vào một quầy chung. Mỗi quầy chỉ xử lý hồ sơ của khoa mình nên ai cũng khám nhanh hơn, một khoa quá tải không kéo chậm khoa khác. Federation tách cơ sở dữ liệu theo chức năng tương tự: users, orders, products mỗi thứ một cơ sở dữ liệu riêng. → Đánh đổi là ghép thông tin từ hai khoa (join hai DB) giờ phức tạp hơn trước.
+
+</RealLife>
 
 ##### Nhược điểm: federation
 
@@ -108,6 +136,19 @@ Tương tự ưu điểm của [federation](#federation), sharding giúp giảm 
 
 Cách phổ biến để shard một bảng người dùng là theo chữ cái đầu của họ (last name) người dùng hoặc theo vị trí địa lý của người dùng.
 
+<RealLife title="Bưu cục phân loại theo khu vực">
+
+Một thành phố lớn không dồn hết thư về một bưu cục trung tâm, mà chia thành nhiều bưu cục nhỏ, mỗi bưu cục phụ trách một cụm quận. Thư gửi tới quận nào, bưu cục quận đó xử lý, không phải cả thành phố chờ một bưu cục làm hết. Sharding chia dữ liệu thành nhiều cơ sở dữ liệu con theo cùng nguyên tắc, mỗi shard chỉ quản một phần dữ liệu. → Nếu chọn tiêu chí chia lệch, một bưu cục vẫn có thể quá tải.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgDbFederationVsSharding}
+  alt="So sánh federation và sharding"
+  caption="Federation tách theo chức năng (users/orders/products mỗi thứ một DB). Sharding chia cùng một bảng thành nhiều phần theo tập con dữ liệu."
+/>
+
 ##### Nhược điểm: sharding
 
 - Bạn sẽ cần sửa logic ứng dụng để làm việc với các shard, có thể dẫn tới những truy vấn SQL phức tạp.
@@ -129,6 +170,12 @@ Phi chuẩn hóa cố gắng cải thiện hiệu năng đọc với cái giá l
 Khi dữ liệu đã được phân tán bằng các kỹ thuật như [federation](#federation) và [sharding](#sharding), việc quản lý join xuyên trung tâm dữ liệu càng làm tăng độ phức tạp. Phi chuẩn hóa có thể giúp tránh phải thực hiện những phép join phức tạp như vậy.
 
 Trong hầu hết hệ thống, số lượt đọc có thể áp đảo số lượt ghi theo tỉ lệ 100:1, thậm chí 1000:1. Một lượt đọc dẫn tới phép join phức tạp trong cơ sở dữ liệu có thể rất tốn kém, tiêu tốn đáng kể thời gian cho các thao tác đĩa.
+
+<RealLife title="Bảng thông báo dán nhiều nơi trong trường">
+
+Trường học dán cùng một thông báo nghỉ học ở cổng, ở lớp và ở căn-tin, thay vì chỉ dán một bản ở văn phòng — học sinh đọc ở đâu cũng thấy ngay. Nhưng khi thông báo cần sửa, phải gỡ và dán lại ở đủ mọi nơi, quên một chỗ là thông tin lệch nhau. Phi chuẩn hóa lưu trùng lặp dữ liệu vào nhiều bảng để đọc nhanh, tương tự vậy. → Đổi lại là mỗi lần ghi phải cập nhật đồng bộ ở mọi bản sao.
+
+</RealLife>
 
 ##### Nhược điểm: phi chuẩn hóa
 
@@ -171,6 +218,12 @@ Benchmark và profile có thể dẫn bạn tới các tối ưu sau.
 - Thao tác ghi cũng có thể chậm hơn vì chỉ mục cũng cần được cập nhật.
 - Khi nạp lượng lớn dữ liệu, có thể sẽ nhanh hơn nếu tắt chỉ mục, nạp dữ liệu, rồi dựng lại chỉ mục.
 
+<RealLife title="Mục lục sách giáo khoa">
+
+Muốn tìm một bài học, bạn tra mục lục đầu sách để biết ngay số trang, thay vì lật từng trang. Mục lục choán thêm vài trang và phải cập nhật khi in thêm bài mới, đổi lại tra cứu nhanh hơn nhiều. Chỉ mục trong cơ sở dữ liệu y hệt: giúp SELECT tìm đúng hàng nhanh hơn, nhưng tốn thêm không gian và làm chậm thao tác ghi vì phải cập nhật cả mục lục. → Chỉ mục đáng giá khi đọc nhiều hơn ghi rất nhiều, như hầu hết ứng dụng web.
+
+</RealLife>
+
 ##### Tránh các phép join tốn kém
 
 - [Phi chuẩn hóa](#phi-chuẩn-hóa-denormalization) ở những chỗ hiệu năng đòi hỏi.
@@ -211,6 +264,12 @@ Một kho khóa - giá trị thường cho phép đọc và ghi trong O(1), và 
 Kho khóa - giá trị cho hiệu năng cao và thường được dùng cho các mô hình dữ liệu đơn giản hoặc dữ liệu thay đổi nhanh, chẳng hạn một tầng cache trong bộ nhớ. Vì chúng chỉ cung cấp một tập thao tác hạn chế, độ phức tạp bị đẩy sang tầng ứng dụng nếu cần thêm thao tác.
 
 Kho khóa - giá trị là nền tảng cho các hệ thống phức tạp hơn như kho tài liệu, và trong một số trường hợp là cả cơ sở dữ liệu đồ thị.
+
+<RealLife title="Tủ khóa đánh số ở phòng gym">
+
+Phòng gym có dãy tủ khóa đánh số, bạn cất đồ vào tủ số 42 và chỉ cần nhớ đúng con số để lấy lại — nhân viên không cần biết bên trong tủ có gì, chỉ cần đúng số là mở nhanh. Kho khóa - giá trị hoạt động giống vậy: dữ liệu được cất theo một khóa, tra đúng khóa thì lấy ra gần như tức thì, không cần hiểu cấu trúc bên trong giá trị. → Không biết đúng "số tủ", bạn không tìm được gì cả.
+
+</RealLife>
 
 ##### Nguồn và đọc thêm: kho khóa - giá trị
 
@@ -313,6 +372,19 @@ Dữ liệu mẫu rất phù hợp với NoSQL:
 - Dữ liệu tạm thời, chẳng hạn giỏ hàng
 - Các bảng được truy cập thường xuyên (bảng "nóng")
 - Bảng siêu dữ liệu/bảng tra cứu
+
+<RealLife title="Biểu mẫu in sẵn và sổ tay ghi tự do">
+
+Một biểu mẫu hành chính có ô in sẵn: họ tên, ngày sinh, địa chỉ — ai điền cũng theo đúng khuôn, dễ đối chiếu chéo. Ngược lại, sổ tay của một người bán hàng rong thì tự do: hôm nay ghi số tiền nợ, mai ghi thêm số điện thoại khách — linh hoạt nhưng khó tổng hợp thống nhất. SQL giống biểu mẫu (lược đồ chặt), NoSQL giống sổ tay (lược đồ linh hoạt). → Chọn cái nào tùy dữ liệu của bạn có "khuôn" rõ ràng hay không.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgDbSqlVsNosqlSchema}
+  alt="Lược đồ cố định của SQL và tài liệu linh hoạt của NoSQL"
+  caption="Bảng SQL buộc mọi hàng theo đúng cột đã định sẵn; tài liệu NoSQL mỗi bản ghi có thể có số trường khác nhau."
+/>
 
 ##### Nguồn và đọc thêm: SQL hay NoSQL
 

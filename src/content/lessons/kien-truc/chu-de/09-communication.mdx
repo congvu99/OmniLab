@@ -19,6 +19,9 @@ import img_5KeocQs from '../../../../assets/legacy/system-design/5KeocQs.jpg';
 import img_JdAsdvG from '../../../../assets/legacy/system-design/JdAsdvG.jpg';
 import img_yzDrJtA from '../../../../assets/legacy/system-design/yzDrJtA.jpg';
 import img_iF4Mkb5 from '../../../../assets/legacy/system-design/iF4Mkb5.png';
+import svgCommTcpHandshake from '../../../../assets/illustrations/kien-truc/chu-de-communication-tcp-handshake.svg?raw';
+import svgCommTcpVsUdpDelivery from '../../../../assets/illustrations/kien-truc/chu-de-communication-tcp-vs-udp-delivery.svg?raw';
+import svgCommRpcVsRest from '../../../../assets/illustrations/kien-truc/chu-de-communication-rpc-vs-rest.svg?raw';
 
 
 # Giao tiếp (Communication)
@@ -43,6 +46,12 @@ Một yêu cầu HTTP cơ bản gồm một động từ (verb, hay method) và 
 
 *Có thể gọi nhiều lần mà không cho ra kết quả khác nhau.
 
+<RealLife title="Quầy một cửa ở UBND phường">
+
+Ở quầy một cửa phường, bạn nộp đúng loại đơn cho đúng việc: xin cấp mới, xin sửa thông tin, xin hủy — không viết chung một tờ đơn mơ hồ. Cán bộ nhận đơn (request), xử lý rồi trả kết quả kèm trạng thái rõ ràng: đã cấp, đã từ chối, đang chờ bổ sung. HTTP y hệt: mỗi request có một động từ rõ nghĩa (GET để xem, POST để tạo, DELETE để xóa) và server luôn trả về trạng thái cụ thể. → Đây là lý do gọi HTTP là giao thức yêu cầu/phản hồi.
+
+</RealLife>
+
 HTTP là một giao thức tầng ứng dụng (application layer), dựa trên các giao thức tầng thấp hơn như **TCP** và **UDP**.
 
 #### Nguồn và đọc thêm: HTTP
@@ -62,6 +71,19 @@ TCP là một giao thức hướng kết nối (connection-oriented) chạy trê
 
 Nếu bên gửi không nhận được phản hồi đúng, nó sẽ gửi lại các gói tin. Nếu hết thời gian chờ (timeout) nhiều lần, kết nối sẽ bị hủy. TCP cũng cài đặt [điều khiển luồng (flow control)](https://en.wikipedia.org/wiki/Flow_control_(data)) và [điều khiển tắc nghẽn (congestion control)](https://en.wikipedia.org/wiki/Network_congestion#Congestion_control). Những đảm bảo này gây ra độ trễ và nhìn chung làm việc truyền dữ liệu kém hiệu quả hơn so với UDP.
 
+<RealLife title="Thư bảo đảm qua bưu điện">
+
+Gửi thư bảo đảm, bưu điện đánh số từng thư, người nhận phải ký xác nhận đã nhận đúng thư đó; thư nào thất lạc, bưu điện gửi lại tới khi có xác nhận. Nhờ vậy thư luôn tới đúng thứ tự và không bị mất, đổi lại chậm hơn thư thường vì phải chờ xác nhận từng bước. TCP tương tự: mỗi gói tin có số thứ tự, bên nhận gửi xác nhận (ACK), gói nào mất thì gửi lại. → Đảm bảo chắc chắn nhưng đổi lấy độ trễ, khác hẳn UDP.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgCommTcpHandshake}
+  alt="Bắt tay ba bước của TCP"
+  caption="TCP bắt tay ba bước (SYN, SYN-ACK, ACK) để thiết lập kết nối trước khi truyền dữ liệu thật."
+/>
+
 Để đảm bảo thông lượng cao, web server có thể giữ mở một số lượng lớn kết nối TCP, dẫn tới tiêu tốn nhiều bộ nhớ. Việc duy trì nhiều kết nối mở giữa các luồng (thread) của web server và, chẳng hạn, một server [memcached](https://memcached.org/) có thể rất tốn kém. [Gộp kết nối (connection pooling)](https://en.wikipedia.org/wiki/Connection_pool) có thể giúp ích, bên cạnh việc chuyển sang UDP ở những chỗ phù hợp.
 
 TCP hữu ích cho các ứng dụng đòi hỏi độ tin cậy cao nhưng ít khắt khe về thời gian. Một số ví dụ gồm web server, thông tin cơ sở dữ liệu, SMTP, FTP và SSH.
@@ -79,6 +101,12 @@ UDP là giao thức phi kết nối (connectionless). Các datagram (tương t�
 
 UDP có thể phát quảng bá (broadcast), gửi datagram tới mọi thiết bị trong mạng con (subnet). Điều này hữu ích với [DHCP](https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol), vì client khi đó chưa nhận được địa chỉ IP, nên TCP không có cách nào truyền luồng dữ liệu khi chưa có địa chỉ IP.
 
+<RealLife title="Loa phát thanh phường">
+
+Loa phường phát thông báo giờ tiêm chủng cho cả khu phố cùng lúc — không ai ký nhận, nhà nào đóng cửa kỹ có thể không nghe thấy. Bù lại thông báo tới ngay lập tức, không phải chờ từng nhà phản hồi trước khi phát tiếp. UDP gửi datagram theo cách này: không bắt tay trước, không đảm bảo tới nơi hay đúng thứ tự, nhưng nhanh, phù hợp khi thà mất một phần còn hơn chờ đợi. → Đó là lý do UDP hợp với voice call hay livestream hơn TCP.
+
+</RealLife>
+
 UDP kém tin cậy hơn nhưng hoạt động tốt trong các trường hợp thời gian thực như VoIP, gọi video, phát trực tuyến (streaming) và game nhiều người chơi thời gian thực.
 
 Dùng UDP thay vì TCP khi:
@@ -86,6 +114,13 @@ Dùng UDP thay vì TCP khi:
 - Bạn cần độ trễ thấp nhất
 - Dữ liệu tới muộn còn tệ hơn mất dữ liệu
 - Bạn muốn tự cài đặt cơ chế sửa lỗi riêng
+
+<Figure
+  added
+  svg={svgCommTcpVsUdpDelivery}
+  alt="TCP giao gói đúng thứ tự có xác nhận, UDP không đảm bảo"
+  caption="TCP đánh số và xác nhận (ACK) từng gói, gửi lại nếu mất; UDP gửi thẳng không bắt tay, gói có thể mất hoặc tới sai thứ tự."
+/>
 
 #### Nguồn và đọc thêm: TCP và UDP
 
@@ -110,6 +145,12 @@ RPC là một giao thức yêu cầu - phản hồi:
 - **Mô-đun giao tiếp phía server (server communication module)** - Hệ điều hành chuyển các gói tin đến cho thủ tục stub phía server.
 - **Thủ tục stub phía server (server stub procedure)** - Giải gói (unmarshal) kết quả, gọi thủ tục phía server khớp với mã định danh thủ tục và truyền vào các đối số đã cho.
 - Phản hồi của server lặp lại các bước trên theo thứ tự ngược lại.
+
+<RealLife title="Nhờ đồng nghiệp chi nhánh khác xử lý hộ">
+
+Bạn gọi điện nhờ đồng nghiệp chi nhánh khác kiểm tra tồn kho giúp, rồi báo lại kết quả — cảm giác y như tự mình đi kiểm tra, dù thực ra người khác ở nơi khác đã làm. Bạn không cần biết họ tra bằng cách nào, chỉ cần nhận đúng kết quả. RPC cho code chạy y hệt: gọi một hàm như gọi hàm cục bộ, nhưng hàm đó thực thi trên một server ở xa, mọi chi tiết giao tiếp được giấu đi. → Cuộc gọi "xa" luôn chậm và kém tin cậy hơn "tự làm".
+
+</RealLife>
 
 Ví dụ các lời gọi RPC:
 
@@ -145,6 +186,12 @@ Các HTTP API theo phong cách **REST** thường được dùng nhiều hơn ch
 
 REST là một phong cách kiến trúc áp đặt mô hình client/server, trong đó client thao tác trên một tập tài nguyên do server quản lý. Server cung cấp biểu diễn (representation) của tài nguyên và các hành động có thể thay đổi tài nguyên hoặc lấy về một biểu diễn mới của tài nguyên. Mọi giao tiếp đều phải phi trạng thái (stateless) và có thể cache.
 
+<RealLife title="Một địa chỉ, đúng loại yêu cầu chuẩn">
+
+Một căn hộ có đúng một địa chỉ cố định. Người giao hàng, người tới lấy đồ trả lại, người tới kiểm tra định kỳ — ai cũng đến đúng địa chỉ đó, chỉ khác loại yêu cầu. REST thiết kế API theo cách đó: mỗi tài nguyên có một URI cố định (ví dụ /don-hang/123), muốn xem, sửa hay xóa thì đổi động từ HTTP chứ không đổi địa chỉ. → Đây là khác biệt lớn nhất so với RPC, nơi mỗi việc thường có một endpoint riêng.
+
+</RealLife>
+
 Một giao diện RESTful có bốn đặc tính:
 
 - **Định danh tài nguyên (URI trong HTTP)** - dùng cùng một URI bất kể thao tác nào.
@@ -169,6 +216,13 @@ REST tập trung vào việc phơi ra dữ liệu. Nó giảm thiểu sự phụ
 - REST thường dựa vào một vài động từ (GET, POST, PUT, DELETE và PATCH), đôi khi không khớp với trường hợp sử dụng của bạn. Ví dụ, việc chuyển các tài liệu hết hạn vào thư mục lưu trữ có thể không gói gọn được một cách sạch sẽ trong các động từ này.
 - Việc lấy các tài nguyên phức tạp có cấu trúc phân cấp lồng nhau đòi hỏi nhiều lượt đi - về (round trip) giữa client và server chỉ để hiển thị một màn hình, ví dụ lấy nội dung một bài blog rồi lấy các bình luận của bài đó. Với ứng dụng di động hoạt động trong điều kiện mạng thay đổi thất thường, nhiều lượt đi - về như vậy là rất không mong muốn.
 - Theo thời gian, nhiều trường có thể được thêm vào phản hồi của API và các client cũ sẽ nhận toàn bộ các trường dữ liệu mới, kể cả những trường chúng không cần. Kết quả là kích thước dữ liệu trả về (payload) phình to và độ trễ tăng lên.
+
+<Figure
+  added
+  svg={svgCommRpcVsRest}
+  alt="RPC gọi mỗi endpoint riêng cho từng việc, REST dùng một URI với nhiều động từ"
+  caption="RPC: mỗi hành động có một endpoint riêng (/signup, /resign...). REST: một URI cho mỗi tài nguyên, hành động chọn qua động từ HTTP (GET/PUT/DELETE)."
+/>
 
 ### So sánh lời gọi RPC và REST
 
