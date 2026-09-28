@@ -4,6 +4,7 @@
 // "Bắt đầu từ bài 1" CTA straight into its first lesson.
 import AppLayout from '../layouts/app-layout.astro';
 import DomainCard from '../components/domain/domain-card.astro';
+import ContinueReadingCard from '../components/islands/continue-reading-card.astro';
 import { getDomains, getLessonsByDomain } from '../lib/content-queries';
 
 const domains = await getDomains();
@@ -22,7 +23,7 @@ const domainCards = await Promise.all(
 ---
 
 <AppLayout title="OmniLab" largeTitle="Học tiếp">
-  <div class="continue-reading-slot" aria-hidden="true"></div>
+  <ContinueReadingCard />
   <ul class="domain-list">
     {
       domainCards.map(({ domain, lessonCount, totalReadingMinutes, firstLessonUrl }) => (

@@ -4,6 +4,8 @@
 // progress-tracking island reads to know which row it's decorating (see
 // phase-04 report, "DOM contracts for Phase 5"). `.lesson-status-slot` is the
 // empty element Phase 5 fills with a checkmark once a lesson is marked done.
+import CircleCheck from '@lucide/astro/icons/circle-check';
+
 interface Props {
   href: string;
   order: number;
@@ -16,13 +18,16 @@ interface Props {
 const { href, order, title, readingMinutes, lessonId, domainId } = Astro.props;
 ---
 
-<a href={href} class="lesson-row tap-scale" data-lesson-id={lessonId} data-domain={domainId}>
+<a href={href} class="lesson-row tap-scale" data-lesson-id={lessonId} data-domain={domainId} data-done="false">
   <span class="lesson-row__order" aria-hidden="true">{order}</span>
   <span class="lesson-row__body">
     <span class="lesson-row__title">{title}</span>
     <span class="lesson-row__meta">{readingMinutes} phút đọc</span>
   </span>
-  <span class="lesson-status-slot" aria-hidden="true"></span>
+  <span class="lesson-status-slot">
+    <CircleCheck size={20} stroke-width={2} aria-hidden="true" class="lesson-status-icon" />
+    <span class="lesson-status-text visually-hidden" data-lesson-status-text></span>
+  </span>
 </a>
 
 <style>
@@ -72,11 +77,65 @@ const { href, order, title, readingMinutes, lessonId, domainId } = Astro.props;
     color: var(--ink-2);
   }
 
-  /* Empty for now — Phase 5 fills in a checkmark once the lesson is marked
-     read (progress state keyed by [data-lesson-id] on the row root above). */
+  /* Checkmark hidden until the row's own [data-done] (toggled client-side —
+     see the <script> below) flips to "true"; the visually-hidden text next
+     to it is the non-color-only signal for screen readers. */
   .lesson-status-slot {
     flex-shrink: 0;
     width: 22px;
     height: 22px;
+    color: var(--success);
+  }
+
+  .lesson-status-icon {
+    display: none;
+  }
+
+  .lesson-row[data-done='true'] .lesson-status-icon {
+    display: block;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 </style>
+
+<script>
+  // Decorates every `.lesson-row` on the page with a checkmark once its
+  // lesson is done. Astro dedupes identical component <script> content, so
+  // this runs once per page regardless of how many lesson-row instances
+  // render it (same reasoning as domain-card.astro's bootstrap script).
+  import { getProgressStore } from '../../lib/progress-store';
+
+  let unsubscribe: (() => void) | null = null;
+
+  function init() {
+    unsubscribe?.();
+    unsubscribe = null;
+
+    const rows = Array.from(document.querySelectorAll<HTMLElement>('.lesson-row[data-lesson-id]'));
+    if (rows.length === 0) return;
+
+    const store = getProgressStore();
+    unsubscribe = store.subscribe((state) => {
+      for (const row of rows) {
+        const lessonId = row.dataset.lessonId;
+        if (!lessonId) continue;
+        const done = Boolean(state.lessons[lessonId]?.done);
+        row.dataset.done = String(done);
+        const text = row.querySelector<HTMLElement>('[data-lesson-status-text]');
+        if (text) text.textContent = done ? 'Đã hoàn thành' : '';
+      }
+    });
+  }
+
+  document.addEventListener('astro:page-load', init);
+</script>

@@ -12,6 +12,9 @@ import LessonMeta from '../../../../components/lesson/lesson-meta.astro';
 import LessonToc from '../../../../components/lesson/lesson-toc.astro';
 import AttributionFooter from '../../../../components/lesson/attribution-footer.astro';
 import NextLessonCard from '../../../../components/lesson/next-lesson-card.astro';
+import MarkCompleteButton from '../../../../components/islands/mark-complete-button.astro';
+import BookmarkButton from '../../../../components/islands/bookmark-button.astro';
+import ReaderProgressTracker from '../../../../components/islands/reader-progress-tracker.astro';
 import { lessonIdOf } from '../../../../lib/lesson-id';
 import { getAdjacent, getDomain, getModules } from '../../../../lib/content-queries';
 
@@ -47,6 +50,8 @@ const toc = headings.filter((h) => h.depth === 2);
   backHref={`/linh-vuc/${domainId}`}
   backLabel={domain.data.title}
 >
+  <BookmarkButton lessonId={lessonId} slot="top-actions" />
+  <ReaderProgressTracker />
   <article
     class="lesson-article"
     data-lesson-id={lessonId}
@@ -69,7 +74,9 @@ const toc = headings.filter((h) => h.depth === 2);
       license={lesson.data.source.license}
       url={lesson.data.source.url}
     />
-    <div class="lesson-complete-slot" data-lesson-id={lessonId} data-domain={domainId}></div>
+    <div class="lesson-complete-slot" data-lesson-id={lessonId} data-domain={domainId}>
+      <MarkCompleteButton lessonId={lessonId} />
+    </div>
     <NextLessonCard
       next={next ? { href: next.url, title: next.title } : null}
       domainHref={`/linh-vuc/${domainId}`}

@@ -1,0 +1,157 @@
+---
+// Toggle button for `.lesson-complete-slot` (reader page, see phase-04 DOM
+// contract). Both icon states + the undo toast are server-rendered (hidden
+// via CSS/[hidden]) so the client script only ever mutates attributes/text —
+// no innerHTML/createElement, so Astro's scoped <style> below applies
+// correctly to every state (see phase-05 report re: the client-DOM-creation
+// scoping pitfall this file deliberately avoids).
+import Circle from '@lucide/astro/icons/circle';
+import CircleCheck from '@lucide/astro/icons/circle-check';
+
+interface Props {
+  lessonId: string;
+}
+
+const { lessonId } = Astro.props;
+---
+
+<div class="mcb" data-mcb data-lesson-id={lessonId} data-done="false">
+  <button type="button" class="mcb-button tap-scale" data-mcb-button aria-pressed="false">
+    <Circle size={20} stroke-width={2} aria-hidden="true" class="mcb-icon mcb-icon--todo" />
+    <CircleCheck size={20} stroke-width={2} aria-hidden="true" class="mcb-icon mcb-icon--done" />
+    <span data-mcb-label>Đánh dấu hoàn thành</span>
+  </button>
+  <div class="mcb-toast" role="status" aria-live="polite" data-mcb-toast hidden>
+    <span data-mcb-toast-text></span>
+    <button type="button" class="mcb-undo tap-scale" data-mcb-undo>Hoàn tác</button>
+  </div>
+</div>
+
+<style>
+  .mcb {
+    margin: var(--space-6) 0 0;
+  }
+
+  .mcb-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    width: 100%;
+    min-height: 44px;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-row);
+    background: var(--surface-2);
+    color: var(--ink);
+    font-size: var(--text-body);
+    font-weight: 600;
+  }
+
+  .mcb[data-done='true'] .mcb-button {
+    background: var(--accent);
+    color: var(--accent-on);
+  }
+
+  .mcb-icon--done {
+    display: none;
+  }
+
+  .mcb[data-done='true'] .mcb-icon--todo {
+    display: none;
+  }
+
+  .mcb[data-done='true'] .mcb-icon--done {
+    display: block;
+  }
+
+  /* [hidden] and an unconditional `display` on the same element are equal
+     specificity, and author styles win cascade ties over the UA stylesheet
+     — so `display: flex` below would silently defeat `.hidden = true`
+     without this explicit override (found via real-browser e2e testing,
+     not just code review — see phase-05 report). Same fix applied to every
+     other hidden-toggled element with a non-default `display` in this
+     phase's islands. */
+  .mcb-toast[hidden] {
+    display: none;
+  }
+
+  .mcb-toast {
+    margin-top: var(--space-3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-row);
+    font-size: var(--text-footnote);
+    color: var(--ink);
+  }
+
+  .mcb-undo {
+    flex-shrink: 0;
+    min-height: 44px;
+    padding-inline: var(--space-2);
+    font-weight: 700;
+    color: var(--accent);
+  }
+</style>
+
+<script>
+  import { getProgressStore } from '../../lib/progress-store';
+
+  const TOAST_DURATION_MS = 4000;
+  let unsubscribe: (() => void) | null = null;
+
+  function init() {
+    unsubscribe?.();
+    unsubscribe = null;
+
+    const root = document.querySelector<HTMLElement>('[data-mcb]');
+    const lessonId = root?.dataset.lessonId;
+    if (!root || !lessonId) return;
+
+    const button = root.querySelector<HTMLButtonElement>('[data-mcb-button]');
+    const label = root.querySelector<HTMLElement>('[data-mcb-label]');
+    const toast = root.querySelector<HTMLElement>('[data-mcb-toast]');
+    const toastText = root.querySelector<HTMLElement>('[data-mcb-toast-text]');
+    const undoButton = root.querySelector<HTMLButtonElement>('[data-mcb-undo]');
+    if (!button || !label || !toast || !toastText || !undoButton) return;
+
+    const store = getProgressStore();
+    let toastTimer: ReturnType<typeof setTimeout> | undefined;
+
+    function render(done: boolean) {
+      root!.dataset.done = String(done);
+      button!.setAttribute('aria-pressed', String(done));
+      label!.textContent = done ? 'Đã hoàn thành' : 'Đánh dấu hoàn thành';
+    }
+
+    function showToast(message: string) {
+      toastText!.textContent = message;
+      toast!.hidden = false;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast!.hidden = true;
+      }, TOAST_DURATION_MS);
+    }
+
+    button.addEventListener('click', () => {
+      const willBeDone = !(store.get().lessons[lessonId]?.done ?? false);
+      store.markDone(lessonId, willBeDone);
+      showToast(willBeDone ? 'Đã đánh dấu hoàn thành bài học.' : 'Đã bỏ đánh dấu hoàn thành.');
+    });
+
+    undoButton.addEventListener('click', () => {
+      const current = store.get().lessons[lessonId]?.done ?? false;
+      store.markDone(lessonId, !current);
+      clearTimeout(toastTimer);
+      toast!.hidden = true;
+    });
+
+    unsubscribe = store.subscribe((state) => render(state.lessons[lessonId]?.done ?? false));
+  }
+
+  document.addEventListener('astro:page-load', init);
+</script>

@@ -1,0 +1,191 @@
+---
+// Renders into `/da-luu`'s body — bookmarked lessons with a remove action,
+// or an empty state explaining how to bookmark. Both states + the row
+// template are server-rendered (see mark-complete-button.astro's header
+// comment re: why client JS here only clones/mutates, never builds HTML
+// from scratch).
+import Bookmark from '@lucide/astro/icons/bookmark';
+import X from '@lucide/astro/icons/x';
+---
+
+<div data-saved-list>
+  <div class="empty-state" data-saved-empty>
+    <Bookmark size={40} stroke-width={1.75} aria-hidden="true" />
+    <p class="empty-title">Chưa có bài đã lưu</p>
+    <p class="empty-body">
+      Mở một bài học, nhấn biểu tượng lưu ở đầu trang để thêm bài vào đây.
+    </p>
+  </div>
+
+  <ul class="saved-rows" data-saved-rows hidden></ul>
+
+  <template data-saved-row-template>
+    <li class="saved-row">
+      <a class="saved-row__link" data-saved-row-link>
+        <span class="saved-row__title" data-saved-row-title></span>
+        <span class="saved-row__domain" data-saved-row-domain></span>
+      </a>
+      <button type="button" class="saved-row__remove tap-scale" data-saved-row-remove aria-label="Bỏ lưu bài này">
+        <X size={18} stroke-width={2} aria-hidden="true" />
+      </button>
+    </li>
+  </template>
+</div>
+
+<style>
+  /* See mark-complete-button.astro's [hidden] comment. */
+  .empty-state[hidden] {
+    display: none;
+  }
+
+  .empty-state {
+    margin: var(--space-6) var(--space-4);
+    padding: var(--space-6) var(--space-5);
+    background: var(--surface);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-2);
+    color: var(--ink-2);
+  }
+
+  .empty-title {
+    font-size: var(--text-title3);
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .empty-body {
+    max-width: 32ch;
+  }
+
+  .saved-rows {
+    margin: var(--space-4);
+    padding: 0;
+    list-style: none;
+    background: var(--surface);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+  }
+
+  .saved-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .saved-row:last-child {
+    border-bottom: none;
+  }
+
+  .saved-row__link {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-height: 44px;
+    justify-content: center;
+    padding: var(--space-3) var(--space-4);
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .saved-row__title {
+    font-size: var(--text-body);
+    color: var(--ink);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .saved-row__domain {
+    font-size: var(--text-caption);
+    color: var(--ink-2);
+  }
+
+  .saved-row__remove {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-2);
+    margin-right: var(--space-2);
+  }
+</style>
+
+<script>
+  import { getProgressStore } from '../../lib/progress-store';
+  import { fetchLessonsIndex } from '../../lib/lessons-index-client';
+
+  let unsubscribe: (() => void) | null = null;
+
+  function init() {
+    unsubscribe?.();
+    unsubscribe = null;
+
+    const root = document.querySelector<HTMLElement>('[data-saved-list]');
+    const emptyState = root?.querySelector<HTMLElement>('[data-saved-empty]');
+    const rowsList = root?.querySelector<HTMLUListElement>('[data-saved-rows]');
+    const template = root?.querySelector<HTMLTemplateElement>('[data-saved-row-template]');
+    if (!root || !emptyState || !rowsList || !template) return;
+
+    const store = getProgressStore();
+
+    async function render() {
+      const bookmarks = store.get().bookmarks;
+      if (bookmarks.length === 0) {
+        emptyState!.hidden = false;
+        rowsList!.hidden = true;
+        rowsList!.replaceChildren();
+        return;
+      }
+
+      let lessons;
+      try {
+        lessons = await fetchLessonsIndex();
+      } catch {
+        // Keep the empty-state message visible rather than showing a broken list.
+        emptyState!.hidden = false;
+        rowsList!.hidden = true;
+        return;
+      }
+
+      const byId = new Map(lessons.map((l) => [l.id, l]));
+      rowsList!.replaceChildren();
+
+      for (const id of bookmarks) {
+        const entry = byId.get(id);
+        if (!entry) continue;
+        const node = template!.content.cloneNode(true) as DocumentFragment;
+        const link = node.querySelector<HTMLAnchorElement>('[data-saved-row-link]')!;
+        const title = node.querySelector<HTMLElement>('[data-saved-row-title]')!;
+        const domain = node.querySelector<HTMLElement>('[data-saved-row-domain]')!;
+        const removeButton = node.querySelector<HTMLButtonElement>('[data-saved-row-remove]')!;
+
+        link.href = entry.url;
+        title.textContent = entry.title;
+        domain.textContent = entry.domainTitle;
+        removeButton.addEventListener('click', () => store.toggleBookmark(id));
+
+        rowsList!.append(node);
+      }
+
+      emptyState!.hidden = true;
+      rowsList!.hidden = false;
+    }
+
+    unsubscribe = store.subscribe(() => {
+      void render();
+    });
+  }
+
+  document.addEventListener('astro:page-load', init);
+</script>

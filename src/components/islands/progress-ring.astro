@@ -1,0 +1,90 @@
+---
+// Shared SVG "% complete" ring markup — used by both domain-card.astro and
+// domain-hero.astro (see phase-05 spec: "vòng % trên domain-card và hero
+// domain"). Purely presentational + static (0%) at server-render time;
+// domain-progress-decorator.astro (a page-level script-only island) fills in
+// the real ratio client-side by reading this exact DOM shape. `role="img"`
+// + `aria-label` (set by the script) carries the info for screen readers;
+// the "%" text inside the ring (and, when `showFraction`, the "x/y bài"
+// text beside it) means sighted users never rely on color alone.
+//
+// `showFraction` lives on this shared component (rather than being
+// duplicated per call-site) so the decorator script can query for
+// `[data-progress-ring-fraction]` uniformly regardless of which page/variant
+// it's decorating.
+interface Props {
+  domainId: string;
+  size?: number;
+  showFraction?: boolean;
+}
+
+const { domainId, size = 32, showFraction = false } = Astro.props;
+const strokeWidth = size <= 40 ? 3 : 4;
+const radius = size / 2 - strokeWidth * 1.5;
+const center = size / 2;
+const fontSize = Math.max(10, Math.round(size * 0.26));
+---
+
+<span
+  class="progress-ring-slot"
+  data-domain={domainId}
+  data-progress-ring
+  data-show-fraction={showFraction ? 'true' : 'false'}
+  role="img"
+  aria-label="Chưa bắt đầu"
+>
+  <span class="progress-ring-circle" style={`--size:${size}px`}>
+    <svg class="progress-ring-svg" viewBox={`0 0 ${size} ${size}`} width={size} height={size} aria-hidden="true">
+      <circle cx={center} cy={center} r={radius} fill="none" stroke="var(--line)" stroke-width={strokeWidth} />
+      <circle
+        cx={center}
+        cy={center}
+        r={radius}
+        fill="none"
+        stroke="var(--card-accent, var(--accent))"
+        stroke-width={strokeWidth}
+        stroke-linecap="round"
+        transform={`rotate(-90 ${center} ${center})`}
+        data-progress-ring-fill
+      />
+    </svg>
+    <span class="progress-ring-text" style={`--ring-font-size:${fontSize}px`} data-progress-ring-text aria-hidden="true"
+    ></span>
+  </span>
+  {showFraction && <span class="progress-ring-fraction" data-progress-ring-fraction aria-hidden="true" />}
+</span>
+
+<style>
+  .progress-ring-slot {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .progress-ring-circle {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--size);
+    height: var(--size);
+    flex-shrink: 0;
+  }
+
+  .progress-ring-svg circle {
+    transition: stroke-dashoffset var(--dur) var(--ease-out);
+  }
+
+  .progress-ring-text {
+    position: absolute;
+    font-size: var(--ring-font-size);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+
+  .progress-ring-fraction {
+    font-size: var(--text-footnote);
+    color: var(--ink-2);
+  }
+</style>

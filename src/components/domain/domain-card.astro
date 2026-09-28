@@ -15,6 +15,7 @@
 // no-code-change extensibility; see phase-04 report.
 import ChevronRight from '@lucide/astro/icons/chevron-right';
 import { icons } from '@lucide/astro';
+import ProgressRing from '../islands/progress-ring.astro';
 
 interface Props {
   href: string;
@@ -61,7 +62,9 @@ const Icon = icons[toPascalCase(icon) as keyof typeof icons] ?? icons.Layers;
       </span>
     )}
   </span>
-  <span class="progress-ring-slot" data-domain={domainId} aria-hidden="true"></span>
+  <span class="progress-ring-wrap">
+    <ProgressRing domainId={domainId} size={32} />
+  </span>
 </a>
 
 <style>
@@ -138,13 +141,45 @@ const Icon = icons[toPascalCase(icon) as keyof typeof icons] ?? icons.Layers;
     }
   }
 
-  /* Empty for now — Phase 5 fills in a % ring (via data-domain lookup) and
-     removes [hidden] once real progress data exists. */
-  .progress-ring-slot {
+  .progress-ring-wrap {
     position: absolute;
     top: var(--space-4);
     right: var(--space-4);
-    width: 32px;
-    height: 32px;
   }
 </style>
+
+<script>
+  // Fills in every `.progress-ring-slot` on the page (there may be several —
+  // one per domain-card instance) with the real % done. Astro hoists/dedupes
+  // identical component <script> content, so this runs once per page
+  // regardless of how many domain-card instances render it (see phase-05
+  // report re: why this lives here rather than a shared page-level island —
+  // /linh-vuc and / aren't in this phase's file-ownership grant).
+  import { getProgressStore } from '../../lib/progress-store';
+  import { fetchLessonsIndex } from '../../lib/lessons-index-client';
+  import { applyProgressRing } from '../../lib/progress-ring-apply';
+
+  let unsubscribe: (() => void) | null = null;
+
+  async function init() {
+    unsubscribe?.();
+    unsubscribe = null;
+
+    const rings = Array.from(document.querySelectorAll<HTMLElement>('.progress-ring-slot[data-progress-ring]'));
+    if (rings.length === 0) return;
+
+    let lessons;
+    try {
+      lessons = await fetchLessonsIndex();
+    } catch {
+      return; // stays at the static server-rendered 0% ring — acceptable degradation
+    }
+
+    const store = getProgressStore();
+    unsubscribe = store.subscribe((state) => {
+      for (const ring of rings) applyProgressRing(ring, state, lessons);
+    });
+  }
+
+  document.addEventListener('astro:page-load', init);
+</script>

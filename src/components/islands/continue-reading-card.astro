@@ -1,0 +1,147 @@
+---
+// Renders into `.continue-reading-slot` on `/` (see phase-04 DOM contract).
+// Both states (empty prompt + card) are server-rendered so the client
+// script only ever mutates text/attributes/hidden — never innerHTML/
+// createElement — matching this phase's established scoping-safe pattern
+// (see mark-complete-button.astro's header comment for why that matters).
+---
+
+<div class="crc" data-crc>
+  <p class="crc-empty" data-crc-empty>
+    Chưa có bài đang học — chọn một lĩnh vực bên dưới để bắt đầu.
+  </p>
+  <a href="#" class="crc-card tap-scale" data-crc-card hidden>
+    <span class="crc-eyebrow" data-crc-eyebrow></span>
+    <span class="crc-title" data-crc-title></span>
+    <span class="crc-progress-track" aria-hidden="true"><span class="crc-progress-bar" data-crc-progress-bar></span></span>
+    <span class="crc-percent" data-crc-percent></span>
+  </a>
+</div>
+
+<style>
+  .crc {
+    margin: 0 var(--space-4) var(--space-5);
+  }
+
+  .crc-empty {
+    padding: var(--space-4);
+    background: var(--surface-2);
+    border-radius: var(--radius-card);
+    color: var(--ink-2);
+    font-size: var(--text-footnote);
+  }
+
+  /* See mark-complete-button.astro's [hidden] comment. */
+  .crc-card[hidden] {
+    display: none;
+  }
+
+  .crc-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-4);
+    background: var(--surface);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .crc-eyebrow {
+    font-size: var(--text-caption);
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .crc-title {
+    font-size: var(--text-title3);
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .crc-progress-track {
+    margin-top: var(--space-2);
+    height: 4px;
+    border-radius: var(--radius-full);
+    background: var(--surface-2);
+    overflow: hidden;
+  }
+
+  .crc-progress-bar {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    border-radius: var(--radius-full);
+  }
+
+  .crc-percent {
+    font-size: var(--text-caption);
+    color: var(--ink-2);
+  }
+</style>
+
+<script>
+  import { getProgressStore } from '../../lib/progress-store';
+  import { fetchLessonsIndex } from '../../lib/lessons-index-client';
+
+  let unsubscribe: (() => void) | null = null;
+
+  function init() {
+    unsubscribe?.();
+    unsubscribe = null;
+
+    const root = document.querySelector<HTMLElement>('[data-crc]');
+    if (!root) return;
+    const empty = root.querySelector<HTMLElement>('[data-crc-empty]');
+    const card = root.querySelector<HTMLAnchorElement>('[data-crc-card]');
+    const eyebrow = root.querySelector<HTMLElement>('[data-crc-eyebrow]');
+    const title = root.querySelector<HTMLElement>('[data-crc-title]');
+    const progressBar = root.querySelector<HTMLElement>('[data-crc-progress-bar]');
+    const percentText = root.querySelector<HTMLElement>('[data-crc-percent]');
+    if (!empty || !card || !eyebrow || !title || !progressBar || !percentText) return;
+
+    const store = getProgressStore();
+
+    function showEmpty() {
+      empty!.hidden = false;
+      card!.hidden = true;
+    }
+
+    async function render() {
+      const id = store.lastUnfinished();
+      if (!id) {
+        showEmpty();
+        return;
+      }
+      try {
+        const lessons = await fetchLessonsIndex();
+        const entry = lessons.find((l) => l.id === id);
+        if (!entry) {
+          showEmpty();
+          return;
+        }
+        const ratio = store.get().lessons[id]?.scroll ?? 0;
+        const percent = Math.round(ratio * 100);
+
+        eyebrow!.textContent = `Học tiếp · ${entry.domainTitle}`;
+        title!.textContent = entry.title;
+        card!.href = entry.url;
+        progressBar!.style.width = `${percent}%`;
+        percentText!.textContent = `${percent}% đã đọc`;
+
+        empty!.hidden = true;
+        card!.hidden = false;
+      } catch {
+        showEmpty();
+      }
+    }
+
+    unsubscribe = store.subscribe(() => {
+      void render();
+    });
+  }
+
+  document.addEventListener('astro:page-load', init);
+</script>

@@ -3,6 +3,7 @@
 // (<1024px) + optional iOS large-title header + <main>. Reader screens use
 // reader-layout.astro instead (full-bleed, no tab chrome).
 import { ClientRouter } from 'astro:transitions';
+import X from '@lucide/astro/icons/x';
 import BaseHead from './base-head.astro';
 import { domainAccentStyle } from './domain-accent';
 import TabBar from '../components/shell/tab-bar.astro';
@@ -31,6 +32,15 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
     <a href="#main-content" class="skip-link">Bỏ qua, đến nội dung chính</a>
     <SidebarNav />
     <div class="app-shell">
+      <div class="ios-hint" data-ios-hint hidden>
+        <p class="ios-hint__text">Thêm OmniLab vào màn hình chính để lưu tiến độ lâu dài.</p>
+        <button type="button" class="ios-hint__dismiss tap-scale" data-ios-hint-dismiss aria-label="Đóng gợi ý">
+          <X size={16} stroke-width={2.5} aria-hidden="true" />
+        </button>
+      </div>
+      <p class="storage-warning" data-storage-warning hidden>
+        Trình duyệt đang chặn lưu trữ (chế độ riêng tư?) — tiến độ học sẽ không được lưu lại.
+      </p>
       {largeTitle && <LargeTitleHeader title={largeTitle} />}
       <main id="main-content" class="app-main">
         <slot />
@@ -42,6 +52,24 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
       // touch listener exists somewhere on the page — this one is a no-op,
       // it just "wakes up" .tap-scale:active across the whole shell.
       document.addEventListener('touchstart', () => {}, { passive: true });
+    </script>
+    <script>
+      import { requestPersistentStorageIfStandalone } from '../lib/request-persistent-storage';
+      import { initIosHint } from '../lib/ios-hint';
+      import { getProgressStore } from '../lib/progress-store';
+
+      function init() {
+        requestPersistentStorageIfStandalone();
+        initIosHint();
+
+        // Private mode (or storage otherwise blocked): the store still works
+        // in-memory (see progress-store.ts), but nothing survives a reload —
+        // let the user know rather than silently losing their progress.
+        const warning = document.querySelector<HTMLElement>('[data-storage-warning]');
+        if (warning) warning.hidden = getProgressStore().isPersistent;
+      }
+
+      document.addEventListener('astro:page-load', init);
     </script>
   </body>
 </html>
@@ -55,6 +83,56 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
     /* Room for the fixed bottom tab bar + its safe-area inset, plus a little
        breathing room so the last row of content isn't flush against it. */
     padding-bottom: calc(var(--shell-tabbar-h) + env(safe-area-inset-bottom) + var(--space-4));
+  }
+
+  /* iOS Safari, not running standalone, not yet dismissed — see
+     src/lib/ios-hint.ts. Shown/hidden via [hidden] after a client-side
+     check, so there's a small one-time layout shift for the (narrow)
+     audience that sees it; accepted trade-off, see phase-05 report. */
+  /* [hidden] + an unconditional `display` tie in specificity, and author
+     styles win ties over the UA stylesheet — without this, `display: flex`
+     below would silently defeat `.hidden = true`/the [hidden] attribute
+     (found via real-browser e2e testing — see phase-05 report). */
+  .ios-hint[hidden] {
+    display: none;
+  }
+
+  .ios-hint {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-4);
+    background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+    border-bottom: 1px solid var(--line);
+  }
+
+  .ios-hint__text {
+    flex: 1;
+    font-size: var(--text-caption);
+    color: var(--ink);
+  }
+
+  .ios-hint__dismiss {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-2);
+  }
+
+  /* Non-dismissible on purpose (see the script above): in private mode
+     nothing persists anyway, so a "dismissed" flag couldn't survive either —
+     showing it every page load is at least consistent, not naggier. */
+  .storage-warning {
+    margin: 0;
+    padding: var(--space-2) var(--space-4);
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line);
+    font-size: var(--text-caption);
+    color: var(--ink-2);
+    text-align: center;
   }
 
   @media (min-width: 1024px) {

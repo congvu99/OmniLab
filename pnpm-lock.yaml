@@ -29,6 +29,9 @@ importers:
       astro:
         specifier: ^7.3.5
         version: 7.3.5(@astrojs/markdown-remark@7.3.1)(@types/node@24.19.0)(yaml@2.9.1)
+      minisearch:
+        specifier: ^7.2.0
+        version: 7.2.0
       sharp:
         specifier: ^0.35.5
         version: 0.35.5(@types/node@24.19.0)
@@ -1570,6 +1573,9 @@ packages:
 
   micromark@4.0.3:
     resolution: {integrity: sha512-oGYfQzHSG5dOMovQcJ3fyTmZlWAWpi0XA0sJwJs+i6OT88o1+Jtw/8z0CmdowSLxGhhFK89rQ/oXph/wN02PNw==}
+
+  minisearch@7.2.0:
+    resolution: {integrity: sha512-dqT2XBYUOZOiC5t2HRnwADjhNS2cecp9u+TJRiJ1Qp/f5qjkeT5APcGPjHw+bz89Ms8Jp+cG4AlE+QZ/QnDglg==}
 
   mrmime@2.0.1:
     resolution: {integrity: sha512-Y3wQdFg2Va6etvQ5I82yUhGdsKrcYox6p7FfL1LbK2J4V01F9TGlepTIhnK24t7koZibmg82KGglhA1XK5IsLQ==}
@@ -4142,6 +4148,8 @@ snapshots:
       micromark-util-types: 2.0.3
     transitivePeerDependencies:
       - supports-color
+
+  minisearch@7.2.0: {}
 
   mrmime@2.0.1: {}
 

@@ -1,0 +1,79 @@
+---
+// Placed in ReaderLayout's `top-actions` named slot (reader-top-bar.astro
+// passes it through — see phase-02 report). >=44px tap target, aria-pressed
+// reflects saved state.
+import Bookmark from '@lucide/astro/icons/bookmark';
+import BookmarkCheck from '@lucide/astro/icons/bookmark-check';
+
+interface Props {
+  lessonId: string;
+}
+
+const { lessonId } = Astro.props;
+---
+
+<button
+  type="button"
+  class="bb tap-scale"
+  data-bb
+  data-lesson-id={lessonId}
+  aria-pressed="false"
+  aria-label="Lưu bài học"
+>
+  <Bookmark size={22} stroke-width={2} aria-hidden="true" class="bb-icon bb-icon--off" />
+  <BookmarkCheck size={22} stroke-width={2} aria-hidden="true" class="bb-icon bb-icon--on" />
+</button>
+
+<style>
+  .bb {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    color: var(--ink);
+  }
+
+  .bb[aria-pressed='true'] {
+    color: var(--accent);
+  }
+
+  .bb-icon--on {
+    display: none;
+  }
+
+  .bb[aria-pressed='true'] .bb-icon--off {
+    display: none;
+  }
+
+  .bb[aria-pressed='true'] .bb-icon--on {
+    display: block;
+  }
+</style>
+
+<script>
+  import { getProgressStore } from '../../lib/progress-store';
+
+  let unsubscribe: (() => void) | null = null;
+
+  function init() {
+    unsubscribe?.();
+    unsubscribe = null;
+
+    const button = document.querySelector<HTMLButtonElement>('[data-bb]');
+    const lessonId = button?.dataset.lessonId;
+    if (!button || !lessonId) return;
+
+    const store = getProgressStore();
+
+    button.addEventListener('click', () => {
+      store.toggleBookmark(lessonId);
+    });
+
+    unsubscribe = store.subscribe((state) => {
+      button.setAttribute('aria-pressed', String(state.bookmarks.includes(lessonId)));
+    });
+  }
+
+  document.addEventListener('astro:page-load', init);
+</script>

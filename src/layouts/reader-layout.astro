@@ -39,6 +39,14 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
     <script>
       document.addEventListener('touchstart', () => {}, { passive: true });
     </script>
+    <script>
+      import { requestPersistentStorageIfStandalone } from '../lib/request-persistent-storage';
+
+      // No iOS "Add to Home Screen" hint here (reader is full-bleed reading,
+      // no room for a banner) — app-layout.astro's hint covers it on the 4
+      // tab pages, which every reading session passes through anyway.
+      document.addEventListener('astro:page-load', requestPersistentStorageIfStandalone);
+    </script>
   </body>
 </html>
 

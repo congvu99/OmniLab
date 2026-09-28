@@ -5,6 +5,7 @@
 // already provides the page's <h1>-equivalent, so this card does not repeat
 // it as a heading element).
 import { icons } from '@lucide/astro';
+import ProgressRing from '../islands/progress-ring.astro';
 
 interface Props {
   icon: string;
@@ -16,6 +17,11 @@ interface Props {
 }
 
 const { icon, tagline, accent, accentDark, lessonCount, totalReadingMinutes } = Astro.props;
+// domain-hero is only ever rendered on /linh-vuc/[domain] — deriving the id
+// from the URL here (instead of adding a new prop) keeps this component
+// self-contained and avoids touching that page, which is outside this
+// phase's file ownership (see phase-05 report).
+const domainId = Astro.url.pathname.split('/').filter(Boolean)[1] ?? '';
 
 function toPascalCase(kebab: string): string {
   return kebab
@@ -34,6 +40,9 @@ const Icon = icons[toPascalCase(icon) as keyof typeof icons] ?? icons.Layers;
   </span>
   <p class="domain-hero__tagline">{tagline}</p>
   <p class="domain-hero__meta">{lessonCount} bài · {totalReadingMinutes} phút đọc</p>
+  <div class="domain-hero__progress">
+    <ProgressRing domainId={domainId} size={40} showFraction />
+  </div>
 </div>
 
 <style>
@@ -81,4 +90,51 @@ const Icon = icons[toPascalCase(icon) as keyof typeof icons] ?? icons.Layers;
     color: var(--ink-2);
     margin: 0;
   }
+
+  .domain-hero__progress {
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid color-mix(in srgb, var(--card-accent) 25%, var(--line));
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .domain-hero__progress {
+      border-top-color: color-mix(in srgb, var(--card-accent-dark) 28%, var(--line));
+    }
+  }
 </style>
+
+<script>
+  // Fills in this page's `.progress-ring-slot` (domain-hero renders exactly
+  // once per /linh-vuc/[domain] page) with the real % done. Duplicated from
+  // domain-card.astro's identical bootstrap rather than shared via a
+  // page-level island — see that file's script comment for why (this
+  // component's own page isn't in this phase's file-ownership grant).
+  import { getProgressStore } from '../../lib/progress-store';
+  import { fetchLessonsIndex } from '../../lib/lessons-index-client';
+  import { applyProgressRing } from '../../lib/progress-ring-apply';
+
+  let unsubscribe: (() => void) | null = null;
+
+  async function init() {
+    unsubscribe?.();
+    unsubscribe = null;
+
+    const rings = Array.from(document.querySelectorAll<HTMLElement>('.progress-ring-slot[data-progress-ring]'));
+    if (rings.length === 0) return;
+
+    let lessons;
+    try {
+      lessons = await fetchLessonsIndex();
+    } catch {
+      return;
+    }
+
+    const store = getProgressStore();
+    unsubscribe = store.subscribe((state) => {
+      for (const ring of rings) applyProgressRing(ring, state, lessons);
+    });
+  }
+
+  document.addEventListener('astro:page-load', init);
+</script>

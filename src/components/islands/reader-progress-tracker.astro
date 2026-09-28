@@ -1,0 +1,57 @@
+---
+// Script-only island (no markup) for the reader page: stamps `visitedAt`
+// once per mount, resumes the saved scroll ratio, and saves the live scroll
+// ratio as the user reads. Reads the `.lesson-article[data-lesson-id]` DOM
+// contract from phase-04's reader page — see that phase's report.
+---
+
+<script>
+  import { getProgressStore } from '../../lib/progress-store';
+
+  // `window` (unlike per-page DOM nodes) survives client-router soft
+  // navigations, so its scroll listener must be explicitly torn down each
+  // re-init or it would stack up one extra listener per navigation.
+  let cleanup: (() => void) | null = null;
+
+  function init() {
+    cleanup?.();
+    cleanup = null;
+
+    const article = document.querySelector<HTMLElement>('.lesson-article[data-lesson-id]');
+    const rawLessonId = article?.dataset.lessonId;
+    if (!article || !rawLessonId) return;
+    const lessonId: string = rawLessonId;
+
+    const store = getProgressStore();
+    store.visit(lessonId);
+
+    // Resume scroll position once the just-swapped-in layout has settled
+    // (images already have explicit dimensions, see phase-04 report, so one
+    // rAF after astro:page-load is enough — no extra delay/poll needed).
+    requestAnimationFrame(() => {
+      const ratio = store.get().lessons[lessonId]?.scroll;
+      if (!ratio) return;
+      const doc = document.documentElement;
+      const scrollable = doc.scrollHeight - doc.clientHeight;
+      if (scrollable > 0) window.scrollTo(0, scrollable * ratio);
+    });
+
+    let ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        const doc = document.documentElement;
+        const scrollable = doc.scrollHeight - doc.clientHeight;
+        const ratio = scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 0;
+        store.saveScroll(lessonId, ratio);
+      });
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    cleanup = () => window.removeEventListener('scroll', onScroll);
+  }
+
+  document.addEventListener('astro:page-load', init);
+</script>
