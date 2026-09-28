@@ -1,0 +1,239 @@
+[
+  {
+    "name": "tab-bar aria-current on /",
+    "pass": true,
+    "detail": [
+      {
+        "href": "/",
+        "current": "page"
+      },
+      {
+        "href": "/linh-vuc",
+        "current": null
+      },
+      {
+        "href": "/tim-kiem",
+        "current": null
+      },
+      {
+        "href": "/da-luu",
+        "current": null
+      }
+    ]
+  },
+  {
+    "name": "tab-bar aria-current on /linh-vuc",
+    "pass": true,
+    "detail": [
+      {
+        "href": "/",
+        "current": null
+      },
+      {
+        "href": "/linh-vuc",
+        "current": "page"
+      },
+      {
+        "href": "/tim-kiem",
+        "current": null
+      },
+      {
+        "href": "/da-luu",
+        "current": null
+      }
+    ]
+  },
+  {
+    "name": "tab-bar aria-current on /tim-kiem",
+    "pass": true,
+    "detail": [
+      {
+        "href": "/",
+        "current": null
+      },
+      {
+        "href": "/linh-vuc",
+        "current": null
+      },
+      {
+        "href": "/tim-kiem",
+        "current": "page"
+      },
+      {
+        "href": "/da-luu",
+        "current": null
+      }
+    ]
+  },
+  {
+    "name": "tab-bar aria-current on /da-luu",
+    "pass": true,
+    "detail": [
+      {
+        "href": "/",
+        "current": null
+      },
+      {
+        "href": "/linh-vuc",
+        "current": null
+      },
+      {
+        "href": "/tim-kiem",
+        "current": null
+      },
+      {
+        "href": "/da-luu",
+        "current": "page"
+      }
+    ]
+  },
+  {
+    "name": "mark-complete button toggles data-done",
+    "pass": true,
+    "detail": {
+      "doneAttr": "true"
+    }
+  },
+  {
+    "name": "domain page row shows done checkmark",
+    "pass": true,
+    "detail": {
+      "done": "true"
+    }
+  },
+  {
+    "name": "domain hero progress ring updated (non-zero)",
+    "pass": true,
+    "detail": {
+      "text": "4%",
+      "label": "Đã hoàn thành 1 trên 27 bài — 4 phần trăm"
+    }
+  },
+  {
+    "name": "mark-complete persists after reload",
+    "pass": true,
+    "detail": {
+      "done": "true"
+    }
+  },
+  {
+    "name": "bookmark button toggles aria-pressed",
+    "pass": true,
+    "detail": {
+      "bbPressed": "true"
+    }
+  },
+  {
+    "name": "bookmarked lesson appears in /da-luu",
+    "pass": true,
+    "detail": [
+      "Cơ sở dữ liệu (Database)"
+    ]
+  },
+  {
+    "name": "remove bookmark works",
+    "pass": true,
+    "detail": {
+      "savedRowsAfterRemove": [],
+      "emptyVisible": true
+    }
+  },
+  {
+    "name": "\"Học tiếp\" card shows last unfinished visited lesson",
+    "pass": true,
+    "detail": {
+      "hidden": false,
+      "title": "Bộ nhớ đệm (Cache)"
+    }
+  },
+  {
+    "name": "search \"cache\" -> expected lesson in top 3",
+    "pass": true,
+    "detail": [
+      "Khả năng mở rộng cho người mới - Phần 3: Bộ nhớ đệm (Cache)",
+      "Bộ nhớ đệm (Cache)",
+      "Thiết kế cache key-value lưu kết quả các truy vấn gần nhất của web server"
+    ]
+  },
+  {
+    "name": "search \"bộ nhớ đệm\" -> expected lesson in top 3",
+    "pass": true,
+    "detail": [
+      "Bộ nhớ đệm (Cache)",
+      "Tuần 3 · Lãi kép, lạm phát & bộ đệm nhỏ",
+      "Khả năng mở rộng cho người mới - Phần 3: Bộ nhớ đệm (Cache)"
+    ]
+  },
+  {
+    "name": "search \"bo nho dem\" -> expected lesson in top 3",
+    "pass": true,
+    "detail": [
+      "Bộ nhớ đệm (Cache)",
+      "Tuần 3 · Lãi kép, lạm phát & bộ đệm nhỏ",
+      "Khả năng mở rộng cho người mới - Phần 3: Bộ nhớ đệm (Cache)"
+    ]
+  },
+  {
+    "name": "search \"can bang tai\" -> expected lesson in top 3",
+    "pass": true,
+    "detail": [
+      "Bộ cân bằng tải (Load Balancer)",
+      "Khả năng mở rộng cho người mới - Phần 1: Bản sao (Clones)",
+      "Tuần 7 · Hiểu các nhóm tài sản"
+    ]
+  },
+  {
+    "name": "search \"lai kep\" -> expected lesson in top 3",
+    "pass": true,
+    "detail": [
+      "Tuần 3 · Lãi kép, lạm phát & bộ đệm nhỏ",
+      "Bốn bài tập có thể làm ngay",
+      "Khả năng mở rộng cho người mới - Phần 3: Bộ nhớ đệm (Cache)"
+    ]
+  },
+  {
+    "name": "no-preference: slide animation present (sanity check)",
+    "pass": true,
+    "detail": {
+      "supported": true,
+      "oldAnim": "ol-slide-out-left",
+      "newAnim": "ol-slide-in-right"
+    }
+  },
+  {
+    "name": "reduced-motion: no slide animation on view-transition",
+    "pass": true,
+    "detail": {
+      "supported": true,
+      "oldAnim": "none",
+      "newAnim": "none"
+    }
+  },
+  {
+    "name": "back navigation restores scroll position",
+    "pass": true,
+    "detail": {
+      "scrollBefore": 500,
+      "scrollAfter": 459
+    }
+  },
+  {
+    "name": "unknown URL returns 404 page",
+    "pass": true,
+    "detail": {
+      "status": 404,
+      "title": "Không tìm thấy trang - OmniLab"
+    }
+  },
+  {
+    "name": "wide table scrolls inside .table-wrap, no page horizontal overflow",
+    "pass": true,
+    "detail": {
+      "found": true,
+      "wrapOverflows": true,
+      "pageOverflow": 0,
+      "scrollWidth": 375,
+      "clientWidth": 375
+    }
+  }
+]

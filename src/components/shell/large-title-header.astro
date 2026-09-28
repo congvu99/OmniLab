@@ -9,15 +9,21 @@ interface Props {
 const { title } = Astro.props;
 ---
 
-<header class="lth-navbar" data-lth-navbar>
-  <div class="lth-navbar-inner">
-    <span class="lth-navbar-title" data-lth-navbar-title>{title}</span>
+<!-- Outer <header> is the page banner landmark: it must contain the page's
+     <h1> for axe-core's "region" rule (all content in a landmark). The sticky
+     collapsing bar below is a plain <div> (not a nested <header> — HTML
+     forbids header-in-header), position: sticky works on any element. -->
+<header class="lth-wrapper">
+  <div class="lth-navbar" data-lth-navbar>
+    <div class="lth-navbar-inner">
+      <span class="lth-navbar-title" data-lth-navbar-title>{title}</span>
+    </div>
+  </div>
+  <div class="lth-block">
+    <h1 class="lth-title">{title}</h1>
+    <span class="lth-sentinel" data-lth-sentinel aria-hidden="true"></span>
   </div>
 </header>
-<div class="lth-block">
-  <h1 class="lth-title">{title}</h1>
-  <span class="lth-sentinel" data-lth-sentinel aria-hidden="true"></span>
-</div>
 
 <style>
   .lth-navbar {

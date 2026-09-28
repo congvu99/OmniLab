@@ -167,11 +167,20 @@
 /* Links: underline for visibility without relying on color alone. Inline
    text links are exempt from the 44px touch-target minimum (standard
    accepted exception for running text; the target itself — one word — is
-   still individually tappable and surrounded by line-height padding). */
+   still individually tappable and surrounded by line-height padding).
+   overflow-wrap: a handful of exercise lessons link their source repo path
+   verbatim as the link text (e.g. "solutions/system_design/pastebin/
+   README.md") — one long slash-separated token with no natural break point,
+   which at 375px pushed past the viewport and forced the whole page to
+   horizontally scroll (found via a real-browser scrollWidth audit across
+   all 58 built pages). overflow-wrap: break-word only breaks mid-word as a
+   last resort, when the word would otherwise overflow its container — short
+   link text is unaffected. */
 .prose a {
   color: var(--accent);
   text-decoration: underline;
   text-underline-offset: 2px;
+  overflow-wrap: break-word;
 }
 
 .prose a:hover {

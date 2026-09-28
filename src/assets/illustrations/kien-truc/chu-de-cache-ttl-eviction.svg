@@ -20,7 +20,7 @@
   <line x1="220" y1="60" x2="330" y2="60" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" marker-end="url(#svg-cte-arrow-ink2)" />
   <text x="278" y="82" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">đọc sau đó → miss, nạp lại</text>
 
-  <text x="8" y="132" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">Hết chỗ — loại theo LRU</text>
+  <text x="8" y="114" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">Hết chỗ — loại theo LRU</text>
 
   <path d="M285 165 C 285 138, 45 138, 45 165" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-cte-arrow-accent)" />
   <text x="165" y="134" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--accent)">D vào, đẩy A ra</text>

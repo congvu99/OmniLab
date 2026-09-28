@@ -34,6 +34,20 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
       <slot name="top-actions" slot="top-actions" />
     </ReaderTopBar>
     <main id="reader-content" class="prose reader-content">
+      <!-- Fallback page <h1>+<h2>: most lesson MDX bodies start with their
+           own "# Title" (the real, visible <h1> reader-top-bar.astro watches
+           via IntersectionObserver), but every finance lesson opens at "##"
+           or "###" instead (fidelity-locked source text — cannot add a
+           top-level heading there). Those pages had zero <h1> (axe
+           page-has-heading-one). Always render a real <h1> here for the a11y
+           tree; also render an <h2> filler so a body that opens at "###"
+           doesn't jump 2 levels from our injected h1 (axe heading-order).
+           The :has() rule below hides both — sighted AND assistive-tech,
+           since display:none removes a11y-tree nodes too — whenever
+           `.lesson-article` already supplies its own <h1>, so those lessons
+           are untouched and no title is ever announced twice. -->
+      <h1 class="reader-fallback-heading" data-reader-fallback-h1>{title}</h1>
+      <h2 class="reader-fallback-heading" data-reader-fallback-h2>Nội dung bài</h2>
       <slot />
     </main>
     <script>
@@ -53,5 +67,25 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
 <style>
   .reader-content {
     padding: var(--space-5) var(--space-4) var(--space-8);
+  }
+
+  /* sr-only: present for the accessibility tree/heading outline, invisible
+     on screen. Hidden entirely (removed from the a11y tree too) when the
+     lesson body already provides its own <h1> — see the comment above the
+     elements in the markup. */
+  .reader-fallback-heading {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .reader-content:has(.lesson-article h1) .reader-fallback-heading {
+    display: none;
   }
 </style>

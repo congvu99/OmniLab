@@ -1,0 +1,2342 @@
+[
+  {
+    "page": "/hoc/kien-truc/bai-tap/mint",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-mint-hang-doi-title",
+    "titleText": "Xử lý bất đồng bộ qua hàng đợi: phản hồi ngay, worker xử lý sau",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/mint",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 1,
+    "titleId": "svg-mint-phan-loai-title",
+    "titleText": "Phân loại giao dịch: tra bảng có sẵn, học thêm từ lựa chọn ghi đè của người dùng",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/pastebin",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-btp-uocluong-title",
+    "titleText": "Ước lượng nhanh: từ 10 triệu paste mỗi tháng ra dung lượng lưu trữ và số lượt ghi, đọc mỗi giây",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/pastebin",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 1,
+    "titleId": "svg-btp-shortlink-title",
+    "titleText": "Luồng sinh shortlink: MD5 của ip + timestamp, mã hoá base62, lấy 7 ký tự, kiểm tra trùng rồi mới lưu",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/query-cache",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-query-cache-lru-title",
+    "titleText": "Danh sách liên kết đôi giữ thứ tự LRU: mục trúng được đưa lên đầu, mục cuối bị loại khi đầy, bảng băm tra node trong O(1)",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/query-cache",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 1,
+    "titleId": "svg-query-cache-sharding-title",
+    "titleText": "Sharding cache: hash(query) xác định đúng một máy trong cụm",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/sales-rank",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-sales-rank-mapreduce-title",
+    "titleText": "Luồng MapReduce hai bước: gộp số lượng rồi mới sắp xếp phân tán",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/sales-rank",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 1,
+    "titleId": "svg-sales-rank-doc-ghi-title",
+    "titleText": "Tỉ lệ đọc so với ghi lệch 100:1, lý do đặt cache trước cơ sở dữ liệu",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/scaling-aws",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-bsa-hanhtrinh-title",
+    "titleText": "Hành trình mở rộng từ một máy tới Users+++++: mỗi bước xử lý đúng một nút thắt đã đo",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/scaling-aws",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 1,
+    "titleId": "svg-bsa-autoscale-title",
+    "titleText": "Autoscaling co giãn số máy theo giờ trong ngày",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/social-graph",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-social-graph-bfs-title",
+    "titleText": "BFS mở rộng từng vòng quen biết: bạn trực tiếp trước, bạn của bạn sau",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/social-graph",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 1,
+    "titleId": "svg-social-graph-bidirectional-title",
+    "titleText": "So sánh vùng phải duyệt: BFS một chiều mở rộng tới tận đích, BFS hai chiều mỗi phía chỉ sâu một nửa rồi gặp nhau ở giữa",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/twitter",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-btw-fanout-title",
+    "titleText": "Fan-out on write: một tweet ghi vào nhiều home timeline",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/twitter",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 1,
+    "titleId": "svg-btw-fanoutcmp-title",
+    "titleText": "So sánh chi phí: fan-out lúc ghi (push) nặng lúc đăng, fan-out lúc đọc (pull) nặng lúc đọc",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/web-crawler",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-bwc-vonglap-title",
+    "titleText": "Vòng lặp crawl: kiểm tra chữ ký tương tự trước khi crawl, nếu trùng thì giảm độ ưu tiên để tránh chu trình",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/web-crawler",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 1,
+    "titleId": "svg-bwc-vantay-title",
+    "titleText": "So sánh vân tay nội dung để phát hiện trang gần trùng lặp",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/application-layer",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-appl-tiers-title",
+    "titleText": "Tách tầng web và tầng ứng dụng để mở rộng độc lập",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/asynchronism",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-async-flow-title",
+    "titleText": "Luồng đồng bộ so với luồng bất đồng bộ qua hàng đợi",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/asynchronism",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 1,
+    "titleId": "svg-async-backpressure-title",
+    "titleText": "Áp lực ngược: hàng đợi đầy tới giới hạn thì từ chối request mới bằng HTTP 503, client thử lại sau",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/cache",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-cache-hit-miss-title",
+    "titleText": "Luồng cache hit và cache miss",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/cache",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 1,
+    "titleId": "svg-cache-ttl-eviction-title",
+    "titleText": "TTL hết hạn theo thời gian và loại bỏ theo LRU khi cache đầy",
+    "viewBox": {
+      "x": 0,
+      "y": -20,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/cache",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 2,
+    "titleId": "svg-cache-aside-write-through-title",
+    "titleText": "So sánh cache-aside và write-through: ai nói chuyện với DB",
+    "viewBox": {
+      "x": 0,
+      "y": -20,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/cdn",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-cdn-proximity-title",
+    "titleText": "Không có CDN so với có CDN: khoảng cách tới người dùng",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/cdn",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 1,
+    "titleId": "svg-cdn-push-pull-title",
+    "titleText": "CDN kiểu đẩy (push) so với kiểu kéo (pull)",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/communication",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-comm-tcphs-title",
+    "titleText": "Bắt tay ba bước của TCP trước khi truyền dữ liệu",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/communication",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 1,
+    "titleId": "svg-comm-tvu-title",
+    "titleText": "TCP giao gói đúng thứ tự có xác nhận, UDP không đảm bảo",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 260
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/communication",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 2,
+    "titleId": "svg-comm-rvr-title",
+    "titleText": "RPC gọi mỗi endpoint riêng cho từng việc, REST dùng một URI với nhiều động từ",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 260
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/database",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-db-msmm-title",
+    "titleText": "So sánh nhân bản master-slave và master-master",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/database",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 1,
+    "titleId": "svg-db-fs-title",
+    "titleText": "So sánh federation và sharding",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/database",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 2,
+    "titleId": "svg-db-svn-title",
+    "titleText": "Lược đồ cố định của SQL so với tài liệu linh hoạt của NoSQL",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/dns",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-dns-resolve-title",
+    "titleText": "Tra cứu DNS phân cấp: resolver tự hỏi lần lượt từng cấp, và trả ngay nhờ cache",
+    "viewBox": {
+      "x": 0,
+      "y": -20,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/load-balancer",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-lb-health-check-title",
+    "titleText": "Load balancer loại máy chủ không khỏe khỏi vòng chia tải",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/load-balancer",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 1,
+    "titleId": "svg-lb-l4-l7-title",
+    "titleText": "Tầng 4 chuyển cả kết nối, tầng 7 định tuyến theo URL",
+    "viewBox": {
+      "x": 0,
+      "y": -20,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/reverse-proxy",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-rp-hide-title",
+    "titleText": "Proxy ngược gom nhiều client và giấu cấu trúc máy chủ nội bộ",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/security",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-sec-mh-title",
+    "titleText": "Mã hóa khi truyền và mã hóa khi lưu bảo vệ hai điểm khác nhau",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 260
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/security",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 1,
+    "titleId": "svg-sec-tvth-title",
+    "titleText": "Truy vấn tham số hóa tách dữ liệu người dùng khỏi cấu trúc câu lệnh",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/danh-doi/availability-patterns",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-availability-patterns-failover-title",
+    "titleText": "Chuyển đổi dự phòng chủ động-bị động so với chủ động-chủ động",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/danh-doi/availability-patterns",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 1,
+    "titleId": "svg-availability-patterns-so-9-title",
+    "titleText": "Thêm một số 9 làm ngân sách thời gian chết mỗi năm co lại rất nhiều",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/danh-doi/availability-patterns",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 2,
+    "titleId": "svg-availability-patterns-mac-noi-title",
+    "titleText": "Mắc nối tiếp làm giảm độ sẵn sàng, mắc song song làm tăng độ sẵn sàng",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/danh-doi/cap-theorem",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-cap-partition-title",
+    "titleText": "Khi mạng bị phân mảnh, hệ thống phải chọn CP hoặc AP",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/danh-doi/cap-theorem",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 1,
+    "titleId": "svg-cap-cp-ap-title",
+    "titleText": "Ví dụ chọn CP hay AP theo từng chức năng",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/danh-doi/consistency-patterns",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-consistency-patterns-ba-muc-title",
+    "titleText": "Sau khi ghi, lần đọc kế tiếp thấy gì ở ba mức nhất quán",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/danh-doi/consistency-patterns",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 1,
+    "titleId": "svg-consistency-patterns-nhan-ban-title",
+    "titleText": "Nhân bản đồng bộ (nhất quán mạnh) so với bất đồng bộ (nhất quán cuối cùng)",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/danh-doi/latency-vs-throughput",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-latency-throughput-ong-dan-title",
+    "titleText": "Độ trễ là thời gian đi hết ống, thông lượng là lượng qua một mặt cắt mỗi giây",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/danh-doi/latency-vs-throughput",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 1,
+    "titleId": "svg-latency-throughput-gom-lo-title",
+    "titleText": "Gửi ngay từng item so với gom lô rồi gửi một lần",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/danh-doi/performance-vs-scalability",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-performance-vs-scalability-title",
+    "titleText": "Chẩn đoán vấn đề hiệu năng so với vấn đề khả năng mở rộng",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/nen-tang/asynchronism",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-asynchronism-hai-kieu-title",
+    "titleText": "Hai kiểu bất đồng bộ: làm sẵn trước và xử lý qua hàng đợi",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/nen-tang/asynchronism",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 1,
+    "titleId": "svg-asynchronism-worker-pool-title",
+    "titleText": "Nhiều worker cùng lấy job từ một hàng đợi chung",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/nen-tang/caches",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-caches-mo-hinh-title",
+    "titleText": "Cache theo từng câu truy vấn so với cache theo đối tượng đầy đủ",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/nen-tang/clones",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-clones-dinh-tuyen-title",
+    "titleText": "Cùng một client, nhiều server khác nhau, nhưng dùng chung một kho session",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/nen-tang/databases",
+    "domain": "kien-truc",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-databases-hai-con-duong-title",
+    "titleText": "Hai con đường khi database trở thành nút thắt cổ chai",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/an-toan/boi-canh-viet-nam",
+    "domain": "tai-chinh",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-nguyen-ly-tra-cuu-title",
+    "titleText": "Học nguyên lý chung rồi tra cứu điều kiện thật tại nguồn chính thức trước khi áp dụng",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/an-toan/chong-gia-mao",
+    "domain": "tai-chinh",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-xac-minh-gia-mao-title",
+    "titleText": "Ba bước xác minh khi có yêu cầu chuyển tiền bất thường: dừng lại, kiểm tra kênh chính thức, rồi gọi lại số tự tra; không đưa OTP cho ai",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/di-tiep/chon-nhanh-tiep",
+    "domain": "tai-chinh",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-chon-nhanh-title",
+    "titleText": "Chọn một trong ba nhánh ngang hàng để đi tiếp sau 12 tuần: đời sống, doanh nghiệp hoặc nghề nghiệp",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/di-tiep/nghien-cuu-noi-gi",
+    "domain": "tai-chinh",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-hai-ket-qua-nghien-cuu-title",
+    "titleText": "Hai tổng hợp nghiên cứu, hai kết luận khác nhau vì bộ dữ liệu và thước đo khác nhau: phần trăm phương sai so với tác động nhân quả trung bình",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/di-tiep/nguon-tham-khao",
+    "domain": "tai-chinh",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-kiem-tra-tuyen-bo-title",
+    "titleText": "Kiểm tra một tuyên bố trước khi tin: tìm nguồn, đối chiếu ngày, cơ quan phát hành và tình trạng hiệu lực",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/di-tiep/tu-danh-gia",
+    "domain": "tai-chinh",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-truoc-khi-dung-tien-that-title",
+    "titleText": "Năm điều cần hiểu rõ trước khi quyết định dùng tiền thật",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/khoi-dong/bon-chang",
+    "domain": "tai-chinh",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-bon-chang-title",
+    "titleText": "Bốn chặng học nối tiếp nhau: kiểm soát tiền, bảo vệ và đầu tư, ra quyết định, rồi mở rộng theo nhu cầu",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/khoi-dong/vi-sao-hoc",
+    "domain": "tai-chinh",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-ba-cach-to-chuc-title",
+    "titleText": "Ba cách tổ chức lộ trình học: theo giáo trình, theo sản phẩm, theo quyết định",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-01",
+    "domain": "tai-chinh",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-tuan01-tai-san-rong-title",
+    "titleText": "Tài sản ròng bằng tài sản trừ đi nợ",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-02",
+    "domain": "tai-chinh",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-tuan02-du-tru-chi-nam-title",
+    "titleText": "Chia khoản chi theo năm thành phần để dành mỗi tháng",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-03",
+    "domain": "tai-chinh",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-lai-kep-title",
+    "titleText": "Lãi kép tăng nhanh dần theo thời gian, lãi đơn tăng đều",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-03",
+    "domain": "tai-chinh",
+    "scheme": "light",
+    "figIdx": 1,
+    "titleId": "svg-lam-phat-title",
+    "titleText": "Cùng một số tiền nhưng lạm phát khiến mua được ít hàng hoá hơn",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-04",
+    "domain": "tai-chinh",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-du-no-title",
+    "titleText": "Lãi tính trên dư nợ giảm dần theo từng kỳ trả góp",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-04",
+    "domain": "tai-chinh",
+    "scheme": "light",
+    "figIdx": 1,
+    "titleId": "svg-thu-tu-tra-no-title",
+    "titleText": "Ưu tiên trả khoản vay lãi suất cao nhất trước",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-05",
+    "domain": "tai-chinh",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-quy-du-phong-title",
+    "titleText": "Quỹ dự phòng: mốc thử 3–6 tháng chi thiết yếu, hiện có bao nhiêu",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-05",
+    "domain": "tai-chinh",
+    "scheme": "light",
+    "figIdx": 1,
+    "titleId": "svg-thoi-gian-cho-title",
+    "titleText": "Mốc thời gian hợp đồng bảo hiểm: 21 ngày cân nhắc tính từ khi nhận hợp đồng, thời gian chờ tính riêng theo điều khoản",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-06",
+    "domain": "tai-chinh",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-tuan06-rut-mot-lan-title",
+    "titleText": "So sánh rút bảo hiểm xã hội một lần với tổng lương hưu hằng tháng cộng dồn",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-07",
+    "domain": "tai-chinh",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-tuan07-thanh-khoan-title",
+    "titleText": "So sánh thời gian quy đổi ra tiền mặt của các nhóm tài sản",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-08",
+    "domain": "tai-chinh",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-tuan08-cong-thuc-nav-title",
+    "titleText": "Công thức tính NAV mỗi chứng chỉ quỹ: tài sản quỹ trừ nợ phải trả, chia cho số chứng chỉ đang lưu hành",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-09",
+    "domain": "tai-chinh",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-tuan09-thoi-han-cho-title",
+    "titleText": "Thời hạn cần tiền càng xa, càng có thời gian chờ phục hồi nếu giá giảm",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-10",
+    "domain": "tai-chinh",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-tuan10-dung-lai-title",
+    "titleText": "Khoảng dừng trước khi quyết định giao dịch",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-11",
+    "domain": "tai-chinh",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-tuan11-ty-trong-lech-title",
+    "titleText": "Tỷ trọng danh mục lệch đi theo thời gian nếu không cân chỉnh lại",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-12",
+    "domain": "tai-chinh",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-tuan12-vong-lap-title",
+    "titleText": "Vòng lặp ghi nguyên tắc, rà soát sau 30 ngày và điều chỉnh kế hoạch tài chính",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/nguon-hoc/nguon-hoc-chinh-thuc",
+    "domain": "tai-chinh",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-kiem-tra-mot-nguon-title",
+    "titleText": "Kiểm tra một nguồn trước khi tin: có bán gì, hứa chắc chắn, hay có dẫn luật và số liệu",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/nguon-hoc/tu-sach-va-lich-doc",
+    "domain": "tai-chinh",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-lich-doc-12-tuan-title",
+    "titleText": "Lịch đọc gắn với 12 tuần: S1 ở tuần 1-8, S2 ở tuần 9-10, ôn tập tuần 11-12, sách mở rộng sau đó",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/thuc-hanh/bai-tap-va-thu-tu-tien-du",
+    "domain": "tai-chinh",
+    "scheme": "light",
+    "figIdx": 0,
+    "titleId": "svg-lo-va-phuc-hoi-title",
+    "titleText": "Lỗ và phục hồi không đối xứng: giảm càng nhiều thì cần tăng tỉ lệ lớn hơn để về lại mức ban đầu",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/thuc-hanh/bai-tap-va-thu-tu-tien-du",
+    "domain": "tai-chinh",
+    "scheme": "light",
+    "figIdx": 1,
+    "titleId": "svg-thu-tu-uu-tien-title",
+    "titleText": "Thứ tự ưu tiên dùng tiền dư (đề xuất có điều kiện): thiết yếu, bộ đệm nhỏ, nợ chi phí cao, dự phòng, rồi mục tiêu dài hạn",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/mint",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-mint-hang-doi-title",
+    "titleText": "Xử lý bất đồng bộ qua hàng đợi: phản hồi ngay, worker xử lý sau",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/mint",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 1,
+    "titleId": "svg-mint-phan-loai-title",
+    "titleText": "Phân loại giao dịch: tra bảng có sẵn, học thêm từ lựa chọn ghi đè của người dùng",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/pastebin",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-btp-uocluong-title",
+    "titleText": "Ước lượng nhanh: từ 10 triệu paste mỗi tháng ra dung lượng lưu trữ và số lượt ghi, đọc mỗi giây",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/pastebin",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 1,
+    "titleId": "svg-btp-shortlink-title",
+    "titleText": "Luồng sinh shortlink: MD5 của ip + timestamp, mã hoá base62, lấy 7 ký tự, kiểm tra trùng rồi mới lưu",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/query-cache",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-query-cache-lru-title",
+    "titleText": "Danh sách liên kết đôi giữ thứ tự LRU: mục trúng được đưa lên đầu, mục cuối bị loại khi đầy, bảng băm tra node trong O(1)",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/query-cache",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 1,
+    "titleId": "svg-query-cache-sharding-title",
+    "titleText": "Sharding cache: hash(query) xác định đúng một máy trong cụm",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/sales-rank",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-sales-rank-mapreduce-title",
+    "titleText": "Luồng MapReduce hai bước: gộp số lượng rồi mới sắp xếp phân tán",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/sales-rank",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 1,
+    "titleId": "svg-sales-rank-doc-ghi-title",
+    "titleText": "Tỉ lệ đọc so với ghi lệch 100:1, lý do đặt cache trước cơ sở dữ liệu",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/scaling-aws",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-bsa-hanhtrinh-title",
+    "titleText": "Hành trình mở rộng từ một máy tới Users+++++: mỗi bước xử lý đúng một nút thắt đã đo",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/scaling-aws",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 1,
+    "titleId": "svg-bsa-autoscale-title",
+    "titleText": "Autoscaling co giãn số máy theo giờ trong ngày",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/social-graph",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-social-graph-bfs-title",
+    "titleText": "BFS mở rộng từng vòng quen biết: bạn trực tiếp trước, bạn của bạn sau",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/social-graph",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 1,
+    "titleId": "svg-social-graph-bidirectional-title",
+    "titleText": "So sánh vùng phải duyệt: BFS một chiều mở rộng tới tận đích, BFS hai chiều mỗi phía chỉ sâu một nửa rồi gặp nhau ở giữa",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/twitter",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-btw-fanout-title",
+    "titleText": "Fan-out on write: một tweet ghi vào nhiều home timeline",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/twitter",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 1,
+    "titleId": "svg-btw-fanoutcmp-title",
+    "titleText": "So sánh chi phí: fan-out lúc ghi (push) nặng lúc đăng, fan-out lúc đọc (pull) nặng lúc đọc",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/web-crawler",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-bwc-vonglap-title",
+    "titleText": "Vòng lặp crawl: kiểm tra chữ ký tương tự trước khi crawl, nếu trùng thì giảm độ ưu tiên để tránh chu trình",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/bai-tap/web-crawler",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 1,
+    "titleId": "svg-bwc-vantay-title",
+    "titleText": "So sánh vân tay nội dung để phát hiện trang gần trùng lặp",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/application-layer",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-appl-tiers-title",
+    "titleText": "Tách tầng web và tầng ứng dụng để mở rộng độc lập",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/asynchronism",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-async-flow-title",
+    "titleText": "Luồng đồng bộ so với luồng bất đồng bộ qua hàng đợi",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/asynchronism",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 1,
+    "titleId": "svg-async-backpressure-title",
+    "titleText": "Áp lực ngược: hàng đợi đầy tới giới hạn thì từ chối request mới bằng HTTP 503, client thử lại sau",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/cache",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-cache-hit-miss-title",
+    "titleText": "Luồng cache hit và cache miss",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/cache",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 1,
+    "titleId": "svg-cache-ttl-eviction-title",
+    "titleText": "TTL hết hạn theo thời gian và loại bỏ theo LRU khi cache đầy",
+    "viewBox": {
+      "x": 0,
+      "y": -20,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/cache",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 2,
+    "titleId": "svg-cache-aside-write-through-title",
+    "titleText": "So sánh cache-aside và write-through: ai nói chuyện với DB",
+    "viewBox": {
+      "x": 0,
+      "y": -20,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/cdn",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-cdn-proximity-title",
+    "titleText": "Không có CDN so với có CDN: khoảng cách tới người dùng",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/cdn",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 1,
+    "titleId": "svg-cdn-push-pull-title",
+    "titleText": "CDN kiểu đẩy (push) so với kiểu kéo (pull)",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/communication",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-comm-tcphs-title",
+    "titleText": "Bắt tay ba bước của TCP trước khi truyền dữ liệu",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/communication",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 1,
+    "titleId": "svg-comm-tvu-title",
+    "titleText": "TCP giao gói đúng thứ tự có xác nhận, UDP không đảm bảo",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 260
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/communication",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 2,
+    "titleId": "svg-comm-rvr-title",
+    "titleText": "RPC gọi mỗi endpoint riêng cho từng việc, REST dùng một URI với nhiều động từ",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 260
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/database",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-db-msmm-title",
+    "titleText": "So sánh nhân bản master-slave và master-master",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/database",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 1,
+    "titleId": "svg-db-fs-title",
+    "titleText": "So sánh federation và sharding",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/database",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 2,
+    "titleId": "svg-db-svn-title",
+    "titleText": "Lược đồ cố định của SQL so với tài liệu linh hoạt của NoSQL",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/dns",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-dns-resolve-title",
+    "titleText": "Tra cứu DNS phân cấp: resolver tự hỏi lần lượt từng cấp, và trả ngay nhờ cache",
+    "viewBox": {
+      "x": 0,
+      "y": -20,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/load-balancer",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-lb-health-check-title",
+    "titleText": "Load balancer loại máy chủ không khỏe khỏi vòng chia tải",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/load-balancer",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 1,
+    "titleId": "svg-lb-l4-l7-title",
+    "titleText": "Tầng 4 chuyển cả kết nối, tầng 7 định tuyến theo URL",
+    "viewBox": {
+      "x": 0,
+      "y": -20,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/reverse-proxy",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-rp-hide-title",
+    "titleText": "Proxy ngược gom nhiều client và giấu cấu trúc máy chủ nội bộ",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/security",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-sec-mh-title",
+    "titleText": "Mã hóa khi truyền và mã hóa khi lưu bảo vệ hai điểm khác nhau",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 260
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/chu-de/security",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 1,
+    "titleId": "svg-sec-tvth-title",
+    "titleText": "Truy vấn tham số hóa tách dữ liệu người dùng khỏi cấu trúc câu lệnh",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/danh-doi/availability-patterns",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-availability-patterns-failover-title",
+    "titleText": "Chuyển đổi dự phòng chủ động-bị động so với chủ động-chủ động",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/danh-doi/availability-patterns",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 1,
+    "titleId": "svg-availability-patterns-so-9-title",
+    "titleText": "Thêm một số 9 làm ngân sách thời gian chết mỗi năm co lại rất nhiều",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/danh-doi/availability-patterns",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 2,
+    "titleId": "svg-availability-patterns-mac-noi-title",
+    "titleText": "Mắc nối tiếp làm giảm độ sẵn sàng, mắc song song làm tăng độ sẵn sàng",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/danh-doi/cap-theorem",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-cap-partition-title",
+    "titleText": "Khi mạng bị phân mảnh, hệ thống phải chọn CP hoặc AP",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/danh-doi/cap-theorem",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 1,
+    "titleId": "svg-cap-cp-ap-title",
+    "titleText": "Ví dụ chọn CP hay AP theo từng chức năng",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/danh-doi/consistency-patterns",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-consistency-patterns-ba-muc-title",
+    "titleText": "Sau khi ghi, lần đọc kế tiếp thấy gì ở ba mức nhất quán",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/danh-doi/consistency-patterns",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 1,
+    "titleId": "svg-consistency-patterns-nhan-ban-title",
+    "titleText": "Nhân bản đồng bộ (nhất quán mạnh) so với bất đồng bộ (nhất quán cuối cùng)",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/danh-doi/latency-vs-throughput",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-latency-throughput-ong-dan-title",
+    "titleText": "Độ trễ là thời gian đi hết ống, thông lượng là lượng qua một mặt cắt mỗi giây",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/danh-doi/latency-vs-throughput",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 1,
+    "titleId": "svg-latency-throughput-gom-lo-title",
+    "titleText": "Gửi ngay từng item so với gom lô rồi gửi một lần",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/danh-doi/performance-vs-scalability",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-performance-vs-scalability-title",
+    "titleText": "Chẩn đoán vấn đề hiệu năng so với vấn đề khả năng mở rộng",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/nen-tang/asynchronism",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-asynchronism-hai-kieu-title",
+    "titleText": "Hai kiểu bất đồng bộ: làm sẵn trước và xử lý qua hàng đợi",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/nen-tang/asynchronism",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 1,
+    "titleId": "svg-asynchronism-worker-pool-title",
+    "titleText": "Nhiều worker cùng lấy job từ một hàng đợi chung",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/nen-tang/caches",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-caches-mo-hinh-title",
+    "titleText": "Cache theo từng câu truy vấn so với cache theo đối tượng đầy đủ",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/nen-tang/clones",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-clones-dinh-tuyen-title",
+    "titleText": "Cùng một client, nhiều server khác nhau, nhưng dùng chung một kho session",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/kien-truc/nen-tang/databases",
+    "domain": "kien-truc",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-databases-hai-con-duong-title",
+    "titleText": "Hai con đường khi database trở thành nút thắt cổ chai",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/an-toan/boi-canh-viet-nam",
+    "domain": "tai-chinh",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-nguyen-ly-tra-cuu-title",
+    "titleText": "Học nguyên lý chung rồi tra cứu điều kiện thật tại nguồn chính thức trước khi áp dụng",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/an-toan/chong-gia-mao",
+    "domain": "tai-chinh",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-xac-minh-gia-mao-title",
+    "titleText": "Ba bước xác minh khi có yêu cầu chuyển tiền bất thường: dừng lại, kiểm tra kênh chính thức, rồi gọi lại số tự tra; không đưa OTP cho ai",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/di-tiep/chon-nhanh-tiep",
+    "domain": "tai-chinh",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-chon-nhanh-title",
+    "titleText": "Chọn một trong ba nhánh ngang hàng để đi tiếp sau 12 tuần: đời sống, doanh nghiệp hoặc nghề nghiệp",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/di-tiep/nghien-cuu-noi-gi",
+    "domain": "tai-chinh",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-hai-ket-qua-nghien-cuu-title",
+    "titleText": "Hai tổng hợp nghiên cứu, hai kết luận khác nhau vì bộ dữ liệu và thước đo khác nhau: phần trăm phương sai so với tác động nhân quả trung bình",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/di-tiep/nguon-tham-khao",
+    "domain": "tai-chinh",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-kiem-tra-tuyen-bo-title",
+    "titleText": "Kiểm tra một tuyên bố trước khi tin: tìm nguồn, đối chiếu ngày, cơ quan phát hành và tình trạng hiệu lực",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/di-tiep/tu-danh-gia",
+    "domain": "tai-chinh",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-truoc-khi-dung-tien-that-title",
+    "titleText": "Năm điều cần hiểu rõ trước khi quyết định dùng tiền thật",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/khoi-dong/bon-chang",
+    "domain": "tai-chinh",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-bon-chang-title",
+    "titleText": "Bốn chặng học nối tiếp nhau: kiểm soát tiền, bảo vệ và đầu tư, ra quyết định, rồi mở rộng theo nhu cầu",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/khoi-dong/vi-sao-hoc",
+    "domain": "tai-chinh",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-ba-cach-to-chuc-title",
+    "titleText": "Ba cách tổ chức lộ trình học: theo giáo trình, theo sản phẩm, theo quyết định",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-01",
+    "domain": "tai-chinh",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-tuan01-tai-san-rong-title",
+    "titleText": "Tài sản ròng bằng tài sản trừ đi nợ",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-02",
+    "domain": "tai-chinh",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-tuan02-du-tru-chi-nam-title",
+    "titleText": "Chia khoản chi theo năm thành phần để dành mỗi tháng",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-03",
+    "domain": "tai-chinh",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-lai-kep-title",
+    "titleText": "Lãi kép tăng nhanh dần theo thời gian, lãi đơn tăng đều",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-03",
+    "domain": "tai-chinh",
+    "scheme": "dark",
+    "figIdx": 1,
+    "titleId": "svg-lam-phat-title",
+    "titleText": "Cùng một số tiền nhưng lạm phát khiến mua được ít hàng hoá hơn",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-04",
+    "domain": "tai-chinh",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-du-no-title",
+    "titleText": "Lãi tính trên dư nợ giảm dần theo từng kỳ trả góp",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-04",
+    "domain": "tai-chinh",
+    "scheme": "dark",
+    "figIdx": 1,
+    "titleId": "svg-thu-tu-tra-no-title",
+    "titleText": "Ưu tiên trả khoản vay lãi suất cao nhất trước",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-05",
+    "domain": "tai-chinh",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-quy-du-phong-title",
+    "titleText": "Quỹ dự phòng: mốc thử 3–6 tháng chi thiết yếu, hiện có bao nhiêu",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-05",
+    "domain": "tai-chinh",
+    "scheme": "dark",
+    "figIdx": 1,
+    "titleId": "svg-thoi-gian-cho-title",
+    "titleText": "Mốc thời gian hợp đồng bảo hiểm: 21 ngày cân nhắc tính từ khi nhận hợp đồng, thời gian chờ tính riêng theo điều khoản",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-06",
+    "domain": "tai-chinh",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-tuan06-rut-mot-lan-title",
+    "titleText": "So sánh rút bảo hiểm xã hội một lần với tổng lương hưu hằng tháng cộng dồn",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-07",
+    "domain": "tai-chinh",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-tuan07-thanh-khoan-title",
+    "titleText": "So sánh thời gian quy đổi ra tiền mặt của các nhóm tài sản",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-08",
+    "domain": "tai-chinh",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-tuan08-cong-thuc-nav-title",
+    "titleText": "Công thức tính NAV mỗi chứng chỉ quỹ: tài sản quỹ trừ nợ phải trả, chia cho số chứng chỉ đang lưu hành",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-09",
+    "domain": "tai-chinh",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-tuan09-thoi-han-cho-title",
+    "titleText": "Thời hạn cần tiền càng xa, càng có thời gian chờ phục hồi nếu giá giảm",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-10",
+    "domain": "tai-chinh",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-tuan10-dung-lai-title",
+    "titleText": "Khoảng dừng trước khi quyết định giao dịch",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-11",
+    "domain": "tai-chinh",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-tuan11-ty-trong-lech-title",
+    "titleText": "Tỷ trọng danh mục lệch đi theo thời gian nếu không cân chỉnh lại",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-12",
+    "domain": "tai-chinh",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-tuan12-vong-lap-title",
+    "titleText": "Vòng lặp ghi nguyên tắc, rà soát sau 30 ngày và điều chỉnh kế hoạch tài chính",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/nguon-hoc/nguon-hoc-chinh-thuc",
+    "domain": "tai-chinh",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-kiem-tra-mot-nguon-title",
+    "titleText": "Kiểm tra một nguồn trước khi tin: có bán gì, hứa chắc chắn, hay có dẫn luật và số liệu",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/nguon-hoc/tu-sach-va-lich-doc",
+    "domain": "tai-chinh",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-lich-doc-12-tuan-title",
+    "titleText": "Lịch đọc gắn với 12 tuần: S1 ở tuần 1-8, S2 ở tuần 9-10, ôn tập tuần 11-12, sách mở rộng sau đó",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/thuc-hanh/bai-tap-va-thu-tu-tien-du",
+    "domain": "tai-chinh",
+    "scheme": "dark",
+    "figIdx": 0,
+    "titleId": "svg-lo-va-phuc-hoi-title",
+    "titleText": "Lỗ và phục hồi không đối xứng: giảm càng nhiều thì cần tăng tỉ lệ lớn hơn để về lại mức ban đầu",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 220
+    },
+    "issues": []
+  },
+  {
+    "page": "/hoc/tai-chinh/thuc-hanh/bai-tap-va-thu-tu-tien-du",
+    "domain": "tai-chinh",
+    "scheme": "dark",
+    "figIdx": 1,
+    "titleId": "svg-thu-tu-uu-tien-title",
+    "titleText": "Thứ tự ưu tiên dùng tiền dư (đề xuất có điều kiện): thiết yếu, bộ đệm nhỏ, nợ chi phí cao, dự phòng, rồi mục tiêu dài hạn",
+    "viewBox": {
+      "x": 0,
+      "y": 0,
+      "w": 360,
+      "h": 300
+    },
+    "issues": []
+  }
+]
