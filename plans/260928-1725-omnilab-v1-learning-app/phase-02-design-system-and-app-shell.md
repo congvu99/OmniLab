@@ -1,7 +1,7 @@
 ---
 phase: 2
 title: Design system and app shell
-status: in-progress
+status: completed
 priority: P1
 effort: 1.5–2 ngày
 dependencies:

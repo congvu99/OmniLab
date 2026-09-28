@@ -1,0 +1,37 @@
+[
+  {
+    "page": "hoc-kien-truc-chu-de-database",
+    "performance": 97,
+    "accessibility": 98,
+    "best-practices": 100,
+    "seo": 100
+  },
+  {
+    "page": "home",
+    "performance": 96,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100
+  },
+  {
+    "page": "linh-vuc-kien-truc",
+    "performance": 96,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100
+  },
+  {
+    "page": "linh-vuc",
+    "performance": 96,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100
+  },
+  {
+    "page": "tim-kiem",
+    "performance": 97,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100
+  }
+]

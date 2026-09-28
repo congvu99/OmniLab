@@ -35,12 +35,12 @@ Nguyên tắc cốt lõi: **nội dung gốc bất biến** (chứng minh bằng
 | Phase | Name | Status |
 |-------|------|--------|
 | 1 | [Scaffold and deploy pipeline](./phase-01-scaffold-and-deploy-pipeline.md) | Completed |
-| 2 | [Design system and app shell](./phase-02-design-system-and-app-shell.md) | In Progress |
-| 3 | [Content model and migration](./phase-03-content-model-and-migration.md) | In Progress |
-| 4 | [Domain and reader screens](./phase-04-domain-and-reader-screens.md) | Pending |
-| 5 | [Progress bookmarks and search](./phase-05-progress-bookmarks-and-search.md) | Pending |
-| 6 | [Content enrichment (all lessons)](./phase-06-pilot-content.md) | Pending |
-| 7 | [QA and launch](./phase-07-qa-and-launch.md) | Pending |
+| 2 | [Design system and app shell](./phase-02-design-system-and-app-shell.md) | Completed |
+| 3 | [Content model and migration](./phase-03-content-model-and-migration.md) | Completed |
+| 4 | [Domain and reader screens](./phase-04-domain-and-reader-screens.md) | Completed |
+| 5 | [Progress bookmarks and search](./phase-05-progress-bookmarks-and-search.md) | Completed |
+| 6 | [Content enrichment (all lessons)](./phase-06-pilot-content.md) | Completed |
+| 7 | [QA and launch](./phase-07-qa-and-launch.md) | In Progress |
 
 ## Dependencies
 

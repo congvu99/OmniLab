@@ -1,7 +1,7 @@
 ---
 phase: 3
 title: Content model and migration
-status: in-progress
+status: completed
 priority: P1
 effort: 2 ngày
 dependencies:

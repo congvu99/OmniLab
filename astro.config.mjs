@@ -5,6 +5,7 @@ import { unified } from '@astrojs/markdown-remark';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { remarkReadingTime } from './src/lib/remark-reading-time.mjs';
+import rehypeWrapTables from './src/lib/rehype-wrap-tables.mjs';
 
 // SITE_URL is read at build time so sitemap.xml/canonical URLs match the real
 // deploy domain. Fallback keeps `pnpm build` reproducible before the user
@@ -18,7 +19,11 @@ export default defineConfig({
     // Unified processor is required for remark plugins to run (Astro 7's
     // default processor ignores them). SmartyPants is off so rendered text
     // keeps the original quotes/dashes exactly as written in the sources.
-    processor: unified({ remarkPlugins: [remarkReadingTime], smartypants: false }),
+    processor: unified({
+      remarkPlugins: [remarkReadingTime],
+      rehypePlugins: [rehypeWrapTables],
+      smartypants: false
+    }),
     shikiConfig: {
       // Dual theme: light colors inline, dark colors exposed as --shiki-dark
       // vars and switched in src/styles/prose.css under prefers-color-scheme.

@@ -1,10 +1,11 @@
 ---
 phase: 6
-title: "Content enrichment (all lessons)"
-status: pending
+title: Content enrichment (all lessons)
+status: completed
 priority: P1
-effort: "~8–10 ngày-agent (song song)"
-dependencies: [4]
+effort: ~8–10 ngày-agent (song song)
+dependencies:
+  - 4
 ---
 
 # Phase 6: Pilot content

@@ -1,10 +1,12 @@
 ---
 phase: 4
-title: "Domain and reader screens"
-status: pending
+title: Domain and reader screens
+status: completed
 priority: P1
-effort: "1 ngày"
-dependencies: [2, 3]
+effort: 1 ngày
+dependencies:
+  - 2
+  - 3
 ---
 
 # Phase 4: Domain and reader screens

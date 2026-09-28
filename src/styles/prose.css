@@ -55,23 +55,13 @@
   margin-bottom: 0;
 }
 
-/* Wide tables: astro.config.mjs is off-limits to Phase 4 (no rehype plugin
-   allowed to auto-wrap <table> in a scrolling <div>), and none of the
-   migrated MDX content wraps its tables either. Forcing `display: block`
-   directly on <table> (a common CSS-only trick) turned out to NOT reliably
-   contain overflow here: browsers still generate an internal anonymous table
-   box for the untouched thead/tr/td (they keep their UA default
-   table-row-group/table-row/table-cell display), and that anonymous box can
-   render wider than the blockified outer box — verified empirically
-   (measured 48px page-level overflow on the "AWS scaling" lesson's
-   comparison table with `display:block` applied). Instead, `:has()` gives
-   overflow-x directly to the table's real DOM parent (whatever element that
-   is — <article>, <aside class="translator-note">, etc.), which — being a
-   normal, non-table-blockified block box — properly clips/scrolls an
-   over-wide table child. Kept `.table-wrap` too in case any future content
-   wraps its own tables in a div. */
-.prose .table-wrap,
-.prose :has(> table) {
+/* Wide tables: rehype-wrap-tables.mjs plugin (registered in astro.config.mjs)
+   wraps every <table> in a <div class="table-wrap"> with proper accessibility
+   attributes (role="region", aria-label). This solution is better than :has()
+   because it creates a proper semantic wrapper and doesn't rely on CSS
+   specificity tricks. Browsers properly contain overflow inside the wrapper
+   without side effects. */
+.prose .table-wrap {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }

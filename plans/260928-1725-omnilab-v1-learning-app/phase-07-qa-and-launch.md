@@ -1,10 +1,12 @@
 ---
 phase: 7
-title: "QA and launch"
-status: pending
+title: QA and launch
+status: in-progress
 priority: P1
-effort: "0.5–1 ngày"
-dependencies: [5, 6]
+effort: 0.5–1 ngày
+dependencies:
+  - 5
+  - 6
 ---
 
 # Phase 7: QA and launch

@@ -1,10 +1,11 @@
 ---
 phase: 5
-title: "Progress bookmarks and search"
-status: pending
+title: Progress bookmarks and search
+status: completed
 priority: P2
-effort: "1–1.5 ngày"
-dependencies: [4]
+effort: 1–1.5 ngày
+dependencies:
+  - 4
 ---
 
 # Phase 5: Progress bookmarks and search
