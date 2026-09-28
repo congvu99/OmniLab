@@ -36,7 +36,7 @@ File `Caddyfile` ở root ghi đè Caddyfile mặc định của Railpack:
 - `root * dist`, `file_server` (ẩn `.git`, `.env*`), nén `gzip`/`zstd`.
 - Cache:
   - `/_astro/*` (asset có content-hash) → `Cache-Control: public, max-age=31536000, immutable`.
-  - HTML (`*.html`, `/`) → `Cache-Control: no-cache` (luôn revalidate, không cache cứng).
+  - Mọi đường dẫn ngoài `/_astro/*` (HTML clean URL, `*.json`, manifest, icon) → `Cache-Control: no-cache` (luôn revalidate).
 - Security header trên mọi response:
   - `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`
   - **CSP**: `default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none';`

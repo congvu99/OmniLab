@@ -18,7 +18,7 @@ OmniLab là app học tập tĩnh (Astro 7) chạy hoàn toàn trong trình duy�
 │ Vibe Deploy + Caddy (phục vụ file tĩnh)                   │
 ├───────────────────────────────────────────────────────────┤
 │ • dist/ (output Astro build)                              │
-│ • Cache: /_astro/* immutable, *.html no-cache             │
+│ • Cache: /_astro/* immutable, còn lại no-cache            │
 │ • CSP: script-src 'self', style-src 'unsafe-inline'       │
 │ • Không SPA fallback (404 thật)                           │
 └───────────────────────────────────────────────────────────┘
@@ -104,7 +104,7 @@ default-src 'self', img-src 'self' data:, object-src 'none', frame-ancestors 'no
 - **HTML**: 58 trang, ~150KB raw / ~40KB gzip.
 - **Search index**: 170KB raw / 45KB gzip (lazy-load).
 - **Fonts**: Self-hosted (@fontsource, không CDN).
-- **Cache**: /_astro/* immutable, HTML no-cache.
+- **Cache**: /_astro/* immutable, mọi đường dẫn khác no-cache (revalidate).
 
 ## Thêm domain
 

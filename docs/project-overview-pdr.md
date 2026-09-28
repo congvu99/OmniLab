@@ -85,7 +85,7 @@ Nền tảng học tập mã nguồn mở, bền vững, cho developer Việt. �
 - `SITE_URL=https://domain` (sitemap, canonical URL)
 
 **Caddyfile** (repo):
-- Cache: `/_astro/*` immutable, HTML no-cache
+- Cache: `/_astro/*` immutable, mọi đường dẫn khác no-cache
 - CSP: `script-src 'self'`, `style-src 'unsafe-inline'`
 - No SPA fallback (404 thật)
 

@@ -65,7 +65,7 @@ src/
 - Vite `assetsInlineLimit: 0` (all scripts external, CSP `script-src 'self'` no hashes)
 
 **Caddyfile** (Railpack):
-- Cache: `/_astro/*` immutable, HTML no-cache
+- Cache: `/_astro/*` immutable, mọi đường dẫn khác no-cache
 - CSP: `script-src 'self'`, `style-src 'unsafe-inline'` (Shiki chỉ)
 - Không SPA fallback (404 thực)
 
