@@ -17,3 +17,8 @@ Thumbs.db
 # logs
 npm-debug.log*
 pnpm-debug.log*
+
+# raw lighthouse reports (keep only the summary)
+plans/**/reports/qa/lighthouse-*.json
+!plans/**/reports/qa/lighthouse-summary.json
+repomix-output.xml
