@@ -1,0 +1,125 @@
+---
+// Mobile bottom tab bar (<1024px). Data comes from nav-items.ts (single
+// source shared with sidebar-nav.astro). Fixed to viewport bottom with
+// safe-area padding; hides on focus of an <input>/<textarea> elsewhere on
+// the page to avoid iOS keyboard-open layout jumps (e.g. Tìm kiếm page).
+import GraduationCap from '@lucide/astro/icons/graduation-cap';
+import Layers from '@lucide/astro/icons/layers';
+import Search from '@lucide/astro/icons/search';
+import Bookmark from '@lucide/astro/icons/bookmark';
+import { navItems, isNavItemActive } from './nav-items';
+
+const iconMap = {
+  'graduation-cap': GraduationCap,
+  layers: Layers,
+  search: Search,
+  bookmark: Bookmark,
+} as const;
+
+const pathname = Astro.url.pathname;
+---
+
+<nav class="tab-bar" aria-label="Điều hướng chính" data-tab-bar>
+  <ul class="tab-list">
+    {navItems.map((item) => {
+      const Icon = iconMap[item.icon];
+      const active = isNavItemActive(pathname, item);
+      return (
+        <li>
+          <a
+            href={item.href}
+            class="tab-link tap-scale"
+            aria-current={active ? 'page' : undefined}
+            data-active={active}
+          >
+            <Icon size={24} stroke-width={active ? 2.25 : 2} aria-hidden="true" />
+            <span class="tab-label">{item.label}</span>
+          </a>
+        </li>
+      );
+    })}
+  </ul>
+</nav>
+
+<style>
+  .tab-bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: var(--z-nav);
+    background: var(--surface-veil);
+    backdrop-filter: blur(20px) saturate(1.4);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    border-top: 1px solid var(--line);
+    padding-bottom: env(safe-area-inset-bottom);
+    transform: translateY(0);
+    transition: transform var(--dur) var(--ease-out);
+  }
+
+  .tab-bar[data-hidden='true'] {
+    transform: translateY(100%);
+  }
+
+  .tab-list {
+    display: flex;
+    margin: 0;
+    padding: 0;
+  }
+
+  .tab-list li {
+    flex: 1;
+    display: flex;
+  }
+
+  .tab-link {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-height: var(--shell-tabbar-h);
+    padding: var(--space-1);
+    color: var(--ink-2);
+    text-decoration: none;
+  }
+
+  .tab-link[data-active='true'] {
+    color: var(--accent);
+  }
+
+  .tab-label {
+    font-size: var(--text-caption);
+    line-height: 1;
+    font-weight: 500;
+  }
+
+  .tab-link[data-active='true'] .tab-label {
+    font-weight: 700;
+  }
+
+  @media (min-width: 1024px) {
+    .tab-bar {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  // Hide the fixed tab bar while any text input/textarea elsewhere on the
+  // page has focus, so the iOS on-screen keyboard doesn't shove it into the
+  // middle of the viewport (see phase-02 risk: "Fixed tab bar + bàn phím iOS").
+  const bar = document.querySelector<HTMLElement>('[data-tab-bar]');
+  if (bar) {
+    const isTextInput = (el: EventTarget | null) =>
+      el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement;
+
+    document.addEventListener('focusin', (ev) => {
+      if (isTextInput(ev.target)) bar.dataset.hidden = 'true';
+    });
+    document.addEventListener('focusout', (ev) => {
+      if (isTextInput(ev.target)) bar.dataset.hidden = 'false';
+    });
+  }
+</script>

@@ -1,0 +1,73 @@
+---
+nguon: Le Cloud Blog - Scalability for Dummies, Part 2
+tac-gia: Sebastian Kreutzberger
+ngay-goc: 2011-07-24
+link-goc: https://web.archive.org/web/20220602114024/https://www.lecloud.net/post/7994751381/scalability-for-dummies-part-2-database
+ngay-dich: 2026-09-18
+trang-thai: hoan-thanh
+---
+
+# Khả năng mở rộng cho người mới - Phần 2: Cơ sở dữ liệu (Database)
+
+## Nút thắt cổ chai mới
+
+Sau khi làm theo [Phần 1](01-clones.md), các server của bạn giờ đã mở rộng theo chiều ngang (horizontally scale) được, và bạn đã phục vụ được hàng nghìn request đồng thời.
+
+Nhưng rồi đến một lúc nào đó, ứng dụng của bạn cứ chậm dần, chậm dần, rồi sập hẳn. Nguyên nhân: **database của bạn**. Là MySQL đúng không?
+
+Lúc này, những thay đổi cần làm đã triệt để hơn nhiều so với việc chỉ thêm vài server nhân bản, và thậm chí còn đòi hỏi một chút gan dạ. Rốt cuộc, bạn có hai con đường để chọn.
+
+## Con đường 1: Bám lấy MySQL
+
+Con đường thứ nhất là ở lại với MySQL và cố giữ cho "con quái vật" đó chạy tiếp.
+
+Thuê một quản trị viên cơ sở dữ liệu (DBA - database administrator), bảo anh ta làm **master-slave replication** (đọc từ slave, ghi vào master), rồi nâng cấp server master bằng cách thêm RAM, RAM và thêm RAM nữa.
+
+Vài tháng sau, DBA của bạn sẽ bắt đầu nhắc đến những từ như **"sharding"**, **"denormalization"** và **"SQL tuning"**, và trông đầy lo lắng về đống giờ làm thêm sắp tới trong những tuần kế tiếp.
+
+Đến lúc đó, mỗi hành động mới để giữ database sống sót đều sẽ **đắt đỏ và tốn thời gian hơn hành động trước đó**. Có lẽ bạn đã khá hơn nhiều nếu chọn Con đường 2 ngay từ khi tập dữ liệu còn nhỏ và còn dễ di chuyển.
+
+## Con đường 2: Phi chuẩn hóa ngay từ đầu
+
+Con đường thứ hai nghĩa là **denormalize** (phi chuẩn hóa) ngay từ đầu, và không dùng thêm bất kỳ phép Join nào trong mọi câu truy vấn database.
+
+Bạn có thể vẫn ở lại với MySQL nhưng dùng nó như một database NoSQL, hoặc chuyển sang một database NoSQL tốt hơn và dễ mở rộng hơn như MongoDB hay CouchDB.
+
+Việc Join giờ sẽ phải làm trong **code ứng dụng** của bạn. Bạn làm bước này càng sớm thì sau này càng phải sửa ít code.
+
+## Nhưng vẫn chưa đủ
+
+Nhưng kể cả khi bạn đã chuyển thành công sang database NoSQL mới nhất và xịn nhất, rồi để ứng dụng tự lo việc join dữ liệu, thì chẳng bao lâu các request tới database lại sẽ chậm dần, chậm dần.
+
+Bạn sẽ cần đưa vào một **cache**.
+
+---
+
+## Ghi chú của người dịch (2026)
+
+Bài gốc từ 2011, và đây là phần bị thời gian bào mòn nhiều nhất trong cả loạt bài. Lời khuyên "phi chuẩn hóa ngay từ đầu, bỏ hết Join" **không còn là lời khuyên mặc định**:
+
+| Bài gốc (2011) | Thực tế hiện nay |
+|---|---|
+| MySQL là "con quái vật" khó mở rộng | PostgreSQL/MySQL hiện đại xử lý tốt hơn rất nhiều; có thêm nhánh distributed SQL (CockroachDB, TiDB, Vitess, Aurora) |
+| Denormalize ngay từ đầu | Khuyến nghị ngược lại: chuẩn hóa trước, chỉ phi chuẩn hóa khi đo được nút thắt cụ thể |
+| Bỏ Join, join trong code ứng dụng | Join trong code thường **chậm hơn** join trong DB, và đẻ ra lỗi nhất quán dữ liệu |
+| MongoDB/CouchDB dễ mở rộng hơn | Đúng về mặt ghi phân tán, nhưng đánh đổi bằng mất transaction và mất tính nhất quán mạnh |
+| Master-slave replication | Thuật ngữ nay thường gọi là primary-replica; bản thân kỹ thuật vẫn dùng rộng rãi |
+
+Cách đọc bài này cho đúng: giữ lại **trình tự leo thang của vấn đề**, bỏ qua kết luận chọn công nghệ.
+
+Trình tự đó vẫn chính xác tuyệt đối và là thứ đáng nhớ nhất:
+
+> server nhân bản (Phần 1) → database thành nút thắt → replication → sharding/denormalization → vẫn chậm → cache (Phần 3)
+
+Điểm cốt lõi khác đáng giữ: **mỗi bước cứu database sau lại đắt hơn bước trước**. Đây là lý do system design coi lựa chọn mô hình dữ liệu là quyết định khó đảo ngược nhất - đổi database khi đã có 10TB dữ liệu đắt hơn đổi lúc có 10GB hàng trăm lần.
+
+Đối chiếu README gốc của repo - phần này viết cập nhật và cân bằng hơn nhiều, nên đọc kỹ:
+- [Database](../../README.md#database)
+- [Master-slave replication](../../README.md#master-slave-replication)
+- [Federation](../../README.md#federation)
+- [Sharding](../../README.md#sharding)
+- [Denormalization](../../README.md#denormalization)
+- [SQL tuning](../../README.md#sql-tuning)
+- [SQL or NoSQL](../../README.md#sql-or-nosql)

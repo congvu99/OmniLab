@@ -1,0 +1,385 @@
+---
+domain: "kien-truc"
+module: "bai-tap"
+order: 8
+title: "Thiết kế cache key-value lưu kết quả các truy vấn gần nhất của web server"
+summary: "Lưu ý: Tài liệu này dẫn link trực tiếp tới các phần liên quan trong danh mục chủ đề system design để tránh lặp lại."
+source:
+  name: "The System Design Primer - bài giải \"Design a key-value cache to save the results of the most recent web server queries\""
+  author: "Donne Martin và cộng đồng đóng góp"
+  url: "https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/query_cache/README.md"
+  license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
+  translatedAt: "2026-09-28"
+  snapshot: "system-design/03-bai-tap/08-query-cache.md"
+examplesReviewed: false
+readingMinutes: 15
+---
+
+import img_query_cache_basic from '../../../../assets/legacy/system-design/query_cache_basic.png';
+import img_query_cache from '../../../../assets/legacy/system-design/query_cache.png';
+
+
+# Thiết kế cache key-value lưu kết quả các truy vấn gần nhất của web server
+
+## Nội dung gốc
+
+*Lưu ý: Tài liệu này dẫn link trực tiếp tới các phần liên quan trong [danh mục chủ đề system design](https://github.com/donnemartin/system-design-primer#index-of-system-design-topics) để tránh lặp lại. Hãy tham khảo nội dung được dẫn link để nắm các ý chính cần thảo luận, các đánh đổi (tradeoff) và các phương án thay thế.*
+
+### Bước 1: Phác thảo các trường hợp sử dụng và ràng buộc
+
+> Thu thập yêu cầu và xác định phạm vi bài toán.
+> Đặt câu hỏi để làm rõ các trường hợp sử dụng (use case) và ràng buộc (constraint).
+> Thảo luận các giả định.
+
+Vì không có người phỏng vấn để trả lời các câu hỏi làm rõ, ta sẽ tự định nghĩa một số use case và ràng buộc.
+
+#### Các trường hợp sử dụng (use cases)
+
+##### Ta giới hạn bài toán chỉ xử lý các use case sau
+
+* **Người dùng (User)** gửi một yêu cầu tìm kiếm và trúng cache (cache hit)
+* **Người dùng** gửi một yêu cầu tìm kiếm và trượt cache (cache miss)
+* **Dịch vụ (Service)** có tính sẵn sàng cao (high availability)
+
+#### Ràng buộc và giả định
+
+##### Nêu các giả định
+
+* Lưu lượng truy cập không phân bố đều
+    * Các truy vấn phổ biến gần như luôn phải có sẵn trong cache
+    * Cần xác định cách làm hết hạn (expire) hoặc làm mới (refresh)
+* Phục vụ từ cache đòi hỏi tra cứu nhanh
+* Độ trễ giữa các máy thấp
+* Bộ nhớ của cache có giới hạn
+    * Cần xác định giữ lại gì và loại bỏ gì
+    * Cần cache hàng triệu truy vấn
+* 10 triệu người dùng
+* 10 tỷ truy vấn mỗi tháng
+
+##### Tính toán mức sử dụng
+
+**Hỏi rõ người phỏng vấn xem bạn có nên thực hiện các phép ước lượng nhanh (back-of-the-envelope) về mức sử dụng hay không.**
+
+* Cache lưu danh sách có thứ tự gồm key: truy vấn (query), value: kết quả (results)
+    * `query` - 50 byte
+    * `title` - 20 byte
+    * `snippet` - 200 byte
+    * Tổng: 270 byte
+* 2,7 TB dữ liệu cache mỗi tháng nếu cả 10 tỷ truy vấn đều khác nhau và đều được lưu
+    * 270 byte mỗi lượt tìm kiếm * 10 tỷ lượt tìm kiếm mỗi tháng
+    * Giả định cho biết bộ nhớ có hạn, nên cần xác định cách làm hết hạn nội dung
+* 4.000 yêu cầu mỗi giây
+
+Bảng quy đổi tiện dụng:
+
+* 2,5 triệu giây mỗi tháng
+* 1 yêu cầu mỗi giây = 2,5 triệu yêu cầu mỗi tháng
+* 40 yêu cầu mỗi giây = 100 triệu yêu cầu mỗi tháng
+* 400 yêu cầu mỗi giây = 1 tỷ yêu cầu mỗi tháng
+
+### Bước 2: Tạo thiết kế tổng quan (high level design)
+
+> Phác thảo thiết kế tổng quan với tất cả các thành phần quan trọng.
+
+<Figure src={img_query_cache_basic} alt="Thiết kế tổng quan query cache" />
+
+### Bước 3: Thiết kế các thành phần cốt lõi
+
+> Đi sâu vào chi tiết từng thành phần cốt lõi.
+
+#### Use case: Người dùng gửi yêu cầu và trúng cache
+
+Các truy vấn phổ biến có thể được phục vụ từ một **Memory Cache** (bộ nhớ đệm trong RAM) như Redis hoặc Memcached để giảm độ trễ đọc và tránh làm quá tải **Reverse Index Service** (dịch vụ chỉ mục ngược) và **Document Service** (dịch vụ tài liệu). Đọc tuần tự 1 MB từ bộ nhớ mất khoảng 250 micro giây, trong khi đọc từ SSD lâu hơn 4 lần và từ ổ đĩa (disk) lâu hơn 80 lần.<sup><a href="https://github.com/donnemartin/system-design-primer#latency-numbers-every-programmer-should-know">1</a></sup>
+
+Vì cache có dung lượng giới hạn, ta sẽ dùng cách loại bỏ mục ít được dùng gần đây nhất (LRU - least recently used) để làm hết hạn các mục cũ.
+
+* **Client** gửi yêu cầu tới **Web Server**, chạy vai trò [reverse proxy](/hoc/kien-truc/chu-de/reverse-proxy)
+* **Web Server** chuyển tiếp yêu cầu tới server **Query API**
+* Server **Query API** thực hiện các việc sau:
+    * Phân tích (parse) truy vấn
+        * Loại bỏ markup
+        * Tách văn bản thành các từ (term)
+        * Sửa lỗi chính tả
+        * Chuẩn hóa chữ hoa/chữ thường
+        * Chuyển truy vấn sang dạng dùng các phép toán boolean
+    * Kiểm tra **Memory Cache** xem có nội dung khớp với truy vấn không
+        * Nếu trúng trong **Memory Cache**, **Memory Cache** thực hiện:
+            * Đưa vị trí của mục được cache lên đầu danh sách LRU
+            * Trả về nội dung đã cache
+        * Ngược lại, **Query API** thực hiện:
+            * Dùng **Reverse Index Service** để tìm các tài liệu khớp với truy vấn
+                * **Reverse Index Service** xếp hạng các kết quả khớp và trả về những kết quả đứng đầu
+            * Dùng **Document Service** để trả về tiêu đề (title) và đoạn trích (snippet)
+            * Cập nhật **Memory Cache** với nội dung vừa lấy, đặt mục đó ở đầu danh sách LRU
+
+##### Cài đặt cache
+
+Cache có thể dùng một danh sách liên kết đôi (doubly-linked list): mục mới được thêm vào đầu (head), còn mục cần loại bỏ sẽ bị xóa ở cuối (tail). Ta dùng một bảng băm (hash table) để tra cứu nhanh tới từng node của danh sách liên kết.
+
+**Hỏi rõ người phỏng vấn xem bạn cần viết bao nhiêu code.**
+
+Cài đặt **Query API Server**:
+
+```python
+class QueryApi(object):
+
+    def __init__(self, memory_cache, reverse_index_service):
+        self.memory_cache = memory_cache
+        self.reverse_index_service = reverse_index_service
+
+    def parse_query(self, query):
+        """Loại bỏ markup, tách văn bản thành các từ, xử lý lỗi chính tả,
+        chuẩn hóa chữ hoa/thường, chuyển sang dạng dùng phép toán boolean.
+        """
+        ...
+
+    def process_query(self, query):
+        query = self.parse_query(query)
+        results = self.memory_cache.get(query)
+        if results is None:
+            results = self.reverse_index_service.process_search(query)
+            self.memory_cache.set(query, results)
+        return results
+```
+
+Cài đặt **Node**:
+
+```python
+class Node(object):
+
+    def __init__(self, query, results):
+        self.query = query
+        self.results = results
+```
+
+Cài đặt **LinkedList**:
+
+```python
+class LinkedList(object):
+
+    def __init__(self):
+        self.head = None
+        self.tail = None
+
+    def move_to_front(self, node):
+        ...
+
+    def append_to_front(self, node):
+        ...
+
+    def remove_from_tail(self):
+        ...
+```
+
+Cài đặt **Cache**:
+
+```python
+class Cache(object):
+
+    def __init__(self, MAX_SIZE):
+        self.MAX_SIZE = MAX_SIZE
+        self.size = 0
+        self.lookup = {}  # key: query, value: node
+        self.linked_list = LinkedList()
+
+    def get(self, query)
+        """Lấy kết quả truy vấn đã lưu trong cache.
+
+        Truy cập một node sẽ đưa vị trí của nó lên đầu danh sách LRU.
+        """
+        node = self.lookup[query]
+        if node is None:
+            return None
+        self.linked_list.move_to_front(node)
+        return node.results
+
+    def set(self, results, query):
+        """Đặt kết quả cho key truy vấn tương ứng trong cache.
+
+        Khi cập nhật một mục, đưa vị trí của nó lên đầu danh sách LRU.
+        Nếu mục là mới và cache đã đầy, xóa mục cũ nhất
+        trước khi thêm mục mới.
+        """
+        node = self.lookup[query]
+        if node is not None:
+            # Key đã có trong cache, cập nhật giá trị
+            node.results = results
+            self.linked_list.move_to_front(node)
+        else:
+            # Key chưa có trong cache
+            if self.size == self.MAX_SIZE:
+                # Xóa mục cũ nhất khỏi danh sách liên kết và bảng tra cứu
+                self.lookup.pop(self.linked_list.tail.query, None)
+                self.linked_list.remove_from_tail()
+            else:
+                self.size += 1
+            # Thêm key và value mới
+            new_node = Node(query, results)
+            self.linked_list.append_to_front(new_node)
+            self.lookup[query] = new_node
+```
+
+##### Khi nào cập nhật cache
+
+Cache cần được cập nhật khi:
+
+* Nội dung trang thay đổi
+* Trang bị xóa hoặc có trang mới được thêm
+* Thứ hạng (page rank) của trang thay đổi
+
+Cách đơn giản nhất để xử lý các trường hợp này là đặt một khoảng thời gian tối đa mà một mục được phép nằm trong cache trước khi được cập nhật, thường gọi là thời gian sống (TTL - time to live).
+
+Tham khảo [Khi nào cập nhật cache](/hoc/kien-truc/chu-de/cache) để biết các đánh đổi và phương án thay thế. Cách làm ở trên chính là mẫu [cache-aside](/hoc/kien-truc/chu-de/cache).
+
+### Bước 4: Mở rộng thiết kế (scale the design)
+
+> Xác định và xử lý các điểm nghẽn (bottleneck), dựa trên các ràng buộc.
+
+<Figure src={img_query_cache} alt="Thiết kế query cache sau khi mở rộng" />
+
+**Quan trọng: Đừng nhảy thẳng từ thiết kế ban đầu sang thiết kế cuối cùng!**
+
+Hãy nói rõ rằng bạn sẽ 1) **Đo hiệu năng/Kiểm thử tải (Benchmark/Load Test)**, 2) **Phân tích (Profile)** để tìm điểm nghẽn, 3) xử lý các điểm nghẽn trong khi cân nhắc các phương án thay thế và đánh đổi, và 4) lặp lại. Xem bài [Thiết kế hệ thống mở rộng tới hàng triệu người dùng trên AWS](/hoc/kien-truc/bai-tap/scaling-aws) làm ví dụ về cách mở rộng dần thiết kế ban đầu.
+
+Điều quan trọng là thảo luận những điểm nghẽn có thể gặp với thiết kế ban đầu và cách xử lý từng điểm. Ví dụ, việc thêm một **Load Balancer** với nhiều **Web Server** giải quyết được vấn đề gì? **CDN**? **Master-Slave Replicas** (bản sao master-slave)? Các phương án thay thế và **đánh đổi** của từng lựa chọn là gì?
+
+Ta sẽ bổ sung một số thành phần để hoàn thiện thiết kế và xử lý các vấn đề về khả năng mở rộng. Các load balancer nội bộ không được vẽ ra để sơ đồ đỡ rối.
+
+*Để tránh lặp lại các thảo luận*, hãy tham khảo các [chủ đề system design](https://github.com/donnemartin/system-design-primer#index-of-system-design-topics) sau để nắm các ý chính, đánh đổi và phương án thay thế:
+
+* [DNS](/hoc/kien-truc/chu-de/dns)
+* [Load balancer](/hoc/kien-truc/chu-de/load-balancer)
+* [Mở rộng theo chiều ngang (horizontal scaling)](/hoc/kien-truc/chu-de/load-balancer)
+* [Web server (reverse proxy)](/hoc/kien-truc/chu-de/reverse-proxy)
+* [API server (tầng ứng dụng - application layer)](/hoc/kien-truc/chu-de/application-layer)
+* [Cache](/hoc/kien-truc/chu-de/cache)
+* [Các mẫu nhất quán (consistency patterns)](/hoc/kien-truc/danh-doi/consistency-patterns)
+* [Các mẫu sẵn sàng (availability patterns)](/hoc/kien-truc/danh-doi/availability-patterns)
+
+#### Mở rộng Memory Cache ra nhiều máy
+
+Để xử lý lượng yêu cầu lớn và lượng bộ nhớ lớn cần dùng, ta sẽ mở rộng theo chiều ngang. Có ba phương án chính để lưu dữ liệu trên cụm (cluster) **Memory Cache**:
+
+* **Mỗi máy trong cụm cache có cache riêng của nó** - Đơn giản, nhưng nhiều khả năng dẫn tới tỷ lệ trúng cache (cache hit rate) thấp.
+* **Mỗi máy trong cụm cache giữ một bản sao của toàn bộ cache** - Đơn giản, nhưng sử dụng bộ nhớ kém hiệu quả.
+* **Cache được [phân mảnh (shard)](/hoc/kien-truc/chu-de/database) trên tất cả các máy trong cụm cache** - Phức tạp hơn, nhưng nhiều khả năng là phương án tốt nhất. Ta có thể dùng hàm băm để xác định máy nào có thể chứa kết quả cache của một truy vấn bằng `machine = hash(query)`. Nhiều khả năng ta sẽ muốn dùng [băm nhất quán (consistent hashing)](https://github.com/donnemartin/system-design-primer#under-development).
+
+### Các điểm thảo luận thêm (Additional talking points)
+
+> Các chủ đề bổ sung để đi sâu, tùy vào phạm vi bài toán và thời gian còn lại.
+
+#### Các mẫu mở rộng SQL (SQL scaling patterns)
+
+* [Bản sao đọc (read replicas)](/hoc/kien-truc/chu-de/database)
+* [Liên hợp (federation)](/hoc/kien-truc/chu-de/database)
+* [Phân mảnh (sharding)](/hoc/kien-truc/chu-de/database)
+* [Phi chuẩn hóa (denormalization)](/hoc/kien-truc/chu-de/database)
+* [Tinh chỉnh SQL (SQL tuning)](/hoc/kien-truc/chu-de/database)
+
+##### NoSQL
+
+* [Key-value store](/hoc/kien-truc/chu-de/database)
+* [Document store](/hoc/kien-truc/chu-de/database)
+* [Wide column store](/hoc/kien-truc/chu-de/database)
+* [Graph database](/hoc/kien-truc/chu-de/database)
+* [SQL hay NoSQL](/hoc/kien-truc/chu-de/database)
+
+#### Bộ nhớ đệm (caching)
+
+* Cache ở đâu
+    * [Cache phía client (client caching)](/hoc/kien-truc/chu-de/cache)
+    * [Cache ở CDN (CDN caching)](/hoc/kien-truc/chu-de/cache)
+    * [Cache ở web server (web server caching)](/hoc/kien-truc/chu-de/cache)
+    * [Cache ở cơ sở dữ liệu (database caching)](/hoc/kien-truc/chu-de/cache)
+    * [Cache ở tầng ứng dụng (application caching)](/hoc/kien-truc/chu-de/cache)
+* Cache cái gì
+    * [Cache ở mức truy vấn cơ sở dữ liệu](/hoc/kien-truc/chu-de/cache)
+    * [Cache ở mức đối tượng](/hoc/kien-truc/chu-de/cache)
+* Khi nào cập nhật cache
+    * [Cache-aside](/hoc/kien-truc/chu-de/cache)
+    * [Write-through](/hoc/kien-truc/chu-de/cache)
+    * [Write-behind (write-back)](/hoc/kien-truc/chu-de/cache)
+    * [Refresh ahead](/hoc/kien-truc/chu-de/cache)
+
+#### Xử lý bất đồng bộ và microservices
+
+* [Hàng đợi thông điệp (message queues)](/hoc/kien-truc/chu-de/asynchronism)
+* [Hàng đợi tác vụ (task queues)](/hoc/kien-truc/chu-de/asynchronism)
+* [Áp lực ngược (back pressure)](/hoc/kien-truc/chu-de/asynchronism)
+* [Microservices](/hoc/kien-truc/chu-de/application-layer)
+
+#### Giao tiếp (communications)
+
+* Thảo luận các đánh đổi:
+    * Giao tiếp bên ngoài với client - [HTTP API theo chuẩn REST](/hoc/kien-truc/chu-de/communication)
+    * Giao tiếp nội bộ - [RPC](/hoc/kien-truc/chu-de/communication)
+* [Khám phá dịch vụ (service discovery)](/hoc/kien-truc/chu-de/application-layer)
+
+#### Bảo mật (security)
+
+Tham khảo [phần bảo mật](/hoc/kien-truc/chu-de/security).
+
+#### Các con số độ trễ (latency numbers)
+
+Xem [Các con số độ trễ mọi lập trình viên nên biết](https://github.com/donnemartin/system-design-primer#latency-numbers-every-programmer-should-know).
+
+#### Liên tục
+
+* Tiếp tục đo hiệu năng và giám sát hệ thống để xử lý các điểm nghẽn khi chúng xuất hiện
+* Mở rộng hệ thống là một quá trình lặp đi lặp lại
+
+---
+
+<TranslatorNote>
+## Ghi chú của người dịch
+
+**1. Phép ước lượng của bài gốc đơn giản hóa quá tay - nên tự sửa khi trình bày**
+
+- **Một mục cache không phải 270 byte.** Bài gốc cộng `query` + một `title` + một `snippet`, tức là như thể mỗi truy vấn chỉ trả về **một** kết quả. Một trang kết quả tìm kiếm thường có khoảng 10 kết quả, mỗi kết quả còn có URL. Ước lượng lại với chính các con số của bài: 50 + 10 * (20 + 200) = 2.250 byte, chưa kể URL và overhead cấu trúc dữ liệu - tức lớn hơn gần 10 lần.
+- **Overhead của cache thật không nhỏ.** Mỗi key trong Redis hay Memcached tốn thêm vài chục byte cho metadata, con trỏ, thông tin hết hạn. Với giá trị nhỏ, overhead này có thể chiếm tỷ lệ đáng kể.
+- **Không cần cache hết 10 tỷ truy vấn.** Con số 2,7 TB là cận trên "mọi truy vấn đều khác nhau". Truy vấn tìm kiếm có phân bố lệch mạnh (gần với phân bố Zipf/đuôi dài - long tail): một phần nhỏ truy vấn chiếm phần lớn lưu lượng, còn phần đuôi rất dài gồm truy vấn chỉ xuất hiện một lần. Câu hỏi đúng là "cần bao nhiêu bộ nhớ để đạt tỷ lệ trúng X%", và câu trả lời chỉ có được bằng cách đo trên log truy vấn thật (vẽ đường cong hit rate theo kích thước cache).
+- 4.000 request/giây là trung bình (10 tỷ / 2,5 triệu giây); cao điểm có thể gấp vài lần. Một node Redis đơn đã xử lý được mức này, nên lý do chính để phân mảnh ở bài này là **dung lượng bộ nhớ và tính sẵn sàng**, không phải thông lượng.
+
+**2. Code gốc có lỗi - biết để không chép nguyên**
+
+- `def get(self, query)` thiếu dấu hai chấm - lỗi cú pháp.
+- `self.lookup[query]` với key chưa có sẽ ném `KeyError`, không trả về `None`. Phải dùng `self.lookup.get(query)`.
+- `QueryApi` gọi `set(query, results)` nhưng `Cache.set` khai báo `set(self, results, query)` - **đảo thứ tự tham số**, dữ liệu sẽ bị lưu ngược key/value.
+- `LinkedList` bỏ trống các hàm cốt lõi. Đây lại chính là phần người phỏng vấn thường muốn thấy: `move_to_front` phải xử lý đủ các trường hợp node đang là head, là tail, hoặc là node duy nhất. Mẹo hay dùng: tạo hai node giả (sentinel) ở đầu và cuối để khỏi xử lý `None`.
+- `MAX_SIZE` đếm theo **số mục**, trong khi giới hạn thật là **số byte** - kết quả của các truy vấn có kích thước rất khác nhau.
+- Code không an toàn khi nhiều luồng dùng chung; cài đặt thật cần khóa hoặc chia cache thành nhiều phân đoạn, mỗi phân đoạn có khóa riêng.
+
+Trong Python thực tế, `collections.OrderedDict` (với `move_to_end` và `popitem(last=False)`) hoặc `functools.lru_cache` đã cho sẵn LRU O(1). Bản code đầy đủ của bài nằm tại [query_cache_snippets.py](../../solutions/system_design/query_cache/query_cache_snippets.py).
+
+**3. LRU trong thực tế: Redis và Memcached không làm đúng như sách giáo khoa**
+
+- **Redis** không duy trì danh sách liên kết cho toàn bộ key (quá tốn bộ nhớ). Khi chạm ngưỡng `maxmemory`, Redis dùng **LRU xấp xỉ**: lấy mẫu ngẫu nhiên một số key (tham số `maxmemory-samples`, mặc định 5) rồi loại key cũ nhất trong mẫu. Chính sách chọn bằng `maxmemory-policy`: `allkeys-lru`, `volatile-lru` (chỉ loại key có TTL), `allkeys-lfu`/`volatile-lfu` (theo tần suất, có từ Redis 4.0), `volatile-ttl`, `allkeys-random`, hoặc `noeviction` (mặc định - báo lỗi khi đầy, không phù hợp cho cache). Với bài này, `allkeys-lru` hoặc `allkeys-lfu` là lựa chọn tự nhiên.
+- **Memcached** chia bộ nhớ theo slab class, mỗi class có LRU riêng; các bản mới dùng LRU phân đoạn (segmented LRU - chia vùng nóng/ấm/lạnh) để tránh một đợt quét lớn đẩy hết dữ liệu nóng ra ngoài.
+- **LRU hay LFU?** Với tìm kiếm, LRU dễ bị "ô nhiễm" bởi đuôi dài: vô số truy vấn chỉ xuất hiện một lần vẫn chen vào đầu danh sách và đẩy truy vấn phổ biến ra. LFU hoặc các thuật toán kết hợp như W-TinyLFU (dùng trong thư viện Caffeine của Java) thường cho hit rate tốt hơn với tải kiểu này. Nêu được điểm này là cộng điểm rõ rệt trong phỏng vấn.
+- Ghi chú bên lề đến 2026: sau khi Redis đổi giấy phép năm 2024, cộng đồng tách nhánh Valkey (thuộc Linux Foundation), và nhiều nhà cung cấp cloud chuyển sang cung cấp Valkey. Về mặt thiết kế hệ thống, hai bên tương thích giao thức nên không ảnh hưởng tới lời giải.
+
+**4. Băm nhất quán (consistent hashing) - phần bài gốc bỏ dở**
+
+Link "consistent hashing" trong bài gốc trỏ tới mục "Under development" - tức chưa được viết. Ý chính cần nắm:
+
+- `machine = hash(query) % N` có vấn đề: khi N đổi (thêm hoặc bớt một máy), gần như **mọi** key đều đổi máy, cache trống trơn hàng loạt và toàn bộ tải dồn xuống Reverse Index Service.
+- Băm nhất quán đặt cả máy và key lên một vòng băm; key thuộc về máy đầu tiên theo chiều kim đồng hồ. Thêm hoặc bớt một máy chỉ làm dịch chuyển khoảng 1/N số key.
+- Dùng **node ảo (virtual node)**: mỗi máy chiếm nhiều điểm trên vòng để phân bố đều hơn và để máy khỏe nhận nhiều phần hơn. Thư viện client Memcached kiểu Ketama là ví dụ kinh điển.
+- Các phương án hiện đại: **Redis Cluster không dùng consistent hashing** mà chia không gian key thành 16.384 hash slot cố định, gán slot cho node và di chuyển slot khi mở rộng. Một phương án khác là rendezvous hashing (highest random weight). Cả hai đều cùng mục tiêu giảm lượng dữ liệu phải di chuyển.
+
+**5. Những vấn đề thực tế bài gốc chưa nhắc - hay bị hỏi thêm**
+
+- **Cache stampede (thundering herd):** một truy vấn rất nóng hết hạn TTL, hàng nghìn request cùng trượt cache và cùng đánh xuống backend. Cách xử lý: gộp request (request coalescing/single-flight - chỉ một request đi tính, các request khác chờ kết quả), làm mới sớm theo xác suất trước khi hết hạn, hoặc refresh-ahead chủ động cho các key nóng.
+- **Key nóng (hot key):** một truy vấn đột biến (tin tức lớn) dồn toàn bộ tải vào một shard. Cách xử lý: thêm một lớp cache cục bộ nhỏ ngay trong Query API server (near cache), hoặc nhân bản key nóng ra nhiều shard.
+- **TTL cần có độ ngẫu nhiên (jitter):** nếu nhiều key được nạp cùng lúc với cùng TTL, chúng sẽ hết hạn cùng lúc.
+- **Chuẩn hóa truy vấn chính là thiết kế key:** bước parse (sửa chính tả, chuẩn hóa chữ hoa/thường) quyết định hit rate - "Iphone" và "iphone" phải ra cùng một key. Nhưng nếu kết quả phụ thuộc ngôn ngữ, vị trí, hay được cá nhân hóa theo người dùng, các yếu tố đó phải vào key, nếu không sẽ trả nhầm kết quả của người khác. Đây là điểm dễ bị hỏi và dễ sai.
+- **Cache kết quả âm (negative caching):** truy vấn không có kết quả cũng nên được cache với TTL ngắn, để tránh bị lợi dụng tấn công dồn tải xuống backend bằng các truy vấn ngẫu nhiên.
+- **Sẵn sàng cao:** mỗi shard cache cần bản sao; khi một shard chết, phần key của nó trượt cache và dồn xuống backend, nên backend phải chịu được mức tăng đó hoặc cần có cơ chế giới hạn tốc độ và áp lực ngược (back pressure).
+- **Vô hiệu hóa (invalidation) bằng sự kiện:** TTL là cách đơn giản nhất như bài gốc nói; phương án chính xác hơn là khi chỉ mục được cập nhật thì phát sự kiện để xóa các key liên quan. Khó ở chỗ ánh xạ ngược "trang nào xuất hiện trong kết quả của truy vấn nào", nên trong thực tế thường kết hợp TTL ngắn cho truy vấn nóng và chấp nhận dữ liệu cũ trong vài phút.
+
+Đối chiếu:
+- Bài gốc: [solutions/system_design/query_cache/README.md](https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/query_cache/README.md)
+- Các chiến lược cache: [Cache](/hoc/kien-truc/chu-de/cache) và bài [Caches](/hoc/kien-truc/nen-tang/caches) đã dịch
+- Bài trước: [Social graph](/hoc/kien-truc/bai-tap/social-graph)
+
+</TranslatorNote>

@@ -1,0 +1,38 @@
+---
+// <RealLife title?> — life example callout. This is ADDED content (never
+// original translated text) so verify-fidelity removes this subtree wholesale
+// when comparing a lesson against its source snapshot.
+interface Props {
+  title?: string;
+}
+const { title = 'Ví dụ đời sống' } = Astro.props;
+---
+
+<aside class="real-life">
+  <p class="real-life__title">{title}</p>
+  <div class="real-life__body">
+    <slot />
+  </div>
+</aside>
+
+<style>
+  .real-life {
+    margin: var(--space-5) 0;
+    padding: var(--space-4);
+    background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--line));
+    border-radius: var(--radius-card);
+  }
+  .real-life__title {
+    margin: 0 0 var(--space-2);
+    font-weight: 700;
+    font-size: var(--text-footnote);
+    color: var(--accent);
+  }
+  .real-life__body {
+    color: var(--ink);
+  }
+  .real-life__body :global(> :last-child) {
+    margin-bottom: 0;
+  }
+</style>

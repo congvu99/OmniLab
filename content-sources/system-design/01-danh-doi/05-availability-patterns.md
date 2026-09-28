@@ -1,0 +1,172 @@
+---
+nguon: The System Design Primer - mục "Availability patterns"
+tac-gia: Donne Martin và cộng đồng đóng góp
+link-goc: ../../README.md#availability-patterns
+ngay-dich: 2026-09-28
+trang-thai: hoan-thanh
+---
+
+# Các mẫu sẵn sàng (Availability Patterns)
+
+## Nội dung gốc
+
+Có hai mẫu bổ trợ cho nhau để đạt tính sẵn sàng cao: **chuyển đổi dự phòng (fail-over)** và **nhân bản (replication)**.
+
+### Chuyển đổi dự phòng (Fail-over)
+
+#### Chủ động - bị động (Active-passive)
+
+Với kiểu chủ động - bị động, các nhịp tim (heartbeat) được gửi qua lại giữa máy chủ đang hoạt động và máy chủ dự phòng đang chờ. Nếu nhịp tim bị gián đoạn, máy chủ bị động sẽ tiếp quản địa chỉ IP của máy chủ chủ động và tiếp tục phục vụ.
+
+Độ dài thời gian ngừng hoạt động phụ thuộc vào việc máy chủ bị động đang chạy sẵn ở chế độ chờ "nóng" (hot standby) hay phải khởi động từ chế độ chờ "nguội" (cold standby). Chỉ máy chủ chủ động xử lý lưu lượng.
+
+Chuyển đổi dự phòng chủ động - bị động còn được gọi là chuyển đổi dự phòng master-slave.
+
+#### Chủ động - chủ động (Active-active)
+
+Ở kiểu chủ động - chủ động, cả hai máy chủ cùng xử lý lưu lượng, chia tải cho nhau.
+
+Nếu các máy chủ phục vụ công khai ra ngoài, DNS cần biết địa chỉ IP công khai của cả hai. Nếu chúng phục vụ nội bộ, logic ứng dụng cần biết cả hai máy chủ.
+
+Chuyển đổi dự phòng chủ động - chủ động còn được gọi là chuyển đổi dự phòng master-master.
+
+### Nhược điểm: chuyển đổi dự phòng
+
+- Chuyển đổi dự phòng làm tăng lượng phần cứng và tăng độ phức tạp.
+- Có nguy cơ mất dữ liệu nếu hệ thống chủ động hỏng trước khi dữ liệu vừa ghi kịp nhân bản sang hệ thống bị động.
+
+### Nhân bản (Replication)
+
+#### Master-slave và master-master
+
+Chủ đề này được bàn kỹ hơn ở mục [Cơ sở dữ liệu](../../README.md#database):
+
+- [Nhân bản master-slave](../../README.md#master-slave-replication)
+- [Nhân bản master-master](../../README.md#master-master-replication)
+
+### Tính sẵn sàng biểu diễn bằng số
+
+Tính sẵn sàng thường được lượng hóa bằng thời gian hoạt động (uptime, hoặc downtime) tính theo phần trăm thời gian dịch vụ khả dụng. Người ta thường đo tính sẵn sàng bằng số chữ số 9: một dịch vụ có tính sẵn sàng 99,99% được mô tả là có "bốn số 9".
+
+#### Sẵn sàng 99,9% - ba số 9
+
+| Khoảng thời gian | Thời gian chết chấp nhận được |
+|---|---|
+| Mỗi năm | 8h 45min 57s |
+| Mỗi tháng | 43m 49,7s |
+| Mỗi tuần | 10m 4,8s |
+| Mỗi ngày | 1m 26,4s |
+
+#### Sẵn sàng 99,99% - bốn số 9
+
+| Khoảng thời gian | Thời gian chết chấp nhận được |
+|---|---|
+| Mỗi năm | 52min 35,7s |
+| Mỗi tháng | 4m 23s |
+| Mỗi tuần | 1m 5s |
+| Mỗi ngày | 8,6s |
+
+#### Sẵn sàng song song và nối tiếp
+
+Nếu một dịch vụ gồm nhiều thành phần có thể hỏng, tính sẵn sàng tổng thể phụ thuộc vào việc các thành phần được mắc nối tiếp hay song song.
+
+**Nối tiếp**
+
+Tính sẵn sàng tổng thể **giảm** khi hai thành phần có độ sẵn sàng dưới 100% được mắc nối tiếp:
+
+```
+Sẵn sàng (Tổng) = Sẵn sàng (Foo) * Sẵn sàng (Bar)
+```
+
+Nếu `Foo` và `Bar` mỗi cái có độ sẵn sàng 99,9%, tổng sẵn sàng khi mắc nối tiếp là 99,8%.
+
+**Song song**
+
+Tính sẵn sàng tổng thể **tăng** khi hai thành phần có độ sẵn sàng dưới 100% được mắc song song:
+
+```
+Sẵn sàng (Tổng) = 1 - (1 - Sẵn sàng (Foo)) * (1 - Sẵn sàng (Bar))
+```
+
+Nếu `Foo` và `Bar` mỗi cái có độ sẵn sàng 99,9%, tổng sẵn sàng khi mắc song song là 99,9999%.
+
+---
+
+## Ghi chú của người dịch
+
+**1. Hai công thức cuối bài là phần quan trọng nhất - và hay bị đọc lướt**
+
+Chúng nói lên toàn bộ triết lý thiết kế hệ thống sẵn sàng cao:
+
+- **Nối tiếp** = phụ thuộc bắt buộc. Mọi thành phần trên đường đi của request đều phải sống thì request mới thành công. Càng thêm tầng, **độ sẵn sàng càng giảm**.
+- **Song song** = dư thừa. Chỉ cần một thành phần sống là được. Càng thêm bản sao, **độ sẵn sàng càng tăng**.
+
+Hệ quả thực tế rất mạnh: **mỗi microservice mới bạn thêm vào đường đi của request là một phép nhân làm giảm độ sẵn sàng.** Một request đi qua 10 dịch vụ, mỗi dịch vụ 99,9%, thì tổng chỉ còn 0,999^10 ≈ **99,0%** - tức từ 8,8 giờ chết mỗi năm thành 87 giờ. Đây là cái giá ẩn của kiến trúc microservices mà sơ đồ kiến trúc không bao giờ vẽ ra.
+
+Cách chữa: biến phụ thuộc nối tiếp thành **không bắt buộc**. Dịch vụ gợi ý sản phẩm chết thì trang vẫn hiện, chỉ mất phần gợi ý. Khi đó nó không còn nằm trong phép nhân nữa.
+
+**2. Số 9 trông đẹp nhưng dễ đánh lừa**
+
+Vài điều bảng số 9 không nói:
+
+- **Bốn số 9 nghĩa là 4 phút 23 giây mỗi tháng.** Một lần deploy hỏng phải rollback thủ công đã tiêu hết ngân sách cả tháng. Muốn đạt bốn số 9 thì gần như bắt buộc phải có triển khai không gián đoạn (blue-green, canary) và tự động hóa việc khôi phục - con người bấm tay không đủ nhanh.
+- **Năm số 9 (99,999%) là 5 phút 15 giây mỗi năm.** Con số này vượt quá thời gian một người trực kịp nhận cảnh báo, mở máy tính và đăng nhập. Nó chỉ đạt được bằng chuyển đổi dự phòng tự động hoàn toàn, và tốn kém gấp nhiều lần bốn số 9. Đừng hứa năm số 9 trong phỏng vấn nếu không giải thích được cái giá.
+- **Đo ở đâu mới là vấn đề.** Server trả 200 OK nhưng trả sai dữ liệu thì uptime vẫn 100%. Nên đo bằng **tỉ lệ request thành công** hoặc bằng kịch bản nghiệp vụ (đăng nhập được, đặt hàng được), không đo bằng ping.
+- **Sẵn sàng không tính thời gian bảo trì có kế hoạch** trong nhiều SLA thương mại - đọc kỹ điều khoản trước khi so sánh hai nhà cung cấp.
+
+**3. Active-passive và active-active: chọn cái nào**
+
+| | Chủ động - bị động | Chủ động - chủ động |
+|---|---|---|
+| Sử dụng tài nguyên | 50% (một máy ngồi chơi) | ~100% |
+| Thời gian chuyển đổi | Vài giây tới vài phút (hot/cold standby) | Gần như bằng 0 |
+| Độ phức tạp | Thấp | Cao - phải xử lý ghi đồng thời ở cả hai phía |
+| Rủi ro đặc thù | Máy dự phòng chưa từng chạy thật, đến lúc cần thì hỏng | Xung đột ghi, split-brain |
+| Hợp với | Cơ sở dữ liệu, hệ có trạng thái | Tầng ứng dụng không trạng thái |
+
+Hai cạm bẫy đáng nhớ:
+
+- **Chế độ chờ nguội là ảo giác an toàn.** Máy dự phòng không bao giờ chạy thật thì không ai biết nó có chạy được không - cấu hình lệch, chứng chỉ hết hạn, đĩa đầy. Nguyên tắc: *nếu chưa từng diễn tập chuyển đổi dự phòng thì coi như không có chuyển đổi dự phòng.*
+- **Split-brain** ở active-active: mạng giữa hai node đứt, cả hai đều tưởng mình là master duy nhất, cả hai cùng nhận ghi. Khi mạng nối lại, dữ liệu xung đột và không có cách nào biết bên nào đúng. Đây chính là tình huống [CAP](03-cap-theorem.md) mô tả, và cách phòng chuẩn là dùng quorum (số node lẻ, phải quá bán mới được nhận ghi) hoặc fencing.
+
+**4. Nhược điểm mà bản gốc nêu rất ngắn nhưng rất quan trọng**
+
+Câu *"có nguy cơ mất dữ liệu nếu hệ thống chủ động hỏng trước khi dữ liệu vừa ghi kịp nhân bản"* chính là mối nối giữa bài này và [Các mẫu nhất quán](04-consistency-patterns.md):
+
+- Nhân bản **bất đồng bộ** → chuyển đổi dự phòng nhanh, nhưng **mất các giao dịch cuối cùng**.
+- Nhân bản **đồng bộ** → không mất dữ liệu, nhưng mỗi lần ghi chậm hơn và nếu bản sao chết thì **ghi cũng chết theo**.
+
+Hai khái niệm dùng để định lượng lựa chọn này:
+
+- **RPO (Recovery Point Objective)**: chấp nhận mất bao nhiêu dữ liệu, tính bằng thời gian. Nhân bản đồng bộ có RPO = 0.
+- **RTO (Recovery Time Objective)**: chấp nhận chết bao lâu. Hot standby có RTO vài giây, cold standby vài chục phút.
+
+Nêu được RPO/RTO khi thiết kế là dấu hiệu rõ ràng của người đã làm vận hành thật.
+
+**5. Sẵn sàng cao không chỉ là thêm máy**
+
+Bản gốc chỉ nói về dư thừa phần cứng. Trong thực tế, phần lớn sự cố đến từ chỗ khác:
+
+- **Lỗi do triển khai và đổi cấu hình** chiếm tỉ lệ lớn nhất trong các sự cố thực tế, lớn hơn hỏng phần cứng nhiều. Dư thừa không cứu được, vì phiên bản lỗi được đẩy lên **tất cả** các bản sao cùng lúc. Chữa bằng canary và khả năng rollback nhanh.
+- **Lỗi lan truyền (cascading failure)**: một dịch vụ chậm khiến dịch vụ gọi nó cạn luồng chờ, rồi lan ngược lên. Chữa bằng timeout, ngắt mạch (circuit breaker), giới hạn tải và hàng đợi có giới hạn.
+- **Bão thử lại (retry storm)**: dịch vụ vừa hồi phục thì bị toàn bộ client thử lại cùng lúc, chết tiếp. Chữa bằng thử lại có giãn cách lũy thừa kèm nhiễu ngẫu nhiên (exponential backoff with jitter).
+- **Suy giảm có kiểm soát (graceful degradation)**: thà phục vụ trang thiếu tính năng còn hơn trả lỗi 500. Đây là cách rẻ nhất để tăng độ sẵn sàng cảm nhận được.
+
+**6. Nối với các mục khác**
+
+- [CAP](03-cap-theorem.md) định nghĩa chữ A ở mức lý thuyết; mục này là cách đạt và đo chữ A đó trong thực tế.
+- [Các mẫu nhất quán](04-consistency-patterns.md) giải thích vì sao nhân bản đồng bộ đắt - và vì sao chọn bất đồng bộ thì đánh đổi bằng rủi ro mất dữ liệu.
+- [Clones](../00-nen-tang/01-clones.md) là điều kiện tiên quyết cho active-active ở tầng ứng dụng: chỉ nhân bản được máy chủ khi nó không giữ trạng thái.
+- [Databases](../00-nen-tang/02-databases.md) trình bày chi tiết master-slave và master-master mà mục này chỉ trỏ link.
+
+**7. Câu hỏi nên tự hỏi trong buổi phỏng vấn system design**
+
+- Mục tiêu sẵn sàng là bao nhiêu, và ai trả tiền cho nó? (Mỗi số 9 thêm vào thường làm chi phí tăng gấp bội.)
+- Trên đường đi của một request có bao nhiêu phụ thuộc **bắt buộc**? (Đếm ra rồi nhân lại - con số thường gây bất ngờ.)
+- Phụ thuộc nào có thể chuyển thành không bắt buộc? (Cách tăng sẵn sàng rẻ nhất, không cần thêm máy nào.)
+- RPO và RTO chấp nhận được là bao nhiêu? (Quyết định nhân bản đồng bộ hay bất đồng bộ, hot hay cold standby.)
+- Lần gần nhất diễn tập chuyển đổi dự phòng là khi nào? (Câu này phân biệt thiết kế trên giấy với hệ thống chạy thật.)
+
+Đối chiếu README gốc của repo:
+- [Availability patterns](../../README.md#availability-patterns)
+- [Domain name system](../../README.md#domain-name-system) - mục kế tiếp, mở đầu phần Chủ đề

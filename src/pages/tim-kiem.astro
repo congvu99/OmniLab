@@ -1,0 +1,70 @@
+---
+// "Tìm kiếm" tab — UI shell only, no search logic yet (Phase 5 wires up
+// Pagefind). Input focus already hides the bottom tab bar globally via
+// tab-bar.astro's focusin/focusout listener.
+import AppLayout from '../layouts/app-layout.astro';
+import Search from '@lucide/astro/icons/search';
+---
+
+<AppLayout title="Tìm kiếm - OmniLab" largeTitle="Tìm kiếm">
+  <div class="search-shell">
+    <label class="search-field" for="search-input">
+      <Search size={20} stroke-width={2} aria-hidden="true" />
+      <input
+        id="search-input"
+        type="search"
+        name="q"
+        placeholder="Tìm bài học, ví dụ: cache, bộ nhớ đệm..."
+        autocomplete="off"
+        enterkeyhint="search"
+      />
+    </label>
+    <p class="search-hint">Tìm kiếm sẽ hoạt động sau khi có nội dung (Phase 5).</p>
+  </div>
+</AppLayout>
+
+<style>
+  .search-shell {
+    margin: var(--space-4);
+  }
+
+  .search-field {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 44px;
+    padding: 0 var(--space-3);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-row);
+    color: var(--ink-2);
+  }
+
+  .search-field input {
+    flex: 1;
+    min-height: 44px;
+    border: none;
+    background: none;
+    font-size: var(--text-body);
+    color: var(--ink);
+  }
+
+  .search-field input::placeholder {
+    color: var(--ink-2);
+  }
+
+  .search-field input:focus {
+    outline: none;
+  }
+
+  .search-field:focus-within {
+    border-color: var(--accent);
+  }
+
+  .search-hint {
+    margin-top: var(--space-3);
+    font-size: var(--text-footnote);
+    color: var(--ink-2);
+    text-align: center;
+  }
+</style>

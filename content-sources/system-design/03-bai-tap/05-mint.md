@@ -1,0 +1,508 @@
+---
+nguon: The System Design Primer - bài giải "Design Mint.com"
+tac-gia: Donne Martin và cộng đồng đóng góp
+link-goc: ../../solutions/system_design/mint/README.md
+ngay-dich: 2026-09-28
+trang-thai: hoan-thanh
+---
+
+# Thiết kế Mint.com
+
+## Nội dung gốc
+
+*Lưu ý: Tài liệu này liên kết trực tiếp tới các phần liên quan trong [danh mục chủ đề system design](../../README.md#index-of-system-design-topics) để tránh lặp lại. Hãy tham khảo nội dung được liên kết để nắm các ý thảo luận chung, các đánh đổi (tradeoff) và phương án thay thế.*
+
+### Bước 1: Phác thảo use case và ràng buộc
+
+> Thu thập yêu cầu và xác định phạm vi bài toán.
+> Đặt câu hỏi để làm rõ use case và ràng buộc.
+> Thảo luận các giả định.
+
+Vì không có người phỏng vấn để trả lời các câu hỏi làm rõ, ta sẽ tự định nghĩa một số use case và ràng buộc.
+
+#### Use case
+
+##### Ta giới hạn bài toán chỉ xử lý các use case sau
+
+* **Người dùng (User)** kết nối tới một tài khoản tài chính
+* **Dịch vụ (Service)** trích xuất giao dịch từ tài khoản
+    * Cập nhật hằng ngày
+    * Phân loại giao dịch
+        * Cho phép người dùng ghi đè danh mục thủ công
+        * Không tự động phân loại lại
+    * Phân tích chi tiêu hằng tháng theo danh mục
+* **Dịch vụ** đề xuất ngân sách
+    * Cho phép người dùng tự đặt ngân sách
+    * Gửi thông báo khi sắp chạm hoặc vượt ngân sách
+* **Dịch vụ** có tính sẵn sàng cao (high availability)
+
+##### Ngoài phạm vi
+
+* **Dịch vụ** thực hiện thêm việc ghi log và phân tích (analytics)
+
+#### Ràng buộc và giả định
+
+##### Các giả định
+
+* Lưu lượng truy cập không phân bố đều
+* Việc tự động cập nhật tài khoản hằng ngày chỉ áp dụng cho người dùng hoạt động trong 30 ngày gần nhất
+* Việc thêm hoặc xóa tài khoản tài chính tương đối hiếm
+* Thông báo ngân sách không cần tức thời
+* 10 triệu người dùng
+    * 10 danh mục ngân sách mỗi người dùng = 100 triệu mục ngân sách
+    * Ví dụ danh mục:
+        * Nhà ở (Housing) = $1,000
+        * Ăn uống (Food) = $200
+        * Xăng (Gas) = $100
+    * Người bán (seller) được dùng để xác định danh mục của giao dịch
+        * 50,000 người bán
+* 30 triệu tài khoản tài chính
+* 5 tỷ giao dịch mỗi tháng
+* 500 triệu yêu cầu đọc mỗi tháng
+* Tỷ lệ ghi:đọc là 10:1
+    * Thiên về ghi (write-heavy): người dùng phát sinh giao dịch hằng ngày, nhưng ít người vào trang web hằng ngày
+
+##### Tính toán mức sử dụng
+
+**Hãy hỏi người phỏng vấn xem bạn có nên thực hiện các phép ước lượng nhanh (back-of-the-envelope) hay không.**
+
+* Kích thước mỗi giao dịch:
+    * `user_id` - 8 byte
+    * `created_at` - 5 byte
+    * `seller` - 32 byte
+    * `amount` - 5 byte
+    * Tổng: ~50 byte
+* 250 GB nội dung giao dịch mới mỗi tháng
+    * 50 byte mỗi giao dịch * 5 tỷ giao dịch mỗi tháng
+    * 9 TB nội dung giao dịch mới trong 3 năm
+    * Giả định phần lớn là giao dịch mới chứ không phải cập nhật giao dịch cũ
+* Trung bình 2,000 giao dịch mỗi giây
+* Trung bình 200 yêu cầu đọc mỗi giây
+
+Bảng quy đổi tiện dụng:
+
+* 2.5 triệu giây mỗi tháng
+* 1 yêu cầu mỗi giây = 2.5 triệu yêu cầu mỗi tháng
+* 40 yêu cầu mỗi giây = 100 triệu yêu cầu mỗi tháng
+* 400 yêu cầu mỗi giây = 1 tỷ yêu cầu mỗi tháng
+
+### Bước 2: Tạo thiết kế tổng quan (high level design)
+
+> Phác thảo thiết kế tổng quan với tất cả các thành phần quan trọng.
+
+![Thiết kế tổng quan Mint](../../solutions/system_design/mint/mint_basic.png)
+
+### Bước 3: Thiết kế các thành phần cốt lõi
+
+> Đi sâu vào chi tiết từng thành phần cốt lõi.
+
+#### Use case: Người dùng kết nối tới một tài khoản tài chính
+
+Ta có thể lưu thông tin của 10 triệu người dùng trong một [cơ sở dữ liệu quan hệ (relational database)](../02-chu-de/06-database.md). Ta nên thảo luận về [các use case và đánh đổi khi chọn SQL hay NoSQL](../02-chu-de/06-database.md).
+
+* **Client** gửi yêu cầu tới **Web Server**, đang chạy dưới dạng [reverse proxy](../02-chu-de/04-reverse-proxy.md)
+* **Web Server** chuyển tiếp yêu cầu tới máy chủ **Accounts API**
+* Máy chủ **Accounts API** cập nhật bảng `accounts` trong **SQL Database** với thông tin tài khoản vừa nhập
+
+**Hãy hỏi người phỏng vấn xem bạn cần viết bao nhiêu code**.
+
+Bảng `accounts` có thể có cấu trúc như sau:
+
+```
+id int NOT NULL AUTO_INCREMENT
+created_at datetime NOT NULL
+last_update datetime NOT NULL
+account_url varchar(255) NOT NULL
+account_login varchar(32) NOT NULL
+account_password_hash char(64) NOT NULL
+user_id int NOT NULL
+PRIMARY KEY(id)
+FOREIGN KEY(user_id) REFERENCES users(id)
+```
+
+Ta sẽ tạo [chỉ mục (index)](../02-chu-de/06-database.md) trên `id`, `user_id ` và `created_at` để tăng tốc tra cứu (thời gian log thay vì quét toàn bộ bảng) và để giữ dữ liệu trong bộ nhớ. Đọc tuần tự 1 MB từ bộ nhớ mất khoảng 250 micro giây, trong khi đọc từ SSD lâu hơn 4 lần và từ ổ đĩa (disk) lâu hơn 80 lần.<sup><a href=../../README.md#latency-numbers-every-programmer-should-know>1</a></sup>
+
+Ta sẽ dùng một [**REST API**](../02-chu-de/09-communication.md) công khai:
+
+```
+$ curl -X POST --data '{ "user_id": "foo", "account_url": "bar", \
+    "account_login": "baz", "account_password": "qux" }' \
+    https://mint.com/api/v1/account
+```
+
+Với giao tiếp nội bộ, ta có thể dùng [gọi thủ tục từ xa (Remote Procedure Call - RPC)](../02-chu-de/09-communication.md).
+
+Tiếp theo, dịch vụ trích xuất giao dịch từ tài khoản.
+
+#### Use case: Dịch vụ trích xuất giao dịch từ tài khoản
+
+Ta sẽ muốn trích xuất thông tin từ tài khoản trong các trường hợp sau:
+
+* Người dùng liên kết tài khoản lần đầu
+* Người dùng làm mới (refresh) tài khoản thủ công
+* Tự động mỗi ngày cho những người dùng hoạt động trong 30 ngày gần nhất
+
+Luồng dữ liệu:
+
+* **Client** gửi yêu cầu tới **Web Server**
+* **Web Server** chuyển tiếp yêu cầu tới máy chủ **Accounts API**
+* Máy chủ **Accounts API** đặt một job vào **Hàng đợi (Queue)** như [Amazon SQS](https://aws.amazon.com/sqs/) hoặc [RabbitMQ](https://www.rabbitmq.com/)
+    * Việc trích xuất giao dịch có thể mất khá lâu, nên ta có lẽ muốn làm việc này [bất đồng bộ bằng hàng đợi](../02-chu-de/08-asynchronism.md), dù điều này làm tăng độ phức tạp
+* **Transaction Extraction Service** thực hiện các việc sau:
+    * Lấy job từ **Queue** và trích xuất giao dịch của tài khoản tương ứng từ tổ chức tài chính, lưu kết quả dưới dạng file log thô (raw log) trong **Object Store**
+    * Dùng **Category Service** để phân loại từng giao dịch
+    * Dùng **Budget Service** để tính tổng chi tiêu hằng tháng theo danh mục
+        * **Budget Service** dùng **Notification Service** để báo cho người dùng biết nếu họ sắp chạm hoặc đã vượt ngân sách
+    * Cập nhật bảng `transactions` trong **SQL Database** với các giao dịch đã phân loại
+    * Cập nhật bảng `monthly_spending` trong **SQL Database** với tổng chi tiêu hằng tháng theo danh mục
+    * Thông báo cho người dùng rằng việc xử lý giao dịch đã hoàn tất thông qua **Notification Service**:
+        * Dùng một **Queue** (không vẽ trong hình) để gửi thông báo bất đồng bộ
+
+Bảng `transactions` có thể có cấu trúc như sau:
+
+```
+id int NOT NULL AUTO_INCREMENT
+created_at datetime NOT NULL
+seller varchar(32) NOT NULL
+amount decimal NOT NULL
+user_id int NOT NULL
+PRIMARY KEY(id)
+FOREIGN KEY(user_id) REFERENCES users(id)
+```
+
+Ta sẽ tạo [chỉ mục](../02-chu-de/06-database.md) trên `id`, `user_id ` và `created_at`.
+
+Bảng `monthly_spending` có thể có cấu trúc như sau:
+
+```
+id int NOT NULL AUTO_INCREMENT
+month_year date NOT NULL
+category varchar(32)
+amount decimal NOT NULL
+user_id int NOT NULL
+PRIMARY KEY(id)
+FOREIGN KEY(user_id) REFERENCES users(id)
+```
+
+Ta sẽ tạo [chỉ mục](../02-chu-de/06-database.md) trên `id` và `user_id `.
+
+##### Category service
+
+Với **Category Service**, ta có thể khởi tạo sẵn (seed) một từ điển ánh xạ người bán sang danh mục (seller-to-category) cho những người bán phổ biến nhất. Nếu ước tính có 50,000 người bán và mỗi mục chiếm dưới 255 byte, từ điển này chỉ tốn khoảng 12 MB bộ nhớ.
+
+**Hãy hỏi người phỏng vấn xem bạn cần viết bao nhiêu code**.
+
+```python
+class DefaultCategories(Enum):
+
+    HOUSING = 0
+    FOOD = 1
+    GAS = 2
+    SHOPPING = 3
+    ...
+
+seller_category_map = {}
+seller_category_map['Exxon'] = DefaultCategories.GAS
+seller_category_map['Target'] = DefaultCategories.SHOPPING
+...
+```
+
+Với những người bán chưa được seed sẵn trong map, ta có thể dựa vào sức mạnh cộng đồng (crowdsourcing) bằng cách đánh giá các lần ghi đè danh mục thủ công mà người dùng cung cấp. Ta có thể dùng một heap để tra nhanh lựa chọn ghi đè phổ biến nhất của mỗi người bán trong thời gian O(1).
+
+```python
+class Categorizer(object):
+
+    def __init__(self, seller_category_map, seller_category_crowd_overrides_map):
+        self.seller_category_map = seller_category_map
+        self.seller_category_crowd_overrides_map = \
+            seller_category_crowd_overrides_map
+
+    def categorize(self, transaction):
+        if transaction.seller in self.seller_category_map:
+            return self.seller_category_map[transaction.seller]
+        elif transaction.seller in self.seller_category_crowd_overrides_map:
+            self.seller_category_map[transaction.seller] = \
+                self.seller_category_crowd_overrides_map[transaction.seller].peek_min()
+            return self.seller_category_map[transaction.seller]
+        return None
+```
+
+Cài đặt lớp Transaction:
+
+```python
+class Transaction(object):
+
+    def __init__(self, created_at, seller, amount):
+        self.created_at = created_at
+        self.seller = seller
+        self.amount = amount
+```
+
+#### Use case: Dịch vụ đề xuất ngân sách
+
+Để bắt đầu, ta có thể dùng một mẫu ngân sách chung (generic budget template), phân bổ số tiền cho từng danh mục dựa trên các bậc thu nhập. Với cách này, ta không phải lưu 100 triệu mục ngân sách đã nêu trong phần ràng buộc, mà chỉ lưu những mục người dùng ghi đè. Nếu người dùng ghi đè một danh mục ngân sách, ta có thể lưu giá trị ghi đè đó trong bảng `TABLE budget_overrides`.
+
+```python
+class Budget(object):
+
+    def __init__(self, income):
+        self.income = income
+        self.categories_to_budget_map = self.create_budget_template()
+
+    def create_budget_template(self):
+        return {
+            DefaultCategories.HOUSING: self.income * .4,
+            DefaultCategories.FOOD: self.income * .2,
+            DefaultCategories.GAS: self.income * .1,
+            DefaultCategories.SHOPPING: self.income * .2,
+            ...
+        }
+
+    def override_category_budget(self, category, amount):
+        self.categories_to_budget_map[category] = amount
+```
+
+Với **Budget Service**, ta có thể chạy các truy vấn SQL trên bảng `transactions` để tạo ra bảng tổng hợp `monthly_spending`. Bảng `monthly_spending` nhiều khả năng có ít dòng hơn nhiều so với tổng số 5 tỷ giao dịch, vì mỗi người dùng thường có nhiều giao dịch trong một tháng.
+
+Một phương án khác là chạy các job **MapReduce** trên các file giao dịch thô để:
+
+* Phân loại từng giao dịch
+* Tạo tổng chi tiêu hằng tháng theo danh mục
+
+Chạy phân tích trên các file giao dịch có thể giảm đáng kể tải cho cơ sở dữ liệu.
+
+Ta có thể gọi **Budget Service** để chạy lại phân tích nếu người dùng cập nhật một danh mục.
+
+**Hãy hỏi người phỏng vấn xem bạn cần viết bao nhiêu code**.
+
+Định dạng file log mẫu, phân tách bằng tab:
+
+```
+user_id   timestamp   seller  amount
+```
+
+Cài đặt **MapReduce**:
+
+```python
+class SpendingByCategory(MRJob):
+
+    def __init__(self, categorizer):
+        self.categorizer = categorizer
+        self.current_year_month = calc_current_year_month()
+        ...
+
+    def calc_current_year_month(self):
+        """Trả về năm và tháng hiện tại."""
+        ...
+
+    def extract_year_month(self, timestamp):
+        """Trả về phần năm và tháng của timestamp."""
+        ...
+
+    def handle_budget_notifications(self, key, total):
+        """Gọi API thông báo nếu sắp chạm hoặc đã vượt ngân sách."""
+        ...
+
+    def mapper(self, _, line):
+        """Phân tích từng dòng log, trích xuất và biến đổi các dòng liên quan.
+
+        Tham số line có dạng:
+
+        user_id   timestamp   seller  amount
+
+        Dùng categorizer để chuyển seller thành category,
+        phát ra (emit) các cặp key-value có dạng:
+
+        (user_id, 2016-01, shopping), 25
+        (user_id, 2016-01, shopping), 100
+        (user_id, 2016-01, gas), 50
+        """
+        user_id, timestamp, seller, amount = line.split('\t')
+        category = self.categorizer.categorize(seller)
+        period = self.extract_year_month(timestamp)
+        if period == self.current_year_month:
+            yield (user_id, period, category), amount
+
+    def reducer(self, key, value):
+        """Cộng dồn các giá trị cho mỗi key.
+
+        (user_id, 2016-01, shopping), 125
+        (user_id, 2016-01, gas), 50
+        """
+        total = sum(values)
+        yield key, sum(values)
+```
+
+### Bước 4: Mở rộng thiết kế (scale)
+
+> Xác định và xử lý các điểm nghẽn (bottleneck), dựa trên các ràng buộc.
+
+![Thiết kế Mint sau khi mở rộng](../../solutions/system_design/mint/mint.png)
+
+**Quan trọng: Đừng nhảy thẳng từ thiết kế ban đầu sang thiết kế cuối cùng!**
+
+Hãy nói rõ rằng bạn sẽ 1) **Đo hiệu năng/Kiểm thử tải (Benchmark/Load Test)**, 2) **Phân tích (Profile)** để tìm điểm nghẽn, 3) xử lý các điểm nghẽn trong khi đánh giá các phương án thay thế và đánh đổi, và 4) lặp lại. Xem [Thiết kế hệ thống phục vụ hàng triệu người dùng trên AWS](02-scaling-aws.md) làm ví dụ về cách mở rộng thiết kế ban đầu theo từng vòng lặp.
+
+Điều quan trọng là thảo luận những điểm nghẽn có thể gặp với thiết kế ban đầu và cách xử lý từng điểm. Ví dụ: thêm **Load Balancer** với nhiều **Web Server** giải quyết được vấn đề gì? **CDN**? **Master-Slave Replicas**? Các phương án thay thế và **đánh đổi** của từng lựa chọn là gì?
+
+Ta sẽ bổ sung một số thành phần để hoàn thiện thiết kế và xử lý các vấn đề về khả năng mở rộng. Các load balancer nội bộ không được vẽ để hình đỡ rối.
+
+*Để tránh lặp lại các thảo luận*, hãy tham khảo các [chủ đề system design](../../README.md#index-of-system-design-topics) sau để nắm các ý chính, đánh đổi và phương án thay thế:
+
+* [DNS](../02-chu-de/01-dns.md)
+* [CDN](../02-chu-de/02-cdn.md)
+* [Load balancer](../02-chu-de/03-load-balancer.md)
+* [Mở rộng theo chiều ngang (horizontal scaling)](../02-chu-de/03-load-balancer.md)
+* [Web server (reverse proxy)](../02-chu-de/04-reverse-proxy.md)
+* [API server (tầng ứng dụng - application layer)](../02-chu-de/05-application-layer.md)
+* [Cache](../02-chu-de/07-cache.md)
+* [Hệ quản trị cơ sở dữ liệu quan hệ (RDBMS)](../02-chu-de/06-database.md)
+* [Fail-over master-slave cho SQL ghi](../01-danh-doi/05-availability-patterns.md)
+* [Nhân bản master-slave (master-slave replication)](../02-chu-de/06-database.md)
+* [Bất đồng bộ (asynchronism)](../02-chu-de/08-asynchronism.md)
+* [Các mẫu nhất quán (consistency patterns)](../01-danh-doi/04-consistency-patterns.md)
+* [Các mẫu sẵn sàng (availability patterns)](../01-danh-doi/05-availability-patterns.md)
+
+Ta thêm một use case bổ sung: **Người dùng** xem bản tóm tắt và các giao dịch.
+
+Phiên người dùng (user session), số liệu tổng hợp theo danh mục và các giao dịch gần đây có thể được đặt trong **Memory Cache** như Redis hoặc Memcached.
+
+* **Client** gửi yêu cầu đọc tới **Web Server**
+* **Web Server** chuyển tiếp yêu cầu tới máy chủ **Read API**
+    * Nội dung tĩnh có thể được phục vụ từ **Object Store** như S3, được cache trên **CDN**
+* Máy chủ **Read API** thực hiện các việc sau:
+    * Kiểm tra nội dung trong **Memory Cache**
+        * Nếu url có trong **Memory Cache**, trả về nội dung đã cache
+        * Ngược lại
+            * Nếu url có trong **SQL Database**, lấy nội dung
+                * Cập nhật **Memory Cache** với nội dung đó
+
+Tham khảo [Khi nào cập nhật cache](../02-chu-de/07-cache.md) để biết các đánh đổi và phương án thay thế. Cách làm ở trên mô tả mẫu [cache-aside](../02-chu-de/07-cache.md).
+
+Thay vì giữ bảng tổng hợp `monthly_spending` trong **SQL Database**, ta có thể tạo một **Analytics Database** riêng dùng giải pháp kho dữ liệu (data warehouse) như Amazon Redshift hoặc Google BigQuery.
+
+Ta có thể chỉ muốn lưu dữ liệu `transactions` của một tháng trong cơ sở dữ liệu, phần còn lại lưu trong data warehouse hoặc trong **Object Store**. Một **Object Store** như Amazon S3 có thể dễ dàng đáp ứng ràng buộc 250 GB nội dung mới mỗi tháng.
+
+Để xử lý 200 yêu cầu đọc mỗi giây *trung bình* (cao hơn vào giờ cao điểm), lưu lượng cho nội dung phổ biến nên được xử lý bởi **Memory Cache** thay vì cơ sở dữ liệu. **Memory Cache** cũng hữu ích để xử lý lưu lượng phân bố không đều và các đợt tăng đột biến (spike). **SQL Read Replicas** hẳn sẽ xử lý được các lần cache miss, miễn là các replica không bị quá tải vì phải nhân bản các thao tác ghi.
+
+2,000 giao dịch ghi mỗi giây *trung bình* (cao hơn vào giờ cao điểm) có thể là quá sức với một **SQL Write Master-Slave** duy nhất. Ta có thể cần áp dụng thêm các mẫu mở rộng SQL:
+
+* [Liên kết (federation)](../02-chu-de/06-database.md)
+* [Phân mảnh (sharding)](../02-chu-de/06-database.md)
+* [Phi chuẩn hóa (denormalization)](../02-chu-de/06-database.md)
+* [Tinh chỉnh SQL (SQL tuning)](../02-chu-de/06-database.md)
+
+Ta cũng nên cân nhắc chuyển một phần dữ liệu sang **NoSQL Database**.
+
+### Các ý thảo luận thêm (Additional talking points)
+
+> Các chủ đề bổ sung để đào sâu, tùy vào phạm vi bài toán và thời gian còn lại.
+
+##### NoSQL
+
+* [Kho key-value (key-value store)](../02-chu-de/06-database.md)
+* [Kho tài liệu (document store)](../02-chu-de/06-database.md)
+* [Kho cột rộng (wide column store)](../02-chu-de/06-database.md)
+* [Cơ sở dữ liệu đồ thị (graph database)](../02-chu-de/06-database.md)
+* [SQL vs NoSQL](../02-chu-de/06-database.md)
+
+#### Caching
+
+* Cache ở đâu
+    * [Cache phía client (client caching)](../02-chu-de/07-cache.md)
+    * [Cache trên CDN](../02-chu-de/07-cache.md)
+    * [Cache trên web server](../02-chu-de/07-cache.md)
+    * [Cache trong cơ sở dữ liệu](../02-chu-de/07-cache.md)
+    * [Cache ở tầng ứng dụng](../02-chu-de/07-cache.md)
+* Cache cái gì
+    * [Cache ở mức truy vấn cơ sở dữ liệu](../02-chu-de/07-cache.md)
+    * [Cache ở mức đối tượng](../02-chu-de/07-cache.md)
+* Khi nào cập nhật cache
+    * [Cache-aside](../02-chu-de/07-cache.md)
+    * [Write-through](../02-chu-de/07-cache.md)
+    * [Write-behind (write-back)](../02-chu-de/07-cache.md)
+    * [Refresh ahead](../02-chu-de/07-cache.md)
+
+#### Bất đồng bộ và microservices
+
+* [Hàng đợi thông điệp (message queues)](../02-chu-de/08-asynchronism.md)
+* [Hàng đợi tác vụ (task queues)](../02-chu-de/08-asynchronism.md)
+* [Áp lực ngược (back pressure)](../02-chu-de/08-asynchronism.md)
+* [Microservices](../02-chu-de/05-application-layer.md)
+
+#### Giao tiếp (communications)
+
+* Thảo luận các đánh đổi:
+    * Giao tiếp bên ngoài với client - [HTTP API theo REST](../02-chu-de/09-communication.md)
+    * Giao tiếp nội bộ - [RPC](../02-chu-de/09-communication.md)
+* [Khám phá dịch vụ (service discovery)](../02-chu-de/05-application-layer.md)
+
+#### Bảo mật
+
+Tham khảo [phần bảo mật](../02-chu-de/10-security.md).
+
+#### Các con số về độ trễ
+
+Xem [Các con số về độ trễ mà mọi lập trình viên nên biết](../../README.md#latency-numbers-every-programmer-should-know).
+
+#### Liên tục
+
+* Tiếp tục đo hiệu năng và giám sát hệ thống để xử lý các điểm nghẽn khi chúng xuất hiện
+* Mở rộng hệ thống là một quá trình lặp đi lặp lại
+
+---
+
+## Ghi chú của người dịch
+
+**1. Lỗi và chỗ sơ sài trong code mẫu của bài gốc**
+
+Code mẫu mang tính minh họa, nhưng có vài chỗ sai mà người đọc kỹ (hoặc người phỏng vấn) sẽ nhận ra:
+
+- `reducer(self, key, value)` nhưng thân hàm lại dùng `values` - biến không tồn tại. Đúng phải là `def reducer(self, key, values)` và chỉ cần `yield key, sum(values)`; biến `total` tính ra rồi bỏ không. Bản trong [mint_mapreduce.py](../../solutions/system_design/mint/mint_mapreduce.py) cũng có thể tham khảo để đối chiếu.
+- Trong `mapper`, `amount` được tách ra từ chuỗi nên là `str`; `sum()` trên chuỗi sẽ lỗi. Cần ép kiểu, và với tiền thì nên dùng `Decimal` hoặc số nguyên theo đơn vị nhỏ nhất (cent, đồng), không dùng `float`.
+- `Categorizer.categorize(transaction)` nhận một đối tượng giao dịch, nhưng `mapper` lại gọi `categorize(seller)` với chuỗi. Không khớp giao diện.
+- Câu "dùng heap để tra lựa chọn ghi đè phổ biến nhất trong O(1)" và gọi `peek_min()`: muốn lấy danh mục được nhiều người chọn nhất thì cần max-heap theo số phiếu (hoặc min-heap lưu số đối). Ngoài ra, cập nhật số phiếu cho một phần tử đã nằm trong heap tốn O(log n) và cần heap có hỗ trợ đổi khóa. Thực tế chỉ cần một bảng đếm `(seller, category) -> count` và chạy batch định kỳ chọn danh mục thắng, đơn giản hơn nhiều.
+- `handle_budget_notifications` được khai báo nhưng không ai gọi. Nếu gọi thông báo ngay trong reducer thì mỗi lần chạy lại job sẽ gửi lặp - cần cơ chế chống trùng (lưu trạng thái "đã báo 80%/100% cho tháng X").
+
+**2. Lưu mật khẩu ngân hàng bằng hash là không dùng được**
+
+Bảng `accounts` có cột `account_password_hash`. Hash là một chiều, nên hệ thống **không thể dùng nó để đăng nhập vào ngân hàng** thay người dùng. Mint thời kỳ đầu thực chất phải lưu thông tin đăng nhập ở dạng mã hóa hai chiều (có thể giải mã) để chạy "screen scraping" - và đó chính là điểm yếu bảo mật lớn nhất của mô hình này.
+
+Cách làm hiện đại (đến 2026):
+
+- **Aggregator** như Plaid, MX, Finicity (Mastercard), Yodlee, TrueLayer, Tink (Visa) đứng giữa. Người dùng đăng nhập trên giao diện của ngân hàng hoặc aggregator, hệ thống của ta chỉ nhận một **access token** gắn với quyền đọc giới hạn, có thể thu hồi.
+- **Open Banking** qua API chuẩn dựa trên OAuth 2.0: châu Âu có PSD2 (và PSD3/PSR đang trong quá trình ban hành), Anh có chuẩn Open Banking UK, Mỹ có quy định Section 1033 của CFPB (ban hành năm 2024, sau đó bị kiện và được xem xét lại). Xu hướng chung là loại bỏ screen scraping.
+- Token vẫn là bí mật: lưu mã hóa bằng KMS (envelope encryption), tách riêng khỏi DB chính, hạn chế quyền truy cập, có audit log.
+
+Trong phỏng vấn, nói được điểm này (và đề xuất `access_token` thay cho `account_password_hash`) là điểm cộng rõ rệt.
+
+Bên lề: Intuit đã đóng cửa Mint vào năm 2024 và chuyển người dùng sang Credit Karma. Bài toán vẫn là một đề phỏng vấn kinh điển vì nó hội tụ nhiều thứ: tích hợp bên thứ ba chậm và không ổn định, xử lý batch, thiên về ghi, dữ liệu nhạy cảm.
+
+**3. Những điểm dễ bị hỏi thêm mà bài gốc bỏ qua**
+
+- **Chống trùng giao dịch (idempotency / dedup).** Mỗi lần làm mới, ngân hàng trả lại cả những giao dịch đã lấy trước đó. Cần khóa duy nhất như `(account_id, provider_transaction_id)` và upsert thay vì insert. Còn có chuyện giao dịch "pending" chuyển thành "posted" với số tiền hoặc ID khác (ví dụ tiền tip ở nhà hàng, tiền giữ chỗ ở trạm xăng hay khách sạn).
+- **Kiểu dữ liệu tiền.** `amount decimal NOT NULL` không ghi độ chính xác, và bảng không có cột tiền tệ. Nên là `DECIMAL(19,4)` hoặc `BIGINT` theo đơn vị nhỏ nhất, kèm `currency`. Ngoài ra `seller varchar(32)` quá ngắn cho chuỗi mô tả giao dịch thô từ ngân hàng.
+- **Múi giờ.** "Chi tiêu tháng này" phụ thuộc múi giờ của người dùng; một giao dịch lúc 23:30 ngày 31 có thể thuộc tháng khác nếu tính theo UTC.
+- **Tích hợp bên ngoài là điểm nghẽn thật sự**, không phải DB. Mỗi ngân hàng có giới hạn tốc độ, thời gian phản hồi và lỗi riêng. Cần giới hạn đồng thời theo từng ngân hàng, retry với exponential backoff, circuit breaker, dead-letter queue, và giãn lịch làm mới hằng ngày ra suốt 24 giờ thay vì dồn vào nửa đêm. Nhiều aggregator hiện nay còn đẩy **webhook** khi có giao dịch mới, thay cho việc hệ thống phải tự kéo (poll) hằng ngày.
+- **Tỷ lệ ghi:đọc 10:1** lấy từ 5 tỷ giao dịch so với 500 triệu lượt đọc mỗi tháng. Lưu ý 2,000 ghi/giây là số trung bình; nếu job hằng ngày dồn vào một khung giờ thì đỉnh có thể cao hơn nhiều lần - lý do càng nên có hàng đợi làm bộ đệm.
+- **Sharding theo `user_id`** là lựa chọn tự nhiên: gần như mọi truy vấn đều nằm trong phạm vi một người dùng, nên không cần join xuyên shard.
+
+**4. Công cụ hiện đại tương đương**
+
+| Trong bài gốc | Tương đương phổ biến đến 2026 |
+|---|---|
+| MapReduce (mrjob/Hadoop) | Apache Spark (batch), Apache Flink hoặc Kafka Streams (stream), dbt chạy trên warehouse |
+| Chạy lại toàn bộ job để tính `monthly_spending` | Cập nhật tăng dần (incremental): mỗi giao dịch mới cộng thẳng vào bộ đếm `(user, tháng, danh mục)`; chỉ cần tính lại khi người dùng đổi danh mục |
+| Amazon SQS, RabbitMQ | Vẫn dùng tốt; thêm Kafka / Amazon Kinesis nếu muốn phát lại (replay) luồng giao dịch |
+| Redshift, BigQuery | Vẫn phổ biến; thêm Snowflake, Databricks, hoặc lakehouse với Apache Iceberg / Delta Lake trên S3 |
+| Phân loại bằng từ điển người bán + crowdsourcing | Mô hình học máy phân loại chuỗi mô tả giao dịch; nhiều aggregator trả sẵn danh mục và tên người bán đã chuẩn hóa |
+
+Với con số của bài (5 tỷ giao dịch/tháng, mỗi người dùng có khoảng 10 danh mục), bảng `monthly_spending` chỉ khoảng 10 triệu người x 10 danh mục = 100 triệu dòng mỗi tháng nếu ai cũng có chi tiêu ở mọi danh mục - vẫn nằm gọn trong một Postgres đã shard, không nhất thiết phải có warehouse riêng cho tính năng hiển thị cho người dùng. Warehouse phù hợp hơn cho phân tích nội bộ.
+
+**5. Nối với các mục khác**
+
+- Hàng đợi và worker bất đồng bộ: [Asynchronism](../00-nen-tang/04-asynchronism.md) và [Bất đồng bộ](../02-chu-de/08-asynchronism.md).
+- Cache-aside cho dữ liệu đọc: [Caches](../00-nen-tang/03-caches.md), [Cache](../02-chu-de/07-cache.md).
+- Sharding theo người dùng: [Databases](../00-nen-tang/02-databases.md), [Cơ sở dữ liệu](../02-chu-de/06-database.md).
+- Thông báo ngân sách "không cần tức thời" là một ví dụ rõ về chấp nhận [nhất quán cuối cùng](../01-danh-doi/04-consistency-patterns.md).
+- Bài kế tiếp dùng lại gần như cùng khung MapReduce: [Sales rank](06-sales-rank.md).

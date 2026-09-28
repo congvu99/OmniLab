@@ -1,0 +1,28 @@
+# Lĩnh vực "Tài chính cá nhân" — tách từ sổ tay "Lộ trình nền tảng tài chính".
+id: tai-chinh
+title: Tài chính cá nhân
+tagline: Lộ trình 12 tuần, bài tập, an toàn giao dịch và nguồn học có thẩm định.
+accent: "#1F7A5A"
+accentDark: "#6EE7B7"
+icon: wallet
+order: 2
+isFinance: true
+modules:
+  - id: khoi-dong
+    title: Khởi động
+    order: 1
+  - id: lo-trinh-12-tuan
+    title: Lộ trình 12 tuần
+    order: 2
+  - id: thuc-hanh
+    title: Thực hành
+    order: 3
+  - id: an-toan
+    title: An toàn & bối cảnh Việt Nam
+    order: 4
+  - id: nguon-hoc
+    title: Nguồn học
+    order: 5
+  - id: di-tiep
+    title: Đi tiếp
+    order: 6

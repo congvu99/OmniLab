@@ -1,0 +1,34 @@
+---
+// TEMPORARY route, owned by Phase 3 only: bare render of lesson content with
+// no layout, so `pnpm build` proves every lesson MDX compiles and every
+// `<Figure>`/image import resolves. Phase 4 REWRITES this file with the real
+// reader layout/shell — do not add visual design here.
+import { getCollection, render } from 'astro:content';
+import { lessonIdOf } from '../../../../lib/lesson-id';
+import { lessonMdxComponents } from '../../../../components/lesson/mdx-components';
+
+export async function getStaticPaths() {
+  const lessons = await getCollection('lessons');
+  return lessons.map((lesson) => {
+    const [domain, module, slug] = lessonIdOf(lesson).split('/');
+    return {
+      params: { domain, module, slug },
+      props: { lesson },
+    };
+  });
+}
+
+const { lesson } = Astro.props;
+const { Content } = await render(lesson);
+---
+
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <title>{lesson.data.title}</title>
+  </head>
+  <body>
+    <h1>{lesson.data.title}</h1>
+    <Content components={lessonMdxComponents} />
+  </body>
+</html>

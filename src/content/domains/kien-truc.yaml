@@ -1,0 +1,21 @@
+# Lĩnh vực "Kiến trúc hệ thống" — dịch từ The System Design Primer.
+id: kien-truc
+title: Kiến trúc hệ thống
+tagline: Nền tảng, đánh đổi, chủ đề cốt lõi và bài tập system design.
+accent: "#4F46E5"
+accentDark: "#A5B4FC"
+icon: network
+order: 1
+modules:
+  - id: nen-tang
+    title: Nền tảng
+    order: 1
+  - id: danh-doi
+    title: Đánh đổi
+    order: 2
+  - id: chu-de
+    title: Chủ đề
+    order: 3
+  - id: bai-tap
+    title: Bài tập
+    order: 4

@@ -4,7 +4,7 @@ description: >-
   App đọc/học Astro tĩnh, UI kiểu iOS, 2 lĩnh vực (Kiến trúc hệ thống, Tài
   chính), 100% nội dung gốc + 6 bài thí điểm có ví dụ đời sống & SVG; deploy
   Railpack/Nhân Hòa.
-status: pending
+status: in-progress
 priority: P2
 branch: main
 tags:
@@ -35,11 +35,11 @@ Nguyên tắc cốt lõi: **nội dung gốc bất biến** (chứng minh bằng
 | Phase | Name | Status |
 |-------|------|--------|
 | 1 | [Scaffold and deploy pipeline](./phase-01-scaffold-and-deploy-pipeline.md) | Completed |
-| 2 | [Design system and app shell](./phase-02-design-system-and-app-shell.md) | Pending |
-| 3 | [Content model and migration](./phase-03-content-model-and-migration.md) | Pending |
+| 2 | [Design system and app shell](./phase-02-design-system-and-app-shell.md) | In Progress |
+| 3 | [Content model and migration](./phase-03-content-model-and-migration.md) | In Progress |
 | 4 | [Domain and reader screens](./phase-04-domain-and-reader-screens.md) | Pending |
 | 5 | [Progress bookmarks and search](./phase-05-progress-bookmarks-and-search.md) | Pending |
-| 6 | [Pilot content](./phase-06-pilot-content.md) | Pending |
+| 6 | [Content enrichment (all lessons)](./phase-06-pilot-content.md) | Pending |
 | 7 | [QA and launch](./phase-07-qa-and-launch.md) | Pending |
 
 ## Dependencies
@@ -54,13 +54,13 @@ Nguyên tắc cốt lõi: **nội dung gốc bất biến** (chứng minh bằng
 2. Đủ 28 bài Kiến trúc + toàn bộ bài Tài chính; `pnpm verify:fidelity` pass.
 3. Đánh dấu hoàn thành → % lĩnh vực cập nhật; đóng/mở app vẫn giữ; "Học tiếp" mở đúng bài + vị trí cuộn.
 4. Tìm "cache" và "bộ nhớ đệm" (và "bo nho dem") đều ra bài Cache.
-5. 6 bài thí điểm: `examplesReviewed: true`, có SVG, đạt ở light + dark.
+5. Mọi bài: có `<RealLife>` + ≥1 SVG, `examplesReviewed: true` sau fact-check agent (user uỷ quyền 2026-09-28), đạt ở light + dark.
 6. Lighthouse mobile ≥ 95 (Performance, A11y, Best Practices); CLS < 0.1.
 7. Thêm lĩnh vực thử nghiệm (YAML + 1 bài) hiển thị đúng mà không sửa code (xoá sau khi test).
 
 ## Decisions đã chốt (không đảo ngược nếu không có bằng chứng mới)
 
-Standalone manifest có, offline/service worker không · Dark mode theo hệ thống, không toggle · Không tuỳ chỉnh cỡ chữ · Ảnh bìa user tự tạo · Nguồn copy 1 lần, OmniLab là source of truth · Ví dụ AI nháp → user duyệt, inline.
+Standalone manifest có, offline/service worker không · Dark mode theo hệ thống, không toggle · Không tuỳ chỉnh cỡ chữ · Ảnh bìa user tự tạo · Nguồn copy 1 lần, OmniLab là source of truth · Ví dụ AI nháp → fact-check agent (user bỏ duyệt tay 2026-09-28), inline · Push thẳng `main` khi xong (user cho phép, không force-push).
 
 ## Ownership
 

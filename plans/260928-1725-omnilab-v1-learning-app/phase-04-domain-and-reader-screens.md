@@ -16,7 +16,7 @@ Ghép shell (Phase 2) với nội dung (Phase 3): danh sách lĩnh vực, màn h
 - Functional:
   - `/linh-vuc`: card mỗi lĩnh vực (accent, icon, tagline, số bài, vòng % — số % gắn ở Phase 5, ở đây render slot).
   - `/linh-vuc/[domain]`: hero card màu domain → section theo module → `lesson-row` (số thứ tự, tiêu đề, phút đọc, slot trạng thái ✓).
-  - `/hoc/[domain]/[slug]`: `ReaderLayout`, bìa (ảnh user hoặc fallback), meta (module, phút đọc, nguồn), nội dung prose, cuối bài: slot "Hoàn thành" (Phase 5) + card "Bài tiếp".
+  - `/hoc/[domain]/[module]/[slug]`: `ReaderLayout`, bìa (ảnh user hoặc fallback), meta (module, phút đọc, nguồn), nội dung prose, cuối bài: slot "Hoàn thành" (Phase 5) + card "Bài tiếp".
   - Bài `examplesReviewed: false` mà có `<RealLife>` → badge "Nháp" trên khối.
   - Bìa fallback: SVG sinh lúc build (gradient accent domain + icon module + tiêu đề) — không cần ảnh.
 - Non-functional: mọi route tĩnh (`getStaticPaths`); ảnh bìa qua `astro:assets` → WebP, có width/height (CLS 0); ảnh dưới fold `loading="lazy"`.
@@ -30,7 +30,7 @@ Ghép shell (Phase 2) với nội dung (Phase 3): danh sách lĩnh vực, màn h
 ## Related Code Files
 - Create: `src/lib/content-queries.ts`
 - Create: `src/components/domain/{domain-card,lesson-row}.astro`, `src/components/lesson/{lesson-cover,next-lesson-card,lesson-meta}.astro`
-- Create: `src/pages/linh-vuc/[domain]/index.astro`, `src/pages/hoc/[domain]/[slug].astro`, `src/pages/gioi-thieu.astro` (nếu chưa có ở Phase 3)
+- Create: `src/pages/linh-vuc/[domain]/index.astro`, `src/pages/hoc/[domain]/[module]/[slug].astro`, `src/pages/gioi-thieu.astro` (nguồn + license + credit ảnh)
 - Modify: `src/pages/index.astro`, `src/pages/linh-vuc/index.astro`, `src/styles/prose.css` (bảng, code, figure trên mobile)
 
 ## Implementation Steps

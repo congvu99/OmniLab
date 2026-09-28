@@ -1,0 +1,297 @@
+---
+domain: "kien-truc"
+module: "chu-de"
+order: 9
+title: "Giao tiếp (Communication)"
+summary: "HTTP là một phương thức để mã hóa và vận chuyển dữ liệu giữa client và server."
+source:
+  name: "The System Design Primer - mục \"Communication\""
+  author: "Donne Martin và cộng đồng đóng góp"
+  url: "https://github.com/donnemartin/system-design-primer#communication"
+  license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
+  translatedAt: "2026-09-28"
+  snapshot: "system-design/02-chu-de/09-communication.md"
+examplesReviewed: false
+readingMinutes: 18
+---
+
+import img_5KeocQs from '../../../../assets/legacy/system-design/5KeocQs.jpg';
+import img_JdAsdvG from '../../../../assets/legacy/system-design/JdAsdvG.jpg';
+import img_yzDrJtA from '../../../../assets/legacy/system-design/yzDrJtA.jpg';
+import img_iF4Mkb5 from '../../../../assets/legacy/system-design/iF4Mkb5.png';
+
+
+# Giao tiếp (Communication)
+
+## Nội dung gốc
+
+<Figure src={img_5KeocQs} alt="Mô hình OSI 7 tầng" credit={`Nguồn: <a href="http://www.escotal.com/osilayer.html">OSI 7 layer model</a>`} />
+
+### Giao thức truyền siêu văn bản (Hypertext transfer protocol - HTTP)
+
+HTTP là một phương thức để mã hóa và vận chuyển dữ liệu giữa client và server. Đây là giao thức kiểu yêu cầu/phản hồi (request/response): client gửi yêu cầu, server trả phản hồi kèm nội dung liên quan và thông tin trạng thái hoàn tất của yêu cầu. HTTP mang tính tự đóng gói (self-contained), cho phép yêu cầu và phản hồi đi qua nhiều router và server trung gian thực hiện cân bằng tải (load balancing), lưu đệm (caching), mã hóa (encryption) và nén (compression).
+
+Một yêu cầu HTTP cơ bản gồm một động từ (verb, hay method) và một tài nguyên (resource, hay endpoint). Dưới đây là các động từ HTTP thông dụng:
+
+| Động từ | Mô tả | Lũy đẳng (idempotent)* | An toàn (safe) | Có thể cache |
+|---|---|---|---|---|
+| GET | Đọc một tài nguyên | Có | Có | Có |
+| POST | Tạo một tài nguyên hoặc kích hoạt một tiến trình xử lý dữ liệu | Không | Không | Có, nếu phản hồi chứa thông tin về độ tươi (freshness) |
+| PUT | Tạo hoặc thay thế một tài nguyên | Có | Không | Không |
+| PATCH | Cập nhật một phần tài nguyên | Không | Không | Có, nếu phản hồi chứa thông tin về độ tươi (freshness) |
+| DELETE | Xóa một tài nguyên | Có | Không | Không |
+
+*Có thể gọi nhiều lần mà không cho ra kết quả khác nhau.
+
+HTTP là một giao thức tầng ứng dụng (application layer), dựa trên các giao thức tầng thấp hơn như **TCP** và **UDP**.
+
+#### Nguồn và đọc thêm: HTTP
+
+- [What is HTTP?](https://www.nginx.com/resources/glossary/http/)
+- [Difference between HTTP and TCP](https://www.quora.com/What-is-the-difference-between-HTTP-protocol-and-TCP-protocol)
+- [Difference between PUT and PATCH](https://laracasts.com/discuss/channels/general-discussion/whats-the-differences-between-put-and-patch?page=1)
+
+### Giao thức điều khiển truyền vận (Transmission control protocol - TCP)
+
+<Figure src={img_JdAsdvG} alt="Sơ đồ truyền gói tin qua TCP" credit={`Nguồn: <a href="http://www.wildbunny.co.uk/blog/2012/10/09/how-to-make-a-multi-player-game-part-1/">How to make a multiplayer game</a>`} />
+
+TCP là một giao thức hướng kết nối (connection-oriented) chạy trên [mạng IP](https://en.wikipedia.org/wiki/Internet_Protocol). Kết nối được thiết lập và kết thúc bằng một quá trình [bắt tay (handshake)](https://en.wikipedia.org/wiki/Handshaking). Mọi gói tin (packet) được gửi đi đều được đảm bảo tới đích đúng thứ tự ban đầu và không bị hỏng, nhờ:
+
+- Số thứ tự (sequence number) và [trường checksum](https://en.wikipedia.org/wiki/Transmission_Control_Protocol#Checksum_computation) cho mỗi gói tin
+- Các gói [xác nhận (acknowledgement)](https://en.wikipedia.org/wiki/Acknowledgement_(data_networks)) và cơ chế tự động truyền lại (retransmission)
+
+Nếu bên gửi không nhận được phản hồi đúng, nó sẽ gửi lại các gói tin. Nếu hết thời gian chờ (timeout) nhiều lần, kết nối sẽ bị hủy. TCP cũng cài đặt [điều khiển luồng (flow control)](https://en.wikipedia.org/wiki/Flow_control_(data)) và [điều khiển tắc nghẽn (congestion control)](https://en.wikipedia.org/wiki/Network_congestion#Congestion_control). Những đảm bảo này gây ra độ trễ và nhìn chung làm việc truyền dữ liệu kém hiệu quả hơn so với UDP.
+
+Để đảm bảo thông lượng cao, web server có thể giữ mở một số lượng lớn kết nối TCP, dẫn tới tiêu tốn nhiều bộ nhớ. Việc duy trì nhiều kết nối mở giữa các luồng (thread) của web server và, chẳng hạn, một server [memcached](https://memcached.org/) có thể rất tốn kém. [Gộp kết nối (connection pooling)](https://en.wikipedia.org/wiki/Connection_pool) có thể giúp ích, bên cạnh việc chuyển sang UDP ở những chỗ phù hợp.
+
+TCP hữu ích cho các ứng dụng đòi hỏi độ tin cậy cao nhưng ít khắt khe về thời gian. Một số ví dụ gồm web server, thông tin cơ sở dữ liệu, SMTP, FTP và SSH.
+
+Dùng TCP thay vì UDP khi:
+
+- Bạn cần toàn bộ dữ liệu tới nơi nguyên vẹn
+- Bạn muốn tự động tận dụng tối đa thông lượng mạng ở mức ước lượng tốt nhất
+
+### Giao thức gói dữ liệu người dùng (User datagram protocol - UDP)
+
+<Figure src={img_yzDrJtA} alt="Sơ đồ truyền gói tin qua UDP" credit={`Nguồn: <a href="http://www.wildbunny.co.uk/blog/2012/10/09/how-to-make-a-multi-player-game-part-1/">How to make a multiplayer game</a>`} />
+
+UDP là giao thức phi kết nối (connectionless). Các datagram (tương tự gói tin) chỉ được đảm bảo ở mức từng datagram. Datagram có thể tới đích sai thứ tự hoặc không tới được. UDP không hỗ trợ điều khiển tắc nghẽn. Không có những đảm bảo như TCP, UDP nhìn chung hiệu quả hơn.
+
+UDP có thể phát quảng bá (broadcast), gửi datagram tới mọi thiết bị trong mạng con (subnet). Điều này hữu ích với [DHCP](https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol), vì client khi đó chưa nhận được địa chỉ IP, nên TCP không có cách nào truyền luồng dữ liệu khi chưa có địa chỉ IP.
+
+UDP kém tin cậy hơn nhưng hoạt động tốt trong các trường hợp thời gian thực như VoIP, gọi video, phát trực tuyến (streaming) và game nhiều người chơi thời gian thực.
+
+Dùng UDP thay vì TCP khi:
+
+- Bạn cần độ trễ thấp nhất
+- Dữ liệu tới muộn còn tệ hơn mất dữ liệu
+- Bạn muốn tự cài đặt cơ chế sửa lỗi riêng
+
+#### Nguồn và đọc thêm: TCP và UDP
+
+- [Networking for game programming](https://gafferongames.com/post/udp_vs_tcp/)
+- [Key differences between TCP and UDP protocols](http://www.cyberciti.biz/faq/key-differences-between-tcp-and-udp-protocols/)
+- [Difference between TCP and UDP](http://stackoverflow.com/questions/5970383/difference-between-tcp-and-udp)
+- [Transmission control protocol](https://en.wikipedia.org/wiki/Transmission_Control_Protocol)
+- [User datagram protocol](https://en.wikipedia.org/wiki/User_Datagram_Protocol)
+- [Scaling memcache at Facebook](http://www.cs.bu.edu/~jappavoo/jappavoo.github.com/451/papers/memcache-fb.pdf)
+
+### Gọi thủ tục từ xa (Remote procedure call - RPC)
+
+<Figure src={img_iF4Mkb5} alt="Sơ đồ luồng gọi RPC giữa client và server" credit={`Nguồn: <a href="http://www.puncsky.com/blog/2016-02-13-crack-the-system-design-interview">Crack the system design interview</a>`} />
+
+Trong RPC, client khiến một thủ tục (procedure) được thực thi ở một không gian địa chỉ khác, thường là trên một server từ xa. Thủ tục được viết như thể đó là một lời gọi thủ tục cục bộ, che giấu khỏi chương trình client các chi tiết về cách giao tiếp với server. Lời gọi từ xa thường chậm hơn và kém tin cậy hơn lời gọi cục bộ, nên việc phân biệt lời gọi RPC với lời gọi cục bộ là điều có ích. Các framework RPC phổ biến gồm [Protobuf](https://developers.google.com/protocol-buffers/), [Thrift](https://thrift.apache.org/) và [Avro](https://avro.apache.org/docs/current/).
+
+RPC là một giao thức yêu cầu - phản hồi:
+
+- **Chương trình client (client program)** - Gọi thủ tục stub phía client. Các tham số được đẩy lên ngăn xếp (stack) giống như một lời gọi thủ tục cục bộ.
+- **Thủ tục stub phía client (client stub procedure)** - Đóng gói (marshal) mã định danh thủ tục và các đối số vào một thông điệp yêu cầu.
+- **Mô-đun giao tiếp phía client (client communication module)** - Hệ điều hành gửi thông điệp từ client tới server.
+- **Mô-đun giao tiếp phía server (server communication module)** - Hệ điều hành chuyển các gói tin đến cho thủ tục stub phía server.
+- **Thủ tục stub phía server (server stub procedure)** - Giải gói (unmarshal) kết quả, gọi thủ tục phía server khớp với mã định danh thủ tục và truyền vào các đối số đã cho.
+- Phản hồi của server lặp lại các bước trên theo thứ tự ngược lại.
+
+Ví dụ các lời gọi RPC:
+
+```
+GET /someoperation?data=anId
+
+POST /anotheroperation
+{
+  "data":"anId";
+  "anotherdata": "another value"
+}
+```
+
+RPC tập trung vào việc phơi ra các hành vi (behavior). RPC thường được dùng cho giao tiếp nội bộ vì lý do hiệu năng, vì bạn có thể tự viết các lời gọi native sao cho khớp nhất với trường hợp sử dụng của mình.
+
+Chọn thư viện native (hay SDK) khi:
+
+- Bạn biết rõ nền tảng đích.
+- Bạn muốn kiểm soát cách "logic" của mình được truy cập.
+- Bạn muốn kiểm soát cách xử lý lỗi diễn ra bên ngoài thư viện của mình.
+- Hiệu năng và trải nghiệm người dùng cuối là mối quan tâm hàng đầu.
+
+Các HTTP API theo phong cách **REST** thường được dùng nhiều hơn cho API công khai.
+
+#### Nhược điểm: RPC
+
+- Client RPC bị gắn chặt (tightly coupled) với cách cài đặt của dịch vụ.
+- Mỗi thao tác hoặc trường hợp sử dụng mới đều phải định nghĩa một API mới.
+- Gỡ lỗi (debug) RPC có thể khó khăn.
+- Bạn có thể không tận dụng ngay được các công nghệ sẵn có. Ví dụ, có thể cần thêm công sức để đảm bảo [các lời gọi RPC được cache đúng cách](https://web.archive.org/web/20170608193645/http://etherealbits.com/2012/12/debunking-the-myths-of-rpc-rest/) trên các caching server như [Squid](http://www.squid-cache.org/).
+
+### Chuyển giao trạng thái biểu diễn (Representational state transfer - REST)
+
+REST là một phong cách kiến trúc áp đặt mô hình client/server, trong đó client thao tác trên một tập tài nguyên do server quản lý. Server cung cấp biểu diễn (representation) của tài nguyên và các hành động có thể thay đổi tài nguyên hoặc lấy về một biểu diễn mới của tài nguyên. Mọi giao tiếp đều phải phi trạng thái (stateless) và có thể cache.
+
+Một giao diện RESTful có bốn đặc tính:
+
+- **Định danh tài nguyên (URI trong HTTP)** - dùng cùng một URI bất kể thao tác nào.
+- **Thay đổi thông qua biểu diễn (động từ trong HTTP)** - dùng động từ, header và body.
+- **Thông báo lỗi tự mô tả (mã trạng thái phản hồi trong HTTP)** - dùng mã trạng thái (status code), đừng phát minh lại bánh xe.
+- **[HATEOAS](http://restcookbook.com/Basics/hateoas/) (giao diện HTML cho HTTP)** - dịch vụ web của bạn phải truy cập được đầy đủ từ trình duyệt.
+
+Ví dụ các lời gọi REST:
+
+```
+GET /someresources/anId
+
+PUT /someresources/anId
+{"anotherdata": "another value"}
+```
+
+REST tập trung vào việc phơi ra dữ liệu. Nó giảm thiểu sự phụ thuộc lẫn nhau (coupling) giữa client và server, và thường được dùng cho các HTTP API công khai. REST dùng một cách thức tổng quát và đồng nhất hơn để phơi ra tài nguyên thông qua URI, [biểu diễn thông qua header](https://github.com/for-GET/know-your-http-well/blob/master/headers.md), và hành động thông qua các động từ như GET, POST, PUT, DELETE và PATCH. Nhờ phi trạng thái, REST rất phù hợp cho mở rộng theo chiều ngang (horizontal scaling) và phân vùng (partitioning).
+
+#### Nhược điểm: REST
+
+- Vì REST tập trung vào phơi ra dữ liệu, nó có thể không phù hợp nếu tài nguyên không được tổ chức hoặc truy cập một cách tự nhiên theo một cấu trúc phân cấp đơn giản. Ví dụ, việc trả về mọi bản ghi được cập nhật trong một giờ qua khớp với một tập sự kiện cụ thể không dễ biểu diễn thành một đường dẫn. Với REST, việc này nhiều khả năng được cài đặt bằng cách kết hợp đường dẫn URI, tham số truy vấn (query parameter), và có thể cả body của yêu cầu.
+- REST thường dựa vào một vài động từ (GET, POST, PUT, DELETE và PATCH), đôi khi không khớp với trường hợp sử dụng của bạn. Ví dụ, việc chuyển các tài liệu hết hạn vào thư mục lưu trữ có thể không gói gọn được một cách sạch sẽ trong các động từ này.
+- Việc lấy các tài nguyên phức tạp có cấu trúc phân cấp lồng nhau đòi hỏi nhiều lượt đi - về (round trip) giữa client và server chỉ để hiển thị một màn hình, ví dụ lấy nội dung một bài blog rồi lấy các bình luận của bài đó. Với ứng dụng di động hoạt động trong điều kiện mạng thay đổi thất thường, nhiều lượt đi - về như vậy là rất không mong muốn.
+- Theo thời gian, nhiều trường có thể được thêm vào phản hồi của API và các client cũ sẽ nhận toàn bộ các trường dữ liệu mới, kể cả những trường chúng không cần. Kết quả là kích thước dữ liệu trả về (payload) phình to và độ trễ tăng lên.
+
+### So sánh lời gọi RPC và REST
+
+| Thao tác | RPC | REST |
+|---|---|---|
+| Đăng ký | **POST** /signup | **POST** /persons |
+| Hủy tài khoản | **POST** /resign<br/>\{<br/>"personid": "1234"<br/>\} | **DELETE** /persons/1234 |
+| Đọc thông tin một người | **GET** /readPerson?personid=1234 | **GET** /persons/1234 |
+| Đọc danh sách vật phẩm của một người | **GET** /readUsersItemsList?personid=1234 | **GET** /persons/1234/items |
+| Thêm một vật phẩm vào danh sách của một người | **POST** /addItemToUsersItemsList<br/>\{<br/>"personid": "1234";<br/>"itemid": "456"<br/>\} | **POST** /persons/1234/items<br/>\{<br/>"itemid": "456"<br/>\} |
+| Cập nhật một vật phẩm | **POST** /modifyItem<br/>\{<br/>"itemid": "456";<br/>"key": "value"<br/>\} | **PUT** /items/456<br/>\{<br/>"key": "value"<br/>\} |
+| Xóa một vật phẩm | **POST** /removeItem<br/>\{<br/>"itemid": "456"<br/>\} | **DELETE** /items/456 |
+
+*Nguồn: [Do you really know why you prefer REST over RPC](https://apihandyman.io/do-you-really-know-why-you-prefer-rest-over-rpc/)*
+
+#### Nguồn và đọc thêm: REST và RPC
+
+- [Do you really know why you prefer REST over RPC](https://apihandyman.io/do-you-really-know-why-you-prefer-rest-over-rpc/)
+- [When are RPC-ish approaches more appropriate than REST?](http://programmers.stackexchange.com/a/181186)
+- [REST vs JSON-RPC](http://stackoverflow.com/questions/15056878/rest-vs-json-rpc)
+- [Debunking the myths of RPC and REST](https://web.archive.org/web/20170608193645/http://etherealbits.com/2012/12/debunking-the-myths-of-rpc-rest/)
+- [What are the drawbacks of using REST](https://www.quora.com/What-are-the-drawbacks-of-using-RESTful-APIs)
+- [Crack the system design interview](http://www.puncsky.com/blog/2016-02-13-crack-the-system-design-interview)
+- [Thrift](https://code.facebook.com/posts/1468950976659943/)
+- [Why REST for internal use and not RPC](http://arstechnica.com/civis/viewtopic.php?t=1190508)
+
+---
+
+<TranslatorNote>
+## Ghi chú của người dịch
+
+**1. Vài chỗ trong bản gốc cần đọc kèm đính chính**
+
+Bản gốc viết từ khoảng 2017 và có vài điểm không chính xác hoặc đã lỗi thời. Phần dịch ở trên giữ nguyên ý gốc; đây là phần đối chiếu:
+
+- **"HTTP dựa trên TCP và UDP"**: HTTP/1.1 và HTTP/2 chạy trên TCP. Chỉ HTTP/3 mới chạy trên UDP, và là gián tiếp qua QUIC (xem mục 2). Không có "HTTP trên UDP" trần.
+- **Bảng động từ HTTP**: về lý thuyết, phản hồi của POST và PATCH có thể cache nếu có thông tin độ tươi, nhưng trên thực tế gần như không cache hay CDN nào cache chúng. Khi thiết kế, cứ coi chỉ GET (và HEAD) là cache được.
+- **"Lũy đẳng" không có nghĩa là phản hồi giống nhau**: DELETE lần hai thường trả 404 thay vì 204, nhưng vẫn lũy đẳng vì **trạng thái trên server** sau nhiều lần gọi vẫn như sau một lần. Lũy đẳng nói về tác dụng phụ, không nói về phản hồi.
+- **"Protobuf, Thrift, Avro là framework RPC"**: Protobuf và Avro trước hết là **định dạng tuần tự hóa (serialization format)**. Framework RPC dùng Protobuf là **gRPC**. Thrift thì đúng là có cả định dạng lẫn tầng RPC.
+- **Khối code ví dụ dùng `;` giữa các trường JSON** (`"data":"anId";`) - đây là lỗi cú pháp trong bản gốc, JSON hợp lệ dùng dấu phẩy. Bản dịch giữ nguyên khối code để trung thành với nguồn.
+- **HATEOAS không phải "giao diện HTML"**: HATEOAS là *Hypermedia As The Engine Of Application State* - phản hồi chứa các liên kết tới hành động tiếp theo có thể làm, để client khám phá API qua liên kết thay vì hard-code URL. Trên thực tế rất ít API "REST" làm điều này; phần lớn chỉ là "JSON qua HTTP có URL đẹp".
+
+**2. Bức tranh HTTP đến 2026: HTTP/1.1, HTTP/2, HTTP/3**
+
+| | HTTP/1.1 | HTTP/2 | HTTP/3 |
+|---|---|---|---|
+| Tầng truyền vận | TCP | TCP | QUIC (trên UDP) |
+| Định dạng | Văn bản | Nhị phân, chia frame | Nhị phân, chia frame |
+| Nhiều request song song trên một kết nối | Không thực sự (pipelining gần như không dùng được) | Có - ghép kênh (multiplexing) | Có - ghép kênh |
+| Nghẽn đầu hàng (head-of-line blocking) | Ở tầng HTTP | Đã hết ở tầng HTTP, **còn ở tầng TCP** | Hết ở cả hai tầng, mỗi stream độc lập |
+| Nén header | Không | HPACK | QPACK |
+| Mã hóa | Tùy chọn | Trình duyệt chỉ hỗ trợ qua TLS | Bắt buộc, TLS 1.3 tích hợp trong QUIC |
+| Đặc tả hiện hành | RFC 9112 | RFC 9113 | RFC 9114 (QUIC: RFC 9000) |
+
+Những điểm đáng nhớ:
+
+- **HTTP/2 giải quyết nghẽn đầu hàng ở tầng ứng dụng nhưng lại lộ ra nghẽn ở tầng TCP**: TCP bắt buộc giao dữ liệu đúng thứ tự, nên mất một gói là **mọi stream** trên kết nối đều phải chờ gói đó được truyền lại. Trên mạng tốt không sao; trên mạng di động mất gói nhiều, HTTP/2 có thể còn tệ hơn nhiều kết nối HTTP/1.1 song song.
+- **QUIC chuyển độ tin cậy lên tầng người dùng, chạy trên UDP**: mỗi stream tự quản thứ tự của mình, bắt tay kết hợp truyền vận và mã hóa trong 1 RTT (0-RTT khi nối lại, kèm rủi ro tấn công phát lại - replay attack), và hỗ trợ **di chuyển kết nối (connection migration)** khi điện thoại đổi từ Wi-Fi sang 4G mà không phải bắt tay lại.
+- Đây là minh họa đẹp cho câu "Bạn muốn tự cài đặt cơ chế sửa lỗi riêng" trong phần UDP: QUIC chính là cài đặt lại gần như mọi đảm bảo của TCP phía trên UDP, để sửa những giới hạn mà TCP (nằm trong nhân hệ điều hành, khó thay đổi) không sửa được.
+- Ngữ nghĩa HTTP (method, status code, header) giờ được tách riêng trong RFC 9110 và **giống nhau** ở cả ba phiên bản. Thiết kế API không phụ thuộc phiên bản HTTP.
+
+**3. TCP: những chi tiết hay bị hỏi mà bản gốc không nêu**
+
+- **Bắt tay ba bước (SYN, SYN-ACK, ACK)** tốn 1 RTT trước khi gửi được byte dữ liệu nào; cộng TLS 1.3 thêm 1 RTT nữa (TLS 1.2 là 2 RTT). Với người dùng ở xa, đây là lý do chính để dùng CDN và giữ kết nối sống (keep-alive) - xem [CDN](/hoc/kien-truc/chu-de/cdn) và [Độ trễ và thông lượng](/hoc/kien-truc/danh-doi/latency-vs-throughput).
+- **Khởi động chậm (slow start)**: kết nối mới không dùng ngay toàn bộ băng thông mà tăng dần cửa sổ tắc nghẽn. Kết nối mới luôn chậm hơn kết nối đã "ấm" - thêm một lý do cho connection pooling.
+- **TIME_WAIT**: bên chủ động đóng kết nối giữ trạng thái này một thời gian để hấp thụ gói đến muộn. Server hay client mở - đóng kết nối liên tục (ví dụ gọi dịch vụ khác mà không dùng pool) có thể cạn cổng nguồn (ephemeral port exhaustion). Đây là lỗi vận hành rất thật.
+- **Connection pooling ở cơ sở dữ liệu** quan trọng hơn ở web: mỗi kết nối PostgreSQL là một tiến trình riêng tốn bộ nhớ đáng kể, nên hàng nghìn instance ứng dụng mỗi cái mở vài chục kết nối có thể làm sập database. Giải pháp thường gặp là đặt một bộ gộp kết nối ở giữa (ví dụ PgBouncer).
+- **Load balancer tầng 4 và tầng 7** chính là phân biệt TCP và HTTP: tầng 4 chỉ nhìn địa chỉ IP và cổng, tầng 7 đọc được URL, header, cookie - xem [Load balancer](/hoc/kien-truc/chu-de/load-balancer) và [Reverse proxy](/hoc/kien-truc/chu-de/reverse-proxy).
+
+**4. UDP ngày nay dùng ở đâu**
+
+- DNS (truy vấn nhỏ, một lượt đi - về; chuyển sang TCP khi phản hồi quá lớn) - xem [DNS](/hoc/kien-truc/chu-de/dns).
+- QUIC/HTTP/3, WebRTC (gọi video, thoại), game thời gian thực, VPN hiện đại như WireGuard.
+- Thu thập số liệu kiểu "bắn và quên" (fire-and-forget) như StatsD, syslog - mất vài gói không sao.
+- Ví dụ memcache ở Facebook trong danh sách đọc thêm: dùng UDP cho lệnh get để giảm chi phí kết nối, chấp nhận coi gói mất là cache miss.
+
+Lưu ý: phát quảng bá (broadcast) chỉ có ở IPv4; IPv6 không có broadcast mà dùng multicast.
+
+**5. Các kiểu giao tiếp hiện đại ngoài RPC/REST cổ điển**
+
+Bản gốc chỉ so REST với RPC. Đến 2026, khi phỏng vấn nên nắm thêm:
+
+| Công nghệ | Bản chất | Mạnh ở | Yếu ở | Hợp với |
+|---|---|---|---|---|
+| REST (JSON/HTTP) | Tài nguyên + động từ HTTP | Đơn giản, cache HTTP, công cụ khắp nơi | Over-fetching/under-fetching, nhiều lượt đi - về | API công khai, CRUD |
+| gRPC | RPC trên HTTP/2, dữ liệu Protobuf, sinh code từ file `.proto` | Nhanh, hợp đồng kiểu chặt, hỗ trợ streaming hai chiều | Trình duyệt không gọi trực tiếp được (cần gRPC-Web hoặc proxy), khó debug bằng mắt | Giao tiếp nội bộ giữa microservice |
+| GraphQL | Một endpoint, client tự mô tả dữ liệu cần lấy | Hết over-fetching, một lượt đi - về cho màn hình phức tạp | Cache HTTP khó (thường là POST), truy vấn đắt khó kiểm soát, bài toán N+1 phía server | Ứng dụng di động/frontend nhiều màn hình khác nhau |
+| WebSocket | Kênh hai chiều, giữ kết nối lâu dài, nâng cấp từ HTTP | Server đẩy dữ liệu xuống tức thì | Kết nối có trạng thái, khó cân bằng tải và mở rộng | Chat, cộng tác thời gian thực, game trên web |
+| Server-Sent Events (SSE) | Luồng một chiều server tới client trên HTTP thường | Đơn giản, tự nối lại, đi qua proxy dễ | Chỉ một chiều, chỉ văn bản | Thông báo, bảng tin trực tiếp, stream token của LLM |
+| Webhook | Server gọi ngược HTTP tới URL của bên kia khi có sự kiện | Không cần polling | Bên nhận phải xác thực chữ ký, xử lý trùng lặp và thứ tự | Tích hợp giữa các hệ thống (thanh toán, CI) |
+
+Nhận xét: gRPC giải quyết gần hết các nhược điểm RPC bản gốc nêu - hợp đồng `.proto` giảm coupling "ngầm", có quy tắc tương thích ngược khi thêm trường, và có công cụ debug riêng. GraphQL thì nhắm đúng hai nhược điểm cuối của REST (nhiều lượt đi - về và payload phình to).
+
+**6. Bẫy thường gặp khi thiết kế API**
+
+- **POST không lũy đẳng, nhưng mạng thì luôn thử lại.** Client gửi yêu cầu thanh toán, timeout, gửi lại - tiền bị trừ hai lần. Cách chuẩn: client gửi kèm **khóa lũy đẳng (idempotency key)** trong header, server lưu kết quả theo khóa và trả lại kết quả cũ nếu gặp lại khóa đó. Đây là câu hỏi phỏng vấn kinh điển cho hệ thống thanh toán.
+- **Dùng PUT sai**: PUT nghĩa là thay thế toàn bộ. Gửi PUT chỉ với vài trường sẽ (theo đúng ngữ nghĩa) xóa các trường còn lại. Muốn cập nhật một phần thì dùng PATCH.
+- **Trả 200 kèm `{"error": ...}` trong body** phá vỡ mọi công cụ dựa trên status code: retry, giám sát, cache, load balancer health check.
+- **Không phân trang (pagination)** các endpoint trả danh sách. Phân trang theo offset chậm dần và bị lệch khi dữ liệu thay đổi; phân trang theo con trỏ (cursor/keyset) ổn định hơn ở quy mô lớn.
+- **Không có chiến lược phiên bản (versioning)**: tối thiểu phải quy ước chỉ **thêm** trường, không đổi nghĩa hay xóa trường trong cùng một phiên bản.
+- **Timeout và retry không đi kèm nhau**: mọi lời gọi qua mạng đều phải có timeout; retry phải có giãn cách lũy thừa kèm nhiễu (xem [Các mẫu sẵn sàng](/hoc/kien-truc/danh-doi/availability-patterns), mục 5) và chỉ áp dụng cho thao tác lũy đẳng hoặc có idempotency key.
+
+**7. Góc nhìn phỏng vấn**
+
+Câu hỏi thường không phải "REST hay RPC tốt hơn" mà là "chọn gì cho **đoạn giao tiếp này**". Một khung trả lời gọn:
+
+- Client bên ngoài, đa dạng, cần cache và dễ tích hợp → **REST**.
+- Frontend/di động cần lấy dữ liệu từ nhiều nguồn cho một màn hình → **GraphQL** hoặc một lớp **BFF (Backend for Frontend)**.
+- Dịch vụ nội bộ gọi nhau với lưu lượng lớn, cần hợp đồng chặt → **gRPC**.
+- Server cần đẩy dữ liệu xuống → **SSE** nếu một chiều, **WebSocket** nếu hai chiều.
+- Không cần phản hồi ngay, hoặc cần tách rời bên gửi và bên nhận → **hàng đợi thông điệp**, xem [Bất đồng bộ](/hoc/kien-truc/chu-de/asynchronism).
+
+Nên chủ động nhắc: timeout, retry, idempotency, phân trang, phiên bản API, và giới hạn tốc độ (rate limiting). Người phỏng vấn thường đánh giá cao những chi tiết vận hành này hơn là tranh luận phong cách REST.
+
+**8. Nối với các mục khác**
+
+- [Tầng ứng dụng](/hoc/kien-truc/chu-de/application-layer) và microservices - các dịch vụ tách rời nhau thì giao tiếp bằng chính các giao thức trong mục này.
+- [Load balancer](/hoc/kien-truc/chu-de/load-balancer) và [Reverse proxy](/hoc/kien-truc/chu-de/reverse-proxy) - cân bằng tải tầng 4 (TCP) và tầng 7 (HTTP).
+- [Cache](/hoc/kien-truc/chu-de/cache) và [CDN](/hoc/kien-truc/chu-de/cdn) - vì sao GET cache được mà RPC qua POST thì không.
+- [Bảo mật](/hoc/kien-truc/chu-de/security) - mã hóa khi truyền (TLS) là tầng dưới của mọi giao tiếp trong mục này.
+
+Đối chiếu README gốc của repo:
+- [Communication](https://github.com/donnemartin/system-design-primer#communication)
+- [Security](https://github.com/donnemartin/system-design-primer#security) - mục kế tiếp
+
+</TranslatorNote>

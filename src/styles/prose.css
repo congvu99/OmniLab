@@ -1,0 +1,172 @@
+/*
+ * `.prose` — long-form lesson body typography (reader-layout content only).
+ * Measure ~60-68ch, body 17px/1.7. Content markup itself (MDX -> HTML) is
+ * owned by Phase 3/4; this file only styles the standard elements it emits.
+ */
+
+.prose {
+  max-width: 65ch;
+  margin-inline: auto;
+  font-size: var(--text-body);
+  line-height: var(--leading-relaxed);
+  color: var(--ink);
+}
+
+.prose > :first-child {
+  margin-top: 0;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-3);
+}
+
+.prose h1 { font-size: var(--text-large); }
+.prose h2 { font-size: var(--text-title1); }
+.prose h3 { font-size: var(--text-title2); }
+.prose h4 { font-size: var(--text-title3); }
+
+.prose p {
+  margin-top: 0;
+  margin-bottom: var(--space-4);
+}
+
+.prose ul,
+.prose ol {
+  margin: 0 0 var(--space-4);
+  padding-left: var(--space-5);
+}
+
+.prose ul { list-style: disc; }
+.prose ol { list-style: decimal; }
+
+.prose li {
+  margin-bottom: var(--space-2);
+}
+
+.prose li > ul,
+.prose li > ol {
+  margin-top: var(--space-2);
+  margin-bottom: 0;
+}
+
+/* Tables: content pipeline wraps every <table> in <div class="table-wrap">
+   so wide tables scroll horizontally inside their own container instead of
+   overflowing the page (contract with Phase 3/4's MDX -> HTML pipeline). */
+.prose .table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 0 var(--space-4);
+}
+
+.prose table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: max-content;
+  font-size: var(--text-footnote);
+  margin: 0;
+}
+
+.prose th,
+.prose td {
+  border: 1px solid var(--line);
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+}
+
+.prose th {
+  background: var(--surface-2);
+  font-weight: 600;
+}
+
+/* Code */
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--surface-2);
+  border-radius: 4px;
+  padding: 0.15em 0.4em;
+}
+
+.prose pre {
+  font-family: var(--font-mono);
+  font-size: var(--text-footnote);
+  background: var(--surface-2);
+  border-radius: var(--radius-row);
+  padding: var(--space-4);
+  margin: 0 0 var(--space-4);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  line-height: var(--leading-normal);
+}
+
+.prose pre code {
+  background: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+/* Blockquote */
+.prose blockquote {
+  margin: 0 0 var(--space-4);
+  padding-left: var(--space-4);
+  border-left: 3px solid var(--accent);
+  color: var(--ink-2);
+  font-style: italic;
+}
+
+.prose blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Media */
+.prose img,
+.prose svg {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-card);
+}
+
+.prose figure {
+  margin: 0 0 var(--space-4);
+}
+
+.prose figcaption {
+  margin-top: var(--space-2);
+  font-size: var(--text-caption);
+  color: var(--ink-2);
+  text-align: center;
+}
+
+.prose hr {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: var(--space-6) 0;
+}
+
+/* Links: underline for visibility without relying on color alone. Inline
+   text links are exempt from the 44px touch-target minimum (standard
+   accepted exception for running text; the target itself — one word — is
+   still individually tappable and surrounded by line-height padding). */
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.prose a:hover {
+  text-decoration-thickness: 2px;
+}
+
+.prose strong {
+  font-weight: 700;
+}
+
+.prose em {
+  font-style: italic;
+}

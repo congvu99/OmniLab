@@ -1,0 +1,124 @@
+/*
+ * Design tokens — single source of truth for color, spacing, type, motion.
+ * Components MUST only reference these custom properties, never raw hex or
+ * bare px magic numbers for color/spacing/radius/duration.
+ *
+ * Dark mode: driven entirely by `@media (prefers-color-scheme: dark)` — no
+ * manual toggle/class (product decision, see plan.md "Decisions đã chốt").
+ *
+ * Domain accent: `--domain-accent` / `--domain-accent-dark` are set as an
+ * inline style on the layout root (see app-layout.astro / reader-layout.astro
+ * `domainAccent` / `domainAccentDark` props) per content YAML. `--accent`
+ * resolves to the light or dark variant depending on system theme, with a
+ * neutral fallback (Kiến trúc indigo) when a page has no domain context
+ * (e.g. Tìm kiếm, Đã lưu). Contrast for both domain accents verified
+ * ≥4.5:1 against surface/bg in light AND dark — see phase-02 report.
+ */
+
+:root {
+  /* --- Color: light (default) --- */
+  --bg: #F7F6F2;
+  --surface: #FFFFFF;
+  --surface-2: #EFEDE7;
+  --ink: #1C1F24;
+  --ink-2: #5A606B;
+  --line: #E3E0D8;
+
+  --domain-accent: #4F46E5;
+  --domain-accent-dark: #A5B4FC;
+  --accent: var(--domain-accent, #4F46E5);
+  --accent-on: #FFFFFF; /* text/icon color placed on top of a solid --accent fill */
+
+  /* Named per-domain accents (plan.md "Decisions đã chốt"), for the rare case
+     a component must show >1 domain's color at once (e.g. the /linh-vuc list
+     — each card needs its own domain's color simultaneously, so the single
+     current-page --domain-accent slot doesn't apply). Everywhere else, use
+     --accent via the layout's domainAccent/domainAccentDark props instead. */
+  --domain-kien-truc-accent: #4F46E5;
+  --domain-kien-truc-accent-dark: #A5B4FC;
+  --domain-tai-chinh-accent: #1F7A5A;
+  --domain-tai-chinh-accent-dark: #6EE7B7;
+
+  --danger: #B3261E;
+  --success: #1F7A5A;
+
+  /* Translucent veil for fixed bars (tab bar, reader top bar): mostly-opaque
+     so contrast stays effectively identical to --surface, with backdrop-filter
+     blur as a purely decorative layer-separation cue (spec: "blur nền nhẹ
+     chỉ để tách lớp"). Raw rgba lives here only — components read the token. */
+  --surface-veil: rgba(255, 255, 255, 0.86);
+
+  /* --- Radius --- */
+  --radius-card: 16px;
+  --radius-row: 12px; /* also used for buttons/inputs — one control radius, no extra token */
+  --radius-full: 999px;
+
+  /* --- Spacing: 4pt grid --- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* --- Motion --- */
+  --dur-fast: 150ms;
+  --dur: 250ms;
+  --dur-exit: 170ms; /* view-transition exit is shorter than enter (~68% of --dur) */
+  --ease-out: cubic-bezier(.2, .8, .2, 1); /* entering content */
+  --ease-in: cubic-bezier(.4, 0, 1, 1); /* exiting content */
+
+  /* --- Type --- */
+  --font-ui: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+
+  --text-caption: 13px;
+  --text-footnote: 15px;
+  --text-body: 17px;
+  --text-title3: 20px;
+  --text-title2: 22px;
+  --text-title1: 28px;
+  --text-large: 34px;
+
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.7; /* long-form reading measure, see prose.css */
+
+  /* --- Z-index scale --- */
+  --z-nav: 100; /* tab bar / sidebar / reader top bar */
+  --z-overlay: 200;
+  --z-toast: 300;
+
+  /* --- Elevation (flat design, used sparingly: card separation only) --- */
+  --shadow-card: 0 1px 2px rgba(28, 31, 36, 0.06), 0 1px 1px rgba(28, 31, 36, 0.04);
+
+  /* --- Shell layout constants (shared by tab-bar / sidebar-nav / headers so
+     app-layout's content insets never drift out of sync with the nav's own
+     CSS) --- */
+  --shell-navbar-h: 44px; /* iOS standard nav-bar height, excl. safe-area */
+  --shell-tabbar-h: 56px; /* excl. safe-area-inset-bottom */
+  --shell-sidebar-w: 240px; /* >=1024px only */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111315;
+    --surface: #1A1D21;
+    --surface-2: #22262B;
+    --ink: #F2F1ED;
+    --ink-2: #A7ACB6;
+    --line: #2C3036;
+
+    --accent: var(--domain-accent-dark, #A5B4FC);
+    --accent-on: #111315; /* light accent tints need dark text/icon on top */
+
+    --danger: #F2A29C;
+    --success: #6EE7B7;
+
+    --surface-veil: rgba(26, 29, 33, 0.82);
+
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 1px rgba(0, 0, 0, 0.3);
+  }
+}

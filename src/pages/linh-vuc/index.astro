@@ -1,0 +1,76 @@
+---
+// "Lĩnh vực" tab — placeholder cards for the 2 domains. Phase 4 replaces this
+// with real data from the content collection (progress %, lesson counts,
+// real hrefs into /linh-vuc/<slug>). Not linked yet on purpose: there is no
+// domain detail route to send users to until then, and a dead link would be
+// worse than a clearly-labeled "coming soon" card.
+import AppLayout from '../../layouts/app-layout.astro';
+import BuildingComplex from '@lucide/astro/icons/building-complex';
+import Landmark from '@lucide/astro/icons/landmark';
+---
+
+<AppLayout title="Lĩnh vực - OmniLab" largeTitle="Lĩnh vực">
+  <ul class="domain-list">
+    <li class="domain-card" style="--card-accent:var(--domain-kien-truc-accent);--card-accent-dark:var(--domain-kien-truc-accent-dark)">
+      <BuildingComplex size={28} stroke-width={1.75} aria-hidden="true" />
+      <div class="domain-copy">
+        <p class="domain-name">Kiến trúc hệ thống</p>
+        <p class="domain-note">Sắp có nội dung</p>
+      </div>
+    </li>
+    <li class="domain-card" style="--card-accent:var(--domain-tai-chinh-accent);--card-accent-dark:var(--domain-tai-chinh-accent-dark)">
+      <Landmark size={28} stroke-width={1.75} aria-hidden="true" />
+      <div class="domain-copy">
+        <p class="domain-name">Tài chính</p>
+        <p class="domain-note">Sắp có nội dung</p>
+      </div>
+    </li>
+  </ul>
+</AppLayout>
+
+<style>
+  .domain-list {
+    margin: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .domain-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: var(--surface);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    color: var(--card-accent);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .domain-card {
+      color: var(--card-accent-dark);
+    }
+  }
+
+  .domain-copy {
+    color: var(--ink);
+  }
+
+  .domain-name {
+    font-size: var(--text-title3);
+    font-weight: 700;
+  }
+
+  .domain-note {
+    font-size: var(--text-footnote);
+    color: var(--ink-2);
+  }
+
+  @media (min-width: 768px) {
+    .domain-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

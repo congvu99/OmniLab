@@ -28,7 +28,7 @@ Cổng chất lượng trước khi công bố: build gates, Lighthouse, a11y, t
 
 ## Implementation Steps
 1. Chạy `pnpm check` + `pnpm build` sạch.
-2. Lighthouse mobile trên 4 trang: `/`, `/linh-vuc/kien-truc`, `/hoc/kien-truc/database` (dài nhất), `/tim-kiem`; sửa đến khi đạt.
+2. Lighthouse mobile trên 4 trang: `/`, `/linh-vuc/kien-truc`, `/hoc/kien-truc/chu-de/database` (dài nhất), `/tim-kiem`; sửa đến khi đạt.
 3. A11y: axe DevTools + VoiceOver iOS trên reader và tab bar; focus ring, `aria-current`, `aria-pressed`, heading tuần tự.
 4. iPhone thật: standalone, safe-area, dark mode, reduced motion, Dynamic Type lớn nhất (text không bị cắt), xoay ngang.
 5. Test "thêm lĩnh vực demo" (AC #7) rồi xoá.

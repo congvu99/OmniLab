@@ -1,0 +1,92 @@
+---
+// iOS-style large title (34px) that collapses into a small 17px title inside
+// a sticky nav bar once scrolled past, via IntersectionObserver (no scroll
+// listener). Used by app-layout.astro for the 4 top-level tab pages.
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<header class="lth-navbar" data-lth-navbar>
+  <div class="lth-navbar-inner">
+    <span class="lth-navbar-title" data-lth-navbar-title>{title}</span>
+  </div>
+</header>
+<div class="lth-block">
+  <h1 class="lth-title">{title}</h1>
+  <span class="lth-sentinel" data-lth-sentinel aria-hidden="true"></span>
+</div>
+
+<style>
+  .lth-navbar {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-nav);
+    padding-top: env(safe-area-inset-top);
+    background: var(--surface-veil);
+    backdrop-filter: blur(20px) saturate(1.4);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--dur) var(--ease-out);
+  }
+
+  .lth-navbar[data-collapsed='true'] {
+    border-bottom-color: var(--line);
+  }
+
+  .lth-navbar-inner {
+    height: var(--shell-navbar-h);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-inline: var(--space-4);
+  }
+
+  .lth-navbar-title {
+    font-size: var(--text-body);
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity var(--dur-fast) var(--ease-out);
+    text-align: center;
+  }
+
+  .lth-navbar[data-collapsed='true'] .lth-navbar-title {
+    opacity: 1;
+  }
+
+  .lth-block {
+    padding: 0 var(--space-4) var(--space-3);
+  }
+
+  .lth-title {
+    font-size: var(--text-large);
+    font-weight: 700;
+    line-height: 1.15;
+    padding-top: var(--space-3);
+  }
+
+  .lth-sentinel {
+    display: block;
+    height: 1px;
+  }
+</style>
+
+<script>
+  // One large-title-header instance per page (iOS large-title pattern is a
+  // single per-screen header) — plain querySelector is enough, no scoping.
+  const navbar = document.querySelector<HTMLElement>('[data-lth-navbar]');
+  const sentinel = document.querySelector<HTMLElement>('[data-lth-sentinel]');
+
+  if (navbar && sentinel && 'IntersectionObserver' in window) {
+    const navbarHeight = 44; // keep in sync with --shell-navbar-h in tokens.css
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        navbar.dataset.collapsed = entry.isIntersecting ? 'false' : 'true';
+      },
+      { rootMargin: `-${navbarHeight}px 0px 0px 0px`, threshold: 0 },
+    );
+    observer.observe(sentinel);
+  }
+</script>

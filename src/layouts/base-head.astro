@@ -1,0 +1,53 @@
+---
+// Shared <head> contents for app-layout.astro and reader-layout.astro — kept
+// in one place so fonts/manifest/meta never drift between the two shells.
+// Renders only <head> children; the <html>/<head> tags themselves live in
+// each layout because that's where the domain-accent inline style (see
+// domain-accent.ts) has to be attached to <html>.
+import '@fontsource/be-vietnam-pro/latin-400.css';
+import '@fontsource/be-vietnam-pro/latin-500.css';
+import '@fontsource/be-vietnam-pro/latin-600.css';
+import '@fontsource/be-vietnam-pro/latin-700.css';
+import '@fontsource/be-vietnam-pro/vietnamese-400.css';
+import '@fontsource/be-vietnam-pro/vietnamese-500.css';
+import '@fontsource/be-vietnam-pro/vietnamese-600.css';
+import '@fontsource/be-vietnam-pro/vietnamese-700.css';
+import '@fontsource/jetbrains-mono/latin-400.css';
+import '@fontsource/jetbrains-mono/vietnamese-400.css';
+import '../styles/tokens.css';
+import '../styles/base.css';
+import '../styles/view-transitions.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'OmniLab - ứng dụng học tập đa lĩnh vực.' } = Astro.props;
+---
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="description" content={description} />
+<title>{title}</title>
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+<link rel="manifest" href="/manifest.webmanifest" />
+
+<!-- theme-color follows system light/dark, matches --bg in tokens.css -->
+<meta name="theme-color" content="#F7F6F2" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#111315" media="(prefers-color-scheme: dark)" />
+
+<!-- iOS "Add to Home Screen" standalone behavior.
+     status-bar-style: "default" (not "black-translucent") — deliberate:
+     black-translucent forces WHITE status bar icons on iOS with no way to
+     flip them per-theme, which would be unreadable against our light theme's
+     near-white background at the top of the screen. "default" lets iOS
+     manage the status bar as normal opaque chrome instead, avoiding that
+     permanent contrast failure; env(safe-area-inset-*) in the shell
+     components still degrades to 0 harmlessly in this mode. -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="OmniLab" />
+<meta name="mobile-web-app-capable" content="yes" />

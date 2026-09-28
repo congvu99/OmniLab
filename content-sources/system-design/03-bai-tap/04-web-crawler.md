@@ -1,0 +1,427 @@
+---
+nguon: The System Design Primer - bài giải "Design a web crawler"
+tac-gia: Donne Martin và cộng đồng đóng góp
+link-goc: ../../solutions/system_design/web_crawler/README.md
+ngay-dich: 2026-09-28
+trang-thai: hoan-thanh
+---
+
+# Thiết kế một web crawler
+
+## Nội dung gốc
+
+*Lưu ý: Tài liệu này liên kết trực tiếp tới các phần liên quan trong [các chủ đề system design](../../README.md#index-of-system-design-topics) để tránh lặp lại. Hãy tham khảo nội dung được liên kết để nắm các điểm thảo luận chung, các đánh đổi (tradeoff) và phương án thay thế.*
+
+## Bước 1: Phác thảo các trường hợp sử dụng và ràng buộc
+
+> Thu thập yêu cầu và khoanh vùng bài toán.
+> Đặt câu hỏi để làm rõ các trường hợp sử dụng (use case) và ràng buộc (constraint).
+> Thảo luận các giả định.
+
+Vì không có người phỏng vấn để trả lời các câu hỏi làm rõ, chúng ta sẽ tự định nghĩa một số trường hợp sử dụng và ràng buộc.
+
+### Các trường hợp sử dụng
+
+#### Chúng ta khoanh vùng bài toán, chỉ xử lý các trường hợp sử dụng sau
+
+* **Dịch vụ** thu thập (crawl) một danh sách url:
+    * Tạo chỉ mục ngược (reverse index) ánh xạ từ các từ tới những trang chứa từ khóa tìm kiếm
+    * Tạo tiêu đề (title) và đoạn trích (snippet) cho các trang
+        * Tiêu đề và đoạn trích là tĩnh, chúng không thay đổi theo truy vấn tìm kiếm
+* **Người dùng** nhập một từ khóa tìm kiếm và thấy danh sách các trang liên quan cùng tiêu đề và đoạn trích mà crawler đã tạo
+    * Chỉ phác thảo các thành phần tổng quan và tương tác cho trường hợp sử dụng này, không cần đi sâu
+* **Dịch vụ** có tính sẵn sàng cao (high availability)
+
+#### Ngoài phạm vi
+
+* Phân tích số liệu tìm kiếm (search analytics)
+* Kết quả tìm kiếm cá nhân hóa
+* Page rank
+
+### Ràng buộc và giả định
+
+#### Nêu các giả định
+
+* Lưu lượng truy cập không phân bố đều
+    * Một số truy vấn tìm kiếm rất phổ biến, trong khi số khác chỉ được thực hiện một lần
+* Chỉ hỗ trợ người dùng ẩn danh
+* Tạo kết quả tìm kiếm phải nhanh
+* Web crawler không được mắc kẹt trong vòng lặp vô hạn
+    * Chúng ta sẽ mắc kẹt trong vòng lặp vô hạn nếu đồ thị có chu trình (cycle)
+* 1 tỷ liên kết cần crawl
+    * Các trang cần được crawl định kỳ để đảm bảo độ tươi mới (freshness)
+    * Tần suất làm mới trung bình khoảng một lần mỗi tuần, thường xuyên hơn với các trang phổ biến
+        * 4 tỷ liên kết được crawl mỗi tháng
+    * Kích thước lưu trữ trung bình mỗi trang web: 500 KB
+        * Để đơn giản, tính các thay đổi giống như trang mới
+* 100 tỷ lượt tìm kiếm mỗi tháng
+
+Hãy luyện tập dùng các hệ thống truyền thống hơn - không dùng các hệ thống có sẵn như [solr](http://lucene.apache.org/solr/) hoặc [nutch](http://nutch.apache.org/).
+
+#### Tính toán mức sử dụng
+
+**Hãy hỏi rõ người phỏng vấn xem bạn có nên thực hiện các phép ước lượng nhanh (back-of-the-envelope) hay không.**
+
+* 2 PB nội dung trang được lưu mỗi tháng
+    * 500 KB mỗi trang * 4 tỷ liên kết được crawl mỗi tháng
+    * 72 PB nội dung trang được lưu trong 3 năm
+* 1.600 yêu cầu ghi mỗi giây
+* 40.000 yêu cầu tìm kiếm mỗi giây
+
+Bảng quy đổi tiện dụng:
+
+* 2,5 triệu giây mỗi tháng
+* 1 yêu cầu mỗi giây = 2,5 triệu yêu cầu mỗi tháng
+* 40 yêu cầu mỗi giây = 100 triệu yêu cầu mỗi tháng
+* 400 yêu cầu mỗi giây = 1 tỷ yêu cầu mỗi tháng
+
+## Bước 2: Tạo thiết kế tổng quan
+
+> Phác thảo thiết kế tổng quan (high level design) với tất cả các thành phần quan trọng.
+
+![Thiết kế tổng quan web crawler](../../solutions/system_design/web_crawler/web_crawler_basic.png)
+
+## Bước 3: Thiết kế các thành phần cốt lõi
+
+> Đi sâu vào chi tiết từng thành phần cốt lõi.
+
+### Trường hợp sử dụng: Dịch vụ crawl một danh sách url
+
+Giả sử ta có một danh sách ban đầu `links_to_crawl` được xếp hạng dựa trên mức độ phổ biến chung của trang web. Nếu đây không phải giả định hợp lý, ta có thể khởi tạo (seed) crawler bằng các trang phổ biến có liên kết tới nội dung bên ngoài như [Yahoo](https://www.yahoo.com/), [DMOZ](http://www.dmoz.org/), v.v.
+
+Chúng ta sẽ dùng bảng `crawled_links` để lưu các liên kết đã xử lý và chữ ký trang (page signature) của chúng.
+
+Ta có thể lưu `links_to_crawl` và `crawled_links` trong một **cơ sở dữ liệu NoSQL** dạng khóa-giá trị (key-value). Với các liên kết đã xếp hạng trong `links_to_crawl`, ta có thể dùng [Redis](https://redis.io/) với sorted set để duy trì thứ hạng của các liên kết trang. Chúng ta nên thảo luận về [các trường hợp sử dụng và đánh đổi giữa việc chọn SQL hay NoSQL](../02-chu-de/06-database.md).
+
+* **Crawler Service** xử lý từng liên kết trang bằng cách thực hiện các việc sau trong một vòng lặp:
+    * Lấy liên kết trang có thứ hạng cao nhất cần crawl
+        * Kiểm tra `crawled_links` trong **cơ sở dữ liệu NoSQL** xem có bản ghi nào có chữ ký trang tương tự không
+            * Nếu đã có trang tương tự, giảm độ ưu tiên của liên kết trang này
+                * Điều này giúp ta tránh rơi vào chu trình
+                * Tiếp tục (continue)
+            * Ngược lại, crawl liên kết đó
+                * Thêm một tác vụ (job) vào hàng đợi của **Reverse Index Service** để tạo [chỉ mục ngược](https://en.wikipedia.org/wiki/Search_engine_indexing)
+                * Thêm một tác vụ vào hàng đợi của **Document Service** để tạo tiêu đề và đoạn trích tĩnh
+                * Tạo chữ ký trang
+                * Xóa liên kết khỏi `links_to_crawl` trong **cơ sở dữ liệu NoSQL**
+                * Chèn liên kết trang và chữ ký vào `crawled_links` trong **cơ sở dữ liệu NoSQL**
+
+**Hãy hỏi rõ người phỏng vấn bạn cần viết bao nhiêu code**.
+
+`PagesDataStore` là một lớp trừu tượng bên trong **Crawler Service**, sử dụng **cơ sở dữ liệu NoSQL**:
+
+```python
+class PagesDataStore(object):
+
+    def __init__(self, db);
+        self.db = db
+        ...
+
+    def add_link_to_crawl(self, url):
+        """Thêm liên kết đã cho vào `links_to_crawl`."""
+        ...
+
+    def remove_link_to_crawl(self, url):
+        """Xóa liên kết đã cho khỏi `links_to_crawl`."""
+        ...
+
+    def reduce_priority_link_to_crawl(self, url)
+        """Giảm độ ưu tiên của một liên kết trong `links_to_crawl` để tránh chu trình."""
+        ...
+
+    def extract_max_priority_page(self):
+        """Trả về liên kết có độ ưu tiên cao nhất trong `links_to_crawl`."""
+        ...
+
+    def insert_crawled_link(self, url, signature):
+        """Thêm liên kết đã cho vào `crawled_links`."""
+        ...
+
+    def crawled_similar(self, signature):
+        """Xác định xem ta đã crawl một trang khớp với chữ ký đã cho hay chưa"""
+        ...
+```
+
+`Page` là một lớp trừu tượng bên trong **Crawler Service**, đóng gói một trang, nội dung của trang, các url con và chữ ký:
+
+```python
+class Page(object):
+
+    def __init__(self, url, contents, child_urls, signature):
+        self.url = url
+        self.contents = contents
+        self.child_urls = child_urls
+        self.signature = signature
+```
+
+`Crawler` là lớp chính bên trong **Crawler Service**, được cấu thành từ `Page` và `PagesDataStore`.
+
+```python
+class Crawler(object):
+
+    def __init__(self, data_store, reverse_index_queue, doc_index_queue):
+        self.data_store = data_store
+        self.reverse_index_queue = reverse_index_queue
+        self.doc_index_queue = doc_index_queue
+
+    def create_signature(self, page):
+        """Tạo chữ ký dựa trên url và nội dung."""
+        ...
+
+    def crawl_page(self, page):
+        for url in page.child_urls:
+            self.data_store.add_link_to_crawl(url)
+        page.signature = self.create_signature(page)
+        self.data_store.remove_link_to_crawl(page.url)
+        self.data_store.insert_crawled_link(page.url, page.signature)
+
+    def crawl(self):
+        while True:
+            page = self.data_store.extract_max_priority_page()
+            if page is None:
+                break
+            if self.data_store.crawled_similar(page.signature):
+                self.data_store.reduce_priority_link_to_crawl(page.url)
+            else:
+                self.crawl_page(page)
+```
+
+Mã nguồn đầy đủ của các đoạn trên: [web_crawler_snippets.py](../../solutions/system_design/web_crawler/web_crawler_snippets.py).
+
+### Xử lý trùng lặp
+
+Chúng ta cần cẩn thận để web crawler không mắc kẹt trong vòng lặp vô hạn, điều xảy ra khi đồ thị có chu trình.
+
+**Hãy hỏi rõ người phỏng vấn bạn cần viết bao nhiêu code**.
+
+Chúng ta sẽ muốn loại bỏ các url trùng lặp:
+
+* Với danh sách nhỏ, ta có thể dùng thứ như `sort | unique`
+* Với 1 tỷ liên kết cần crawl, ta có thể dùng **MapReduce** để chỉ xuất ra các mục có tần suất bằng 1
+
+```python
+class RemoveDuplicateUrls(MRJob):
+
+    def mapper(self, _, line):
+        yield line, 1
+
+    def reducer(self, key, values):
+        total = sum(values)
+        if total == 1:
+            yield key, total
+```
+
+Mã nguồn đầy đủ: [web_crawler_mapreduce.py](../../solutions/system_design/web_crawler/web_crawler_mapreduce.py).
+
+Phát hiện nội dung trùng lặp phức tạp hơn. Ta có thể tạo chữ ký dựa trên nội dung trang rồi so sánh hai chữ ký để đo độ tương tự. Một số thuật toán có thể dùng là [chỉ số Jaccard (Jaccard index)](https://en.wikipedia.org/wiki/Jaccard_index) và [độ tương tự cosin (cosine similarity)](https://en.wikipedia.org/wiki/Cosine_similarity).
+
+### Xác định khi nào cập nhật kết quả crawl
+
+Các trang cần được crawl định kỳ để đảm bảo độ tươi mới. Kết quả crawl có thể có một trường `timestamp` cho biết lần cuối trang được crawl. Sau một khoảng thời gian mặc định, chẳng hạn một tuần, mọi trang nên được làm mới. Các trang cập nhật thường xuyên hoặc phổ biến hơn có thể được làm mới với chu kỳ ngắn hơn.
+
+Dù không đi sâu vào phân tích số liệu, ta có thể khai phá dữ liệu (data mining) để xác định thời gian trung bình trước khi một trang cụ thể được cập nhật, và dùng thống kê đó để quyết định tần suất crawl lại trang.
+
+Ta cũng có thể chọn hỗ trợ file `Robots.txt`, cho phép quản trị viên trang web (webmaster) kiểm soát tần suất crawl.
+
+### Trường hợp sử dụng: Người dùng nhập một từ khóa tìm kiếm và thấy danh sách các trang liên quan cùng tiêu đề và đoạn trích
+
+* **Client** gửi yêu cầu tới **Web Server**, vốn đang chạy như một [reverse proxy](../02-chu-de/04-reverse-proxy.md)
+* **Web Server** chuyển tiếp yêu cầu tới máy chủ **Query API**
+* Máy chủ **Query API** thực hiện các việc sau:
+    * Phân tích cú pháp (parse) truy vấn
+        * Loại bỏ markup
+        * Tách văn bản thành các từ (term)
+        * Sửa lỗi chính tả
+        * Chuẩn hóa chữ hoa chữ thường
+        * Chuyển truy vấn sang dạng dùng các phép toán boolean
+    * Dùng **Reverse Index Service** để tìm các tài liệu khớp với truy vấn
+        * **Reverse Index Service** xếp hạng các kết quả khớp và trả về những kết quả đứng đầu
+    * Dùng **Document Service** để trả về tiêu đề và đoạn trích
+
+Chúng ta sẽ dùng một [**REST API**](../02-chu-de/09-communication.md) công khai:
+
+```
+$ curl https://search.com/api/v1/search?query=hello+world
+```
+
+Phản hồi:
+
+```
+{
+    "title": "foo's title",
+    "snippet": "foo's snippet",
+    "link": "https://foo.com",
+},
+{
+    "title": "bar's title",
+    "snippet": "bar's snippet",
+    "link": "https://bar.com",
+},
+{
+    "title": "baz's title",
+    "snippet": "baz's snippet",
+    "link": "https://baz.com",
+},
+```
+
+Với giao tiếp nội bộ, chúng ta có thể dùng [lời gọi thủ tục từ xa (Remote Procedure Call - RPC)](../02-chu-de/09-communication.md).
+
+## Bước 4: Mở rộng thiết kế
+
+> Xác định và xử lý các điểm nghẽn (bottleneck), dựa trên các ràng buộc.
+
+![Thiết kế web crawler sau khi mở rộng](../../solutions/system_design/web_crawler/web_crawler.png)
+
+**Quan trọng: Đừng nhảy thẳng từ thiết kế ban đầu sang thiết kế cuối cùng!**
+
+Hãy nói rằng bạn sẽ 1) **Benchmark/kiểm thử tải (Load Test)**, 2) **Profile** để tìm điểm nghẽn, 3) xử lý các điểm nghẽn trong khi đánh giá các phương án thay thế và đánh đổi, và 4) lặp lại. Xem [Thiết kế một hệ thống mở rộng tới hàng triệu người dùng trên AWS](02-scaling-aws.md) để có ví dụ về cách mở rộng thiết kế ban đầu theo từng bước lặp.
+
+Điều quan trọng là thảo luận những điểm nghẽn bạn có thể gặp với thiết kế ban đầu và cách xử lý từng điểm. Ví dụ, việc thêm một **bộ cân bằng tải (Load Balancer)** với nhiều **Web Server** giải quyết được vấn đề gì? **CDN**? **Bản sao Master-Slave (Master-Slave Replicas)**? Mỗi thứ có những phương án thay thế và **đánh đổi** nào?
+
+Chúng ta sẽ đưa vào một số thành phần để hoàn thiện thiết kế và xử lý các vấn đề về khả năng mở rộng. Các bộ cân bằng tải nội bộ không được vẽ ra để hình đỡ rối.
+
+*Để tránh lặp lại các thảo luận*, hãy tham khảo các [chủ đề system design](../../README.md#index-of-system-design-topics) sau để nắm các điểm thảo luận chính, đánh đổi và phương án thay thế:
+
+* [DNS](../02-chu-de/01-dns.md)
+* [Bộ cân bằng tải (Load balancer)](../02-chu-de/03-load-balancer.md)
+* [Mở rộng theo chiều ngang (Horizontal scaling)](../02-chu-de/03-load-balancer.md)
+* [Web server (reverse proxy)](../02-chu-de/04-reverse-proxy.md)
+* [API server (tầng ứng dụng - application layer)](../02-chu-de/05-application-layer.md)
+* [Bộ nhớ đệm (Cache)](../02-chu-de/07-cache.md)
+* [NoSQL](../02-chu-de/06-database.md)
+* [Các mẫu nhất quán (Consistency patterns)](../01-danh-doi/04-consistency-patterns.md)
+* [Các mẫu sẵn sàng (Availability patterns)](../01-danh-doi/05-availability-patterns.md)
+
+Một số truy vấn tìm kiếm rất phổ biến, trong khi số khác chỉ được thực hiện một lần. Các truy vấn phổ biến có thể được phục vụ từ một **Memory Cache** như Redis hoặc Memcached để giảm thời gian phản hồi và tránh làm quá tải **Reverse Index Service** và **Document Service**. **Memory Cache** cũng hữu ích để xử lý lưu lượng phân bố không đều và các đợt tăng đột biến (traffic spike). Đọc tuần tự 1 MB từ bộ nhớ mất khoảng 250 micro giây, trong khi đọc từ SSD lâu hơn 4 lần và từ ổ đĩa cứng lâu hơn 80 lần.<sup><a href=../../README.md#latency-numbers-every-programmer-should-know>1</a></sup>
+
+Dưới đây là một vài tối ưu khác cho **Crawling Service**:
+
+* Để xử lý kích thước dữ liệu và tải yêu cầu, **Reverse Index Service** và **Document Service** nhiều khả năng cần dùng nhiều phân mảnh (sharding) và liên hợp (federation).
+* Tra cứu DNS có thể là điểm nghẽn, **Crawler Service** có thể tự duy trì bộ tra cứu DNS riêng được làm mới định kỳ
+* **Crawler Service** có thể cải thiện hiệu năng và giảm sử dụng bộ nhớ bằng cách giữ nhiều kết nối mở cùng lúc, gọi là [connection pooling](https://en.wikipedia.org/wiki/Connection_pool)
+    * Chuyển sang [UDP](../02-chu-de/09-communication.md) cũng có thể tăng hiệu năng
+* Crawl web tiêu tốn nhiều băng thông, hãy đảm bảo có đủ băng thông để duy trì thông lượng cao
+
+## Các điểm thảo luận bổ sung
+
+> Các chủ đề bổ sung để đi sâu, tùy theo phạm vi bài toán và thời gian còn lại.
+
+### Các mẫu mở rộng SQL
+
+* [Bản sao đọc (Read replicas)](../02-chu-de/06-database.md)
+* [Liên hợp (Federation)](../02-chu-de/06-database.md)
+* [Phân mảnh (Sharding)](../02-chu-de/06-database.md)
+* [Phi chuẩn hóa (Denormalization)](../02-chu-de/06-database.md)
+* [Tinh chỉnh SQL (SQL Tuning)](../02-chu-de/06-database.md)
+
+#### NoSQL
+
+* [Kho khóa-giá trị (Key-value store)](../02-chu-de/06-database.md)
+* [Kho tài liệu (Document store)](../02-chu-de/06-database.md)
+* [Kho cột rộng (Wide column store)](../02-chu-de/06-database.md)
+* [Cơ sở dữ liệu đồ thị (Graph database)](../02-chu-de/06-database.md)
+* [SQL hay NoSQL](../02-chu-de/06-database.md)
+
+### Bộ nhớ đệm (Caching)
+
+* Cache ở đâu
+    * [Cache phía client (Client caching)](../02-chu-de/07-cache.md)
+    * [Cache ở CDN (CDN caching)](../02-chu-de/07-cache.md)
+    * [Cache ở web server (Web server caching)](../02-chu-de/07-cache.md)
+    * [Cache ở cơ sở dữ liệu (Database caching)](../02-chu-de/07-cache.md)
+    * [Cache ở tầng ứng dụng (Application caching)](../02-chu-de/07-cache.md)
+* Cache cái gì
+    * [Cache ở mức truy vấn cơ sở dữ liệu](../02-chu-de/07-cache.md)
+    * [Cache ở mức đối tượng](../02-chu-de/07-cache.md)
+* Khi nào cập nhật cache
+    * [Cache-aside](../02-chu-de/07-cache.md)
+    * [Write-through](../02-chu-de/07-cache.md)
+    * [Write-behind (write-back)](../02-chu-de/07-cache.md)
+    * [Refresh ahead](../02-chu-de/07-cache.md)
+
+### Bất đồng bộ và microservices
+
+* [Hàng đợi thông điệp (Message queues)](../02-chu-de/08-asynchronism.md)
+* [Hàng đợi tác vụ (Task queues)](../02-chu-de/08-asynchronism.md)
+* [Áp lực ngược (Back pressure)](../02-chu-de/08-asynchronism.md)
+* [Microservices](../02-chu-de/05-application-layer.md)
+
+### Giao tiếp
+
+* Thảo luận các đánh đổi:
+    * Giao tiếp bên ngoài với client - [HTTP API theo kiểu REST](../02-chu-de/09-communication.md)
+    * Giao tiếp nội bộ - [RPC](../02-chu-de/09-communication.md)
+* [Khám phá dịch vụ (Service discovery)](../02-chu-de/05-application-layer.md)
+
+### Bảo mật
+
+Tham khảo [mục bảo mật](../02-chu-de/10-security.md).
+
+### Các con số độ trễ
+
+Xem [Các con số độ trễ mà mọi lập trình viên nên biết (Latency numbers every programmer should know)](../../README.md#latency-numbers-every-programmer-should-know).
+
+### Liên tục
+
+* Tiếp tục benchmark và giám sát hệ thống để xử lý các điểm nghẽn khi chúng xuất hiện
+* Mở rộng là một quá trình lặp đi lặp lại
+
+---
+
+## Ghi chú của người dịch
+
+**1. Lỗi trong các đoạn code của bài gốc (giữ nguyên trong bản dịch để trung thành)**
+
+- `def __init__(self, db);` dùng dấu chấm phẩy thay vì dấu hai chấm, và `def reduce_priority_link_to_crawl(self, url)` thiếu dấu hai chấm - đây là lỗi cú pháp Python. File [web_crawler_snippets.py](../../solutions/system_design/web_crawler/web_crawler_snippets.py) trong repo đã viết đúng.
+- Lỗi logic trong `crawl()`: vòng lặp gọi `crawled_similar(page.signature)` **trước khi** trang được tải và chữ ký được tạo (chữ ký chỉ được gán trong `crawl_page`). Trong thực tế thứ tự đúng là: lấy URL → kiểm tra URL đã thấy chưa → tải trang → tạo chữ ký từ nội dung → kiểm tra nội dung trùng → nếu mới thì trích link con, đẩy vào hàng đợi index. Nên chỉ ra điểm này nếu được yêu cầu viết code.
+- Code cũng chưa hề đẩy tác vụ vào `reverse_index_queue` và `doc_index_queue` dù phần mô tả có nói - đây là phần bị lược bớt.
+- **MapReduce loại trùng bị sai ý**: reducer chỉ xuất các URL có tần suất bằng 1, tức là URL nào xuất hiện từ hai lần trở lên sẽ **bị bỏ hẳn** chứ không phải giữ lại một bản. Muốn loại trùng thì reducer phải xuất mọi `key` đúng một lần (bỏ điều kiện `if total == 1`). Đây là chỗ đáng để ý khi luyện đề.
+
+**2. Tính lịch sự (politeness) và robots.txt - điểm bài gốc chỉ nhắc qua**
+
+Bài gốc chỉ nói "có thể chọn hỗ trợ `Robots.txt`". Trong thiết kế crawler thật, đây là **bắt buộc**, và người phỏng vấn gần như chắc chắn hỏi:
+
+- **robots.txt** đã được chuẩn hóa thành RFC 9309 (2022). Crawler phải tải và cache robots.txt cho từng host, tôn trọng `Disallow`/`Allow` theo user-agent. Lưu ý chỉ thị `Crawl-delay` **không nằm trong RFC 9309** - một số crawler tôn trọng, Googlebot thì không.
+- **Giới hạn tốc độ theo host**: không bao giờ gửi dồn hàng nghìn yêu cầu vào một máy chủ. Thiết kế kinh điển (Mercator) tách frontier thành hai tầng: hàng đợi ưu tiên (front queues) quyết định *crawl cái gì trước*, và hàng đợi theo host (back queues) quyết định *khi nào được phép gọi host đó tiếp*, mỗi host chỉ do một worker phụ trách tại một thời điểm.
+- Crawler nên khai báo User-Agent rõ ràng kèm địa chỉ liên hệ, lùi lại (back off) khi gặp mã 429/503, và tôn trọng `Retry-After`.
+
+Một sorted set Redis duy nhất như bài gốc gợi ý không mô tả được ràng buộc theo host này - đây là chỗ đơn giản hóa lớn nhất của bài.
+
+**3. Loại trùng URL và nội dung ở quy mô lớn**
+
+- **Chuẩn hóa URL (URL normalization)** trước khi so sánh: chữ thường cho scheme và host, bỏ fragment `#...`, bỏ cổng mặc định, sắp xếp hoặc loại tham số theo dõi (`utm_*`), xử lý `rel="canonical"`. Không chuẩn hóa thì cùng một trang sẽ bị crawl nhiều lần.
+- **Kiểm tra "đã thấy URL chưa"** với hàng tỷ URL thường dùng **Bloom filter** (tiết kiệm bộ nhớ, chấp nhận dương tính giả - tức thỉnh thoảng bỏ sót một URL mới) hoặc tập hash URL phân mảnh, thay vì truy vấn cơ sở dữ liệu cho mỗi link.
+- **Gần trùng nội dung (near-duplicate)**: bài gốc nhắc Jaccard và cosine; trong thực tế người ta không so từng cặp mà dùng **MinHash** (xấp xỉ Jaccard) hoặc **SimHash** (vân tay 64 bit, hai trang gần giống nhau thì khoảng cách Hamming nhỏ), kết hợp LSH để tìm ứng viên nhanh. Trùng tuyệt đối thì chỉ cần hash nội dung (ví dụ SHA-256).
+
+**4. Bẫy crawler (crawler trap) và chu trình**
+
+Chu trình trong đồ thị không phải vấn đề chính (đã có tập URL đã thấy); vấn đề thật là **không gian URL vô hạn**: lịch có nút "tháng sau" vô tận, tham số phiên (session id) trong URL, đường dẫn lặp `/a/a/a/...`, trang sinh động. Các biện pháp: giới hạn độ sâu, giới hạn độ dài URL, giới hạn số trang mỗi host, phát hiện mẫu đường dẫn lặp.
+
+**5. Độ tươi mới: crawl lại thông minh hơn**
+
+- Dùng **conditional GET** (`If-Modified-Since`, `If-None-Match` với `ETag`) để máy chủ trả `304 Not Modified` - tiết kiệm băng thông khi trang không đổi. Giả định của bài "tính thay đổi như trang mới" (500 KB mỗi lần) là cách ước lượng bảo thủ.
+- Dùng **sitemap.xml** (có trường `lastmod`) để phát hiện trang mới/cập nhật mà không cần crawl mù.
+- Ý tưởng "khai phá dữ liệu để ước lượng thời gian trung bình trước khi trang thay đổi" của bài gốc là đúng hướng: tần suất crawl lại tỷ lệ theo tốc độ thay đổi quan sát được và mức quan trọng của trang.
+
+**6. Những chỗ đã lỗi thời hoặc cần hiểu đúng**
+
+- **DMOZ** đã đóng cửa từ năm 2017, link trong bài không còn dùng làm seed được. Nguồn seed/dữ liệu mở hiện nay thường nhắc tới là **Common Crawl** (kho dữ liệu crawl công khai) và danh sách tên miền phổ biến như Tranco.
+- **"Reverse index"** trong bài chính là **chỉ mục đảo (inverted index)** - thuật ngữ chuẩn trong tài liệu truy hồi thông tin.
+- **"Chuyển sang UDP để tăng hiệu năng"** cần hiểu thận trọng: HTTP/1.1 và HTTP/2 chạy trên TCP, crawler không thể tự "chuyển sang UDP" để tải trang. Chỗ UDP hợp lý là **truy vấn DNS** (vốn chạy trên UDP), hoặc HTTP/3 chạy trên QUIC (dựa trên UDP) nếu máy chủ đích hỗ trợ. Nên nói rõ điều này nếu bị hỏi.
+- **Cache DNS riêng** là điểm rất đúng: với hàng nghìn yêu cầu mỗi giây, resolver dùng chung sẽ thành điểm nghẽn; crawler lớn thường chạy resolver cục bộ có cache và tra cứu bất đồng bộ.
+- **Trang dựng bằng JavaScript**: nhiều trang hiện nay chỉ có nội dung sau khi chạy JS. Crawler hiện đại cần một tầng render bằng trình duyệt headless (ví dụ Chromium điều khiển qua Playwright/Puppeteer) - tốn tài nguyên hơn tải HTML thuần hàng chục lần, nên chỉ dùng cho các trang cần thiết. Bài gốc (viết khoảng 2017) không đề cập.
+- **solr/nutch**: bài cấm dùng để luyện thiết kế. Trong thực tế Apache Nutch, StormCrawler, Scrapy (quy mô nhỏ hơn) và Elasticsearch/OpenSearch/Solr cho phần chỉ mục vẫn là các lựa chọn phổ biến.
+
+**7. Kiểm tra lại các con số ước lượng**
+
+- 4 tỷ link/tháng ÷ 2,5 triệu giây/tháng = 1.600 lượt ghi mỗi giây - khớp với bài.
+- 100 tỷ lượt tìm kiếm/tháng ÷ 2,5 triệu = 40.000 yêu cầu mỗi giây - khớp.
+- Băng thông tải về xấp xỉ 1.600 trang/giây * 500 KB ≈ 800 MB/giây, tức khoảng 6,4 Gbps liên tục (phép tính tự làm từ giả định của bài). Con số này minh họa vì sao bài gốc nhấn mạnh "crawl rất tốn băng thông". Thực tế nén HTTP (gzip, brotli) và conditional GET làm giảm đáng kể con số này.
+
+**8. Nối với các mục khác**
+
+- Hàng đợi tác vụ cho Reverse Index Service và Document Service: [Asynchronism](../00-nen-tang/04-asynchronism.md), [Bất đồng bộ](../02-chu-de/08-asynchronism.md).
+- Cache truy vấn phổ biến: [Caches](../00-nen-tang/03-caches.md), [Bộ nhớ đệm](../02-chu-de/07-cache.md).
+- Phân mảnh index và kho tài liệu: [Cơ sở dữ liệu](../02-chu-de/06-database.md).
+- DNS là điểm nghẽn của crawler: [DNS](../02-chu-de/01-dns.md).
+- Kết quả tìm kiếm chấp nhận nhất quán cuối cùng (index cập nhật trễ vài giờ vẫn ổn): [Các mẫu nhất quán](../01-danh-doi/04-consistency-patterns.md).

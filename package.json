@@ -9,9 +9,13 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "node scripts/verify-fidelity.mjs && astro build",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "astro check",
+    "test": "vitest run",
+    "migrate:system-design": "node scripts/migrate-system-design.mjs",
+    "migrate:finance": "node scripts/migrate-finance-html.mjs",
+    "verify:fidelity": "node scripts/verify-fidelity.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.0.2",

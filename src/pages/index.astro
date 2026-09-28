@@ -1,19 +1,56 @@
 ---
-// Placeholder trang chủ. Layout/design system sẽ được thêm ở Phase 2.
-const title = 'OmniLab';
+// "Học tiếp" tab — v1 placeholder: no reading progress yet (Phase 5), so we
+// always show the empty state pointing at Lĩnh vực. Phase 4/5 will swap this
+// for "continue where you left off" once progress tracking exists.
+import AppLayout from '../layouts/app-layout.astro';
+import Compass from '@lucide/astro/icons/compass';
 ---
 
-<html lang="vi">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="description" content="OmniLab - ứng dụng học tập đa lĩnh vực, đang trong quá trình xây dựng." />
-		<title>{title}</title>
-	</head>
-	<body>
-		<main>
-			<h1>OmniLab</h1>
-			<p>Ứng dụng đang được xây dựng. Quay lại sau nhé!</p>
-		</main>
-	</body>
-</html>
+<AppLayout title="OmniLab" largeTitle="Học tiếp">
+  <div class="empty-state">
+    <Compass size={40} stroke-width={1.75} aria-hidden="true" />
+    <p class="empty-title">Chưa có bài đang học</p>
+    <p class="empty-body">Chọn một lĩnh vực để bắt đầu — tiến độ của bạn sẽ hiện ở đây.</p>
+    <a href="/linh-vuc" class="empty-cta tap-scale">Bắt đầu học</a>
+  </div>
+</AppLayout>
+
+<style>
+  .empty-state {
+    margin: var(--space-6) var(--space-4);
+    padding: var(--space-6) var(--space-5);
+    background: var(--surface);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-2);
+    color: var(--ink-2);
+  }
+
+  .empty-title {
+    font-size: var(--text-title3);
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .empty-body {
+    max-width: 32ch;
+  }
+
+  .empty-cta {
+    margin-top: var(--space-3);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 var(--space-5);
+    border-radius: var(--radius-row);
+    background: var(--accent);
+    color: var(--accent-on);
+    font-weight: 600;
+    text-decoration: none;
+  }
+</style>

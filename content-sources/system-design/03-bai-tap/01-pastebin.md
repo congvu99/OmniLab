@@ -1,0 +1,410 @@
+---
+nguon: The System Design Primer - bài giải "Design Pastebin.com (or Bit.ly)"
+tac-gia: Donne Martin và cộng đồng đóng góp
+link-goc: ../../solutions/system_design/pastebin/README.md
+ngay-dich: 2026-09-28
+trang-thai: hoan-thanh
+---
+
+# Thiết kế Pastebin.com (hoặc Bit.ly)
+
+## Nội dung gốc
+
+*Lưu ý: Tài liệu này liên kết thẳng tới các phần liên quan trong [danh mục chủ đề system design](../../README.md#index-of-system-design-topics) để tránh lặp lại. Hãy tham khảo nội dung được liên kết để nắm các ý chính cần trình bày, các đánh đổi (tradeoff) và các phương án thay thế.*
+
+**Thiết kế Bit.ly** - là một câu hỏi tương tự, chỉ khác ở chỗ pastebin phải lưu nội dung đoạn paste thay vì lưu url gốc chưa rút gọn.
+
+### Bước 1: Phác thảo các trường hợp sử dụng và ràng buộc
+
+> Thu thập yêu cầu và khoanh vùng bài toán.
+> Đặt câu hỏi để làm rõ các trường hợp sử dụng (use case) và ràng buộc (constraint).
+> Thảo luận các giả định.
+
+Vì không có người phỏng vấn để trả lời các câu hỏi làm rõ, ta sẽ tự định nghĩa một số trường hợp sử dụng và ràng buộc.
+
+#### Các trường hợp sử dụng (use cases)
+
+##### Ta khoanh vùng bài toán, chỉ xử lý các trường hợp sử dụng sau
+
+* **Người dùng** nhập một khối văn bản và nhận về một đường link được sinh ngẫu nhiên
+    * Thời hạn hết hạn (expiration)
+        * Mặc định là không hết hạn
+        * Có thể tùy chọn đặt thời gian hết hạn
+* **Người dùng** nhập url của một đoạn paste và xem nội dung
+* **Người dùng** là ẩn danh
+* **Dịch vụ** theo dõi số liệu phân tích (analytics) của các trang
+    * Thống kê lượt truy cập theo tháng
+* **Dịch vụ** xóa các đoạn paste đã hết hạn
+* **Dịch vụ** có tính sẵn sàng cao (high availability)
+
+##### Ngoài phạm vi
+
+* **Người dùng** đăng ký tài khoản
+    * **Người dùng** xác minh email
+* **Người dùng** đăng nhập vào tài khoản đã đăng ký
+    * **Người dùng** chỉnh sửa tài liệu
+* **Người dùng** có thể đặt chế độ hiển thị (công khai/riêng tư)
+* **Người dùng** có thể tự đặt shortlink
+
+#### Ràng buộc và giả định
+
+##### Nêu các giả định
+
+* Lưu lượng truy cập không phân bố đều
+* Việc mở một short link phải nhanh
+* Paste chỉ là văn bản
+* Số liệu phân tích lượt xem trang không cần theo thời gian thực
+* 10 triệu người dùng
+* 10 triệu lượt ghi paste mỗi tháng
+* 100 triệu lượt đọc paste mỗi tháng
+* Tỷ lệ đọc/ghi là 10:1
+
+##### Tính toán mức sử dụng
+
+**Hãy hỏi rõ người phỏng vấn xem bạn có nên làm các phép ước lượng nhanh (back-of-the-envelope) về mức sử dụng hay không.**
+
+* Kích thước mỗi paste
+    * 1 KB nội dung mỗi paste
+    * `shortlink` - 7 byte
+    * `expiration_length_in_minutes` - 4 byte
+    * `created_at` - 5 byte
+    * `paste_path` - 255 byte
+    * tổng = ~1,27 KB
+* 12,7 GB nội dung paste mới mỗi tháng
+    * 1,27 KB mỗi paste * 10 triệu paste mỗi tháng
+    * ~450 GB nội dung paste mới trong 3 năm
+    * 360 triệu shortlink trong 3 năm
+    * Giả định phần lớn là paste mới chứ không phải cập nhật paste cũ
+* Trung bình 4 lượt ghi paste mỗi giây
+* Trung bình 40 yêu cầu đọc mỗi giây
+
+Bảng quy đổi tiện dụng:
+
+* 2,5 triệu giây mỗi tháng
+* 1 yêu cầu mỗi giây = 2,5 triệu yêu cầu mỗi tháng
+* 40 yêu cầu mỗi giây = 100 triệu yêu cầu mỗi tháng
+* 400 yêu cầu mỗi giây = 1 tỷ yêu cầu mỗi tháng
+
+### Bước 2: Tạo thiết kế tổng quan (high level design)
+
+> Phác thảo thiết kế tổng quan với tất cả các thành phần quan trọng.
+
+![Sơ đồ thiết kế tổng quan Pastebin](../../solutions/system_design/pastebin/pastebin_basic.png)
+
+### Bước 3: Thiết kế các thành phần cốt lõi
+
+> Đi sâu vào chi tiết từng thành phần cốt lõi.
+
+#### Trường hợp sử dụng: Người dùng nhập một khối văn bản và nhận về một đường link được sinh ngẫu nhiên
+
+Ta có thể dùng một [cơ sở dữ liệu quan hệ (relational database)](../02-chu-de/06-database.md) như một bảng băm (hash table) cỡ lớn, ánh xạ url được sinh ra tới một máy chủ tệp (file server) và đường dẫn chứa tệp paste.
+
+Thay vì tự quản lý một file server, ta có thể dùng một **kho lưu trữ đối tượng (Object Store)** được quản lý sẵn như Amazon S3 hoặc một [kho tài liệu NoSQL (document store)](../02-chu-de/06-database.md).
+
+Một phương án khác thay cho cơ sở dữ liệu quan hệ đóng vai trò bảng băm lớn là dùng một [kho khóa-giá trị NoSQL (key-value store)](../02-chu-de/06-database.md). Ta nên thảo luận [các đánh đổi giữa việc chọn SQL hay NoSQL](../02-chu-de/06-database.md). Phần thảo luận dưới đây dùng cách tiếp cận cơ sở dữ liệu quan hệ.
+
+* **Client** gửi yêu cầu tạo paste tới **Web Server**, đang chạy như một [reverse proxy](../02-chu-de/04-reverse-proxy.md)
+* **Web Server** chuyển tiếp yêu cầu tới máy chủ **Write API**
+* Máy chủ **Write API** thực hiện các việc sau:
+    * Sinh một url duy nhất
+        * Kiểm tra url có duy nhất không bằng cách tìm bản trùng trong **SQL Database**
+        * Nếu url không duy nhất, sinh một url khác
+        * Nếu hỗ trợ url tùy chỉnh, ta có thể dùng url do người dùng cung cấp (cũng phải kiểm tra trùng)
+    * Lưu vào bảng `pastes` trong **SQL Database**
+    * Lưu dữ liệu paste vào **Object Store**
+    * Trả về url
+
+**Hãy hỏi rõ người phỏng vấn xem bạn cần viết bao nhiêu code**.
+
+Bảng `pastes` có thể có cấu trúc như sau:
+
+```
+shortlink char(7) NOT NULL
+expiration_length_in_minutes int NOT NULL
+created_at datetime NOT NULL
+paste_path varchar(255) NOT NULL
+PRIMARY KEY(shortlink)
+```
+
+Đặt khóa chính (primary key) dựa trên cột `shortlink` sẽ tạo ra một [chỉ mục (index)](../02-chu-de/06-database.md) mà cơ sở dữ liệu dùng để đảm bảo tính duy nhất. Ta sẽ tạo thêm một chỉ mục trên `created_at` để tăng tốc tra cứu (thời gian logarit thay vì quét toàn bộ bảng) và để giữ dữ liệu trong bộ nhớ. Đọc tuần tự 1 MB từ bộ nhớ mất khoảng 250 micro giây, trong khi đọc từ SSD lâu hơn 4 lần và từ đĩa cứng lâu hơn 80 lần.<sup><a href=../../README.md#latency-numbers-every-programmer-should-know>1</a></sup>
+
+Để sinh url duy nhất, ta có thể:
+
+* Lấy giá trị băm [**MD5**](https://en.wikipedia.org/wiki/MD5) của ip_address của người dùng + timestamp
+    * MD5 là hàm băm được dùng rộng rãi, tạo ra giá trị băm 128 bit
+    * MD5 phân bố đều
+    * Ngoài ra, ta cũng có thể lấy MD5 của dữ liệu được sinh ngẫu nhiên
+* Mã hóa [**Base 62**](https://www.kerstner.at/2012/07/shortening-strings-using-base-62-encoding/) giá trị băm MD5
+    * Base 62 mã hóa thành `[a-zA-Z0-9]`, rất hợp với url vì không cần thoát (escape) ký tự đặc biệt
+    * Mỗi đầu vào gốc chỉ có một kết quả băm, và Base 62 là tất định (deterministic - không có yếu tố ngẫu nhiên)
+    * Base 64 là một cách mã hóa phổ biến khác nhưng gây rắc rối cho url vì có thêm ký tự `+` và `/`
+    * [Mã giả Base 62](http://stackoverflow.com/questions/742013/how-to-code-a-url-shortener) sau chạy trong thời gian O(k), với k là số chữ số = 7:
+
+```python
+def base_encode(num, base=62):
+    digits = []
+    while num > 0
+      remainder = modulo(num, base)
+      digits.push(remainder)
+      num = divide(num, base)
+    digits = digits.reverse
+```
+
+* Lấy 7 ký tự đầu của kết quả, cho ra 62^7 giá trị khả dĩ, đủ để đáp ứng ràng buộc 360 triệu shortlink trong 3 năm:
+
+```python
+url = base_encode(md5(ip_address+timestamp))[:URL_LENGTH]
+```
+
+Ta sẽ dùng một [**REST API**](../02-chu-de/09-communication.md) công khai:
+
+```
+$ curl -X POST --data '{ "expiration_length_in_minutes": "60", \
+    "paste_contents": "Hello World!" }' https://pastebin.com/api/v1/paste
+```
+
+Phản hồi:
+
+```
+{
+    "shortlink": "foobar"
+}
+```
+
+Với giao tiếp nội bộ, ta có thể dùng [lời gọi thủ tục từ xa (Remote Procedure Call - RPC)](../02-chu-de/09-communication.md).
+
+#### Trường hợp sử dụng: Người dùng nhập url của một đoạn paste và xem nội dung
+
+* **Client** gửi yêu cầu lấy paste tới **Web Server**
+* **Web Server** chuyển tiếp yêu cầu tới máy chủ **Read API**
+* Máy chủ **Read API** thực hiện các việc sau:
+    * Kiểm tra url được sinh ra trong **SQL Database**
+        * Nếu url có trong **SQL Database**, lấy nội dung paste từ **Object Store**
+        * Ngược lại, trả về thông báo lỗi cho người dùng
+
+REST API:
+
+```
+$ curl https://pastebin.com/api/v1/paste?shortlink=foobar
+```
+
+Phản hồi:
+
+```
+{
+    "paste_contents": "Hello World"
+    "created_at": "YYYY-MM-DD HH:MM:SS"
+    "expiration_length_in_minutes": "60"
+}
+```
+
+#### Trường hợp sử dụng: Dịch vụ theo dõi số liệu phân tích của các trang
+
+Vì không yêu cầu phân tích theo thời gian thực, ta chỉ cần chạy **MapReduce** trên log của **Web Server** để tạo số đếm lượt truy cập (hit count).
+
+**Hãy hỏi rõ người phỏng vấn xem bạn cần viết bao nhiêu code**.
+
+```python
+class HitCounts(MRJob):
+
+    def extract_url(self, line):
+        """Trích url được sinh ra từ dòng log."""
+        ...
+
+    def extract_year_month(self, line):
+        """Trả về phần năm và tháng của timestamp."""
+        ...
+
+    def mapper(self, _, line):
+        """Phân tích từng dòng log, trích xuất và biến đổi các dòng liên quan.
+
+        Phát ra các cặp khóa-giá trị có dạng:
+
+        (2016-01, url0), 1
+        (2016-01, url0), 1
+        (2016-01, url1), 1
+        """
+        url = self.extract_url(line)
+        period = self.extract_year_month(line)
+        yield (period, url), 1
+
+    def reducer(self, key, values):
+        """Cộng dồn các giá trị theo từng khóa.
+
+        (2016-01, url0), 2
+        (2016-01, url1), 1
+        """
+        yield key, sum(values)
+```
+
+#### Trường hợp sử dụng: Dịch vụ xóa các đoạn paste đã hết hạn
+
+Để xóa các paste đã hết hạn, ta chỉ cần quét **SQL Database** để tìm mọi bản ghi có timestamp hết hạn cũ hơn timestamp hiện tại. Tất cả bản ghi hết hạn sau đó sẽ bị xóa (hoặc đánh dấu là đã hết hạn) khỏi bảng.
+
+### Bước 4: Mở rộng thiết kế (scale the design)
+
+> Xác định và xử lý các nút thắt cổ chai (bottleneck), dựa trên các ràng buộc.
+
+![Sơ đồ thiết kế Pastebin sau khi mở rộng](../../solutions/system_design/pastebin/pastebin.png)
+
+**Quan trọng: Đừng nhảy thẳng từ thiết kế ban đầu sang thiết kế cuối cùng!**
+
+Hãy nói rõ rằng bạn sẽ làm theo vòng lặp: 1) **Đo hiệu năng/Kiểm thử tải (Benchmark/Load Test)**, 2) **Phân tích hiệu năng (Profile)** để tìm nút thắt, 3) xử lý nút thắt đồng thời đánh giá các phương án thay thế và đánh đổi, và 4) lặp lại. Xem [Thiết kế hệ thống mở rộng tới hàng triệu người dùng trên AWS](02-scaling-aws.md) làm ví dụ về cách mở rộng dần thiết kế ban đầu.
+
+Điều quan trọng là thảo luận những nút thắt nào có thể gặp với thiết kế ban đầu và cách xử lý từng cái. Ví dụ, việc thêm một **Load Balancer** với nhiều **Web Server** giải quyết vấn đề gì? **CDN** thì sao? **Bản sao Master-Slave (Master-Slave Replicas)**? Các phương án thay thế và **đánh đổi** cho từng lựa chọn là gì?
+
+Ta sẽ bổ sung một số thành phần để hoàn thiện thiết kế và xử lý các vấn đề về khả năng mở rộng. Các load balancer nội bộ không được vẽ để sơ đồ đỡ rối.
+
+*Để tránh lặp lại các thảo luận*, hãy tham khảo các [chủ đề system design](../../README.md#index-of-system-design-topics) sau để nắm ý chính, đánh đổi và phương án thay thế:
+
+* [DNS](../02-chu-de/01-dns.md)
+* [CDN](../02-chu-de/02-cdn.md)
+* [Load balancer](../02-chu-de/03-load-balancer.md)
+* [Mở rộng theo chiều ngang (horizontal scaling)](../02-chu-de/03-load-balancer.md)
+* [Web server (reverse proxy)](../02-chu-de/04-reverse-proxy.md)
+* [API server (tầng ứng dụng - application layer)](../02-chu-de/05-application-layer.md)
+* [Cache](../02-chu-de/07-cache.md)
+* [Hệ quản trị cơ sở dữ liệu quan hệ (RDBMS)](../02-chu-de/06-database.md)
+* [Chuyển đổi dự phòng (failover) cho SQL write master-slave](../01-danh-doi/05-availability-patterns.md)
+* [Nhân bản master-slave (master-slave replication)](../02-chu-de/06-database.md)
+* [Các mẫu nhất quán (consistency patterns)](../01-danh-doi/04-consistency-patterns.md)
+* [Các mẫu sẵn sàng (availability patterns)](../01-danh-doi/05-availability-patterns.md)
+
+**Analytics Database** có thể dùng một giải pháp kho dữ liệu (data warehouse) như Amazon Redshift hoặc Google BigQuery.
+
+Một **Object Store** như Amazon S3 có thể thoải mái đáp ứng ràng buộc 12,7 GB nội dung mới mỗi tháng.
+
+Để xử lý 40 yêu cầu đọc mỗi giây *trung bình* (cao hơn vào giờ cao điểm), lưu lượng cho nội dung phổ biến nên được phục vụ bởi **Memory Cache** thay vì cơ sở dữ liệu. **Memory Cache** cũng hữu ích để xử lý lưu lượng phân bố không đều và các đợt tăng đột biến. **SQL Read Replicas** sẽ đủ sức xử lý các lần trượt cache (cache miss), miễn là các bản sao không bị quá tải vì phải nhân bản các thao tác ghi.
+
+4 lượt ghi paste mỗi giây *trung bình* (cao hơn vào giờ cao điểm) là khả thi với một **SQL Write Master-Slave** duy nhất. Nếu không, ta sẽ cần áp dụng thêm các mẫu mở rộng SQL:
+
+* [Liên kết (federation)](../02-chu-de/06-database.md)
+* [Phân mảnh (sharding)](../02-chu-de/06-database.md)
+* [Phi chuẩn hóa (denormalization)](../02-chu-de/06-database.md)
+* [Tinh chỉnh SQL (SQL tuning)](../02-chu-de/06-database.md)
+
+Ta cũng nên cân nhắc chuyển một phần dữ liệu sang **cơ sở dữ liệu NoSQL**.
+
+### Các ý bàn thêm (additional talking points)
+
+> Các chủ đề bổ sung để đào sâu, tùy vào phạm vi bài toán và thời gian còn lại.
+
+##### NoSQL
+
+* [Kho khóa-giá trị (key-value store)](../02-chu-de/06-database.md)
+* [Kho tài liệu (document store)](../02-chu-de/06-database.md)
+* [Kho cột rộng (wide column store)](../02-chu-de/06-database.md)
+* [Cơ sở dữ liệu đồ thị (graph database)](../02-chu-de/06-database.md)
+* [SQL hay NoSQL](../02-chu-de/06-database.md)
+
+#### Bộ nhớ đệm (caching)
+
+* Cache ở đâu
+    * [Cache phía client (client caching)](../02-chu-de/07-cache.md)
+    * [Cache tại CDN (CDN caching)](../02-chu-de/07-cache.md)
+    * [Cache tại web server (web server caching)](../02-chu-de/07-cache.md)
+    * [Cache tại cơ sở dữ liệu (database caching)](../02-chu-de/07-cache.md)
+    * [Cache tại tầng ứng dụng (application caching)](../02-chu-de/07-cache.md)
+* Cache cái gì
+    * [Cache ở mức truy vấn cơ sở dữ liệu](../02-chu-de/07-cache.md)
+    * [Cache ở mức đối tượng](../02-chu-de/07-cache.md)
+* Khi nào cập nhật cache
+    * [Cache-aside](../02-chu-de/07-cache.md)
+    * [Write-through](../02-chu-de/07-cache.md)
+    * [Write-behind (write-back)](../02-chu-de/07-cache.md)
+    * [Refresh ahead](../02-chu-de/07-cache.md)
+
+#### Bất đồng bộ (asynchronism) và microservices
+
+* [Hàng đợi thông điệp (message queues)](../02-chu-de/08-asynchronism.md)
+* [Hàng đợi tác vụ (task queues)](../02-chu-de/08-asynchronism.md)
+* [Áp lực ngược (back pressure)](../02-chu-de/08-asynchronism.md)
+* [Microservices](../02-chu-de/05-application-layer.md)
+
+#### Giao tiếp (communications)
+
+* Thảo luận các đánh đổi:
+    * Giao tiếp bên ngoài với client - [HTTP API theo REST](../02-chu-de/09-communication.md)
+    * Giao tiếp nội bộ - [RPC](../02-chu-de/09-communication.md)
+* [Khám phá dịch vụ (service discovery)](../02-chu-de/05-application-layer.md)
+
+#### Bảo mật (security)
+
+Tham khảo [phần bảo mật](../02-chu-de/10-security.md).
+
+#### Các con số độ trễ
+
+Xem [Các con số độ trễ mọi lập trình viên nên biết (Latency numbers every programmer should know)](../../README.md#latency-numbers-every-programmer-should-know).
+
+#### Tiếp tục
+
+* Tiếp tục đo hiệu năng và giám sát hệ thống để xử lý các nút thắt khi chúng xuất hiện
+* Mở rộng quy mô là một quá trình lặp đi lặp lại
+
+---
+
+## Ghi chú của người dịch
+
+**1. Kiểm tra lại các con số ước lượng**
+
+Đây là phần người phỏng vấn hay bắt tính lại tại chỗ, nên tự làm lại một lần:
+
+- Kích thước một paste: 1 KB (1024 byte) + 7 + 4 + 5 + 255 = 1295 byte, xấp xỉ 1,27 KB. Lưu ý 255 byte cho `paste_path` là cận trên của `varchar(255)`, thực tế đường dẫn ngắn hơn nhiều.
+- 10 triệu paste/tháng chia 2,5 triệu giây/tháng = 4 lượt ghi/giây. Đọc gấp 10 lần = 40 lượt/giây.
+- 12,7 GB/tháng x 36 tháng = khoảng 457 GB, làm tròn thành ~450 GB. 10 triệu x 36 = 360 triệu shortlink.
+- 62^7 xấp xỉ 3,5 nghìn tỷ (3,5 x 10^12) giá trị - gấp khoảng 10.000 lần số shortlink cần trong 3 năm.
+- Con số "2,5 triệu giây mỗi tháng" là làm tròn cho dễ nhẩm (thực tế 30 ngày là 2.592.000 giây).
+
+Kết luận quan trọng mà bài gốc không nói thẳng: **ở quy mô này, một máy PostgreSQL/MySQL bình thường là dư sức**. 4 ghi/giây và 40 đọc/giây là tải rất nhẹ. Phần "Bước 4" chủ yếu để minh họa tư duy mở rộng; trong phỏng vấn nên nói rõ điều này, rồi hỏi người phỏng vấn có muốn tăng quy mô lên 100 hay 1000 lần không.
+
+**2. Sinh shortlink: chỗ bài gốc đơn giản hóa nhiều nhất**
+
+- **Va chạm (collision) là chắc chắn xảy ra.** Cắt MD5 còn 7 ký tự base62 thì không gian chỉ còn 62^7. Theo nghịch lý ngày sinh (birthday paradox), số cặp trùng kỳ vọng khi sinh n khóa ngẫu nhiên trong không gian N xấp xỉ n^2 / (2N). Với n = 360 triệu, N = 3,5 x 10^12, kết quả khoảng 18.000 lần trùng trong 3 năm. Không nhiều, nhưng đủ để bước "kiểm tra trùng rồi sinh lại" là bắt buộc chứ không phải tùy chọn.
+- **"Kiểm tra rồi mới ghi" có lỗi race condition.** Hai request có thể cùng SELECT thấy khóa chưa tồn tại rồi cùng INSERT. Cách đúng: INSERT thẳng, để ràng buộc PRIMARY KEY từ chối bản trùng, bắt lỗi vi phạm unique rồi sinh khóa khác và thử lại (hoặc `INSERT ... ON CONFLICT DO NOTHING` trong PostgreSQL).
+- **md5(ip + timestamp) không tốt như vẻ ngoài.** Nhiều người dùng sau cùng một NAT (công ty, mạng di động) có chung IP; nếu timestamp chỉ chính xác tới giây thì hai paste trong cùng giây sẽ ra cùng một khóa. Đơn giản và an toàn hơn là sinh trực tiếp 7 ký tự ngẫu nhiên từ bộ sinh số ngẫu nhiên an toàn mật mã (CSPRNG) - cũng không cần MD5.
+- **Mã giả base62 có lỗi nhỏ**: thiếu dấu `:` sau `while num > 0` và không `return` kết quả. Ngoài ra MD5 là số 128 bit nên mã hóa base62 ra khoảng 22 chữ số, tức vòng lặp chạy ~22 lần chứ không phải 7 như bài gốc nói; độ phức tạp đúng là O(log_62 n). Việc lấy 7 ký tự đầu xảy ra *sau* khi mã hóa.
+- **Các phương án thay thế hay được hỏi:**
+  - *Bộ đếm tăng dần + base62* (dùng ticket server, cấp phát theo dải ID cho từng máy chủ, hoặc ID kiểu Snowflake): không bao giờ trùng, không cần kiểm tra. Nhược điểm: ID **đoán được và liệt kê được** - với pastebin điều này nghĩa là ai cũng có thể quét tuần tự để đọc paste của người khác. Có thể che bằng một phép hoán vị song ánh (ví dụ mạng Feistel, hoặc thư viện kiểu Sqids), nhưng đó là làm rối, không phải bảo mật.
+  - *Dịch vụ sinh khóa trước (Key Generation Service)*: sinh sẵn hàng loạt khóa ngẫu nhiên chưa dùng, lưu vào một bảng, máy chủ ghi lấy ra theo lô. Loại bỏ va chạm lúc ghi, đổi lại thêm một thành phần phải vận hành và đảm bảo không phát trùng một khóa cho hai máy.
+
+**3. Lược đồ bảng và chỉ mục**
+
+- Bài gốc tạo chỉ mục trên `created_at` nhưng truy vấn xóa paste hết hạn lại cần điều kiện `created_at + expiration_length_in_minutes < now()`. Điều kiện trên một biểu thức như vậy không tận dụng tốt chỉ mục thường. Thiết kế hay hơn: lưu thẳng cột `expires_at` (NULL nếu không bao giờ hết hạn) và đánh chỉ mục trên cột đó.
+- Câu "để giữ dữ liệu trong bộ nhớ" chỉ đúng một phần: chỉ mục nhỏ và hay dùng thì có xu hướng nằm trong buffer pool, nhưng không có gì đảm bảo.
+- Các con số độ trễ (250 micro giây cho 1 MB từ RAM, SSD chậm hơn 4 lần, đĩa chậm hơn 80 lần) lấy từ bảng số liệu kinh điển khoảng đầu thập niên 2010. SSD NVMe hiện nay đã thu hẹp khoảng cách với RAM đáng kể về thông lượng đọc tuần tự; thứ tự "RAM nhanh hơn SSD nhanh hơn HDD" vẫn đúng nhưng đừng trích các hệ số đó như số liệu hiện hành.
+
+**4. Xóa paste hết hạn - làm cho đúng**
+
+- **Luôn kiểm tra hạn khi đọc (lazy expiration).** Job dọn dẹp chạy định kỳ nên có độ trễ; nếu Read API không tự kiểm tra `expires_at` thì người dùng vẫn đọc được paste đã hết hạn. Job dọn dẹp chỉ để thu hồi dung lượng.
+- Xóa theo lô nhỏ (ví dụ vài nghìn dòng mỗi lần) để không khóa bảng lâu và không làm tăng độ trễ nhân bản sang read replica.
+- Nhớ xóa cả object trong object store, không chỉ dòng trong SQL. Các công cụ hiện đại giúp việc này: S3 Lifecycle rules (hết hạn object theo tuổi, lọc theo prefix hoặc tag), DynamoDB TTL, `EXPIRE` của Redis.
+- Nếu paste đã được CDN hoặc cache lưu, cần đặt thời gian sống của cache không vượt quá thời gian còn lại của paste (ví dụ `Cache-Control: max-age` bằng số giây còn lại), hoặc chủ động xóa khỏi cache.
+
+**5. Lưu nội dung 1 KB trong object store - có nên không?**
+
+- Mỗi lần đọc S3 là một request HTTP với độ trễ thường ở mức hàng chục mili giây và có tính phí theo request. Với paste trung bình 1 KB, lưu nội dung thẳng trong cơ sở dữ liệu (cột `text`) hoặc trong một key-value store (DynamoDB cho phép item tới 400 KB) thường đơn giản và nhanh hơn. Object store hợp lý khi cho phép paste lớn (hàng MB) - khi đó có thể làm lai: nhỏ thì lưu trong DB, lớn thì lưu S3.
+- Một điểm đã lỗi thời: từ tháng 12/2020, Amazon S3 có nhất quán mạnh read-after-write cho mọi thao tác, nên nỗi lo "vừa ghi xong đọc lại không thấy" không còn áp dụng với S3.
+
+**6. Nếu đề là Bit.ly: 301 hay 302?**
+
+Câu hỏi kinh điển khi bài toán chuyển sang rút gọn url:
+- `301 Moved Permanently`: trình duyệt cache chuyển hướng, lần sau đi thẳng tới đích mà không gọi lại máy chủ - giảm tải nhưng **mất số liệu analytics**.
+- `302 Found` / `307 Temporary Redirect`: mọi lượt click đều đi qua máy chủ - đếm được lượt click, đổi được đích, trả giá bằng tải cao hơn.
+Dịch vụ rút gọn thương mại thường chọn 302 vì analytics là sản phẩm của họ.
+
+**7. Analytics theo cách của năm 2026**
+
+- `mrjob` (thư viện MapReduce Python của Yelp mà đoạn code dùng) gần như không còn được phát triển tích cực; Hadoop MapReduce thuần cũng hiếm khi là lựa chọn mới. Mã đầy đủ của ví dụ nằm ở [pastebin.py](../../solutions/system_design/pastebin/pastebin.py).
+- Cách làm phổ biến hiện nay cho yêu cầu "không cần realtime": đẩy log truy cập vào object store (S3/GCS) dạng Parquet, rồi truy vấn bằng SQL qua Athena, BigQuery, Spark hoặc ClickHouse. Câu `GROUP BY month, shortlink` thay cho toàn bộ job MapReduce.
+- Nếu người phỏng vấn đổi yêu cầu thành gần realtime: phát sự kiện click vào Kafka (hoặc Kinesis), tổng hợp bằng Flink hoặc đếm tăng dần trong Redis, định kỳ ghi xuống kho phân tích.
+
+**8. Những điểm bài gốc bỏ qua nhưng hay bị hỏi**
+
+- **Chống lạm dụng**: dịch vụ ẩn danh cho phép đăng văn bản tùy ý sẽ bị dùng để phát tán mã độc, dữ liệu bị lộ, spam. Cần rate limiting theo IP, giới hạn kích thước paste, cơ chế báo cáo và gỡ nội dung.
+- **Tính bất biến (immutability)**: vì người dùng không sửa được paste (ngoài phạm vi), nội dung là bất biến - lý tưởng để cache lâu trên CDN. Đây là lý do mạnh nhất để đưa CDN vào thiết kế, mạnh hơn cả con số 40 đọc/giây.
+- **Paste nóng (hot key)**: một paste bị chia sẻ viral có thể nhận phần lớn lưu lượng; cache và CDN giải quyết việc này tốt hơn là thêm read replica.
+- **Ước lượng dung lượng cache**: nếu áp dụng quy tắc 80/20 (20% paste nhận 80% lượt đọc), chỉ cần cache một phần nhỏ dữ liệu mỗi ngày - ví dụ 20% của lượng paste được đọc trong ngày x 1,27 KB - con số này thường chỉ vài trăm MB tới vài GB, vừa một node Redis.
+
+Đối chiếu:
+- Bài gốc: [solutions/system_design/pastebin/README.md](../../solutions/system_design/pastebin/README.md)
+- Bài kế tiếp: [Thiết kế hệ thống mở rộng tới hàng triệu người dùng trên AWS](02-scaling-aws.md)

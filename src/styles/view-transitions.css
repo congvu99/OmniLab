@@ -1,0 +1,68 @@
+/*
+ * View Transitions (astro:transitions ClientRouter): forward navigation
+ * slides the whole document left (new page enters from the right, old page
+ * exits to the left); back navigation reverses it. Uses the browser's
+ * default whole-document `root` view-transition pseudo pair — no
+ * `transition:name`/`transition:animate` directive needed on any element.
+ * `[data-astro-transition="back"]` is set on <html> by Astro's router before
+ * the transition starts (see astro/dist/transitions/router.js), the same
+ * mechanism Astro's own built-in `slide()` preset relies on.
+ * Progressive enhancement: browsers without the View Transitions API (and
+ * without JS) simply do a normal navigation — no error, no dependency here.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: var(--dur);
+    animation-timing-function: var(--ease-out);
+    animation-fill-mode: both;
+  }
+
+  ::view-transition-old(root) {
+    /* Exit is shorter than enter so the swap feels responsive. */
+    animation-duration: var(--dur-exit);
+    animation-timing-function: var(--ease-in);
+  }
+
+  ::view-transition-new(root) {
+    animation-name: ol-slide-in-right;
+  }
+
+  ::view-transition-old(root) {
+    animation-name: ol-slide-out-left;
+  }
+
+  [data-astro-transition="back"]::view-transition-new(root) {
+    animation-name: ol-slide-in-left;
+  }
+
+  [data-astro-transition="back"]::view-transition-old(root) {
+    animation-name: ol-slide-out-right;
+  }
+
+  @keyframes ol-slide-in-right {
+    from { transform: translateX(100%); }
+  }
+
+  @keyframes ol-slide-out-left {
+    to { transform: translateX(-100%); }
+  }
+
+  @keyframes ol-slide-in-left {
+    from { transform: translateX(-100%); }
+  }
+
+  @keyframes ol-slide-out-right {
+    to { transform: translateX(100%); }
+  }
+}
+
+/* Reduced motion: no slide, instant swap (mirrors Astro's own built-in
+   reduced-motion handling in astro/components/viewtransitions.css). */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

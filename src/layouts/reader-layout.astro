@@ -1,0 +1,49 @@
+---
+// Full-bleed reading shell: back button + collapsing title + progress bar
+// (reader-top-bar.astro), no tab bar/sidebar (maximizes reading space per
+// phase-02 spec). Default slot content is wrapped in <main id="reader-content"
+// class="prose"> — consumers just drop MDX/HTML output in directly, no need
+// to remember the "prose" class themselves.
+import { ClientRouter } from 'astro:transitions';
+import BaseHead from './base-head.astro';
+import { domainAccentStyle } from './domain-accent';
+import ReaderTopBar from '../components/shell/reader-top-bar.astro';
+import '../styles/prose.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  domainAccent?: string;
+  domainAccentDark?: string;
+  backHref: string;
+  backLabel?: string;
+}
+
+const { title, description, domainAccent, domainAccentDark, backHref, backLabel } = Astro.props;
+const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
+---
+
+<html lang="vi" style={htmlStyle}>
+  <head>
+    <BaseHead title={title} description={description} />
+    <ClientRouter />
+  </head>
+  <body>
+    <a href="#reader-content" class="skip-link">Bỏ qua, đến nội dung chính</a>
+    <ReaderTopBar title={title} backHref={backHref} backLabel={backLabel}>
+      <slot name="top-actions" slot="top-actions" />
+    </ReaderTopBar>
+    <main id="reader-content" class="prose reader-content">
+      <slot />
+    </main>
+    <script>
+      document.addEventListener('touchstart', () => {}, { passive: true });
+    </script>
+  </body>
+</html>
+
+<style>
+  .reader-content {
+    padding: var(--space-5) var(--space-4) var(--space-8);
+  }
+</style>

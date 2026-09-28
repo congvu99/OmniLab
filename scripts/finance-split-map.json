@@ -1,0 +1,189 @@
+{
+  "_comment": "Declarative map from content-sources/finance/index.html <section id> to lessons. `boundary` tells migrate-finance-html.mjs how to slice a section's children when one <section> becomes >1 lesson (see phase-03 report 'Finance split table' for the human-readable version). Every section id below must be consumed by exactly one lesson (script asserts this).",
+  "lessons": [
+    {
+      "module": "khoi-dong",
+      "slug": "vi-sao-hoc",
+      "order": 1,
+      "title": "Học để làm được việc gì?",
+      "sourceSection": "bat-dau",
+      "boundary": { "type": "hero-plus-section" }
+    },
+    {
+      "module": "khoi-dong",
+      "slug": "bon-chang",
+      "order": 2,
+      "title": "Bốn chặng, một thói quen xuyên suốt",
+      "sourceSection": "ban-do",
+      "boundary": { "type": "whole" }
+    },
+    {
+      "module": "lo-trinh-12-tuan",
+      "slug": "tuan-01",
+      "order": 1,
+      "title": "Tuần 1 · Bức tranh tiền bạc hiện tại",
+      "sourceSection": "lich-hoc",
+      "boundary": { "type": "week", "week": 1, "includeIntro": true }
+    },
+    {
+      "module": "lo-trinh-12-tuan",
+      "slug": "tuan-02",
+      "order": 2,
+      "title": "Tuần 2 · Ngân sách vừa sức",
+      "sourceSection": "lich-hoc",
+      "boundary": { "type": "week", "week": 2 }
+    },
+    {
+      "module": "lo-trinh-12-tuan",
+      "slug": "tuan-03",
+      "order": 3,
+      "title": "Tuần 3 · Lãi kép, lạm phát & bộ đệm nhỏ",
+      "sourceSection": "lich-hoc",
+      "boundary": { "type": "week", "week": 3 }
+    },
+    {
+      "module": "lo-trinh-12-tuan",
+      "slug": "tuan-04",
+      "order": 4,
+      "title": "Tuần 4 · Chi phí vay & kế hoạch trả nợ",
+      "sourceSection": "lich-hoc",
+      "boundary": { "type": "week", "week": 4 }
+    },
+    {
+      "module": "lo-trinh-12-tuan",
+      "slug": "tuan-05",
+      "order": 5,
+      "title": "Tuần 5 · Quỹ dự phòng & bảo hiểm",
+      "sourceSection": "lich-hoc",
+      "boundary": { "type": "week", "week": 5 }
+    },
+    {
+      "module": "lo-trinh-12-tuan",
+      "slug": "tuan-06",
+      "order": 6,
+      "title": "Tuần 6 · Thuế, hưu trí & an toàn số",
+      "sourceSection": "lich-hoc",
+      "boundary": { "type": "week", "week": 6 }
+    },
+    {
+      "module": "lo-trinh-12-tuan",
+      "slug": "tuan-07",
+      "order": 7,
+      "title": "Tuần 7 · Hiểu các nhóm tài sản",
+      "sourceSection": "lich-hoc",
+      "boundary": { "type": "week", "week": 7 }
+    },
+    {
+      "module": "lo-trinh-12-tuan",
+      "slug": "tuan-08",
+      "order": 8,
+      "title": "Tuần 8 · Đọc tài liệu sản phẩm & phí",
+      "sourceSection": "lich-hoc",
+      "boundary": { "type": "week", "week": 8 }
+    },
+    {
+      "module": "lo-trinh-12-tuan",
+      "slug": "tuan-09",
+      "order": 9,
+      "title": "Tuần 9 · Gắn tiền với mục tiêu",
+      "sourceSection": "lich-hoc",
+      "boundary": { "type": "week", "week": 9 }
+    },
+    {
+      "module": "lo-trinh-12-tuan",
+      "slug": "tuan-10",
+      "order": 10,
+      "title": "Tuần 10 · Hành vi gây mất tiền",
+      "sourceSection": "lich-hoc",
+      "boundary": { "type": "week", "week": 10 }
+    },
+    {
+      "module": "lo-trinh-12-tuan",
+      "slug": "tuan-11",
+      "order": 11,
+      "title": "Tuần 11 · Diễn tập kế hoạch đầu tư",
+      "sourceSection": "lich-hoc",
+      "boundary": { "type": "week", "week": 11 }
+    },
+    {
+      "module": "lo-trinh-12-tuan",
+      "slug": "tuan-12",
+      "order": 12,
+      "title": "Tuần 12 · Tổng kết & chọn bước tiếp",
+      "sourceSection": "lich-hoc",
+      "boundary": { "type": "week", "week": 12 }
+    },
+    {
+      "module": "thuc-hanh",
+      "slug": "bai-tap-va-thu-tu-tien-du",
+      "order": 1,
+      "title": "Bốn bài tập có thể làm ngay",
+      "sourceSection": "thuc-hanh",
+      "boundary": { "type": "whole" }
+    },
+    {
+      "module": "an-toan",
+      "slug": "boi-canh-viet-nam",
+      "order": 1,
+      "title": "Học nguyên lý, kiểm tra điều kiện tại nơi dùng",
+      "sourceSection": "viet-nam",
+      "boundary": { "type": "split-before-heading", "tag": "h3", "text": "Quy trình chống giả mạo trước khi chuyển tiền", "part": "before" }
+    },
+    {
+      "module": "an-toan",
+      "slug": "chong-gia-mao",
+      "order": 2,
+      "title": "Quy trình chống giả mạo trước khi chuyển tiền",
+      "sourceSection": "viet-nam",
+      "boundary": { "type": "split-before-heading", "tag": "h3", "text": "Quy trình chống giả mạo trước khi chuyển tiền", "part": "after" }
+    },
+    {
+      "module": "nguon-hoc",
+      "slug": "nguon-hoc-chinh-thuc",
+      "order": 1,
+      "title": "Một nguồn chính, vài nguồn bổ trợ",
+      "sourceSection": "hoc-lieu",
+      "boundary": { "type": "split-before-heading", "tag": "h3", "text": "Tủ sách: năm cuốn lõi", "part": "before" }
+    },
+    {
+      "module": "nguon-hoc",
+      "slug": "tu-sach-va-lich-doc",
+      "order": 2,
+      "title": "Tủ sách và lịch đọc gắn với 12 tuần",
+      "sourceSection": "hoc-lieu",
+      "boundary": { "type": "split-before-heading", "tag": "h3", "text": "Tủ sách: năm cuốn lõi", "part": "after" }
+    },
+    {
+      "module": "di-tiep",
+      "slug": "chon-nhanh-tiep",
+      "order": 1,
+      "title": "Chọn một nhánh để đi tiếp",
+      "sourceSection": "mo-rong",
+      "boundary": { "type": "whole" }
+    },
+    {
+      "module": "di-tiep",
+      "slug": "nghien-cuu-noi-gi",
+      "order": 2,
+      "title": "Nghiên cứu hỗ trợ điều gì?",
+      "sourceSection": "bang-chung",
+      "boundary": { "type": "whole" }
+    },
+    {
+      "module": "di-tiep",
+      "slug": "tu-danh-gia",
+      "order": 3,
+      "title": "Bạn làm được, không chỉ nhận ra đáp án",
+      "sourceSection": "tu-kiem-tra",
+      "boundary": { "type": "whole" }
+    },
+    {
+      "module": "di-tiep",
+      "slug": "nguon-tham-khao",
+      "order": 4,
+      "title": "Nguồn để kiểm tra và đọc tiếp",
+      "sourceSection": "nguon",
+      "boundary": { "type": "whole" }
+    }
+  ]
+}

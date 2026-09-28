@@ -47,11 +47,28 @@
 	header {
 		X-Content-Type-Options "nosniff"
 		Referrer-Policy "strict-origin-when-cross-origin"
-		# Self only: no inline <style>/<script> in the build (astro.config.mjs
-		# sets build.inlineStylesheets: 'never'; Astro emits client scripts as
-		# external <script type="module" src="...">), so no 'unsafe-inline'
-		# needed. No Google Fonts: fonts are self-hosted (see Phase 2).
-		Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none';"
+		# style-src stays 'self' only: astro.config.mjs sets
+		# build.inlineStylesheets: 'never' and the Phase 2 shell verified no
+		# inline <style> in dist/*.html, so no 'unsafe-inline' needed there.
+		# No Google Fonts: fonts are self-hosted (see Phase 2).
+		#
+		# script-src needed 4 'sha256-...' hash-sources (Phase 2 addition):
+		# Astro's build auto-inlines small per-component <script> blocks
+		# (tab-bar/large-title-header/reader-top-bar's IntersectionObserver +
+		# scroll-progress logic, and the shared touchstart no-op tap-feedback
+		# fix in app-layout/reader-layout) as literal
+		# `<script type="module">...</script>` — confirmed in dist/*.html;
+		# there is no astro.config.mjs option to force these external the way
+		# inlineStylesheets does for CSS, and astro.config.mjs is outside
+		# Phase 2's file ownership regardless. Each hash is the base64 SHA-256
+		# of one script's exact minified body; hashes over 'unsafe-inline' per
+		# task instructions, since only these 4 known, reviewed scripts run.
+		# Regenerate if their source changes: `pnpm build`, then for each
+		# `<script type="module">BODY</script>` in dist/**/*.html, hash BODY
+		# with sha256 + base64 (see phase-02 report for the exact commands
+		# used). Phase 4/5/6 must add their own hashes here if they introduce
+		# new small inline scripts that Astro also auto-inlines.
+		Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self' 'sha256-EGOKsI3DKA+opJPhptQmxUnBV1Upd5f8UY52ASAtV34=' 'sha256-2aUsVcwD2toRFmK8/ThV2ytiAGeyjGbyIvvC5s2My9s=' 'sha256-NA00W4f0H7ZNymllEJOwPo0WWNVMPSybLtpQM7ycleg=' 'sha256-JjHYwV9Uyx4g6tfnYXhBMSrFOgVrehOK/nnT4rU2grM='; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none';"
 		-Server
 	}
 

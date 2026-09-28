@@ -1,0 +1,25 @@
+---
+// <TranslatorNote> wraps the "## Ghi chú của người dịch" section (heading +
+// everything after it, verbatim from the original .md file) so it reads as a
+// visually distinct block. The heading itself is passed as a child (slot),
+// not a prop, per the migration contract — verify-fidelity keeps all of its
+// text (it is original translator content, not added content).
+---
+
+<aside class="translator-note">
+  <slot />
+</aside>
+
+<style>
+  .translator-note {
+    margin: var(--space-7) 0 0;
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--line);
+    color: var(--ink-2);
+    font-size: var(--text-footnote);
+  }
+  .translator-note :global(h2) {
+    color: var(--ink);
+    font-size: var(--text-title3);
+  }
+</style>

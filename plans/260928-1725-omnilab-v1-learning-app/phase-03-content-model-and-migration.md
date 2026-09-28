@@ -1,10 +1,11 @@
 ---
 phase: 3
-title: "Content model and migration"
-status: pending
+title: Content model and migration
+status: in-progress
 priority: P1
-effort: "2 ngày"
-dependencies: [1]
+effort: 2 ngày
+dependencies:
+  - 1
 ---
 
 # Phase 3: Content model and migration
@@ -16,7 +17,7 @@ Schema nội dung domain-agnostic, MDX components nội dung, script chuyển 28
 - Functional:
   - Thêm lĩnh vực = `src/content/domains/<id>.yaml` + thư mục `src/content/lessons/<id>/` — không sửa code.
   - Mỗi bài có nguồn + license hiển thị được; bài Tài chính có `<Disclaimer>`.
-  - Lesson ID ổn định `domain/slug` (slug = tên file bỏ tiền tố số), không đổi sau khi publish.
+  - Lesson ID ổn định `domain/module/slug` (slug = tên file bỏ tiền tố số; cần module vì `nen-tang/asynchronism` trùng `chu-de/asynchronism`), không đổi sau khi publish.
 - Non-functional: script migration idempotent (chạy lại ra kết quả như cũ); snapshot nguồn commit vào repo để fidelity check không phụ thuộc máy.
 
 ## Architecture
@@ -44,7 +45,7 @@ src/assets/legacy/system-design/*.png  # ảnh gốc, giữ credit
 **MDX components** (`src/components/lesson/`): `real-life.astro` (tiêu đề + icon + accent nền nhạt), `figure.astro` (SVG/ảnh + alt bắt buộc + caption + credit), `note.astro`, `translator-note.astro`, `disclaimer.astro`. Map vào MDX qua `components` prop — không import từng file.
 
 **Migration:**
-- `scripts/migrate-system-design.mjs`: đọc snapshot → giữ frontmatter gốc map sang schema → sửa link nội bộ `../02-chu-de/07-cache.md` → `/hoc/kien-truc/cache`, ảnh `../../images/x.png` → import từ `src/assets/legacy/` → bọc khối "Ghi chú của người dịch" bằng `<TranslatorNote>` → ghi `.mdx`. Escape ký tự MDX nhạy cảm (`{`, `<` trong text/code).
+- `scripts/migrate-system-design.mjs`: đọc snapshot → giữ frontmatter gốc map sang schema → sửa link nội bộ `../02-chu-de/07-cache.md` → `/hoc/kien-truc/chu-de/cache`, ảnh `../../images/x.png` → import từ `src/assets/legacy/` → bọc khối "Ghi chú của người dịch" bằng `<TranslatorNote>` → ghi `.mdx`. Escape ký tự MDX nhạy cảm (`{`, `<` trong text/code).
 - `scripts/migrate-finance-html.mjs`: parse HTML (`node-html-parser`/`hast`), tách theo `h2/h3` bằng `scripts/finance-split-map.json` (section id → lesson slug/module/order), convert sang markdown (`turndown` hoặc `hast-util-to-mdast`), giữ bảng, box/note → `<Note>`.
 **Fidelity** (`scripts/verify-fidelity.mjs`, chạy trong `pnpm build` qua `prebuild`):
 1. Parse MDX → mdast; xoá node `<RealLife>`, `<Figure>`, `<Disclaimer>`; lấy plain text.
@@ -68,7 +69,7 @@ src/assets/legacy/system-design/*.png  # ảnh gốc, giữ credit
 6. Viết `migrate-system-design.mjs`; chạy; kiểm tay 3 bài (cache, database — dài nhất, pastebin — có ảnh).
 7. Chốt `finance-split-map.json` (đề xuất: 1 bài "Học để làm gì" + 1 "Bốn chặng" + 12 bài tuần + 1 "Bài tập thực hành" + 1 "An toàn & chống giả mạo" + 1 "Nguồn học" + 1 "Chọn nhánh tiếp" + 1 "Nghiên cứu nói gì" ≈ 19); chạy `migrate-finance-html.mjs`.
 8. `pnpm verify:fidelity` pass toàn bộ; `astro check` pass (schema).
-9. Trang `/gioi-thieu` liệt kê nguồn + license CC BY 4.0 (Donne Martin & cộng đồng) + credit ảnh bên thứ ba.
+9. Dữ liệu ghi công nằm trong frontmatter `source` (trang `/gioi-thieu` do Phase 4 dựng).
 
 ## Success Criteria
 - [ ] 28 bài Kiến trúc + ~19 bài Tài chính build được, schema hợp lệ.

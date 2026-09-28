@@ -1,0 +1,145 @@
+---
+domain: "kien-truc"
+module: "nen-tang"
+order: 3
+title: "Khả năng mở rộng cho người mới - Phần 3: Bộ nhớ đệm (Cache)"
+summary: "Sau khi làm theo Phần 2, giờ bạn đã có một giải pháp database mở rộng được. Bạn không còn sợ phải lưu hàng terabyte nữa, và thế giới trông thật đẹp đẽ."
+source:
+  name: "Le Cloud Blog - Scalability for Dummies, Part 3"
+  author: "Sebastian Kreutzberger"
+  url: "https://web.archive.org/web/20230126233752/https://www.lecloud.net/post/9246290032/scalability-for-dummies-part-3-cache"
+  license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
+  translatedAt: "2026-09-18"
+  snapshot: "system-design/00-nen-tang/03-caches.md"
+examplesReviewed: false
+readingMinutes: 6
+---
+
+
+# Khả năng mở rộng cho người mới - Phần 3: Bộ nhớ đệm (Cache)
+
+## Vấn đề còn lại
+
+Sau khi làm theo [Phần 2](/hoc/kien-truc/nen-tang/databases), giờ bạn đã có một giải pháp database mở rộng được. Bạn không còn sợ phải lưu hàng terabyte nữa, và thế giới trông thật đẹp đẽ.
+
+Nhưng chỉ đẹp với riêng bạn thôi. **Người dùng của bạn vẫn phải chịu đựng những trang tải chậm** mỗi khi có nhiều dữ liệu cần lấy từ database.
+
+Giải pháp là triển khai một **cache** (bộ nhớ đệm).
+
+## Cache là gì, và đặt ở đâu
+
+Khi nói "cache", tôi luôn muốn nói tới **in-memory cache** (bộ đệm nằm trong RAM) như Memcached hoặc Redis.
+
+> **Xin đừng bao giờ dùng cache dựa trên file.** Nó khiến việc nhân bản (cloning) và tự động mở rộng (auto-scaling) server của bạn trở thành cực hình.
+
+Quay lại với in-memory cache. Cache là một kho key-value đơn giản, và nó nên nằm như một **tầng đệm giữa ứng dụng và kho dữ liệu** của bạn.
+
+Bất cứ khi nào ứng dụng cần đọc dữ liệu, trước hết nó phải thử lấy dữ liệu từ cache. **Chỉ khi không có trong cache** thì mới đi lấy từ nguồn dữ liệu chính.
+
+## Tại sao phải làm vậy
+
+Vì cache **nhanh như chớp**. Nó giữ mọi tập dữ liệu trong RAM và xử lý request nhanh nhất mức kỹ thuật cho phép.
+
+Ví dụ, Redis chạy trên một server tiêu chuẩn có thể thực hiện **vài trăm nghìn thao tác đọc mỗi giây**. Ghi cũng vậy, đặc biệt là phép tăng giá trị (increment), nhanh vô cùng.
+
+Thử làm điều đó với một database mà xem!
+
+## Hai mô hình cache dữ liệu
+
+Có 2 mô hình để cache dữ liệu: một cũ và một mới.
+
+### Mô hình 1 - Cache câu truy vấn (Cached Database Queries)
+
+Đây vẫn là mô hình cache được dùng phổ biến nhất. Mỗi khi bạn chạy một truy vấn tới database, bạn lưu tập kết quả vào cache. **Khóa cache là một bản băm (hash) của chính câu truy vấn đó.** Lần sau chạy lại truy vấn này, bạn kiểm tra cache trước xem đã có kết quả sẵn chưa.
+
+Mô hình này có vài vấn đề. Vấn đề chính là **chuyện hết hạn (expiration)**.
+
+Rất khó xóa một kết quả đã cache khi bạn cache một truy vấn phức tạp - mà ai chẳng có truy vấn phức tạp? Khi một mẩu dữ liệu thay đổi (ví dụ một ô trong bảng), bạn phải xóa **tất cả** các truy vấn đã cache có thể có chứa ô đó. Bạn hiểu vấn đề rồi chứ?
+
+### Mô hình 2 - Cache đối tượng (Cached Objects)
+
+Đây là mô hình tôi **hết sức khuyến nghị** và luôn ưu tiên dùng.
+
+Nói chung, hãy nhìn dữ liệu của bạn như một đối tượng, đúng như cách bạn vẫn làm trong code (class, instance, v.v.). Để class của bạn lắp ráp một tập dữ liệu từ database, rồi lưu **toàn bộ instance của class đó**, hoặc tập dữ liệu đã lắp ráp xong, vào cache.
+
+Nghe có vẻ lý thuyết, tôi biết, nhưng cứ nhìn vào cách bạn code bình thường:
+
+Bạn có một class tên `Product`, trong đó có thuộc tính `data`. Nó là một mảng chứa giá, mô tả, hình ảnh và đánh giá của khách hàng về sản phẩm. Thuộc tính `data` được lấp đầy bởi nhiều phương thức trong class, mỗi phương thức chạy vài truy vấn database - những truy vấn rất khó cache, vì nhiều thứ liên quan chằng chịt với nhau.
+
+Giờ hãy làm thế này: **khi class của bạn lắp ráp xong mảng dữ liệu, hãy lưu thẳng mảng đó - hoặc tốt hơn nữa, lưu cả instance của class - vào cache!**
+
+Cách này cho phép bạn dễ dàng vứt bỏ đối tượng mỗi khi có gì đó thay đổi, và làm cho toàn bộ hoạt động của code vừa nhanh hơn vừa hợp logic hơn.
+
+### Và phần hay nhất: xử lý bất đồng bộ
+
+Nó **mở đường cho xử lý bất đồng bộ (asynchronous processing)**!
+
+Hãy tưởng tượng một đội quân worker server chuyên đi lắp ráp các đối tượng giúp bạn. Ứng dụng chỉ việc tiêu thụ đối tượng đã cache mới nhất, và **gần như không bao giờ phải chạm vào database nữa**!
+
+## Vài gợi ý về đối tượng nên cache
+
+- session của người dùng (**đừng bao giờ dùng database cho việc này!**)
+- bài blog đã render hoàn chỉnh
+- luồng hoạt động (activity stream)
+- quan hệ bạn bè giữa các user
+
+## Lời cuối
+
+Như bạn có lẽ đã nhận ra, tôi là một fan cuồng của caching. Nó dễ hiểu, cực kỳ đơn giản để triển khai, và kết quả thì lúc nào cũng làm người ta nín thở.
+
+Nhìn chung tôi thích Redis hơn Memcached, vì tôi mê những tính năng thiên về database của Redis như tính bền vững (persistence) và các cấu trúc dữ liệu có sẵn như list và set. Với Redis cộng thêm cách đặt khóa khôn ngoan, biết đâu bạn còn có cơ hội **bỏ luôn được database**.
+
+Nhưng nếu bạn chỉ cần cache thôi, hãy chọn Memcached, vì nó mở rộng ngọt như đường.
+
+Chúc caching vui vẻ!
+
+---
+
+<TranslatorNote>
+## Ghi chú của người dịch (2026)
+
+Đây là bài **ít lỗi thời nhất** trong cả loạt. Redis và Memcached vẫn là hai lựa chọn mặc định sau 15 năm, và cả hai mô hình cache vẫn nguyên giá trị.
+
+Vài chỗ cần bổ sung:
+
+**1. Tên gọi chuẩn của mô hình 1 và 2**
+
+README gốc của repo gọi chúng bằng thuật ngữ phổ biến hơn:
+- Mô hình 1 = [Caching at the database query level](https://github.com/donnemartin/system-design-primer#caching-at-the-database-query-level)
+- Mô hình 2 = [Caching at the object level](https://github.com/donnemartin/system-design-primer#caching-at-the-object-level)
+
+**2. Bài không nói về chiến lược ghi cache**
+
+Tác giả chỉ bàn cách *đọc* từ cache, không bàn khi nào *cập nhật* cache. Đây là lỗ hổng lớn nhất của bài. README gốc có hẳn mục [When to update the cache](https://github.com/donnemartin/system-design-primer#when-to-update-the-cache) với 4 chiến lược:
+
+| Chiến lược | Cách hoạt động |
+|---|---|
+| **Cache-aside** | App tự hỏi cache trước, trượt thì đọc DB rồi ghi vào cache. Chính là cách bài này mô tả |
+| **Write-through** | Ghi vào cache, cache ghi xuống DB ngay. Ghi chậm nhưng dữ liệu luôn khớp |
+| **Write-behind** | Ghi vào cache, ghi xuống DB sau (bất đồng bộ). Ghi rất nhanh nhưng có nguy cơ mất dữ liệu |
+| **Refresh-ahead** | Đoán trước dữ liệu sắp cần, làm mới cache trước khi hết hạn |
+
+Bài này thực chất đang mô tả **cache-aside** mà không gọi tên.
+
+**3. Vấn đề chưa được nhắc tới**
+
+Bài viết lạc quan quá mức. Cache đẻ ra lớp vấn đề riêng:
+
+- **Cache invalidation** - làm sao biết khi nào dữ liệu trong cache đã cũ. Tác giả có chạm vào ở mô hình 1 nhưng chưa nói mô hình 2 cũng dính, chỉ nhẹ hơn.
+- **Thundering herd / cache stampede** - cache hết hạn đúng lúc cao điểm, hàng nghìn request cùng lúc đổ xuống database, sập luôn.
+- **Cache chết thì sao** - nếu hệ thống đã quen với 95% request được cache phục vụ, cache sập đồng nghĩa database nhận tải gấp 20 lần cùng lúc.
+
+**4. Câu "bỏ luôn được database" - đừng làm theo**
+
+Redis có persistence, nhưng đó không phải bảo đảm bền vững ở mức database. Dùng Redis làm kho dữ liệu chính chỉ hợp lý khi mất dữ liệu là chấp nhận được.
+
+**5. "Đừng bao giờ dùng database cho session" - đã bớt tuyệt đối**
+
+Ngày nay nhiều hệ thống dùng token không trạng thái (JWT) nên không cần session store. Nhưng nguyên tắc gốc vẫn đúng: **đừng lưu session trên đĩa cục bộ của app server** - đó là quy tắc vàng của [Phần 1](/hoc/kien-truc/nen-tang/clones).
+
+Đối chiếu README gốc của repo:
+- [Cache](https://github.com/donnemartin/system-design-primer#cache) - toàn bộ chương, bao gồm cả các tầng cache khác (client, CDN, web server, database)
+- [When to update the cache](https://github.com/donnemartin/system-design-primer#when-to-update-the-cache)
+- [Disadvantage(s): cache](https://github.com/donnemartin/system-design-primer#disadvantages-cache)
+
+</TranslatorNote>

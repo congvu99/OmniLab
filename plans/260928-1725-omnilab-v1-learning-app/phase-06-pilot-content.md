@@ -1,26 +1,28 @@
 ---
 phase: 6
-title: "Pilot content"
+title: "Content enrichment (all lessons)"
 status: pending
 priority: P1
-effort: "3–4 ngày (gồm vòng duyệt của user)"
+effort: "~8–10 ngày-agent (song song)"
 dependencies: [4]
 ---
 
 # Phase 6: Pilot content
 
 ## Overview
-Chốt **template chất lượng** trên 6 bài thí điểm: ví dụ đời sống (`<RealLife>`) do AI nháp → user duyệt, SVG minh hoạ theo style guide, prompt mẫu ảnh bìa để user tự tạo. Kết quả phase này là chuẩn để nhân rộng ~41 bài còn lại ở vòng 2.
+> **Scope change 2026-09-28 (user):** làm **toàn bộ bài học** (không chỉ thí điểm), không hỏi user; user bỏ vòng duyệt thủ công → thay bằng **agent fact-check độc lập** mỗi lô trước khi set `examplesReviewed: true`. Vòng 2 cũ gộp vào phase này.
 
-Bài thí điểm:
+Quy trình: (1) chốt style guide + SVG mẫu trên 6 bài thí điểm (dưới đây) bằng 1 agent; (2) fan-out agent song song theo lô thư mục bài học (file ownership tách bạch); (3) fact-check agent mỗi lô; (4) `verify-fidelity` + build.
+
+Bài thí điểm (lô 0, chốt style):
 - Kiến trúc: `chu-de/07-cache`, `chu-de/03-load-balancer`, `danh-doi/03-cap-theorem`
 - Tài chính: Tuần 3 (Lãi kép, lạm phát & bộ đệm nhỏ), Tuần 4 (Chi phí vay & kế hoạch trả nợ), Tuần 5 (Quỹ dự phòng & bảo hiểm)
 
 ## Requirements
 - Functional:
   - Mỗi bài 3–5 khối `<RealLife>`, đặt ngay sau đoạn khái niệm liên quan; bối cảnh Việt Nam đời thường (quán phở, tủ lạnh, ngân hàng, xếp hàng, Grab...).
-  - Mỗi bài 2–3 SVG (`<Figure>`), tổng ~15; mỗi SVG giải thích **cơ chế** (luồng, so sánh trước/sau), không trang trí.
-  - `examplesReviewed: true` chỉ khi user duyệt xong.
+  - Mỗi bài 1–3 SVG (`<Figure added>`), tổng ~90–110; mỗi SVG giải thích **cơ chế** (luồng, so sánh trước/sau), không trang trí.
+  - `examplesReviewed: true` chỉ khi fact-check agent pass (user uỷ quyền, không duyệt tay).
   - File `docs/cover-image-prompt.md`: 1 prompt mẫu + biến (chủ đề, màu accent) + spec xuất ảnh.
 - Non-functional: SVG < 15KB/ảnh, dùng `currentColor`/CSS var (đúng ở light + dark), chữ tiếng Việt là `<text>` thật, có `<title>` + alt; `verify-fidelity` vẫn pass.
 

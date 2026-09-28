@@ -1,19 +1,45 @@
 ---
-// Trang 404 thật (không SPA fallback). Caddyfile handle_errors trỏ về đây.
-const title = 'Không tìm thấy trang - OmniLab';
+// Real 404 page (no SPA fallback — Caddyfile handle_errors routes here).
+// Uses app-layout so it matches the rest of the app's chrome/fonts/theme.
+import AppLayout from '../layouts/app-layout.astro';
 ---
 
-<html lang="vi">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>{title}</title>
-	</head>
-	<body>
-		<main>
-			<h1>404 - Không tìm thấy trang</h1>
-			<p>Trang bạn tìm không tồn tại hoặc đã bị di chuyển.</p>
-			<p><a href="/">Về trang chủ</a></p>
-		</main>
-	</body>
-</html>
+<AppLayout title="Không tìm thấy trang - OmniLab" largeTitle="404">
+  <div class="not-found">
+    <p class="not-found-body">Trang bạn tìm không tồn tại hoặc đã bị di chuyển.</p>
+    <a href="/" class="not-found-cta tap-scale">Về trang chủ</a>
+  </div>
+</AppLayout>
+
+<style>
+  .not-found {
+    margin: var(--space-6) var(--space-4);
+    padding: var(--space-6) var(--space-5);
+    background: var(--surface);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-3);
+  }
+
+  .not-found-body {
+    color: var(--ink-2);
+    max-width: 32ch;
+  }
+
+  .not-found-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 var(--space-5);
+    border-radius: var(--radius-row);
+    background: var(--accent);
+    color: var(--accent-on);
+    font-weight: 600;
+    text-decoration: none;
+  }
+</style>

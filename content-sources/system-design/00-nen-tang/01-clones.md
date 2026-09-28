@@ -1,0 +1,61 @@
+---
+nguon: Le Cloud Blog - Scalability for Dummies, Part 1
+tac-gia: Sebastian Kreutzberger
+ngay-goc: 2011-07-06
+link-goc: https://web.archive.org/web/20220530193911/https://www.lecloud.net/post/7295452622/scalability-for-dummies-part-1-clones
+ngay-dich: 2026-09-18
+trang-thai: hoan-thanh
+---
+
+# Khả năng mở rộng cho người mới - Phần 1: Bản sao (Clones)
+
+> Lời mở đầu của tác giả: Gần đây tôi được hỏi cần những gì để làm một web service có khả năng mở rộng ở quy mô cực lớn. Câu trả lời của tôi khá dài, và có lẽ cũng hữu ích cho người khác. Nên tôi chia sẻ ở đây trên blog, tách thành nhiều phần cho dễ đọc. Các phần mới sẽ ra đều đặn. Chúc vui, và luôn hoan nghênh bình luận của bạn!
+
+## Load balancer đứng trước cụm server
+
+Các server công khai (public server) của một web service có khả năng mở rộng đều nằm ẩn sau một **load balancer** (bộ cân bằng tải). Load balancer này phân phối tải - tức là các request từ người dùng của bạn - một cách đều đặn lên cả nhóm/cụm (cluster) application server.
+
+Nghĩa là, ví dụ người dùng Steve tương tác với dịch vụ của bạn: request đầu tiên của anh ta có thể được server 2 phục vụ, request thứ hai lại do server 9 phục vụ, rồi request thứ ba có khi lại quay về server 2.
+
+## Quy tắc vàng đầu tiên
+
+Steve phải **luôn nhận về cùng một kết quả** cho request của mình, bất kể anh ta "đáp xuống" server nào. Điều đó dẫn tới quy tắc vàng đầu tiên của khả năng mở rộng:
+
+> **Mọi server phải chứa chính xác cùng một codebase, và không được lưu bất kỳ dữ liệu nào liên quan đến người dùng - như session hay ảnh đại diện - trên ổ đĩa hoặc bộ nhớ cục bộ của chính nó.**
+
+## Session phải để ở đâu
+
+Session cần được lưu trong một **kho dữ liệu tập trung** (centralized data store) mà tất cả application server đều truy cập được. Kho đó có thể là một database bên ngoài, hoặc một persistent cache bên ngoài như **Redis**. Một persistent cache bên ngoài sẽ cho hiệu năng tốt hơn database bên ngoài.
+
+"Bên ngoài" (external) ở đây nghĩa là: kho dữ liệu đó **không nằm trên chính các application server**. Thay vào đó, nó nằm đâu đó bên trong hoặc gần với data center chứa các application server của bạn.
+
+## Còn triển khai (deployment) thì sao?
+
+Làm sao đảm bảo một thay đổi code được đẩy tới **tất cả** server, không để sót server nào vẫn còn chạy code cũ?
+
+Vấn đề hóc búa này may thay đã được giải quyết bởi một công cụ rất tốt là **Capistrano**. Nó đòi hỏi bạn phải học một chút, nhất là nếu bạn không làm Ruby on Rails, nhưng chắc chắn đáng công sức bỏ ra.
+
+## Nhân bản server bằng image
+
+Sau khi đã "đưa session ra ngoài" và phục vụ cùng một codebase từ mọi server, giờ bạn có thể tạo một **image file** từ một trong các server đó. AWS gọi cái này là **AMI** (Amazon Machine Image).
+
+Dùng AMI này làm một "siêu bản sao" (super-clone) làm nền cho mọi instance mới. Mỗi khi khởi chạy một instance/clone mới, chỉ cần deploy code mới nhất lần đầu là xong, sẵn sàng chạy!
+
+---
+
+## Ghi chú của người dịch (2026)
+
+Bài gốc viết năm 2011, ý tưởng cốt lõi vẫn đúng nguyên nhưng công cụ đã đổi:
+
+| Bài gốc (2011) | Tương đương hiện nay |
+|---|---|
+| Capistrano để đẩy code | CI/CD pipeline (GitHub Actions, GitLab CI), container image |
+| AMI làm "super-clone" | Docker image + Kubernetes, hoặc AMI + Auto Scaling Group |
+| Redis làm session store | Vẫn Redis, hoặc JWT/token không trạng thái để khỏi cần session store |
+
+Khái niệm nền tảng rút ra: **stateless application server** (server không giữ trạng thái). Đây là điều kiện tiên quyết của horizontal scaling - xem mục [Horizontal scaling](../../README.md#horizontal-scaling) trong README gốc.
+
+Đối chiếu README gốc của repo:
+- [Load balancer](../../README.md#load-balancer)
+- [Application layer](../../README.md#application-layer)
+- [Cache](../../README.md#cache)

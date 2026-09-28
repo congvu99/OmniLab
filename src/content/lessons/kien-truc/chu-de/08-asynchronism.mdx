@@ -1,0 +1,151 @@
+---
+domain: "kien-truc"
+module: "chu-de"
+order: 8
+title: "Bất đồng bộ (Asynchronism)"
+summary: "Các luồng công việc bất đồng bộ (asynchronous workflows) giúp giảm thời gian xử lý request đối với những thao tác tốn kém mà nếu không thì phải thực hiện ngay trong luồng request (in-line)."
+source:
+  name: "The System Design Primer - mục \"Asynchronism\""
+  author: "Donne Martin và cộng đồng đóng góp"
+  url: "https://github.com/donnemartin/system-design-primer#asynchronism"
+  license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
+  translatedAt: "2026-09-28"
+  snapshot: "system-design/02-chu-de/08-asynchronism.md"
+examplesReviewed: false
+readingMinutes: 8
+---
+
+import img_54GYsSx from '../../../../assets/legacy/system-design/54GYsSx.png';
+
+
+# Bất đồng bộ (Asynchronism)
+
+## Nội dung gốc
+
+<Figure src={img_54GYsSx} alt="Sơ đồ tầng nền tảng với hàng đợi và worker xử lý bất đồng bộ" credit={`Nguồn: <a href="http://lethain.com/introduction-to-architecting-systems-for-scale/#platform_layer">Intro to architecting systems for scale</a>`} />
+
+Các luồng công việc bất đồng bộ (asynchronous workflows) giúp giảm thời gian xử lý request đối với những thao tác tốn kém mà nếu không thì phải thực hiện ngay trong luồng request (in-line). Chúng cũng có thể giúp bằng cách làm trước những việc tốn thời gian, chẳng hạn tổng hợp dữ liệu định kỳ.
+
+### Hàng đợi thông điệp (Message queues)
+
+Hàng đợi thông điệp nhận, lưu giữ và chuyển phát thông điệp. Nếu một thao tác quá chậm để thực hiện ngay trong luồng request, bạn có thể dùng hàng đợi thông điệp với luồng công việc sau:
+
+- Ứng dụng đẩy (publish) một công việc (job) vào hàng đợi, rồi thông báo trạng thái công việc cho người dùng
+- Một worker lấy công việc từ hàng đợi, xử lý nó, rồi báo hiệu công việc đã hoàn tất
+
+Người dùng không bị chặn (blocked) và công việc được xử lý ở chế độ nền. Trong khoảng thời gian này, client có thể tùy chọn tự xử lý một phần nhỏ để trông như tác vụ đã hoàn thành. Ví dụ, khi đăng một tweet, tweet đó có thể lập tức hiện trên dòng thời gian (timeline) của bạn, nhưng có thể mất một lúc trước khi tweet thực sự được chuyển tới tất cả người theo dõi bạn.
+
+**[Redis](https://redis.io/)** hữu ích như một message broker đơn giản nhưng thông điệp có thể bị mất.
+
+**[RabbitMQ](https://www.rabbitmq.com/)** phổ biến nhưng đòi hỏi bạn phải làm quen với giao thức "AMQP" và tự quản lý các node của mình.
+
+**[Amazon SQS](https://aws.amazon.com/sqs/)** là dịch vụ được lưu trữ sẵn (hosted) nhưng có thể có độ trễ cao và có khả năng một thông điệp bị chuyển phát hai lần.
+
+### Hàng đợi tác vụ (Task queues)
+
+Hàng đợi tác vụ nhận các tác vụ cùng dữ liệu liên quan, chạy chúng, rồi trả về kết quả. Chúng có thể hỗ trợ lập lịch (scheduling) và có thể được dùng để chạy các công việc nặng về tính toán ở chế độ nền.
+
+**[Celery](https://docs.celeryproject.org/en/stable/)** hỗ trợ lập lịch và chủ yếu hỗ trợ Python.
+
+### Áp lực ngược (Back pressure)
+
+Nếu hàng đợi bắt đầu phình to đáng kể, kích thước hàng đợi có thể vượt quá bộ nhớ, dẫn tới trượt cache (cache miss), đọc đĩa, và hiệu năng còn chậm hơn nữa. [Áp lực ngược (back pressure)](http://mechanical-sympathy.blogspot.com/2012/05/apply-back-pressure-when-overloaded.html) có thể giúp bằng cách giới hạn kích thước hàng đợi, nhờ đó duy trì thông lượng cao và thời gian phản hồi tốt cho các công việc đã nằm trong hàng đợi. Khi hàng đợi đầy, client nhận được thông báo máy chủ bận hoặc mã trạng thái HTTP 503 để thử lại sau. Client có thể thử lại request vào thời điểm sau đó, có thể dùng [giãn cách lũy thừa (exponential backoff)](https://en.wikipedia.org/wiki/Exponential_backoff).
+
+### Nhược điểm: bất đồng bộ
+
+- Những trường hợp như tính toán rẻ và luồng công việc thời gian thực có thể phù hợp hơn với thao tác đồng bộ, vì việc đưa hàng đợi vào có thể làm tăng độ trễ và độ phức tạp.
+
+### Nguồn và đọc thêm
+
+- [It's all a numbers game](https://www.youtube.com/watch?v=1KRYH75wgy4)
+- [Applying back pressure when overloaded](http://mechanical-sympathy.blogspot.com/2012/05/apply-back-pressure-when-overloaded.html)
+- [Little's law](https://en.wikipedia.org/wiki/Little%27s_law)
+- [What is the difference between a message queue and a task queue?](https://www.quora.com/What-is-the-difference-between-a-message-queue-and-a-task-queue-Why-would-a-task-queue-require-a-message-broker-like-RabbitMQ-Redis-Celery-or-IronMQ-to-function)
+
+---
+
+<TranslatorNote>
+## Ghi chú của người dịch
+
+**1. Mục này ngắn, nhưng là một trong những công cụ mạnh nhất để mở rộng**
+
+Bất đồng bộ tách **thời điểm nhận việc** khỏi **thời điểm làm việc**. Nhờ vậy:
+
+- Thời gian phản hồi người dùng không còn phụ thuộc vào phần việc chậm nhất (gửi email, resize ảnh, tạo báo cáo).
+- Đợt tăng đột biến lưu lượng được hàng đợi "san phẳng" (load leveling): worker xử lý với tốc độ ổn định, hàng đợi tạm chứa phần dư.
+- Bên gửi và bên nhận không cần sống cùng lúc - worker chết vài phút thì việc chỉ bị trễ, không bị mất (nếu broker lưu bền).
+
+Cái giá: người dùng không còn nhận được kết quả ngay, nên giao diện phải thiết kế cho trạng thái "đang xử lý" (polling, webhook, WebSocket, thông báo đẩy). Ví dụ tweet trong bản gốc chính là kỹ thuật **cập nhật lạc quan (optimistic UI)**.
+
+**2. Message queue, task queue và event log - phân biệt cho rõ**
+
+Bản gốc chỉ nêu hai loại. Đến 2026, cần thêm loại thứ ba vì nó phổ biến không kém:
+
+| | Message queue | Task queue | Event log / streaming |
+|---|---|---|---|
+| Đơn vị | Thông điệp | Tác vụ (hàm + tham số) | Sự kiện trong một log chỉ ghi thêm |
+| Sau khi xử lý | Thông điệp bị xóa | Tác vụ xong, có thể lưu kết quả | Sự kiện **vẫn còn**, đọc lại được |
+| Số bên nhận | Thường một consumer mỗi thông điệp | Một worker | Nhiều nhóm consumer độc lập, mỗi nhóm giữ vị trí đọc (offset) riêng |
+| Ví dụ | RabbitMQ, Amazon SQS, ActiveMQ | Celery, Sidekiq, BullMQ, RQ | Apache Kafka, Redpanda, Amazon Kinesis, Apache Pulsar |
+
+Task queue thường **chạy trên** một message broker (Celery dùng RabbitMQ hoặc Redis làm broker) - đó chính là ý câu hỏi Quora trong phần đọc thêm.
+
+**3. Cập nhật ghi chú về công cụ trong bản gốc**
+
+- **Redis "có thể mất thông điệp"**: đúng với Pub/Sub (không có subscriber lúc gửi là mất) và với danh sách dùng `LPUSH`/`BRPOP` đơn giản (worker lấy ra rồi chết là mất). **Redis Streams** (từ Redis 5) có consumer group và cơ chế xác nhận (`XACK`), khắc phục phần lớn vấn đề, nhưng độ bền vẫn phụ thuộc vào cấu hình lưu bền của Redis.
+- **RabbitMQ**: ngoài AMQP 0-9-1, các bản mới hỗ trợ AMQP 1.0, MQTT, STOMP, cùng quorum queue (dựa trên Raft) và Streams. "Tự quản lý node" có thể tránh bằng dịch vụ quản lý (Amazon MQ, CloudAMQP).
+- **Amazon SQS "có thể chuyển phát hai lần"**: đúng với hàng đợi Standard (at-least-once). Hàng đợi **FIFO** có loại bỏ trùng lặp trong một khoảng thời gian và giữ thứ tự, đổi lại thông lượng thấp hơn.
+- **Kafka** đã bỏ hẳn ZooKeeper, chuyển sang chế độ KRaft từ bản 4.0 - vận hành đơn giản hơn trước nhiều.
+- Các lựa chọn khác đáng biết: Google Cloud Pub/Sub, Azure Service Bus, NATS / JetStream; và các engine **luồng công việc bền vững (durable workflow)** như Temporal cho quy trình nhiều bước chạy dài.
+
+**4. Chuyển phát "đúng một lần" gần như là ảo giác - hãy thiết kế idempotent**
+
+Các broker thực tế cung cấp **ít nhất một lần (at-least-once)** hoặc **nhiều nhất một lần (at-most-once)**. Worker có thể xử lý xong nhưng chết trước khi xác nhận, và thông điệp sẽ được giao lại. Vì vậy:
+
+- Worker phải **idempotent** (xử lý hai lần cho cùng kết quả như một lần), thường bằng khóa idempotency hoặc bảng ghi các ID đã xử lý.
+- Thông điệp lỗi mãi không xử lý được (poison message) phải được đẩy sang **hàng đợi thư chết (dead-letter queue - DLQ)** sau vài lần thử, không để nó chặn cả hàng đợi.
+- **Bài toán ghi kép (dual write)**: ghi DB rồi gửi thông điệp - nếu chết ở giữa thì hai bên lệch nhau. Mẫu chuẩn là **transactional outbox**: ghi thông điệp vào một bảng outbox trong cùng giao dịch DB, rồi một tiến trình riêng (hoặc CDC như Debezium) đẩy ra broker.
+- Hàng đợi không bảo đảm thứ tự toàn cục; nếu cần thứ tự thì thường chỉ có được **theo từng khóa** (partition key trong Kafka, message group trong SQS FIFO).
+
+**5. Back pressure và định luật Little**
+
+Định luật Little (trong phần đọc thêm): **L = λ × W** - số việc trung bình trong hệ thống bằng tốc độ đến nhân thời gian trung bình mỗi việc ở trong hệ thống. Hệ quả trực tiếp: nếu tốc độ đến vượt tốc độ xử lý trong thời gian dài, hàng đợi **phình mãi** và thời gian chờ tăng không giới hạn. Hàng đợi chỉ hấp thụ được đợt tăng tạm thời, không cứu được hệ thiếu năng lực thường trực.
+
+Vì vậy:
+
+- **Hàng đợi không giới hạn là lỗi thiết kế** - nó biến sự cố quá tải thành sự cố hết bộ nhớ, trễ hơn và khó chẩn đoán hơn.
+- Theo dõi **độ sâu hàng đợi** và **tuổi của thông điệp cũ nhất** (consumer lag), dùng chúng để tự động mở rộng worker (ví dụ KEDA trên Kubernetes).
+- Khi từ chối bằng HTTP 503, gửi kèm header `Retry-After`, và client thử lại nên dùng exponential backoff **kèm nhiễu ngẫu nhiên (jitter)** để tránh bão thử lại - xem thêm ở [Các mẫu sẵn sàng](/hoc/kien-truc/danh-doi/availability-patterns).
+
+**6. Khi nào KHÔNG nên dùng bất đồng bộ**
+
+Nhược điểm trong bản gốc chỉ một dòng nhưng đáng nhấn mạnh: thêm hàng đợi là thêm một thành phần phải vận hành, giám sát, và thêm một lớp khó gỡ lỗi (truy vết một request đi qua hàng đợi cần distributed tracing như OpenTelemetry). Đừng dùng khi:
+
+- Người dùng **cần kết quả ngay** để đi tiếp (kiểm tra mật khẩu, xác nhận tồn kho khi thanh toán).
+- Việc đủ rẻ để làm trong vài mili giây.
+- Hệ thống còn nhỏ - một cron job hoặc một bảng "jobs" trong PostgreSQL (dùng `SELECT ... FOR UPDATE SKIP LOCKED`) thường đủ dùng trước khi cần broker riêng.
+
+**7. Góc nhìn phỏng vấn**
+
+Khi vẽ hàng đợi vào sơ đồ, nên tự trả lời trước:
+
+- Việc nào nằm trên đường đi đồng bộ, việc nào đẩy ra hàng đợi, và vì sao?
+- Bảo đảm chuyển phát là gì, và worker xử lý trùng lặp thế nào?
+- Có cần thứ tự không? Thứ tự theo khóa nào?
+- Hàng đợi đầy thì sao? (Back pressure, 503, loại bỏ việc ít quan trọng.)
+- Thông điệp lỗi đi đâu? (DLQ, cảnh báo, cơ chế chạy lại.)
+- Người dùng biết kết quả bằng cách nào? (Polling, webhook, WebSocket.)
+
+**8. Nối với các mục khác**
+
+- [Asynchronism (Scalability for Dummies, Phần 4)](/hoc/kien-truc/nen-tang/asynchronism) - bản nhập môn với hai kiểu bất đồng bộ: làm sẵn từ trước và nhận việc rồi trả kết quả sau.
+- [Cache](/hoc/kien-truc/chu-de/cache) - mục trước; cache mức đối tượng và write-behind đều dựa trên xử lý bất đồng bộ.
+- [Các mẫu nhất quán](/hoc/kien-truc/danh-doi/consistency-patterns) - xử lý bất đồng bộ đồng nghĩa người dùng có thể thấy dữ liệu nhất quán sau cùng (eventual consistency).
+- [Latency vs throughput](/hoc/kien-truc/danh-doi/latency-vs-throughput) - hàng đợi đổi độ trễ của từng việc lấy thông lượng ổn định.
+- [Communication](/hoc/kien-truc/chu-de/communication) - mục kế tiếp, bàn về giao thức giữa các thành phần.
+
+Đối chiếu README gốc của repo:
+- [Asynchronism](https://github.com/donnemartin/system-design-primer#asynchronism)
+- [Communication](https://github.com/donnemartin/system-design-primer#communication) - mục kế tiếp
+
+</TranslatorNote>

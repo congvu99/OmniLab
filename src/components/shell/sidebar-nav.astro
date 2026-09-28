@@ -1,0 +1,100 @@
+---
+// Desktop sidebar (>=1024px), same 4 items as tab-bar.astro via nav-items.ts.
+// app-layout.astro reserves --shell-sidebar-w of left padding on <main> at
+// this breakpoint so content never sits under the fixed sidebar.
+import GraduationCap from '@lucide/astro/icons/graduation-cap';
+import Layers from '@lucide/astro/icons/layers';
+import Search from '@lucide/astro/icons/search';
+import Bookmark from '@lucide/astro/icons/bookmark';
+import { navItems, isNavItemActive } from './nav-items';
+
+const iconMap = {
+  'graduation-cap': GraduationCap,
+  layers: Layers,
+  search: Search,
+  bookmark: Bookmark,
+} as const;
+
+const pathname = Astro.url.pathname;
+---
+
+<nav class="sidebar-nav" aria-label="Điều hướng chính">
+  <a href="/" class="sidebar-brand tap-scale">OmniLab</a>
+  <ul class="sidebar-list">
+    {navItems.map((item) => {
+      const Icon = iconMap[item.icon];
+      const active = isNavItemActive(pathname, item);
+      return (
+        <li>
+          <a
+            href={item.href}
+            class="sidebar-link tap-scale"
+            aria-current={active ? 'page' : undefined}
+            data-active={active}
+          >
+            <Icon size={20} stroke-width={active ? 2.25 : 2} aria-hidden="true" />
+            <span>{item.label}</span>
+          </a>
+        </li>
+      );
+    })}
+  </ul>
+</nav>
+
+<style>
+  .sidebar-nav {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: var(--shell-sidebar-w);
+      padding: var(--space-5) var(--space-4);
+      border-right: 1px solid var(--line);
+      background: var(--surface);
+      z-index: var(--z-nav);
+      overflow-y: auto;
+    }
+  }
+
+  .sidebar-brand {
+    font-size: var(--text-title2);
+    font-weight: 700;
+    color: var(--ink);
+    text-decoration: none;
+    padding: var(--space-2);
+  }
+
+  .sidebar-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    margin: 0;
+    padding: 0;
+  }
+
+  .sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: 44px;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-row);
+    color: var(--ink-2);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .sidebar-link[data-active='true'] {
+    color: var(--accent);
+    background: var(--surface-2);
+    font-weight: 700;
+  }
+</style>

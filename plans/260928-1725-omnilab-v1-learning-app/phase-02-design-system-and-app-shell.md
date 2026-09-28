@@ -1,10 +1,11 @@
 ---
 phase: 2
-title: "Design system and app shell"
-status: pending
+title: Design system and app shell
+status: in-progress
 priority: P1
-effort: "1.5–2 ngày"
-dependencies: [1]
+effort: 1.5–2 ngày
+dependencies:
+  - 1
 ---
 
 # Phase 2: Design system and app shell

@@ -1,0 +1,29 @@
+---
+// <Disclaimer> — added content, rendered at the top of every finance lesson
+// (domain.isFinance === true, wired by Phase 4's lesson layout). Not part of
+// the original source: verify-fidelity strips this subtree entirely.
+---
+
+<div class="disclaimer" role="note">
+  <p>
+    <strong>Miễn trừ trách nhiệm:</strong> nội dung mang tính giáo dục, không
+    phải tư vấn đầu tư hay khuyến nghị mua/bán sản phẩm tài chính cụ thể.
+    Kiểm tra lại số liệu, quy định pháp luật và điều kiện sản phẩm tại nguồn
+    chính thức trước khi quyết định.
+  </p>
+</div>
+
+<style>
+  .disclaimer {
+    margin: 0 0 var(--space-5);
+    padding: var(--space-3) var(--space-4);
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-row);
+    font-size: var(--text-footnote);
+    color: var(--ink-2);
+  }
+  .disclaimer p {
+    margin: 0;
+  }
+</style>

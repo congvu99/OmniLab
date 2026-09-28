@@ -1,0 +1,145 @@
+---
+domain: "kien-truc"
+module: "danh-doi"
+order: 3
+title: "Định lý CAP (CAP Theorem)"
+summary: "Trong một hệ thống máy tính phân tán, bạn chỉ có thể đáp ứng hai trong ba đảm bảo sau:"
+source:
+  name: "The System Design Primer - mục \"Availability vs consistency / CAP theorem\""
+  author: "Donne Martin và cộng đồng đóng góp"
+  url: "https://github.com/donnemartin/system-design-primer#cap-theorem"
+  license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
+  translatedAt: "2026-09-28"
+  snapshot: "system-design/01-danh-doi/03-cap-theorem.md"
+examplesReviewed: false
+readingMinutes: 7
+---
+
+import img_bgLMI2u from '../../../../assets/legacy/system-design/bgLMI2u.png';
+
+
+# Định lý CAP (CAP Theorem)
+
+## Nội dung gốc
+
+<Figure src={img_bgLMI2u} alt="Sơ đồ định lý CAP" credit={`Nguồn: <a href="https://robertgreiner.com/cap-theorem-revisited">CAP theorem revisited</a>`} />
+
+Trong một hệ thống máy tính phân tán, bạn chỉ có thể đáp ứng **hai** trong ba đảm bảo sau:
+
+- **Tính nhất quán (Consistency)** - Mọi lần đọc đều nhận được kết quả của lần ghi gần nhất, hoặc nhận lỗi.
+- **Tính sẵn sàng (Availability)** - Mọi yêu cầu đều nhận được phản hồi, nhưng không đảm bảo phản hồi đó chứa phiên bản mới nhất của thông tin.
+- **Khả năng chịu phân mảnh (Partition Tolerance)** - Hệ thống tiếp tục hoạt động bất chấp việc mạng bị chia cắt tùy ý do sự cố.
+
+*Mạng vốn không đáng tin cậy, nên bạn buộc phải hỗ trợ khả năng chịu phân mảnh. Việc bạn phải làm là đánh đổi giữa tính nhất quán và tính sẵn sàng ở tầng phần mềm.*
+
+### CP - nhất quán và chịu phân mảnh
+
+Việc chờ phản hồi từ node bị chia cắt có thể dẫn tới lỗi hết thời gian chờ (timeout). CP là lựa chọn tốt nếu nghiệp vụ của bạn đòi hỏi đọc và ghi mang tính nguyên tử (atomic).
+
+### AP - sẵn sàng và chịu phân mảnh
+
+Phản hồi trả về phiên bản dữ liệu sẵn có nhất trên bất kỳ node nào, và phiên bản đó có thể không phải mới nhất. Các thao tác ghi có thể mất một khoảng thời gian để lan truyền khi tình trạng phân mảnh được khắc phục.
+
+AP là lựa chọn tốt nếu nghiệp vụ cho phép nhất quán cuối cùng (eventual consistency), hoặc khi hệ thống cần tiếp tục chạy bất chấp lỗi từ bên ngoài.
+
+### Nguồn và đọc thêm
+
+- [CAP theorem revisited](https://robertgreiner.com/cap-theorem-revisited/)
+- [A plain english introduction to CAP theorem](http://ksat.me/a-plain-english-introduction-to-cap-theorem)
+- [CAP FAQ](https://github.com/henryr/cap-faq)
+- [The CAP theorem](https://www.youtube.com/watch?v=k-Yaq8AHlFA)
+
+---
+
+<TranslatorNote>
+## Ghi chú của người dịch
+
+**1. Cách phát biểu "chọn 2 trong 3" là cách phát biểu sai - nhưng vẫn hữu ích**
+
+Đây là điều quan trọng nhất cần biết về CAP, và bản gốc trình bày theo lối phổ thông nên dễ gây hiểu nhầm.
+
+Hình tam giác gợi ý rằng ta được **chọn tự do** 2 trong 3, tức là có ba lựa chọn: CA, CP, AP. Thực tế **CA không tồn tại** trong hệ phân tán. Lý do: phân mảnh mạng không phải một tính năng để chọn, nó là **một sự kiện xảy ra dù bạn muốn hay không**. Cáp đứt, switch hỏng, node bị GC pause 30 giây - tất cả đều là phân mảnh. Khi nó xảy ra, hệ thống buộc phải chọn:
+
+- Từ chối phục vụ để không trả dữ liệu cũ, tức **CP** (hy sinh sẵn sàng)
+- Vẫn phục vụ với dữ liệu có thể cũ, tức **AP** (hy sinh nhất quán)
+
+Chính vì vậy, chữ "P" không phải một lựa chọn mà là **một tiền đề**. Cách phát biểu chính xác hơn:
+
+> **Khi và chỉ khi mạng bị phân mảnh**, hệ thống phải chọn giữa nhất quán và sẵn sàng.
+
+Vế "khi và chỉ khi" cũng quan trọng không kém: **lúc mạng bình thường, không có đánh đổi nào cả**. Một hệ thống hoàn toàn có thể vừa nhất quán mạnh vừa sẵn sàng cao trong 99,9% thời gian, và chỉ phải chọn phe trong 0,1% thời gian còn lại. Rất nhiều tranh luận kiểu "Postgres là CP nên không sẵn sàng" xuất phát từ việc bỏ quên vế này.
+
+**2. Ba định nghĩa trong CAP hẹp hơn nghĩa thông thường**
+
+Đây là nguồn nhầm lẫn thứ hai. Các chữ C, A trong CAP là thuật ngữ kỹ thuật có định nghĩa hình thức, **không giống** cách ta dùng chúng hằng ngày:
+
+| Chữ | Nghĩa trong CAP | Nghĩa thông thường (dễ nhầm) |
+|---|---|---|
+| C | Khả tuần tự hóa nguyên tử (linearizability) - toàn hệ thống hành xử như thể chỉ có một bản sao duy nhất | Chữ C trong ACID - giao dịch không phá vỡ ràng buộc dữ liệu |
+| A | **Mọi** node còn sống đều phải trả lời, không giới hạn thời gian | Uptime, SLA "99,99%" |
+| P | Hệ thống vẫn chạy khi các node mất liên lạc hoàn toàn với nhau | Khả năng chịu lỗi nói chung |
+
+Hai bẫy hay gặp:
+
+- **C của CAP không phải C của ACID.** Chúng chỉ trùng chữ cái. C của ACID nói về ràng buộc nghiệp vụ (số dư không âm, khóa ngoại hợp lệ); C của CAP nói về thứ tự quan sát được của các thao tác giữa nhiều bản sao.
+- **A của CAP không phải uptime.** Định nghĩa CAP yêu cầu *mọi* node không lỗi đều phản hồi. Một hệ thống có 5 node, 3 node trả lời tốt, 2 node từ chối vì mất quorum, theo CAP là **không sẵn sàng** - dù người dùng thực tế vẫn dùng bình thường và biểu đồ uptime vẫn 100%.
+
+**3. PACELC - phần bổ sung quan trọng mà CAP thiếu**
+
+CAP chỉ nói về lúc mạng hỏng, nhưng mạng hỏng rất hiếm. Câu hỏi thực tế hơn là: **lúc mạng bình thường thì sao?** Daniel Abadi đề xuất mở rộng PACELC để trả lời:
+
+> **P**artition thì chọn **A** hay **C**; **E**lse (bình thường) thì chọn **L**atency hay **C**onsistency.
+
+Vế sau (ELC) mới là thứ ảnh hưởng tới hệ thống mỗi ngày. Muốn nhất quán mạnh thì mỗi lần ghi phải chờ đồng bộ sang nhiều bản sao, có thể là sang vùng địa lý khác - và như đã thấy ở mục [Độ trễ và thông lượng](/hoc/kien-truc/danh-doi/latency-vs-throughput), khoảng cách địa lý đặt ra sàn cứng cho độ trễ. Nhất quán mạnh xuyên lục địa nghĩa là mỗi lần ghi cõng thêm 150-200 ms, không có cách nào tránh.
+
+Phân loại vài hệ quen thuộc theo PACELC:
+
+| Hệ thống | Khi phân mảnh | Lúc bình thường |
+|---|---|---|
+| PostgreSQL, MySQL (một master) | PC | EC |
+| MongoDB | PC | EC (mặc định đọc từ primary) |
+| Cassandra, DynamoDB | PA | EL (chỉnh được qua mức nhất quán từng truy vấn) |
+| Spanner (Google) | PC | EC - trả giá bằng đồng hồ nguyên tử để giữ độ trễ chấp nhận được |
+
+**4. Lựa chọn CP hay AP là quyết định nghiệp vụ, không phải kỹ thuật**
+
+Câu hỏi quyết định rất đơn giản: **nếu trả sai dữ liệu thì thiệt hại thế nào, so với việc không trả gì cả?**
+
+| Nghiệp vụ | Nên chọn | Vì sao |
+|---|---|---|
+| Chuyển khoản, trừ tiền, đặt vé số lượng có hạn | CP | Bán trùng một chỗ ngồi tệ hơn nhiều so với báo lỗi "thử lại sau" |
+| Giỏ hàng, lượt thích, đếm view, feed mạng xã hội | AP | Mất một lượt thích không ai chết; không vào được web thì mất doanh thu ngay |
+| Danh sách bạn bè, thông tin hồ sơ | AP | Thấy tên cũ vài giây là chấp nhận được |
+| Cấp hoặc thu hồi quyền truy cập, khóa tài khoản | CP | Dùng dữ liệu cũ nghĩa là kẻ đã bị đuổi vẫn còn quyền |
+
+Điểm mấu chốt trong phỏng vấn: **quyết định này đặt ở mức từng chức năng, không phải mức toàn hệ thống**. Amazon vừa có giỏ hàng AP (luôn thêm được vào giỏ) vừa có thanh toán CP (không được trừ tiền hai lần). Một hệ thống thật luôn là hỗn hợp.
+
+**5. Vùng xám: hệ thống thật không tuyệt đối CP hay AP**
+
+Thực tế có nhiều mức trung gian, và đa số hệ hiện đại cho **chỉnh theo từng truy vấn**:
+
+- Cassandra cho chọn mức nhất quán mỗi lần đọc hoặc ghi (`ONE`, `QUORUM`, `ALL`). Nếu số bản sao đọc cộng số bản sao ghi lớn hơn tổng số bản sao (R + W \> N) thì có nhất quán mạnh; hạ xuống thì được độ trễ thấp.
+- DynamoDB có hai kiểu đọc: đọc nhất quán cuối cùng (rẻ, nhanh) và đọc nhất quán mạnh (đắt gấp đôi, chậm hơn).
+- MongoDB có `writeConcern` và `readConcern` đóng vai trò tương tự.
+
+Nghĩa là: **CP/AP không phải thuộc tính cố định của một cơ sở dữ liệu, mà là một tham số bạn điều chỉnh cho từng thao tác.** Nói "Cassandra là AP" chỉ đúng với cấu hình mặc định.
+
+**6. Nối với các mục khác**
+
+- Mục này định nghĩa chữ C; [Các mẫu nhất quán](/hoc/kien-truc/danh-doi/consistency-patterns) trải chữ C đó thành một dải từ yếu đến mạnh.
+- Mục này định nghĩa chữ A; [Các mẫu sẵn sàng](/hoc/kien-truc/danh-doi/availability-patterns) trình bày cách đạt được A trên thực tế (fail-over, nhân bản) và cách đo nó bằng số 9.
+- Cái giá của nhất quán mạnh được trả bằng độ trễ - xem lại [Độ trễ và thông lượng](/hoc/kien-truc/danh-doi/latency-vs-throughput), mục 5 về độ trễ truyền dẫn.
+- Kỹ thuật nhân bản cụ thể (master-slave, master-master) nằm ở mục [Cơ sở dữ liệu](https://github.com/donnemartin/system-design-primer#database) và bài [Databases](/hoc/kien-truc/nen-tang/databases) đã dịch.
+
+**7. Câu hỏi nên tự hỏi trong buổi phỏng vấn system design**
+
+- Chức năng này nếu đọc phải dữ liệu cũ 5 giây thì hậu quả là gì? (Không trả lời được câu này thì chưa chọn được CP hay AP.)
+- Dữ liệu có bị ghi đồng thời từ nhiều nơi không? (Nếu chỉ một nơi ghi, phần lớn vấn đề nhất quán biến mất.)
+- Người dùng và dữ liệu có ở nhiều vùng địa lý không? (Nếu có, vế ELC của PACELC quan trọng hơn vế PAC.)
+- Có thao tác nào bắt buộc nguyên tử không - trừ tiền, giữ chỗ, cấp định danh duy nhất? (Những chỗ này phải CP, phần còn lại thường không cần.)
+
+Đối chiếu README gốc của repo:
+- [CAP theorem](https://github.com/donnemartin/system-design-primer#cap-theorem)
+- [Consistency patterns](https://github.com/donnemartin/system-design-primer#consistency-patterns) - mục kế tiếp
+
+</TranslatorNote>

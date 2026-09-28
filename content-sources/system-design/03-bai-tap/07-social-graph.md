@@ -1,0 +1,434 @@
+---
+nguon: The System Design Primer - bài giải "Design the data structures for a social network"
+tac-gia: Donne Martin và cộng đồng đóng góp
+link-goc: ../../solutions/system_design/social_graph/README.md
+ngay-dich: 2026-09-28
+trang-thai: hoan-thanh
+---
+
+# Thiết kế cấu trúc dữ liệu cho một mạng xã hội
+
+## Nội dung gốc
+
+*Lưu ý: Tài liệu này dẫn link trực tiếp tới các phần liên quan trong [danh mục chủ đề system design](../../README.md#index-of-system-design-topics) để tránh lặp lại. Hãy tham khảo nội dung được dẫn link để nắm các ý chính cần thảo luận, các đánh đổi (tradeoff) và các phương án thay thế.*
+
+### Bước 1: Phác thảo các trường hợp sử dụng và ràng buộc
+
+> Thu thập yêu cầu và xác định phạm vi bài toán.
+> Đặt câu hỏi để làm rõ các trường hợp sử dụng (use case) và ràng buộc (constraint).
+> Thảo luận các giả định.
+
+Vì không có người phỏng vấn để trả lời các câu hỏi làm rõ, ta sẽ tự định nghĩa một số use case và ràng buộc.
+
+#### Các trường hợp sử dụng (use cases)
+
+##### Ta giới hạn bài toán chỉ xử lý các use case sau
+
+* **Người dùng (User)** tìm kiếm một người nào đó và thấy đường đi ngắn nhất (shortest path) tới người được tìm
+* **Dịch vụ (Service)** có tính sẵn sàng cao (high availability)
+
+#### Ràng buộc và giả định
+
+##### Nêu các giả định
+
+* Lưu lượng truy cập không phân bố đều
+    * Một số lượt tìm kiếm phổ biến hơn hẳn các lượt khác, trong khi một số khác chỉ được thực hiện đúng một lần
+* Dữ liệu đồ thị (graph) không vừa trên một máy duy nhất
+* Các cạnh (edge) của đồ thị không có trọng số (unweighted)
+* 100 triệu người dùng
+* Trung bình 50 bạn bè mỗi người dùng
+* 1 tỷ lượt tìm kiếm bạn bè mỗi tháng
+
+Hãy luyện tập sử dụng các hệ thống truyền thống - không dùng các giải pháp chuyên cho đồ thị như [GraphQL](http://graphql.org/) hay một cơ sở dữ liệu đồ thị (graph database) như [Neo4j](https://neo4j.com/)
+
+##### Tính toán mức sử dụng
+
+**Hỏi rõ người phỏng vấn xem bạn có nên thực hiện các phép ước lượng nhanh (back-of-the-envelope) về mức sử dụng hay không.**
+
+* 5 tỷ quan hệ bạn bè
+    * 100 triệu người dùng * trung bình 50 bạn bè mỗi người dùng
+* 400 yêu cầu tìm kiếm mỗi giây
+
+Bảng quy đổi tiện dụng:
+
+* 2,5 triệu giây mỗi tháng
+* 1 yêu cầu mỗi giây = 2,5 triệu yêu cầu mỗi tháng
+* 40 yêu cầu mỗi giây = 100 triệu yêu cầu mỗi tháng
+* 400 yêu cầu mỗi giây = 1 tỷ yêu cầu mỗi tháng
+
+### Bước 2: Tạo thiết kế tổng quan (high level design)
+
+> Phác thảo thiết kế tổng quan với tất cả các thành phần quan trọng.
+
+![Thiết kế tổng quan social graph](../../solutions/system_design/social_graph/social_graph_basic.png)
+
+### Bước 3: Thiết kế các thành phần cốt lõi
+
+> Đi sâu vào chi tiết từng thành phần cốt lõi.
+
+#### Use case: Người dùng tìm kiếm một người nào đó và thấy đường đi ngắn nhất tới người được tìm
+
+**Hỏi rõ người phỏng vấn xem bạn cần viết bao nhiêu code.**
+
+Nếu không có ràng buộc hàng triệu người dùng (đỉnh - vertex) và hàng tỷ quan hệ bạn bè (cạnh - edge), ta có thể giải bài toán đường đi ngắn nhất không trọng số này bằng thuật toán tìm kiếm theo chiều rộng (BFS - breadth-first search) thông thường:
+
+```python
+class Graph(Graph):
+
+    def shortest_path(self, source, dest):
+        if source is None or dest is None:
+            return None
+        if source is dest:
+            return [source.key]
+        prev_node_keys = self._shortest_path(source, dest)
+        if prev_node_keys is None:
+            return None
+        else:
+            path_ids = [dest.key]
+            prev_node_key = prev_node_keys[dest.key]
+            while prev_node_key is not None:
+                path_ids.append(prev_node_key)
+                prev_node_key = prev_node_keys[prev_node_key]
+            return path_ids[::-1]
+
+    def _shortest_path(self, source, dest):
+        queue = deque()
+        queue.append(source)
+        prev_node_keys = {source.key: None}
+        source.visit_state = State.visited
+        while queue:
+            node = queue.popleft()
+            if node is dest:
+                return prev_node_keys
+            prev_node = node
+            for adj_node in node.adj_nodes.values():
+                if adj_node.visit_state == State.unvisited:
+                    queue.append(adj_node)
+                    prev_node_keys[adj_node.key] = prev_node.key
+                    adj_node.visit_state = State.visited
+        return None
+```
+
+Ta sẽ không thể chứa toàn bộ người dùng trên cùng một máy, nên cần [phân mảnh (shard)](../02-chu-de/06-database.md) người dùng ra nhiều **Person Server** và truy cập chúng thông qua một **Lookup Service** (dịch vụ tra cứu).
+
+* **Client** gửi yêu cầu tới **Web Server**, chạy vai trò [reverse proxy](../02-chu-de/04-reverse-proxy.md)
+* **Web Server** chuyển tiếp yêu cầu tới server **Search API**
+* Server **Search API** chuyển tiếp yêu cầu tới **User Graph Service**
+* **User Graph Service** thực hiện các việc sau:
+    * Dùng **Lookup Service** để tìm **Person Server** đang lưu thông tin của người dùng hiện tại
+    * Tìm tới **Person Server** tương ứng để lấy danh sách `friend_ids` của người dùng hiện tại
+    * Chạy BFS với người dùng hiện tại là `source` và danh sách `friend_ids` của người dùng hiện tại là id của từng `adjacent_node` (node kề)
+    * Để lấy `adjacent_node` từ một id cho trước:
+        * **User Graph Service** sẽ *lại* phải giao tiếp với **Lookup Service** để xác định **Person Server** nào đang lưu `adjacent_node` ứng với id đó (chỗ này có thể tối ưu)
+
+**Hỏi rõ người phỏng vấn xem bạn nên viết bao nhiêu code.**
+
+**Lưu ý**: Phần xử lý lỗi được lược bỏ bên dưới cho đơn giản. Hãy hỏi xem bạn có cần viết code xử lý lỗi đầy đủ hay không.
+
+Cài đặt **Lookup Service**:
+
+```python
+class LookupService(object):
+
+    def __init__(self):
+        self.lookup = self._init_lookup()  # key: person_id, value: person_server
+
+    def _init_lookup(self):
+        ...
+
+    def lookup_person_server(self, person_id):
+        return self.lookup[person_id]
+```
+
+Cài đặt **Person Server**:
+
+```python
+class PersonServer(object):
+
+    def __init__(self):
+        self.people = {}  # key: person_id, value: person
+
+    def add_person(self, person):
+        ...
+
+    def people(self, ids):
+        results = []
+        for id in ids:
+            if id in self.people:
+                results.append(self.people[id])
+        return results
+```
+
+Cài đặt **Person**:
+
+```python
+class Person(object):
+
+    def __init__(self, id, name, friend_ids):
+        self.id = id
+        self.name = name
+        self.friend_ids = friend_ids
+```
+
+Cài đặt **User Graph Service**:
+
+```python
+class UserGraphService(object):
+
+    def __init__(self, lookup_service):
+        self.lookup_service = lookup_service
+
+    def person(self, person_id):
+        person_server = self.lookup_service.lookup_person_server(person_id)
+        return person_server.people([person_id])
+
+    def shortest_path(self, source_key, dest_key):
+        if source_key is None or dest_key is None:
+            return None
+        if source_key is dest_key:
+            return [source_key]
+        prev_node_keys = self._shortest_path(source_key, dest_key)
+        if prev_node_keys is None:
+            return None
+        else:
+            # Duyệt ngược path_ids, bắt đầu từ dest_key
+            path_ids = [dest_key]
+            prev_node_key = prev_node_keys[dest_key]
+            while prev_node_key is not None:
+                path_ids.append(prev_node_key)
+                prev_node_key = prev_node_keys[prev_node_key]
+            # Đảo ngược danh sách vì ta đã duyệt ngược
+            return path_ids[::-1]
+
+    def _shortest_path(self, source_key, dest_key, path):
+        # Dùng id để lấy Person
+        source = self.person(source_key)
+        # Cập nhật hàng đợi bfs
+        queue = deque()
+        queue.append(source)
+        # prev_node_keys ghi lại từng bước nhảy từ
+        # source_key tới dest_key
+        prev_node_keys = {source_key: None}
+        # Dùng visited_ids để ghi lại các node đã thăm,
+        # khác với bfs thông thường vốn có thể
+        # lưu trạng thái này ngay trong node
+        visited_ids = set()
+        visited_ids.add(source.id)
+        while queue:
+            node = queue.popleft()
+            if node.key is dest_key:
+                return prev_node_keys
+            prev_node = node
+            for friend_id in node.friend_ids:
+                if friend_id not in visited_ids:
+                    friend_node = self.person(friend_id)
+                    queue.append(friend_node)
+                    prev_node_keys[friend_id] = prev_node.key
+                    visited_ids.add(friend_id)
+        return None
+```
+
+Ta sẽ dùng một [**REST API**](../02-chu-de/09-communication.md) công khai:
+
+```
+$ curl https://social.com/api/v1/friend_search?person_id=1234
+```
+
+Phản hồi:
+
+```
+{
+    "person_id": "100",
+    "name": "foo",
+    "link": "https://social.com/foo",
+},
+{
+    "person_id": "53",
+    "name": "bar",
+    "link": "https://social.com/bar",
+},
+{
+    "person_id": "1234",
+    "name": "baz",
+    "link": "https://social.com/baz",
+},
+```
+
+Với giao tiếp nội bộ, ta có thể dùng [gọi thủ tục từ xa (RPC - Remote Procedure Call)](../02-chu-de/09-communication.md).
+
+### Bước 4: Mở rộng thiết kế (scale the design)
+
+> Xác định và xử lý các điểm nghẽn (bottleneck), dựa trên các ràng buộc.
+
+![Thiết kế social graph sau khi mở rộng](../../solutions/system_design/social_graph/social_graph.png)
+
+**Quan trọng: Đừng nhảy thẳng từ thiết kế ban đầu sang thiết kế cuối cùng!**
+
+Hãy nói rõ rằng bạn sẽ 1) **Đo hiệu năng/Kiểm thử tải (Benchmark/Load Test)**, 2) **Phân tích (Profile)** để tìm điểm nghẽn, 3) xử lý các điểm nghẽn trong khi cân nhắc các phương án thay thế và đánh đổi, và 4) lặp lại. Xem bài [Thiết kế hệ thống mở rộng tới hàng triệu người dùng trên AWS](02-scaling-aws.md) làm ví dụ về cách mở rộng dần thiết kế ban đầu.
+
+Điều quan trọng là thảo luận những điểm nghẽn có thể gặp với thiết kế ban đầu và cách xử lý từng điểm. Ví dụ, việc thêm một **Load Balancer** với nhiều **Web Server** giải quyết được vấn đề gì? **CDN**? **Master-Slave Replicas** (bản sao master-slave)? Các phương án thay thế và **đánh đổi** của từng lựa chọn là gì?
+
+Ta sẽ bổ sung một số thành phần để hoàn thiện thiết kế và xử lý các vấn đề về khả năng mở rộng. Các load balancer nội bộ không được vẽ ra để sơ đồ đỡ rối.
+
+*Để tránh lặp lại các thảo luận*, hãy tham khảo các [chủ đề system design](../../README.md#index-of-system-design-topics) sau để nắm các ý chính, đánh đổi và phương án thay thế:
+
+* [DNS](../02-chu-de/01-dns.md)
+* [Load balancer](../02-chu-de/03-load-balancer.md)
+* [Mở rộng theo chiều ngang (horizontal scaling)](../02-chu-de/03-load-balancer.md)
+* [Web server (reverse proxy)](../02-chu-de/04-reverse-proxy.md)
+* [API server (tầng ứng dụng - application layer)](../02-chu-de/05-application-layer.md)
+* [Cache](../02-chu-de/07-cache.md)
+* [Các mẫu nhất quán (consistency patterns)](../01-danh-doi/04-consistency-patterns.md)
+* [Các mẫu sẵn sàng (availability patterns)](../01-danh-doi/05-availability-patterns.md)
+
+Để đáp ứng ràng buộc 400 yêu cầu đọc mỗi giây *trung bình* (cao hơn vào giờ cao điểm), dữ liệu người dùng có thể được phục vụ từ một **Memory Cache** (bộ nhớ đệm trong RAM) như Redis hoặc Memcached để giảm thời gian phản hồi và giảm lưu lượng tới các dịch vụ phía sau. Điều này đặc biệt hữu ích với những người thực hiện nhiều lượt tìm kiếm liên tiếp và những người có nhiều kết nối. Đọc tuần tự 1 MB từ bộ nhớ mất khoảng 250 micro giây, trong khi đọc từ SSD lâu hơn 4 lần và từ ổ đĩa (disk) lâu hơn 80 lần.<sup><a href="../../README.md#latency-numbers-every-programmer-should-know">1</a></sup>
+
+Dưới đây là các tối ưu thêm:
+
+* Lưu kết quả duyệt BFS toàn phần hoặc một phần vào **Memory Cache** để tăng tốc các lần tra cứu sau
+* Tính toán theo lô (batch) ngoại tuyến rồi lưu kết quả duyệt BFS toàn phần hoặc một phần vào một **NoSQL Database** để tăng tốc các lần tra cứu sau
+* Giảm số lần nhảy giữa các máy bằng cách gộp các lượt tra cứu bạn bè nằm trên cùng một **Person Server** thành một lô
+    * [Shard](../02-chu-de/06-database.md) các **Person Server** theo vị trí địa lý để cải thiện thêm, vì bạn bè thường sống gần nhau
+* Chạy hai lượt BFS cùng lúc, một bắt đầu từ nguồn (source) và một từ đích (destination), rồi ghép hai đường đi lại
+* Bắt đầu BFS từ những người có số lượng bạn bè lớn, vì họ có nhiều khả năng rút ngắn [số bậc phân cách (degrees of separation)](https://en.wikipedia.org/wiki/Six_degrees_of_separation) giữa người dùng hiện tại và người được tìm
+* Đặt giới hạn theo thời gian hoặc số bước nhảy (hop) trước khi hỏi người dùng có muốn tiếp tục tìm không, vì trong một số trường hợp việc tìm kiếm có thể mất khá nhiều thời gian
+* Dùng một **Graph Database** như [Neo4j](https://neo4j.com/) hoặc một ngôn ngữ truy vấn chuyên cho đồ thị như [GraphQL](http://graphql.org/) (nếu không có ràng buộc cấm dùng **Graph Database**)
+
+### Các điểm thảo luận thêm (Additional talking points)
+
+> Các chủ đề bổ sung để đi sâu, tùy vào phạm vi bài toán và thời gian còn lại.
+
+#### Các mẫu mở rộng SQL (SQL scaling patterns)
+
+* [Bản sao đọc (read replicas)](../02-chu-de/06-database.md)
+* [Liên hợp (federation)](../02-chu-de/06-database.md)
+* [Phân mảnh (sharding)](../02-chu-de/06-database.md)
+* [Phi chuẩn hóa (denormalization)](../02-chu-de/06-database.md)
+* [Tinh chỉnh SQL (SQL tuning)](../02-chu-de/06-database.md)
+
+##### NoSQL
+
+* [Key-value store](../02-chu-de/06-database.md)
+* [Document store](../02-chu-de/06-database.md)
+* [Wide column store](../02-chu-de/06-database.md)
+* [Graph database](../02-chu-de/06-database.md)
+* [SQL hay NoSQL](../02-chu-de/06-database.md)
+
+#### Bộ nhớ đệm (caching)
+
+* Cache ở đâu
+    * [Cache phía client (client caching)](../02-chu-de/07-cache.md)
+    * [Cache ở CDN (CDN caching)](../02-chu-de/07-cache.md)
+    * [Cache ở web server (web server caching)](../02-chu-de/07-cache.md)
+    * [Cache ở cơ sở dữ liệu (database caching)](../02-chu-de/07-cache.md)
+    * [Cache ở tầng ứng dụng (application caching)](../02-chu-de/07-cache.md)
+* Cache cái gì
+    * [Cache ở mức truy vấn cơ sở dữ liệu](../02-chu-de/07-cache.md)
+    * [Cache ở mức đối tượng](../02-chu-de/07-cache.md)
+* Khi nào cập nhật cache
+    * [Cache-aside](../02-chu-de/07-cache.md)
+    * [Write-through](../02-chu-de/07-cache.md)
+    * [Write-behind (write-back)](../02-chu-de/07-cache.md)
+    * [Refresh ahead](../02-chu-de/07-cache.md)
+
+#### Xử lý bất đồng bộ và microservices
+
+* [Hàng đợi thông điệp (message queues)](../02-chu-de/08-asynchronism.md)
+* [Hàng đợi tác vụ (task queues)](../02-chu-de/08-asynchronism.md)
+* [Áp lực ngược (back pressure)](../02-chu-de/08-asynchronism.md)
+* [Microservices](../02-chu-de/05-application-layer.md)
+
+#### Giao tiếp (communications)
+
+* Thảo luận các đánh đổi:
+    * Giao tiếp bên ngoài với client - [HTTP API theo chuẩn REST](../02-chu-de/09-communication.md)
+    * Giao tiếp nội bộ - [RPC](../02-chu-de/09-communication.md)
+* [Khám phá dịch vụ (service discovery)](../02-chu-de/05-application-layer.md)
+
+#### Bảo mật (security)
+
+Tham khảo [phần bảo mật](../02-chu-de/10-security.md).
+
+#### Các con số độ trễ (latency numbers)
+
+Xem [Các con số độ trễ mọi lập trình viên nên biết](../../README.md#latency-numbers-every-programmer-should-know).
+
+#### Liên tục
+
+* Tiếp tục đo hiệu năng và giám sát hệ thống để xử lý các điểm nghẽn khi chúng xuất hiện
+* Mở rộng hệ thống là một quá trình lặp đi lặp lại
+
+---
+
+## Ghi chú của người dịch
+
+**1. Ước lượng thật sự đáng lo: số node phải chạm tới, không phải số request**
+
+Bài gốc tính 400 request/giây và dừng ở đó. Con số này nhỏ; cái đáng tính là **mỗi request chạm tới bao nhiêu node**. Với trung bình 50 bạn/người, số node ở bậc k khoảng 50^k (bỏ qua trùng lặp):
+
+| Bậc (hop) | Số node ước tính |
+|---|---|
+| 1 | 50 |
+| 2 | 2.500 |
+| 3 | 125.000 |
+| 4 | 6.250.000 |
+
+Tức là một lượt tìm đường tới người cách 4 bậc có thể phải đọc hàng triệu bản ghi, mỗi bản ghi lại có thể nằm trên một Person Server khác. Nhân với 400 request/giây là con số không thể phục vụ trực tuyến. Thực tế còn tệ hơn trung bình: đồ thị mạng xã hội có phân bố bậc lệch (vài tài khoản có hàng nghìn, hàng triệu kết nối), chỉ cần chạm vào một "hub" là biên (frontier) của BFS phình ra đột ngột. Đây là lý do mọi tối ưu ở Bước 4 đều xoay quanh việc **giảm số node phải mở rộng**, và là câu hỏi người phỏng vấn rất hay đào sâu.
+
+**2. BFS hai chiều (bidirectional BFS) - tối ưu quan trọng nhất trong danh sách**
+
+Gạch đầu dòng "chạy hai BFS cùng lúc" nghe như một mẹo nhỏ, nhưng thực ra là thay đổi về bậc độ phức tạp. BFS một chiều tới độ sâu d mở rộng khoảng b^d node (b là bậc trung bình); BFS hai chiều dừng khi hai biên gặp nhau ở giữa, mỗi bên chỉ cần sâu d/2, tổng cộng khoảng 2 * b^(d/2). Với b = 50, d = 4: khoảng 6,25 triệu so với khoảng 5.000 node.
+
+Các điểm cần nói khi trình bày:
+
+- Mỗi vòng, **mở rộng phía có biên nhỏ hơn** - cải tiến đơn giản nhưng giúp tránh sa vào hub.
+- Điều kiện dừng: khi một node vừa được thăm đã nằm trong tập visited của phía bên kia. Để chắc chắn tìm được đường **ngắn nhất**, cần mở rộng trọn một tầng rồi mới kiểm tra giao nhau, không dừng ngay ở node chung đầu tiên gặp giữa chừng tầng.
+- Cần hai bảng `prev_node_keys` (một cho mỗi phía) để dựng lại đường đi từ node gặp nhau.
+
+Gợi ý "bắt đầu từ người có nhiều bạn" trong bài gốc thì nên dùng thận trọng: nó chỉ là heuristic, không đảm bảo tìm được đường ngắn nhất nếu thay đổi thứ tự BFS một cách tùy tiện, và mở rộng hub lại chính là thứ làm biên phình to.
+
+**3. Code gốc có lỗi - biết để không chép nguyên vào buổi phỏng vấn**
+
+Đoạn code mang tính minh họa và có nhiều chỗ không chạy được nếu chép nguyên:
+
+- `_shortest_path(self, source_key, dest_key, path)` khai báo tham số `path` nhưng `shortest_path` gọi chỉ với hai đối số - sẽ lỗi `TypeError`.
+- `person()` trả về kết quả của `people([person_id])`, tức là một **list**, trong khi phần sau dùng như một đối tượng `Person` (`source.id`, `node.friend_ids`).
+- Lớp `Person` có `id` nhưng code dùng `node.key`.
+- So sánh khóa bằng `is` (`source_key is dest_key`, `node.key is dest_key`) là so sánh định danh đối tượng, không phải giá trị - với chuỗi hoặc số lớn trong Python có thể cho kết quả sai. Phải dùng `==`.
+- `PersonServer` vừa có thuộc tính `self.people` vừa có phương thức `people()` trùng tên - thuộc tính gán trong `__init__` sẽ che phương thức.
+- Kiểm tra đích khi **lấy ra** khỏi hàng đợi thay vì khi **đưa vào** - vẫn đúng nhưng mở rộng thừa một tầng.
+- Phản hồi JSON mẫu không hợp lệ (nhiều object rời nhau, dấu phẩy thừa); đúng ra phải là một mảng. Thứ tự các phần tử thể hiện đường đi từ nguồn tới đích.
+
+Bản code đầy đủ nằm tại [social_graph_snippets.py](../../solutions/system_design/social_graph/social_graph_snippets.py).
+
+Điểm thiết kế đáng giữ lại từ code: gọi `self.person(friend_id)` cho **từng** người bạn tạo ra một lượt RPC mỗi node - đây chính là "chỗ có thể tối ưu" bài gốc nhắc tới. Trong thực tế cần gom theo server (batch/multi-get) và gửi song song các lô, để mỗi tầng BFS tốn số round-trip bằng số server chứ không bằng số node.
+
+**4. Sharding theo vị trí - lợi ích và bẫy**
+
+Shard theo địa lý giúp tăng tỷ lệ "bạn bè cùng shard", nhưng gây ra shard nóng (thành phố lớn) và phải xử lý người dùng di chuyển. Cách làm bài bản hơn là **phân hoạch đồ thị (graph partitioning)** - chia sao cho số cạnh cắt ngang các shard là ít nhất. Facebook đã công bố nghiên cứu dùng phân hoạch kiểu này (Social Hash) để giảm lượng giao tiếp giữa các máy. Trong phỏng vấn, chỉ cần nêu được mục tiêu "tối thiểu cạnh cắt ngang shard" và đánh đổi với cân bằng tải là đủ.
+
+Ngoài ra, danh sách bạn bè của người nổi tiếng (hàng triệu `friend_ids`) không nên lưu thành một bản ghi duy nhất; cần phân trang hoặc tách bảng cạnh (edge table) riêng.
+
+**5. Về ràng buộc "không dùng graph database" và nhầm lẫn GraphQL**
+
+- **GraphQL không phải công nghệ đồ thị.** Nó là ngôn ngữ truy vấn cho API (thay thế/bổ sung REST), chữ "Graph" chỉ về mô hình dữ liệu của schema. GraphQL không có thuật toán đường đi ngắn nhất nào. Bài gốc gọi nó là "graph-specific query language" là không chính xác; nếu cần nêu ngôn ngữ truy vấn đồ thị thì đó là Cypher (Neo4j), Gremlin (Apache TinkerPop), hoặc GQL - chuẩn ISO/IEC 39075 được công bố năm 2024.
+- Graph database đơn máy (như Neo4j bản thường) duyệt quan hệ rất nhanh nhờ lưu con trỏ tới node kề (index-free adjacency), nhưng **không giải quyết** được vấn đề cốt lõi của bài này là đồ thị không vừa một máy - khi đã phân tán, việc duyệt qua ranh giới máy vẫn tốn round-trip như thiết kế trên.
+- Thực tế các mạng xã hội lớn thường dùng lớp lưu trữ đồ thị riêng xây trên nền cơ sở dữ liệu truyền thống cộng cache: Facebook có TAO (đồ thị đối tượng và liên kết, đặt trên MySQL với tầng cache lớn); LinkedIn xây hệ thống đồ thị riêng để phục vụ quan hệ bậc 1, 2, 3. Vì vậy ràng buộc "dùng hệ thống truyền thống" của đề bài thực ra khá sát thực tế.
+
+**6. Sản phẩm thật thường không tính đường đi ngắn nhất tùy ý**
+
+Tính năng trên LinkedIn hiển thị kết nối bậc 1, 2, 3 và coi xa hơn là "ngoài mạng lưới". Đây là cách **giới hạn độ sâu** - đúng với gạch đầu dòng "đặt giới hạn theo số hop" trong bài gốc, nhưng được đẩy lên thành quyết định sản phẩm. Kết hợp với việc tính trước (precompute) tập bạn bậc 2 cho mỗi người rồi cache, câu hỏi "A và B có cách nhau tối đa 3 bậc không" quy về phép giao hai tập, rất rẻ. Theo nghiên cứu Facebook công bố năm 2016, số bậc phân cách trung bình giữa hai người dùng Facebook khoảng 3,5 - nên đa số đường đi đều ngắn, và giới hạn độ sâu ít khi làm mất kết quả có ý nghĩa.
+
+Khi đề xuất lưu kết quả BFS vào cache/NoSQL, cần nói thêm về **vô hiệu hóa (invalidation)**: một lần kết bạn hay hủy kết bạn có thể làm sai đường đi của rất nhiều cặp. Thường chấp nhận dữ liệu cũ trong thời gian ngắn (nhất quán cuối cùng - xem [Các mẫu nhất quán](../01-danh-doi/04-consistency-patterns.md)) vì "đường đi tới một người" không phải dữ liệu cần chính xác tuyệt đối.
+
+**7. Câu hỏi hay bị hỏi thêm**
+
+- Nếu đồ thị có hướng (follow như Twitter/X) thì sao? BFS hai chiều khi đó phía đích phải duyệt theo cạnh ngược, tức cần lưu cả danh sách người theo dõi (follower) lẫn người được theo dõi (following).
+- Nếu cạnh có trọng số (độ thân thiết)? BFS không còn đúng, phải dùng Dijkstra hoặc A* - đắt hơn nhiều khi phân tán.
+- Làm sao đảm bảo tính sẵn sàng cao? Mỗi Person Server cần bản sao (replica); Lookup Service là điểm lỗi đơn (single point of failure) nếu không nhân bản - thay bảng tra cứu tập trung bằng hàm băm nhất quán (consistent hashing) hoặc cache bảng ánh xạ ngay trong User Graph Service.
+- Bảo mật và quyền riêng tư: đường đi trả về chứa tên những người trung gian - người dùng có cho phép bị hiển thị trong đường đi của người lạ không?
+
+Đối chiếu:
+- Bài gốc: [solutions/system_design/social_graph/README.md](../../solutions/system_design/social_graph/README.md)
+- Kỹ thuật shard và các kiểu NoSQL: [Cơ sở dữ liệu](../02-chu-de/06-database.md) và bài [Databases](../00-nen-tang/02-databases.md)
+- Bài tiếp theo: [Query cache](08-query-cache.md)

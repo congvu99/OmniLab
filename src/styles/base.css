@@ -1,0 +1,147 @@
+/*
+ * Global reset + base typography + motion primitives shared by every page.
+ * Imported once per layout (app-layout.astro / reader-layout.astro via
+ * base-head.astro). Long-form lesson body styling lives in prose.css, not
+ * here — this file is app-shell chrome only.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: light dark; /* native form controls / scrollbars follow system theme */
+  /* Prevents iOS/older mobile browsers' automatic text-inflation on rotation.
+     Does NOT disable pinch-zoom or OS Dynamic Type — those stay user-controlled. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* Guard against accidental horizontal overflow from any component without
+     turning body into a non-standard scroll container: declaring both axes
+     explicitly avoids the CSS Overflow spec's "visible -> auto" auto-promotion
+     that a lone `overflow-x: hidden` would trigger on `overflow-y`. */
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: var(--text-body); /* 17px, >=16px per non-functional requirement */
+  line-height: var(--leading-normal);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img,
+picture,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+table {
+  max-width: 100%;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+a {
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+ul,
+ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+}
+
+/* --- Accessibility: focus rings --- */
+/* Visible on keyboard focus only; mouse/touch activation stays clean. */
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* --- Skip link (keyboard users jump straight to <main>) --- */
+.skip-link {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: var(--z-toast);
+  padding: var(--space-2) var(--space-4);
+  background: var(--surface);
+  color: var(--ink);
+  border-radius: var(--radius-row);
+  box-shadow: var(--shadow-card);
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(-200%);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* --- Tap feedback: subtle scale, transform/opacity only (no layout shift,
+   no reliance on iOS's quirky :active-without-touch-listener behavior —
+   see the touchstart no-op registered in base-head.astro's init script). --- */
+.tap-scale {
+  transition: transform var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease-out);
+}
+
+.tap-scale:active {
+  transform: scale(0.97);
+  opacity: 0.9;
+}
+
+/* --- Reduced motion: kill all durations/transitions/smooth-scroll --- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* View Transitions (forward/back slide, reduced-motion handling): see
+   view-transitions.css — split out to keep this file under ~150 lines. */
