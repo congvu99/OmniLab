@@ -1,0 +1,21 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-tuan10-dung-lai-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-tuan10-dung-lai-title">Khoảng dừng trước khi quyết định giao dịch</title>
+
+  <rect x="6" y="80" width="104" height="60" rx="10" fill="color-mix(in srgb, var(--danger) 12%, transparent)" stroke="var(--danger)" stroke-width="2" />
+  <text x="58" y="106" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Muốn mua/bán</text>
+  <text x="58" y="122" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">ngay lập tức</text>
+
+  <line x1="112" y1="110" x2="124" y2="110" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+  <path d="M120 105 L128 110 L120 115 Z" fill="var(--ink-2)" />
+
+  <rect x="128" y="80" width="104" height="60" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="180" y="106" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Chờ 24–48 giờ</text>
+  <text x="180" y="122" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">trước khi quyết định</text>
+
+  <line x1="234" y1="110" x2="246" y2="110" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+  <path d="M242 105 L250 110 L242 115 Z" fill="var(--ink-2)" />
+
+  <rect x="250" y="80" width="104" height="60" rx="10" fill="color-mix(in srgb, var(--accent) 14%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <text x="302" y="106" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--accent)">Quyết định</text>
+  <text x="302" y="122" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--accent)">tỉnh táo hơn</text>
+</svg>

@@ -1,0 +1,24 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-tuan08-cong-thuc-nav-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-tuan08-cong-thuc-nav-title">Công thức tính NAV của một quỹ đầu tư</title>
+
+  <rect x="8" y="70" width="102" height="70" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="59" y="98" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Tổng giá trị</text>
+  <text x="59" y="114" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">tài sản quỹ</text>
+  <text x="59" y="158" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">500 tỷ</text>
+
+  <text x="120" y="112" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="20" fill="var(--ink-2)">÷</text>
+
+  <rect x="129" y="70" width="102" height="70" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="180" y="98" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Số chứng chỉ</text>
+  <text x="180" y="114" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">đang lưu hành</text>
+  <text x="180" y="158" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">50 triệu đơn vị</text>
+
+  <text x="242" y="112" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="20" fill="var(--ink-2)">=</text>
+
+  <rect x="251" y="70" width="102" height="70" rx="10" fill="color-mix(in srgb, var(--accent) 14%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <text x="302" y="98" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--ink)">NAV mỗi</text>
+  <text x="302" y="114" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--ink)">chứng chỉ</text>
+  <text x="302" y="158" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" font-weight="700" fill="var(--accent)">10.000đ</text>
+
+  <text x="180" y="20" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">số giả định, chỉ minh hoạ công thức</text>
+</svg>

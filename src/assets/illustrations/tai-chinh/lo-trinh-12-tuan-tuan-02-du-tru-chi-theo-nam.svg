@@ -1,0 +1,19 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-tuan02-du-tru-chi-nam-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-tuan02-du-tru-chi-nam-title">Chia khoản chi theo năm thành phần để dành mỗi tháng</title>
+
+  <line x1="20" y1="190" x2="350" y2="190" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+  <line x1="20" y1="40" x2="345" y2="40" stroke="var(--ink-2)" stroke-width="2" stroke-dasharray="4 4" stroke-linecap="round" />
+  <text x="345" y="34" text-anchor="end" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">mục tiêu năm: 12 triệu</text>
+
+  <rect x="70" y="175" width="50" height="15" rx="6" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="95" y="170" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink)">1tr</text>
+  <text x="95" y="206" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Tháng 1</text>
+
+  <rect x="170" y="100" width="50" height="90" rx="6" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="195" y="95" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink)">6tr</text>
+  <text x="195" y="206" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Tháng 6</text>
+
+  <rect x="270" y="40" width="50" height="150" rx="6" fill="color-mix(in srgb, var(--accent) 14%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <text x="295" y="35" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" font-weight="700" fill="var(--accent)">12tr</text>
+  <text x="295" y="206" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Tháng 12</text>
+</svg>

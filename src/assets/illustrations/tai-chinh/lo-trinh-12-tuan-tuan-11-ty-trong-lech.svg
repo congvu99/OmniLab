@@ -1,0 +1,17 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-tuan11-ty-trong-lech-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-tuan11-ty-trong-lech-title">Tỷ trọng danh mục lệch đi theo thời gian nếu không cân chỉnh lại</title>
+
+  <line x1="20" y1="190" x2="340" y2="190" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+
+  <rect x="70" y="40" width="80" height="105" fill="color-mix(in srgb, var(--accent) 14%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="110" y="97" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">70%</text>
+  <rect x="70" y="145" width="80" height="45" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="110" y="172" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">30%</text>
+  <text x="110" y="206" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Ban đầu</text>
+
+  <rect x="220" y="40" width="80" height="127" fill="color-mix(in srgb, var(--accent) 14%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <text x="260" y="107" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">85%</text>
+  <rect x="220" y="167" width="80" height="23" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="260" y="184" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">15%</text>
+  <text x="260" y="206" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Sau 1 năm</text>
+</svg>
