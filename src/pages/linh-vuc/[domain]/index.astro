@@ -1,0 +1,105 @@
+---
+// Domain detail: hero card + one section per module + lesson rows. Still
+// inside the app shell (tab bar/sidebar) — only the reader itself
+// (/hoc/**) goes full-bleed. nav-items.ts already treats /linh-vuc/* as part
+// of the "Lĩnh vực" tab (see activePrefixes), so the tab bar highlights
+// correctly here.
+import AppLayout from '../../../layouts/app-layout.astro';
+import DomainHero from '../../../components/domain/domain-hero.astro';
+import LessonRow from '../../../components/domain/lesson-row.astro';
+import { getDomains, getDomain, getModules, getLessonsByDomain } from '../../../lib/content-queries';
+
+export async function getStaticPaths() {
+  const domains = await getDomains();
+  return domains.map((domain) => ({ params: { domain: domain.id } }));
+}
+
+const { domain: domainId } = Astro.params;
+const domain = await getDomain(domainId!);
+if (!domain) throw new Error(`Unknown domain "${domainId}"`);
+
+const modules = await getModules(domainId!);
+const lessons = await getLessonsByDomain(domainId!);
+const totalReadingMinutes = lessons.reduce((sum, l) => sum + l.readingMinutes, 0);
+
+const lessonsByModule = new Map(modules.map((m) => [m.id, lessons.filter((l) => l.moduleId === m.id)]));
+---
+
+<AppLayout
+  title={`${domain.data.title} - OmniLab`}
+  description={domain.data.tagline}
+  domainAccent={domain.data.accent}
+  domainAccentDark={domain.data.accentDark}
+  largeTitle={domain.data.title}
+>
+  <DomainHero
+    icon={domain.data.icon}
+    tagline={domain.data.tagline}
+    accent={domain.data.accent}
+    accentDark={domain.data.accentDark}
+    lessonCount={lessons.length}
+    totalReadingMinutes={totalReadingMinutes}
+  />
+
+  {
+    modules.map((moduleItem) => {
+      const moduleLessons = lessonsByModule.get(moduleItem.id) ?? [];
+      if (moduleLessons.length === 0) return null;
+      return (
+        <section class="module-section">
+          <h2 class="module-section__title">
+            {moduleItem.title}
+            <span class="module-section__count">{moduleLessons.length} bài</span>
+          </h2>
+          <ul class="lesson-list">
+            {moduleLessons.map((lesson) => (
+              <li>
+                <LessonRow
+                  href={lesson.url}
+                  order={lesson.order}
+                  title={lesson.title}
+                  readingMinutes={lesson.readingMinutes}
+                  lessonId={lesson.id}
+                  domainId={domainId!}
+                />
+              </li>
+            ))}
+          </ul>
+        </section>
+      );
+    })
+  }
+</AppLayout>
+
+<style>
+  .module-section {
+    margin: var(--space-5) var(--space-4);
+  }
+
+  .module-section__title {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    font-size: var(--text-title3);
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 var(--space-2);
+    padding: 0 var(--space-2);
+  }
+
+  .module-section__count {
+    font-size: var(--text-caption);
+    font-weight: 500;
+    color: var(--ink-2);
+  }
+
+  .lesson-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    background: var(--surface);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+  }
+</style>

@@ -1,0 +1,84 @@
+---
+// Hero card at the top of /linh-vuc/[domain] — solid domain-accent
+// background, icon, tagline, lesson count + total reading time. Purely
+// decorative/summary (the page's own <LargeTitleHeader title={domain.title}>
+// already provides the page's <h1>-equivalent, so this card does not repeat
+// it as a heading element).
+import { icons } from '@lucide/astro';
+
+interface Props {
+  icon: string;
+  tagline: string;
+  accent: string;
+  accentDark: string;
+  lessonCount: number;
+  totalReadingMinutes: number;
+}
+
+const { icon, tagline, accent, accentDark, lessonCount, totalReadingMinutes } = Astro.props;
+
+function toPascalCase(kebab: string): string {
+  return kebab
+    .split('-')
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join('');
+}
+
+const Icon = icons[toPascalCase(icon) as keyof typeof icons] ?? icons.Layers;
+---
+
+<div class="domain-hero" style={`--card-accent:${accent};--card-accent-dark:${accentDark}`}>
+  <span class="domain-hero__icon">
+    <Icon size={28} stroke-width={1.75} aria-hidden="true" />
+  </span>
+  <p class="domain-hero__tagline">{tagline}</p>
+  <p class="domain-hero__meta">{lessonCount} bài · {totalReadingMinutes} phút đọc</p>
+</div>
+
+<style>
+  .domain-hero {
+    margin: var(--space-4);
+    padding: var(--space-5);
+    border-radius: var(--radius-card);
+    background: color-mix(in srgb, var(--card-accent) 14%, var(--surface));
+    border: 1px solid color-mix(in srgb, var(--card-accent) 25%, var(--line));
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .domain-hero {
+      background: color-mix(in srgb, var(--card-accent-dark) 16%, var(--surface));
+      border-color: color-mix(in srgb, var(--card-accent-dark) 28%, var(--line));
+    }
+  }
+
+  .domain-hero__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-row);
+    color: var(--card-accent);
+    background: var(--surface);
+    margin-bottom: var(--space-3);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .domain-hero__icon {
+      color: var(--card-accent-dark);
+    }
+  }
+
+  .domain-hero__tagline {
+    font-size: var(--text-body);
+    color: var(--ink);
+    margin: 0 0 var(--space-2);
+  }
+
+  .domain-hero__meta {
+    font-size: var(--text-footnote);
+    color: var(--ink-2);
+    margin: 0;
+  }
+</style>

@@ -1,0 +1,46 @@
+---
+// One-line meta row under the lesson cover: module title · reading time ·
+// source name.
+import Clock from '@lucide/astro/icons/clock';
+
+interface Props {
+  moduleTitle: string;
+  readingMinutes: number;
+  sourceName: string;
+}
+
+const { moduleTitle, readingMinutes, sourceName } = Astro.props;
+---
+
+<p class="lesson-meta">
+  <span>{moduleTitle}</span>
+  <span class="lesson-meta__dot" aria-hidden="true">·</span>
+  <span class="lesson-meta__reading">
+    <Clock size={14} stroke-width={2} aria-hidden="true" />
+    {readingMinutes} phút đọc
+  </span>
+  <span class="lesson-meta__dot" aria-hidden="true">·</span>
+  <span>{sourceName}</span>
+</p>
+
+<style>
+  .lesson-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0 0 var(--space-5);
+    font-size: var(--text-caption);
+    color: var(--ink-2);
+  }
+
+  .lesson-meta__dot {
+    opacity: 0.6;
+  }
+
+  .lesson-meta__reading {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+</style>

@@ -1,0 +1,174 @@
+---
+// About/attribution page: purpose, sources & licenses, translation notes,
+// third-party image credits (legacy System Design Primer figures), finance
+// content disclaimer. Linked from the /linh-vuc footer.
+import { getCollection } from 'astro:content';
+import AppLayout from '../layouts/app-layout.astro';
+
+// Third-party image credits: derived at build time from each kien-truc
+// lesson's raw MDX body (only that domain carries legacy <Figure> images —
+// see phase-03 report). `entry.body` is the loader's retained raw source
+// text (glob loader default `retainAsBody: true`); regex-extracting
+// `<Figure ... credit={...} />` here avoids re-rendering every lesson just to
+// read a figcaption. Falls back to a general statement below if none are
+// found (e.g. if a future loader config stops retaining body text).
+function extractFigureCredits(body: string): string[] {
+  // Scan for the `credit={\`...\`}` / `credit="..."` prop value directly
+  // (rather than first isolating each `<Figure ... />` tag): the credit
+  // value itself often embeds an `<a href="...">` HTML tag, whose own `>`
+  // would prematurely end a naive "match up to the next `>`" tag scan.
+  // `credit=` only ever appears on <Figure>, so this needs no tag scoping.
+  const credits = new Set<string>();
+  for (const m of body.matchAll(/credit=\{`([\s\S]*?)`\}/g)) credits.add(m[1].trim());
+  for (const m of body.matchAll(/credit="([^"]*)"/g)) credits.add(m[1].trim());
+  return [...credits];
+}
+
+const kienTrucLessons = (await getCollection('lessons')).filter((l) => {
+  const domain = l.data.domain;
+  return (typeof domain === 'string' ? domain : domain.id) === 'kien-truc';
+});
+
+const imageCredits = [...new Set(kienTrucLessons.flatMap((l) => extractFigureCredits(l.body ?? '')))].sort();
+---
+
+<AppLayout title="Giới thiệu - OmniLab" largeTitle="Giới thiệu">
+  <div class="about">
+    <section class="about-section">
+      <h2>Mục đích</h2>
+      <p>
+        OmniLab là ứng dụng học tập cá nhân, dịch và biên soạn lại nội dung gốc theo từng lĩnh vực (Kiến
+        trúc hệ thống, Tài chính cá nhân) để đọc thuận tiện trên điện thoại, có thêm ví dụ đời sống và sơ
+        đồ minh hoạ cho một số bài. Nội dung dịch giữ nguyên 100% ý gốc (đã kiểm chứng bằng script
+        <code>verify-fidelity</code>) — phần thêm mới (ví dụ, ghi chú) luôn tách riêng khỏi bản dịch.
+      </p>
+    </section>
+
+    <section class="about-section">
+      <h2>Nguồn & giấy phép</h2>
+      <ul class="source-list">
+        <li>
+          <strong>The System Design Primer</strong> — Donne Martin và cộng đồng đóng góp. Giấy phép
+          <strong>CC BY 4.0</strong>.
+          <a href="https://github.com/donnemartin/system-design-primer" target="_blank" rel="noopener noreferrer">
+            github.com/donnemartin/system-design-primer
+          </a>
+          . Nội dung lĩnh vực "Kiến trúc hệ thống" dịch sang tiếng Việt từ bản gốc tiếng Anh, giữ nguyên ý
+          nghĩa; các đoạn "Ghi chú của người dịch" là phần thêm mới của người dịch, không thuộc bản gốc.
+        </li>
+        <li>
+          <strong>Lộ trình nền tảng tài chính — Sổ tay thực hành</strong> — OmniLab (tổng hợp). Giấy phép:
+          <em>chưa xác định, đang chờ xác nhận</em>. Nội dung lĩnh vực "Tài chính cá nhân" tổng hợp lại từ
+          sổ tay nội bộ; xem miễn trừ trách nhiệm bên dưới.
+        </li>
+      </ul>
+    </section>
+
+    <section class="about-section">
+      <h2>Ảnh minh hoạ (bên thứ ba)</h2>
+      {
+        imageCredits.length > 0 ? (
+          <>
+            <p>
+              Một số bài "Kiến trúc hệ thống" giữ lại ảnh/sơ đồ minh hoạ gốc (chưa thay bằng SVG tự vẽ),
+              kèm nguồn credit bên dưới, trích từ bài học tương ứng:
+            </p>
+            <details class="credit-list">
+              <summary>Xem {imageCredits.length} nguồn ảnh</summary>
+              <ul>
+                {imageCredits.map((credit) => (
+                  <li set:html={credit} />
+                ))}
+              </ul>
+            </details>
+          </>
+        ) : (
+          <p>
+            Một số bài "Kiến trúc hệ thống" giữ lại ảnh/sơ đồ minh hoạ gốc (chưa thay bằng SVG tự vẽ); mỗi
+            ảnh có ghi nguồn ngay trong bài học tương ứng.
+          </p>
+        )
+      }
+    </section>
+
+    <section class="about-section">
+      <h2>Miễn trừ trách nhiệm</h2>
+      <p>
+        Nội dung lĩnh vực "Tài chính cá nhân" mang tính giáo dục, không phải tư vấn đầu tư hay khuyến nghị
+        mua/bán sản phẩm tài chính cụ thể. Kiểm tra lại số liệu, quy định pháp luật và điều kiện sản phẩm
+        tại nguồn chính thức trước khi quyết định.
+      </p>
+    </section>
+  </div>
+</AppLayout>
+
+<style>
+  .about {
+    margin: var(--space-4);
+    max-width: 65ch;
+  }
+
+  .about-section {
+    margin-bottom: var(--space-6);
+  }
+
+  .about-section h2 {
+    font-size: var(--text-title3);
+    font-weight: 700;
+    margin: 0 0 var(--space-3);
+  }
+
+  .about-section p {
+    font-size: var(--text-body);
+    line-height: var(--leading-relaxed);
+    color: var(--ink);
+    margin: 0 0 var(--space-3);
+  }
+
+  .about-section code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    background: var(--surface-2);
+    border-radius: 4px;
+    padding: 0.15em 0.4em;
+  }
+
+  .source-list {
+    margin: 0;
+    padding-left: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .source-list li {
+    font-size: var(--text-body);
+    line-height: var(--leading-relaxed);
+  }
+
+  .about a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    word-break: break-word;
+  }
+
+  .credit-list summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .credit-list ul {
+    margin: var(--space-3) 0 0;
+    padding-left: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .credit-list li {
+    font-size: var(--text-footnote);
+    color: var(--ink-2);
+  }
+</style>

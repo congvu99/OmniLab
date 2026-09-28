@@ -1,0 +1,73 @@
+---
+// End-of-lesson navigation card: link to the next lesson (crossing module
+// boundaries within the domain, see src/lib/content-queries.ts getAdjacent),
+// or a "Hoàn thành lĩnh vực" card when there is no next lesson (domain's last
+// lesson).
+import ArrowRight from '@lucide/astro/icons/arrow-right';
+import PartyPopper from '@lucide/astro/icons/party-popper';
+
+interface Props {
+  next: { href: string; title: string } | null;
+  /** Where the "Hoàn thành lĩnh vực" card links back to when `next` is null. */
+  domainHref: string;
+}
+
+const { next, domainHref } = Astro.props;
+---
+
+{
+  next ? (
+    <a href={next.href} class="next-lesson-card tap-scale">
+      <span class="next-lesson-card__eyebrow">Bài tiếp theo</span>
+      <span class="next-lesson-card__title">{next.title}</span>
+      <ArrowRight size={20} stroke-width={2} aria-hidden="true" class="next-lesson-card__icon" />
+    </a>
+  ) : (
+    <a href={domainHref} class="next-lesson-card next-lesson-card--complete tap-scale">
+      <PartyPopper size={22} stroke-width={1.75} aria-hidden="true" />
+      <span class="next-lesson-card__title">Hoàn thành lĩnh vực — xem lại các bài</span>
+    </a>
+  )
+}
+
+<style>
+  .next-lesson-card {
+    margin: var(--space-6) 0 0;
+    padding: var(--space-4) var(--space-5);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: 44px;
+    background: var(--surface-2);
+    border-radius: var(--radius-card);
+    text-decoration: none;
+    color: var(--ink);
+  }
+
+  .next-lesson-card__eyebrow {
+    display: block;
+    width: 100%;
+    font-size: var(--text-caption);
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+
+  .next-lesson-card:not(.next-lesson-card--complete) {
+    flex-wrap: wrap;
+  }
+
+  .next-lesson-card__title {
+    font-size: var(--text-body);
+    font-weight: 700;
+    flex: 1;
+  }
+
+  .next-lesson-card__icon {
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .next-lesson-card--complete {
+    color: var(--accent);
+  }
+</style>

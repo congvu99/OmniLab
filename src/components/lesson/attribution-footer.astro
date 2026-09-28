@@ -1,0 +1,54 @@
+---
+// End-of-lesson source/license attribution — required on every lesson per
+// phase-04 success criteria ("Mỗi bài hiển thị nguồn + license").
+import ExternalLink from '@lucide/astro/icons/external-link';
+
+interface Props {
+  sourceName: string;
+  author: string;
+  license: string;
+  url?: string;
+}
+
+const { sourceName, author, license, url } = Astro.props;
+---
+
+<footer class="attribution-footer">
+  <p>
+    <strong>Nguồn:</strong> {sourceName} — {author}
+  </p>
+  <p><strong>Giấy phép:</strong> {license}</p>
+  {
+    url && (
+      <p>
+        <a href={url} target="_blank" rel="noopener noreferrer">
+          Xem bản gốc
+          <ExternalLink size={14} stroke-width={2} aria-hidden="true" />
+        </a>
+      </p>
+    )
+  }
+</footer>
+
+<style>
+  .attribution-footer {
+    margin: var(--space-7) 0 0;
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--line);
+    font-size: var(--text-caption);
+    color: var(--ink-2);
+  }
+
+  .attribution-footer p {
+    margin: 0 0 var(--space-1);
+  }
+
+  .attribution-footer a {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+</style>

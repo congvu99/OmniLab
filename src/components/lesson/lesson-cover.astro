@@ -1,0 +1,119 @@
+---
+// Reader cover: a user-authored frontmatter `cover` image (via astro:assets
+// <Image>, auto width/height -> zero CLS) when present, otherwise a
+// build-time fallback generated from the domain's accent color + Lucide icon
+// + lesson title — no image asset required, no client script. The gradient
+// is real inline <svg> (rect + linearGradient), not a CSS background, per
+// spec ("rendered as inline SVG markup in the page — not an inline script");
+// the title/icon overlay is plain HTML on top so long titles wrap normally
+// (SVG <text> doesn't wrap).
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { icons } from '@lucide/astro';
+
+interface Props {
+  cover?: ImageMetadata;
+  title: string;
+  domainIcon: string;
+}
+
+const { cover, title, domainIcon } = Astro.props;
+
+function toPascalCase(kebab: string): string {
+  return kebab
+    .split('-')
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join('');
+}
+
+const Icon = icons[toPascalCase(domainIcon) as keyof typeof icons] ?? icons.Layers;
+---
+
+<div class="lesson-cover">
+  {
+    cover ? (
+      <Image src={cover} alt={title} class="lesson-cover__img" loading="eager" decoding="async" />
+    ) : (
+      <>
+        <svg
+          class="lesson-cover__bg"
+          viewBox="0 0 640 360"
+          preserveAspectRatio="xMidYMid slice"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <rect width="640" height="360" fill="var(--accent)" />
+          <linearGradient id="lesson-cover-shade" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="35%" stop-color="#000000" stop-opacity="0" />
+            <stop offset="100%" stop-color="#000000" stop-opacity="0.4" />
+          </linearGradient>
+          <rect width="640" height="360" fill="url(#lesson-cover-shade)" />
+        </svg>
+        <div class="lesson-cover__overlay">
+          <span class="lesson-cover__icon">
+            <Icon size={36} stroke-width={1.5} aria-hidden="true" />
+          </span>
+          <p class="lesson-cover__title">{title}</p>
+        </div>
+      </>
+    )
+  }
+</div>
+
+<style>
+  .lesson-cover {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    margin: 0 0 var(--space-5);
+  }
+
+  .lesson-cover :global(.lesson-cover__img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 0;
+  }
+
+  .lesson-cover__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .lesson-cover__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: var(--space-2);
+    padding: var(--space-5);
+  }
+
+  .lesson-cover__icon {
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-on);
+    opacity: 0.9;
+  }
+
+  .lesson-cover__title {
+    margin: 0;
+    font-size: var(--text-title2);
+    font-weight: 700;
+    line-height: var(--leading-tight);
+    color: var(--accent-on);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+</style>

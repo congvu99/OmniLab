@@ -1,0 +1,82 @@
+---
+// One lesson row inside a module section on /linh-vuc/[domain]. The row root
+// (this <a>) carries data-lesson-id/data-domain — the DOM contract Phase 5's
+// progress-tracking island reads to know which row it's decorating (see
+// phase-04 report, "DOM contracts for Phase 5"). `.lesson-status-slot` is the
+// empty element Phase 5 fills with a checkmark once a lesson is marked done.
+interface Props {
+  href: string;
+  order: number;
+  title: string;
+  readingMinutes: number;
+  lessonId: string;
+  domainId: string;
+}
+
+const { href, order, title, readingMinutes, lessonId, domainId } = Astro.props;
+---
+
+<a href={href} class="lesson-row tap-scale" data-lesson-id={lessonId} data-domain={domainId}>
+  <span class="lesson-row__order" aria-hidden="true">{order}</span>
+  <span class="lesson-row__body">
+    <span class="lesson-row__title">{title}</span>
+    <span class="lesson-row__meta">{readingMinutes} phút đọc</span>
+  </span>
+  <span class="lesson-status-slot" aria-hidden="true"></span>
+</a>
+
+<style>
+  .lesson-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: 44px;
+    padding: var(--space-3) var(--space-4);
+    text-decoration: none;
+    color: inherit;
+    border-bottom: 1px solid var(--line);
+  }
+
+  li:last-child > .lesson-row {
+    border-bottom: none;
+  }
+
+  .lesson-row__order {
+    flex-shrink: 0;
+    width: 24px;
+    text-align: center;
+    font-size: var(--text-footnote);
+    font-weight: 600;
+    color: var(--ink-2);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .lesson-row__body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .lesson-row__title {
+    font-size: var(--text-body);
+    color: var(--ink);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .lesson-row__meta {
+    font-size: var(--text-caption);
+    color: var(--ink-2);
+  }
+
+  /* Empty for now — Phase 5 fills in a checkmark once the lesson is marked
+     read (progress state keyed by [data-lesson-id] on the row root above). */
+  .lesson-status-slot {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+  }
+</style>

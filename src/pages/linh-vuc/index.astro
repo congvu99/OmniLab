@@ -1,70 +1,54 @@
 ---
-// "Lĩnh vực" tab — placeholder cards for the 2 domains. Phase 4 replaces this
-// with real data from the content collection (progress %, lesson counts,
-// real hrefs into /linh-vuc/<slug>). Not linked yet on purpose: there is no
-// domain detail route to send users to until then, and a dead link would be
-// worse than a clearly-labeled "coming soon" card.
+// "Lĩnh vực" tab — real domain cards from the content collection (accent,
+// icon, tagline, lesson count, reading minutes, empty progress-ring slot for
+// Phase 5), each linking to its /linh-vuc/<domain> detail page.
 import AppLayout from '../../layouts/app-layout.astro';
-import BuildingComplex from '@lucide/astro/icons/building-complex';
-import Landmark from '@lucide/astro/icons/landmark';
+import DomainCard from '../../components/domain/domain-card.astro';
+import { getDomains, getLessonsByDomain } from '../../lib/content-queries';
+
+const domains = await getDomains();
+const domainCards = await Promise.all(
+  domains.map(async (domain) => {
+    const lessons = await getLessonsByDomain(domain.id);
+    const totalReadingMinutes = lessons.reduce((sum, l) => sum + l.readingMinutes, 0);
+    return { domain, lessonCount: lessons.length, totalReadingMinutes };
+  }),
+);
 ---
 
 <AppLayout title="Lĩnh vực - OmniLab" largeTitle="Lĩnh vực">
   <ul class="domain-list">
-    <li class="domain-card" style="--card-accent:var(--domain-kien-truc-accent);--card-accent-dark:var(--domain-kien-truc-accent-dark)">
-      <BuildingComplex size={28} stroke-width={1.75} aria-hidden="true" />
-      <div class="domain-copy">
-        <p class="domain-name">Kiến trúc hệ thống</p>
-        <p class="domain-note">Sắp có nội dung</p>
-      </div>
-    </li>
-    <li class="domain-card" style="--card-accent:var(--domain-tai-chinh-accent);--card-accent-dark:var(--domain-tai-chinh-accent-dark)">
-      <Landmark size={28} stroke-width={1.75} aria-hidden="true" />
-      <div class="domain-copy">
-        <p class="domain-name">Tài chính</p>
-        <p class="domain-note">Sắp có nội dung</p>
-      </div>
-    </li>
+    {
+      domainCards.map(({ domain, lessonCount, totalReadingMinutes }) => (
+        <li>
+          <DomainCard
+            href={`/linh-vuc/${domain.id}`}
+            domainId={domain.id}
+            icon={domain.data.icon}
+            title={domain.data.title}
+            tagline={domain.data.tagline}
+            accent={domain.data.accent}
+            accentDark={domain.data.accentDark}
+            lessonCount={lessonCount}
+            totalReadingMinutes={totalReadingMinutes}
+          />
+        </li>
+      ))
+    }
   </ul>
+  <p class="linh-vuc-footer">
+    <a href="/gioi-thieu">Nguồn & giấy phép nội dung</a>
+  </p>
 </AppLayout>
 
 <style>
   .domain-list {
     margin: var(--space-4);
+    padding: 0;
+    list-style: none;
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
-  }
-
-  .domain-card {
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
-    padding: var(--space-4);
-    background: var(--surface);
-    border-radius: var(--radius-card);
-    box-shadow: var(--shadow-card);
-    color: var(--card-accent);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .domain-card {
-      color: var(--card-accent-dark);
-    }
-  }
-
-  .domain-copy {
-    color: var(--ink);
-  }
-
-  .domain-name {
-    font-size: var(--text-title3);
-    font-weight: 700;
-  }
-
-  .domain-note {
-    font-size: var(--text-footnote);
-    color: var(--ink-2);
   }
 
   @media (min-width: 768px) {
@@ -72,5 +56,17 @@ import Landmark from '@lucide/astro/icons/landmark';
       display: grid;
       grid-template-columns: repeat(2, 1fr);
     }
+  }
+
+  .linh-vuc-footer {
+    margin: var(--space-5) var(--space-4);
+    text-align: center;
+    font-size: var(--text-caption);
+  }
+
+  .linh-vuc-footer a {
+    color: var(--ink-2);
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 </style>

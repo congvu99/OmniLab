@@ -1,0 +1,150 @@
+---
+// Domain summary card — used on both `/linh-vuc` (links to the domain detail
+// page) and `/` "Học tiếp" (links straight to the domain's first lesson via
+// `ctaLabel`/`href`, see src/pages/index.astro). Whole card is one tappable
+// link (>=44px tall).
+//
+// Icon: domain YAML authors an arbitrary Lucide icon name (kebab-case, e.g.
+// "network"). Per plan.md acceptance criteria #7 ("thêm lĩnh vực mới không
+// cần sửa code"), this can't be a fixed per-icon import map like
+// tab-bar/sidebar-nav use for the 4 static nav icons — so this looks the
+// icon up dynamically from `@lucide/astro`'s `icons` namespace export
+// (PascalCase keys). This *does* pull the full Lucide icon set into the
+// server-side build (no client JS/bundle impact — Astro components render to
+// static HTML at build time), which is the accepted tradeoff for genuine
+// no-code-change extensibility; see phase-04 report.
+import ChevronRight from '@lucide/astro/icons/chevron-right';
+import { icons } from '@lucide/astro';
+
+interface Props {
+  href: string;
+  domainId: string;
+  icon: string;
+  title: string;
+  tagline: string;
+  accent: string;
+  accentDark: string;
+  lessonCount: number;
+  totalReadingMinutes: number;
+  /** When set, renders a CTA row (e.g. "Bắt đầu từ bài 1" on the homepage variant). */
+  ctaLabel?: string;
+}
+
+const { href, domainId, icon, title, tagline, accent, accentDark, lessonCount, totalReadingMinutes, ctaLabel } =
+  Astro.props;
+
+function toPascalCase(kebab: string): string {
+  return kebab
+    .split('-')
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join('');
+}
+
+// Unknown/typo'd icon name in content YAML falls back to a generic icon
+// rather than breaking the build.
+const Icon = icons[toPascalCase(icon) as keyof typeof icons] ?? icons.Layers;
+---
+
+<a href={href} class="domain-card tap-scale" style={`--card-accent:${accent};--card-accent-dark:${accentDark}`}>
+  <span class="domain-card__icon">
+    <Icon size={26} stroke-width={1.75} aria-hidden="true" />
+  </span>
+  <span class="domain-card__body">
+    <span class="domain-card__title">{title}</span>
+    <span class="domain-card__tagline">{tagline}</span>
+    <span class="domain-card__meta">{lessonCount} bài · {totalReadingMinutes} phút đọc</span>
+    {ctaLabel && (
+      <span class="domain-card__cta">
+        {ctaLabel}
+        <ChevronRight size={16} stroke-width={2.5} aria-hidden="true" />
+      </span>
+    )}
+  </span>
+  <span class="progress-ring-slot" data-domain={domainId} aria-hidden="true"></span>
+</a>
+
+<style>
+  .domain-card {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: var(--surface);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    text-decoration: none;
+    color: inherit;
+    min-height: 44px;
+  }
+
+  .domain-card__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: var(--radius-row);
+    color: var(--card-accent);
+    background: color-mix(in srgb, var(--card-accent) 12%, var(--surface));
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .domain-card__icon {
+      color: var(--card-accent-dark);
+      background: color-mix(in srgb, var(--card-accent-dark) 16%, var(--surface));
+    }
+  }
+
+  .domain-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .domain-card__title {
+    font-size: var(--text-title3);
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .domain-card__tagline {
+    font-size: var(--text-footnote);
+    color: var(--ink-2);
+  }
+
+  .domain-card__meta {
+    margin-top: var(--space-1);
+    font-size: var(--text-caption);
+    color: var(--ink-2);
+  }
+
+  .domain-card__cta {
+    margin-top: var(--space-2);
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-size: var(--text-footnote);
+    font-weight: 600;
+    color: var(--card-accent);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .domain-card__cta {
+      color: var(--card-accent-dark);
+    }
+  }
+
+  /* Empty for now — Phase 5 fills in a % ring (via data-domain lookup) and
+     removes [hidden] once real progress data exists. */
+  .progress-ring-slot {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    width: 32px;
+    height: 32px;
+  }
+</style>

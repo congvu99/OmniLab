@@ -55,21 +55,32 @@
   margin-bottom: 0;
 }
 
-/* Tables: content pipeline wraps every <table> in <div class="table-wrap">
-   so wide tables scroll horizontally inside their own container instead of
-   overflowing the page (contract with Phase 3/4's MDX -> HTML pipeline). */
-.prose .table-wrap {
+/* Wide tables: astro.config.mjs is off-limits to Phase 4 (no rehype plugin
+   allowed to auto-wrap <table> in a scrolling <div>), and none of the
+   migrated MDX content wraps its tables either. Forcing `display: block`
+   directly on <table> (a common CSS-only trick) turned out to NOT reliably
+   contain overflow here: browsers still generate an internal anonymous table
+   box for the untouched thead/tr/td (they keep their UA default
+   table-row-group/table-row/table-cell display), and that anonymous box can
+   render wider than the blockified outer box — verified empirically
+   (measured 48px page-level overflow on the "AWS scaling" lesson's
+   comparison table with `display:block` applied). Instead, `:has()` gives
+   overflow-x directly to the table's real DOM parent (whatever element that
+   is — <article>, <aside class="translator-note">, etc.), which — being a
+   normal, non-table-blockified block box — properly clips/scrolls an
+   over-wide table child. Kept `.table-wrap` too in case any future content
+   wraps its own tables in a div. */
+.prose .table-wrap,
+.prose :has(> table) {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  margin: 0 0 var(--space-4);
 }
 
 .prose table {
   border-collapse: collapse;
-  width: 100%;
-  min-width: max-content;
+  min-width: 100%;
   font-size: var(--text-footnote);
-  margin: 0;
+  margin: 0 0 var(--space-4);
 }
 
 .prose th,
@@ -77,6 +88,7 @@
   border: 1px solid var(--line);
   padding: var(--space-2) var(--space-3);
   text-align: left;
+  white-space: normal;
 }
 
 .prose th {

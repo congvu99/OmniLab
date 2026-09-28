@@ -1,34 +1,78 @@
 ---
-// TEMPORARY route, owned by Phase 3 only: bare render of lesson content with
-// no layout, so `pnpm build` proves every lesson MDX compiles and every
-// `<Figure>`/image import resolves. Phase 4 REWRITES this file with the real
-// reader layout/shell — do not add visual design here.
+// Lesson reader — replaces Phase 3's temporary bare-render route. Full-bleed
+// ReaderLayout (back -> domain page), cover, meta, collapsible TOC,
+// <Disclaimer> for finance lessons, MDX body, source/license attribution,
+// end-of-lesson slot + next-lesson navigation.
 import { getCollection, render } from 'astro:content';
-import { lessonIdOf } from '../../../../lib/lesson-id';
+import ReaderLayout from '../../../../layouts/reader-layout.astro';
 import { lessonMdxComponents } from '../../../../components/lesson/mdx-components';
+import Disclaimer from '../../../../components/lesson/disclaimer.astro';
+import LessonCover from '../../../../components/lesson/lesson-cover.astro';
+import LessonMeta from '../../../../components/lesson/lesson-meta.astro';
+import LessonToc from '../../../../components/lesson/lesson-toc.astro';
+import AttributionFooter from '../../../../components/lesson/attribution-footer.astro';
+import NextLessonCard from '../../../../components/lesson/next-lesson-card.astro';
+import { lessonIdOf } from '../../../../lib/lesson-id';
+import { getAdjacent, getDomain, getModules } from '../../../../lib/content-queries';
 
 export async function getStaticPaths() {
   const lessons = await getCollection('lessons');
   return lessons.map((lesson) => {
     const [domain, module, slug] = lessonIdOf(lesson).split('/');
-    return {
-      params: { domain, module, slug },
-      props: { lesson },
-    };
+    return { params: { domain, module, slug }, props: { lesson } };
   });
 }
 
 const { lesson } = Astro.props;
-const { Content } = await render(lesson);
+const { Content, headings } = await render(lesson);
+
+const lessonId = lessonIdOf(lesson);
+const [domainId, moduleId] = lessonId.split('/');
+
+const domain = await getDomain(domainId);
+if (!domain) throw new Error(`Unknown domain "${domainId}" for lesson ${lessonId}`);
+
+const modules = await getModules(domainId);
+const currentModule = modules.find((m) => m.id === moduleId);
+
+const { next } = await getAdjacent(lessonId);
+const toc = headings.filter((h) => h.depth === 2);
 ---
 
-<html lang="vi">
-  <head>
-    <meta charset="utf-8" />
-    <title>{lesson.data.title}</title>
-  </head>
-  <body>
-    <h1>{lesson.data.title}</h1>
+<ReaderLayout
+  title={lesson.data.title}
+  description={lesson.data.summary}
+  domainAccent={domain.data.accent}
+  domainAccentDark={domain.data.accentDark}
+  backHref={`/linh-vuc/${domainId}`}
+  backLabel={domain.data.title}
+>
+  <article
+    class="lesson-article"
+    data-lesson-id={lessonId}
+    data-domain={domainId}
+    data-examples-reviewed={lesson.data.examplesReviewed ? 'true' : 'false'}
+    data-pagefind-body
+  >
+    <LessonCover cover={lesson.data.cover} title={lesson.data.title} domainIcon={domain.data.icon} />
+    <LessonMeta
+      moduleTitle={currentModule?.title ?? moduleId}
+      readingMinutes={lesson.data.readingMinutes ?? 1}
+      sourceName={lesson.data.source.name}
+    />
+    <LessonToc headings={toc} />
+    {domain.data.isFinance && <Disclaimer />}
     <Content components={lessonMdxComponents} />
-  </body>
-</html>
+    <AttributionFooter
+      sourceName={lesson.data.source.name}
+      author={lesson.data.source.author}
+      license={lesson.data.source.license}
+      url={lesson.data.source.url}
+    />
+    <div class="lesson-complete-slot" data-lesson-id={lessonId} data-domain={domainId}></div>
+    <NextLessonCard
+      next={next ? { href: next.url, title: next.title } : null}
+      domainHref={`/linh-vuc/${domainId}`}
+    />
+  </article>
+</ReaderLayout>
