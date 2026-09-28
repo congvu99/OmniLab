@@ -4,7 +4,7 @@ description: >-
   App đọc/học Astro tĩnh, UI kiểu iOS, 2 lĩnh vực (Kiến trúc hệ thống, Tài
   chính), 100% nội dung gốc + 6 bài thí điểm có ví dụ đời sống & SVG; deploy
   Railpack/Nhân Hòa.
-status: in-progress
+status: completed
 priority: P2
 branch: main
 tags:
@@ -40,7 +40,7 @@ Nguyên tắc cốt lõi: **nội dung gốc bất biến** (chứng minh bằng
 | 4 | [Domain and reader screens](./phase-04-domain-and-reader-screens.md) | Completed |
 | 5 | [Progress bookmarks and search](./phase-05-progress-bookmarks-and-search.md) | Completed |
 | 6 | [Content enrichment (all lessons)](./phase-06-pilot-content.md) | Completed |
-| 7 | [QA and launch](./phase-07-qa-and-launch.md) | In Progress |
+| 7 | [QA and launch](./phase-07-qa-and-launch.md) | Completed |
 
 ## Dependencies
 

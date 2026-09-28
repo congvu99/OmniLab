@@ -1,7 +1,7 @@
 ---
 phase: 7
 title: QA and launch
-status: in-progress
+status: completed
 priority: P1
 effort: 0.5–1 ngày
 dependencies:

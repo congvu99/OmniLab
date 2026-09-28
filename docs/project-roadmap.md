@@ -12,8 +12,8 @@ Trạng thái: toàn bộ 7 phase trong [plan v1](../plans/260928-1725-omnilab-v
 | Tiến độ, bookmark, Học tiếp | `localStorage` (`omnilab:v1:state`), fallback in-memory ở private mode |
 | Tìm kiếm | MiniSearch, gập dấu tiếng Việt; index ~84KB gzip, chỉ tải ở `/tim-kiem` |
 | JS mỗi trang | 6,6–13KB gzip (ngân sách 30KB) |
-| Lighthouse mobile (5 trang) | Performance 96–97, Accessibility 98–100, Best Practices 100, SEO 100 — [QA report](../plans/260928-1725-omnilab-v1-learning-app/reports/phase-07-qa-report.md) |
-| Test | 174 unit test (vitest) |
+| Lighthouse mobile (đo lại sau sửa lỗi, 3 trang) | Performance 96–97, Accessibility 100, Best Practices 100, SEO 100, CLS 0; LCP 2,1–2,3s (mục tiêu < 2s, chưa đạt trên giả lập 4G chậm) — [QA report](../plans/260928-1725-omnilab-v1-learning-app/reports/phase-07-qa-report.md) |
+| Test | 237 unit test (vitest) |
 
 Chưa kiểm được trong môi trường dev (chủ dự án làm sau deploy): chế độ standalone trên iPhone thật, safe-area, lưu tiến độ lâu dài trên iOS, hiển thị SVG ở dark mode trên Safari.
 
@@ -33,4 +33,6 @@ Chưa kiểm được trong môi trường dev (chủ dự án làm sau deploy):
 
 - Xác nhận giấy phép nội dung Tài chính (hiện ghi "Chưa xác định").
 - Bảng "số 9" trong bài Availability (bản gốc upstream) ghi 99,99%/tuần là "1m 5s"; giá trị đúng ≈ 1m 0,5s. Nội dung gốc bị khoá bởi fidelity gate, nếu muốn sửa thì thêm ghi chú người dịch.
-- Kiểm tra trực quan toàn bộ SVG ở light/dark trên thiết bị thật.
+- Kiểm tra trực quan SVG ở light/dark trên iPhone thật (đã soát tự động 156/156 trên Chromium).
+- LCP 2,1–2,3s trên giả lập 4G chậm, cần tối ưu font/ảnh nếu muốn < 2s.
+- HSTS: chưa đặt trong Caddyfile; xác nhận nền tảng Vibe Deploy có tự thêm không.
