@@ -1,17 +1,17 @@
 <svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-thu-tu-tra-no-title" xmlns="http://www.w3.org/2000/svg">
   <title id="svg-thu-tu-tra-no-title">Ưu tiên trả khoản vay lãi suất cao nhất trước</title>
 
-  <text x="145" y="50" text-anchor="end" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Thẻ tín dụng (40%/năm)</text>
-  <rect x="150" y="30" width="180" height="32" rx="8" fill="color-mix(in srgb, var(--accent) 14%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <!-- Độ dài thanh tỷ lệ với lãi suất: 7px = 1%/năm (số giả định) -->
+  <text x="20" y="28" text-anchor="start" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Thẻ tín dụng (40%/năm)</text>
+  <text x="340" y="28" text-anchor="end" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--accent)">① trả trước</text>
+  <rect x="20" y="36" width="280" height="24" rx="8" fill="color-mix(in srgb, var(--accent) 14%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
 
-  <text x="145" y="102" text-anchor="end" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Vay tiêu dùng (18%/năm)</text>
-  <rect x="150" y="82" width="90" height="32" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="20" y="86" text-anchor="start" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Vay tiêu dùng (18%/năm)</text>
+  <rect x="20" y="94" width="126" height="24" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
 
-  <text x="145" y="154" text-anchor="end" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Vay mua nhà (9%/năm)</text>
-  <rect x="150" y="134" width="50" height="32" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="20" y="144" text-anchor="start" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Vay mua nhà (9%/năm)</text>
+  <rect x="20" y="152" width="63" height="24" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
 
-  <text x="340" y="22" text-anchor="end" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--accent)">① trả trước</text>
-
-  <text x="180" y="192" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Trả tối thiểu mọi khoản, dồn phần dư</text>
-  <text x="180" y="208" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">vào khoản lãi cao nhất trước</text>
+  <text x="180" y="198" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Trả tối thiểu mọi khoản, dồn phần dư</text>
+  <text x="180" y="214" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">vào khoản lãi cao nhất trước</text>
 </svg>

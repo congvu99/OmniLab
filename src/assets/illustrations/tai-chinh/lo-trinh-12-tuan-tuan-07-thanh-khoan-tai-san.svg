@@ -1,23 +1,24 @@
 <svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-tuan07-thanh-khoan-title" xmlns="http://www.w3.org/2000/svg">
   <title id="svg-tuan07-thanh-khoan-title">So sánh thời gian quy đổi ra tiền mặt của các nhóm tài sản</title>
 
+  <text x="20" y="30" text-anchor="start" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">← nhanh</text>
+  <text x="340" y="30" text-anchor="end" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">chậm →</text>
+
   <line x1="30" y1="110" x2="330" y2="110" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
-  <text x="30" y="150" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">nhanh</text>
-  <text x="330" y="150" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">chậm</text>
 
-  <circle cx="60" cy="110" r="8" fill="color-mix(in srgb, var(--accent) 14%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
-  <text x="60" y="80" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Tiền gửi</text>
-  <text x="60" y="96" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">vài ngày</text>
+  <circle cx="62" cy="110" r="8" fill="color-mix(in srgb, var(--accent) 14%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <text x="62" y="80" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Tiền gửi</text>
+  <text x="62" y="96" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">ngay hoặc trong ngày</text>
 
-  <circle cx="150" cy="110" r="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
-  <text x="150" y="140" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Quỹ / cổ phiếu</text>
-  <text x="150" y="156" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">vài ngày làm việc</text>
+  <circle cx="140" cy="110" r="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="140" y="138" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Vàng</text>
+  <text x="140" y="154" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">trong ngày, lệch giá</text>
 
-  <circle cx="240" cy="110" r="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
-  <text x="240" y="80" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Vàng</text>
-  <text x="240" y="96" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">trong ngày, lệch giá</text>
+  <circle cx="225" cy="110" r="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="225" y="80" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Quỹ / cổ phiếu</text>
+  <text x="225" y="96" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">vài ngày làm việc</text>
 
-  <circle cx="320" cy="110" r="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
-  <text x="305" y="140" text-anchor="end" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Bất động sản</text>
-  <text x="305" y="156" text-anchor="end" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">vài tuần đến vài tháng</text>
+  <circle cx="315" cy="110" r="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="350" y="138" text-anchor="end" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Bất động sản</text>
+  <text x="350" y="154" text-anchor="end" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">vài tuần–vài tháng</text>
 </svg>

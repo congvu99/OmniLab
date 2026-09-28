@@ -4,15 +4,16 @@
   <line x1="30" y1="20" x2="30" y2="190" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
   <line x1="30" y1="190" x2="340" y2="190" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
 
-  <path d="M30 180 L330 120" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
-  <path d="M30 180 C 150 175, 250 140, 330 40" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" />
+  <!-- 22px = 1 lần vốn; lãi 10%/năm (số giả định). Lãi đơn: 1 + 0,1n. Lãi kép: 1,1^n, chấm mỗi 2 năm. -->
+  <path d="M30 168 L330 124" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+  <path d="M30 168 L60 163.4 L90 157.8 L120 151 L150 142.8 L180 132.9 L210 121 L240 106.5 L270 88.9 L300 67.7 L330 42" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
 
-  <text x="335" y="112" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)" text-anchor="end">lãi đơn</text>
-  <text x="335" y="35" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--accent)" text-anchor="end" font-weight="700">lãi kép</text>
+  <text x="340" y="114" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)" text-anchor="end">lãi đơn ×3</text>
+  <text x="340" y="32" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--accent)" text-anchor="end" font-weight="700">lãi kép ×6,7</text>
 
   <text x="30" y="206" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">0</text>
-  <text x="185" y="206" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">10 năm</text>
-  <text x="335" y="206" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">20 năm</text>
+  <text x="180" y="206" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">10 năm</text>
+  <text x="330" y="206" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">20 năm</text>
 
   <text x="12" y="16" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">số tiền</text>
 </svg>

@@ -1,19 +1,21 @@
 <svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-thoi-gian-cho-title" xmlns="http://www.w3.org/2000/svg">
-  <title id="svg-thoi-gian-cho-title">Mốc thời gian hợp đồng bảo hiểm: cân nhắc 21 ngày rồi tới thời gian chờ</title>
+  <title id="svg-thoi-gian-cho-title">Mốc thời gian hợp đồng bảo hiểm: 21 ngày cân nhắc tính từ khi nhận hợp đồng, thời gian chờ tính riêng theo điều khoản</title>
 
-  <line x1="20" y1="110" x2="340" y2="110" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
-  <rect x="40" y="104" width="100" height="12" rx="6" fill="color-mix(in srgb, var(--accent) 12%, transparent)" />
+  <line x1="20" y1="90" x2="340" y2="90" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+  <rect x="40" y="84" width="100" height="12" rx="6" fill="color-mix(in srgb, var(--accent) 12%, transparent)" />
 
-  <circle cx="40" cy="110" r="6" fill="var(--accent)" />
-  <text x="40" y="88" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">Ngày 0</text>
-  <text x="40" y="140" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">ký HĐ, có thể huỷ</text>
+  <circle cx="40" cy="90" r="6" fill="var(--accent)" />
+  <text x="40" y="68" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">Ngày 0</text>
+  <text x="40" y="116" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">nhận HĐ</text>
 
-  <circle cx="140" cy="110" r="6" fill="var(--accent)" />
-  <text x="140" y="88" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--accent)">Ngày 21</text>
-  <text x="140" y="140" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">hết hạn cân nhắc</text>
+  <circle cx="140" cy="90" r="6" fill="var(--accent)" />
+  <text x="140" y="68" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--accent)">Ngày 21</text>
+  <text x="140" y="116" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">hết hạn cân nhắc</text>
 
-  <circle cx="300" cy="110" r="6" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
-  <text x="300" y="88" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">Thời gian chờ</text>
-  <text x="300" y="140" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">quyền lợi mới</text>
-  <text x="300" y="154" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">được chi trả</text>
+  <text x="40" y="148" text-anchor="start" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">Thời gian chờ (tuỳ quyền lợi, theo điều khoản)</text>
+  <rect x="40" y="156" width="250" height="12" rx="6" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" stroke-dasharray="4 4" />
+
+  <circle cx="290" cy="162" r="6" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="290" y="190" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">quyền lợi đó</text>
+  <text x="290" y="204" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">bắt đầu được chi trả</text>
 </svg>

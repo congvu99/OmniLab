@@ -9,7 +9,7 @@ source:
   author: "OmniLab (tổng hợp)"
   license: "Chưa xác định — cần user xác nhận"
   snapshot: "finance/index.html"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 1
 ---
 
@@ -23,7 +23,7 @@ import svgThuTuTraNo from '../../../../assets/illustrations/tai-chinh/lo-trinh-1
 
 <RealLife title="Dư nợ giảm dần">
 
-Vay 10 triệu trả góp 10 tháng. Nếu tính lãi trên dư nợ giảm dần, mỗi tháng lãi chỉ tính trên số tiền bạn còn nợ thực tế — nợ càng ít, lãi càng ít. Nếu tính trên dư nợ ban đầu, ngân hàng vẫn tính lãi như thể bạn nợ nguyên 10 triệu suốt cả kỳ vay, dù bạn đã trả bớt. → Cùng lãi suất công bố, cách tính "dư nợ ban đầu" luôn tốn hơn "dư nợ giảm dần".
+Vay 10 triệu, trả gốc đều 1 triệu/tháng trong 10 tháng, lãi 1%/tháng (số giả định). Tính trên dư nợ giảm dần: tháng đầu lãi 100 nghìn, tháng cuối chỉ còn 10 nghìn, tổng lãi 550 nghìn. Tính trên dư nợ ban đầu: tháng nào cũng 100 nghìn như thể vẫn nợ nguyên 10 triệu, tổng lãi 1 triệu. → Cùng lãi suất công bố, khi trả góp nhiều kỳ, cách tính "dư nợ ban đầu" luôn tốn hơn "dư nợ giảm dần".
 
 </RealLife>
 
@@ -31,14 +31,14 @@ Vay 10 triệu trả góp 10 tháng. Nếu tính lãi trên dư nợ giảm dầ
   added
   svg={svgDuNoGiamDan}
   alt="Lãi tính trên dư nợ giảm dần theo từng kỳ trả góp"
-  caption="Khi trả góp theo dư nợ giảm dần, lãi mỗi kỳ tính trên số dư nợ còn lại — dư nợ giảm thì lãi cũng giảm theo."
+  caption="Vay 10 triệu, trả gốc đều 1 triệu/tháng, lãi 1%/tháng (số giả định): dư nợ đầu kỳ giảm từ 10 triệu xuống 1 triệu nên lãi mỗi kỳ giảm từ 100 nghìn xuống 10 nghìn — tổng lãi 550 nghìn, so với 1 triệu nếu tính trên dư nợ ban đầu."
 />
 
 **Làm:** lập bảng khoản vay, tiếp tục trả các khoản tối thiểu đến hạn; xác định khoản chi phí cao để ưu tiên. Không có nợ thì so sánh hai hợp đồng giả định. Với vay mua nhà, tính lại khoản trả khi hết lãi suất ưu đãi và chuyển sang thả nổi. Tự tra lịch sử tín dụng của mình tại CIC. Nguồn H2 và mục Việt Nam.
 
 <RealLife title="Ưu tiên trả khoản lãi cao nhất trước">
 
-Có ba khoản nợ cùng lúc: thẻ tín dụng 40%/năm, vay tiêu dùng 18%/năm, vay mua nhà 9%/năm. Vẫn trả tối thiểu đúng hạn cho cả ba để không bị phạt, nhưng phần tiền dư ra nên dồn hết vào thẻ tín dụng trước — đó là khoản "chảy máu" nhanh nhất. → Trả hết khoản lãi cao nhất trước giúp tổng số tiền phải trả ít đi nhiều nhất.
+Có ba khoản nợ cùng lúc: thẻ tín dụng 40%/năm, vay tiêu dùng 18%/năm, vay mua nhà 9%/năm (số giả định). Vẫn trả tối thiểu đúng hạn cho cả ba để không bị phạt, còn phần tiền dư ra dồn vào thẻ tín dụng trước — đó là khoản "chảy máu" nhanh nhất. Trước khi trả sớm khoản nào, xem hợp đồng có phí trả nợ trước hạn không. → Ưu tiên khoản chi phí cao nhất giúp tổng tiền lãi phải trả ít nhất.
 
 </RealLife>
 
@@ -46,12 +46,12 @@ Có ba khoản nợ cùng lúc: thẻ tín dụng 40%/năm, vay tiêu dùng 18%/
   added
   svg={svgThuTuTraNo}
   alt="Ưu tiên trả khoản vay lãi suất cao nhất trước"
-  caption="Trả tối thiểu mọi khoản đúng hạn, nhưng dồn phần tiền dư vào khoản lãi suất cao nhất để giảm tổng chi phí vay."
+  caption="Trả tối thiểu mọi khoản đúng hạn, nhưng dồn phần tiền dư vào khoản lãi suất cao nhất để giảm tổng chi phí vay (lãi suất 40%, 18%, 9%/năm là số giả định; độ dài thanh tỷ lệ với lãi suất)."
 />
 
 <RealLife title="Hết ưu đãi, lãi suất thả nổi">
 
-Nhiều khoản vay mua nhà có mức lãi ưu đãi hấp dẫn trong 1-2 năm đầu, giống giá khuyến mãi dùng thử. Hết thời gian đó, lãi suất chuyển sang thả nổi — thường cao hơn đáng kể — và khoản trả hàng tháng tăng lên. → Luôn tính thử khoản trả ở mức lãi thả nổi *trước khi* ký hợp đồng, đừng chỉ nhìn con số ưu đãi ban đầu.
+Nhiều khoản vay mua nhà có lãi ưu đãi trong một thời gian đầu (tuỳ hợp đồng, vài tháng đến vài năm), giống giá khuyến mãi dùng thử. Hết ưu đãi, lãi suất chuyển sang thả nổi theo công thức trong hợp đồng — thường cao hơn đáng kể và có thể còn thay đổi — nên khoản trả hàng tháng tăng lên. → Luôn tính thử khoản trả ở mức lãi thả nổi *trước khi* ký hợp đồng, đừng chỉ nhìn con số ưu đãi ban đầu.
 
 </RealLife>
 

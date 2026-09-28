@@ -9,7 +9,7 @@ source:
   author: "OmniLab (tổng hợp)"
   license: "Chưa xác định — cần user xác nhận"
   snapshot: "finance/index.html"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 1
 ---
 
@@ -19,9 +19,9 @@ import svgCongThucNav from '../../../../assets/illustrations/tai-chinh/lo-trinh-
 
 **Học:** mục tiêu quỹ, tài sản nắm giữ, giá trị tài sản ròng (NAV), phí và thời gian xử lý lệnh.
 
-<RealLife title="NAV giống giá một suất ăn chung nồi lớn">
+<RealLife title="Giá một phần trong lô hàng góp chung">
 
-Một quỹ gom tiền nhiều người để mua nhiều loại tài sản chung, giống một nồi lẩu chung nhiều người góp tiền. NAV là giá trị một suất — tổng giá trị nồi lẩu chia cho số suất đang chia. Giá trị nồi lẩu (tài sản quỹ) đổi mỗi ngày nên NAV cũng đổi mỗi ngày. → NAV không phải giá cố định, nó phản ánh giá trị tài sản quỹ đang nắm giữ tại thời điểm tính.
+Mười người góp tiền mua chung một lô hàng ở chợ đầu mối, chia 100 phần bằng nhau. Muốn biết hôm nay một phần đáng giá bao nhiêu: lấy giá trị cả lô theo giá chợ, trừ tiền xe còn nợ, rồi chia 100. Giá chợ lên xuống thì mỗi phần cũng đổi theo. → NAV mỗi chứng chỉ quỹ tính tương tự: tài sản quỹ trừ nợ phải trả, chia cho số chứng chỉ, và được tính lại ở mỗi kỳ định giá.
 
 </RealLife>
 
@@ -29,12 +29,12 @@ Một quỹ gom tiền nhiều người để mua nhiều loại tài sản chun
   added
   svg={svgCongThucNav}
   alt="Công thức tính NAV của một quỹ đầu tư"
-  caption="NAV mỗi chứng chỉ quỹ bằng tổng giá trị tài sản quỹ chia cho số chứng chỉ đang lưu hành (số giả định, chỉ minh hoạ công thức)."
+  caption="NAV mỗi chứng chỉ quỹ bằng giá trị tài sản ròng của quỹ (tổng tài sản trừ nợ phải trả) chia cho số chứng chỉ đang lưu hành: 500 tỷ ÷ 50 triệu = 10.000đ (số giả định, chỉ minh hoạ công thức)."
 />
 
 <RealLife title="Phí quản lý trừ âm thầm mỗi năm dù không thấy giao dịch">
 
-Phí quản lý quỹ thường trừ dần theo tỷ lệ % mỗi năm trên giá trị tài sản, giống phí thường niên của một chiếc thẻ ngân hàng — không cần bạn thao tác gì, tiền vẫn tự trừ. Số phần trăm nhỏ nhưng cộng dồn nhiều năm có thể ảnh hưởng đáng kể tới số dư cuối cùng. → Luôn đọc kỹ mục phí trong bản cáo bạch trước khi so sánh hai sản phẩm.
+Phí quản lý quỹ tính theo % mỗi năm trên giá trị tài sản và được trừ dần vào NAV, nên không hiện thành một dòng trừ tiền riêng. Giả sử 100 triệu giữ 10 năm, tài sản quỹ không tăng không giảm (số giả định): phí 1%/năm còn khoảng 90,4 triệu, phí 2%/năm chỉ còn khoảng 81,7 triệu. → Chênh 1%/năm nghe nhỏ nhưng cộng dồn nhiều năm là đáng kể; luôn đọc kỹ mục phí trong bản cáo bạch trước khi so sánh hai sản phẩm.
 
 </RealLife>
 
@@ -42,7 +42,7 @@ Phí quản lý quỹ thường trừ dần theo tỷ lệ % mỗi năm trên gi
 
 <RealLife title="Đặt lệnh hôm nay, vài ngày sau mới biết giá khớp">
 
-Đặt mua chứng chỉ quỹ hôm nay giống đặt hàng online — đơn được ghi nhận ngay, nhưng giá khớp và tiền trừ thực tế có thể tính theo NAV của một, hai ngày làm việc sau đó, không phải giá lúc bấm đặt lệnh. → Thời gian xử lý lệnh khiến giá thực tế có thể khác với giá bạn nhìn thấy lúc đặt.
+Mua chứng chỉ quỹ mở khác mua hàng có giá niêm yết: bạn chuyển tiền và đặt lệnh trước giờ đóng sổ lệnh, nhưng số chứng chỉ nhận được tính theo NAV của ngày giao dịch kế tiếp (lịch giao dịch tuỳ quỹ, ghi trong bản cáo bạch), không phải giá lúc bấm đặt. Khi bán cũng vậy, tiền về sau vài ngày làm việc. → Thời gian xử lý lệnh khiến giá thực tế có thể khác với giá bạn nhìn thấy lúc đặt.
 
 </RealLife>
 

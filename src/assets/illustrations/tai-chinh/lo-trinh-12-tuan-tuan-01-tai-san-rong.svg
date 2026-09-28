@@ -1,11 +1,13 @@
 <svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-tuan01-tai-san-rong-title" xmlns="http://www.w3.org/2000/svg">
   <title id="svg-tuan01-tai-san-rong-title">Tài sản ròng bằng tài sản trừ đi nợ</title>
 
+  <text x="350" y="20" text-anchor="end" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">số giả định</text>
+
   <line x1="10" y1="190" x2="350" y2="190" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
 
   <rect x="20" y="70" width="70" height="120" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
   <text x="55" y="58" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Tài sản</text>
-  <text x="55" y="206" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">200 triệu (số giả định)</text>
+  <text x="55" y="206" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">200 triệu</text>
 
   <text x="108" y="145" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="20" fill="var(--ink-2)">−</text>
 

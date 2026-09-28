@@ -10,7 +10,7 @@
 
   <rect x="128" y="80" width="104" height="60" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
   <text x="180" y="106" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Chờ 24–48 giờ</text>
-  <text x="180" y="122" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">trước khi quyết định</text>
+  <text x="180" y="122" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">&amp; viết lý do</text>
 
   <line x1="234" y1="110" x2="246" y2="110" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
   <path d="M242 105 L250 110 L242 115 Z" fill="var(--ink-2)" />

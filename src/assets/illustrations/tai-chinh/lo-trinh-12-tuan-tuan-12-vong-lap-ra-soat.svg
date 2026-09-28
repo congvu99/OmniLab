@@ -1,5 +1,5 @@
-<svg viewBox="0 0 360 240" width="100%" role="img" aria-labelledby="svg-tuan12-vong-lap-title" xmlns="http://www.w3.org/2000/svg">
-  <title id="svg-tuan12-vong-lap-title">Vòng lặp rà soát và điều chỉnh kế hoạch tài chính sau mỗi 30 ngày</title>
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-tuan12-vong-lap-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-tuan12-vong-lap-title">Vòng lặp ghi nguyên tắc, rà soát sau 30 ngày và điều chỉnh kế hoạch tài chính</title>
 
   <rect x="6" y="90" width="104" height="60" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
   <text x="58" y="114" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Ghi nguyên tắc</text>
@@ -21,5 +21,5 @@
 
   <path d="M306 150 C 306 210, 58 210, 58 150" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
   <path d="M52 154 L58 150 L64 154" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-  <text x="182" y="200" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">lặp lại mỗi tháng</text>
+  <text x="182" y="184" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">lặp lại định kỳ</text>
 </svg>
