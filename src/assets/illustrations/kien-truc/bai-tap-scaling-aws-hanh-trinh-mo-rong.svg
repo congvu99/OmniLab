@@ -1,0 +1,24 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-bsa-hanhtrinh-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-bsa-hanhtrinh-title">Hành trình mở rộng: mỗi bước xử lý đúng một nút thắt đã đo</title>
+  <defs>
+    <marker id="svg-bsa-hanhtrinh-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)" />
+    </marker>
+  </defs>
+
+  <path d="M30 100 H310" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-bsa-hanhtrinh-arrow)" />
+
+  <circle cx="30" cy="100" r="6" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <circle cx="100" cy="100" r="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <circle cx="170" cy="100" r="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <circle cx="240" cy="100" r="12" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <circle cx="303" cy="100" r="14" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+
+  <text x="30" y="130" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">1 máy</text>
+  <text x="100" y="130" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">Users+</text>
+  <text x="170" y="130" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">Users++</text>
+  <text x="240" y="130" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">Users+++</text>
+  <text x="303" y="130" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">Users++++</text>
+
+  <text x="180" y="172" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Mỗi bước: đo tải → xử lý đúng nút thắt đó → lặp lại</text>
+</svg>

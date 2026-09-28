@@ -1,0 +1,31 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-bwc-vantay-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-bwc-vantay-title">So sánh vân tay nội dung để phát hiện trang gần trùng lặp</title>
+
+  <rect x="20" y="10" width="100" height="56" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="70" y="82" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Trang A</text>
+
+  <rect x="240" y="10" width="100" height="56" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="290" y="82" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Trang B</text>
+
+  <rect x="23" y="94" width="10" height="14" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--ink-2)" stroke-width="1.5" />
+  <rect x="35" y="94" width="10" height="14" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--ink-2)" stroke-width="1.5" />
+  <rect x="47" y="94" width="10" height="14" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="1.5" />
+  <rect x="59" y="94" width="10" height="14" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--ink-2)" stroke-width="1.5" />
+  <rect x="71" y="94" width="10" height="14" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="1.5" />
+  <rect x="83" y="94" width="10" height="14" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--ink-2)" stroke-width="1.5" />
+  <rect x="95" y="94" width="10" height="14" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="1.5" />
+  <rect x="107" y="94" width="10" height="14" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--ink-2)" stroke-width="1.5" />
+
+  <rect x="243" y="94" width="10" height="14" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--ink-2)" stroke-width="1.5" />
+  <rect x="255" y="94" width="10" height="14" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--ink-2)" stroke-width="1.5" />
+  <rect x="267" y="94" width="10" height="14" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="1.5" />
+  <rect x="279" y="94" width="10" height="14" fill="var(--surface-2)" stroke="var(--danger)" stroke-width="2" />
+  <rect x="291" y="94" width="10" height="14" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="1.5" />
+  <rect x="303" y="94" width="10" height="14" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--ink-2)" stroke-width="1.5" />
+  <rect x="315" y="94" width="10" height="14" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="1.5" />
+  <rect x="327" y="94" width="10" height="14" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--ink-2)" stroke-width="1.5" />
+
+  <path d="M117 101 H243" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" />
+
+  <text x="180" y="140" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">khác 1 vị trí → vẫn tính là gần trùng</text>
+</svg>

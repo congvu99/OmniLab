@@ -1,0 +1,36 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-btw-fanout-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-btw-fanout-title">Fan-out on write: một tweet ghi vào nhiều home timeline</title>
+  <defs>
+    <marker id="svg-btw-fanout-arrow-ink2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
+    </marker>
+    <marker id="svg-btw-fanout-arrow-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)" />
+    </marker>
+  </defs>
+
+  <rect x="140" y="10" width="80" height="32" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="180" y="31" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Tweet mới</text>
+
+  <path d="M180 42 V62" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-btw-fanout-arrow-ink2)" />
+
+  <rect x="110" y="62" width="140" height="32" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="180" y="83" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Fan Out Service</text>
+
+  <text x="180" y="114" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--accent)">O(n) lượt ghi</text>
+
+  <path d="M180 94 C 130 108, 105 112, 75 130" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-btw-fanout-arrow-accent)" />
+  <path d="M180 94 V130" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-btw-fanout-arrow-accent)" />
+  <path d="M180 94 C 230 108, 255 112, 285 130" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-btw-fanout-arrow-accent)" />
+
+  <rect x="30" y="130" width="90" height="32" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="75" y="151" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Timeline A</text>
+
+  <rect x="135" y="130" width="90" height="32" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="180" y="151" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Timeline B</text>
+
+  <rect x="240" y="130" width="90" height="32" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="285" y="151" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Timeline C</text>
+
+  <text x="345" y="150" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="16" fill="var(--ink-2)">…</text>
+</svg>

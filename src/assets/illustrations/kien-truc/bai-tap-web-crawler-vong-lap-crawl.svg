@@ -1,0 +1,33 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-bwc-vonglap-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-bwc-vonglap-title">Vòng lặp crawl: kiểm tra trùng trước khi crawl để tránh vòng vô hạn</title>
+  <defs>
+    <marker id="svg-bwc-vonglap-arrow-ink2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
+    </marker>
+    <marker id="svg-bwc-vonglap-arrow-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)" />
+    </marker>
+  </defs>
+
+  <rect x="80" y="6" width="200" height="30" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="180" y="26" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Lấy URL ưu tiên cao nhất</text>
+
+  <path d="M180 36 V58" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-bwc-vonglap-arrow-ink2)" />
+
+  <rect x="70" y="58" width="220" height="30" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="180" y="78" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Đã crawl trang tương tự?</text>
+
+  <path d="M180 88 V110" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-bwc-vonglap-arrow-ink2)" />
+  <text x="228" y="102" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">không</text>
+
+  <rect x="80" y="110" width="200" height="30" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="180" y="130" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Crawl trang, tạo chữ ký</text>
+
+  <path d="M180 140 V162" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-bwc-vonglap-arrow-ink2)" />
+
+  <rect x="60" y="162" width="240" height="32" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="180" y="183" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Lưu index + crawled_links</text>
+
+  <path d="M70 73 C 15 73, 15 21, 80 21" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-bwc-vonglap-arrow-accent)" />
+  <text x="30" y="50" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--accent)">có</text>
+</svg>

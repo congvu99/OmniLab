@@ -17,6 +17,8 @@ readingMinutes: 17
 
 import img_web_crawler_basic from '../../../../assets/legacy/system-design/web_crawler_basic.png';
 import img_web_crawler from '../../../../assets/legacy/system-design/web_crawler.png';
+import svgWebCrawlerVongLap from '../../../../assets/illustrations/kien-truc/bai-tap-web-crawler-vong-lap-crawl.svg?raw';
+import svgWebCrawlerVanTay from '../../../../assets/illustrations/kien-truc/bai-tap-web-crawler-van-tay-trung-lap.svg?raw';
 
 
 # Thiết kế một web crawler
@@ -87,6 +89,12 @@ Bảng quy đổi tiện dụng:
 * 1 yêu cầu mỗi giây = 2,5 triệu yêu cầu mỗi tháng
 * 40 yêu cầu mỗi giây = 100 triệu yêu cầu mỗi tháng
 * 400 yêu cầu mỗi giây = 1 tỷ yêu cầu mỗi tháng
+
+<RealLife title="Ước lượng số xe tải cho kho hàng mới">
+
+Trước khi thuê kho chứa hàng mới, chủ kho không đo chính xác từng kiện — chỉ nhẩm nhanh: trung bình 500 kiện/ngày, mỗi kiện 20kg, vậy cần khoảng 10 tấn hàng vào mỗi ngày để tính số xe tải cần thuê. Bài toán web crawler ước lượng dung lượng lưu trữ theo cách tương tự: 500 KB mỗi trang nhân với 4 tỷ trang crawl mỗi tháng, ra ngay con số petabyte cần chứa, dù chưa xây một dòng code nào. → Ước lượng thô giúp chọn đúng quy mô hạ tầng ngay từ đầu.
+
+</RealLife>
 
 ## Bước 2: Tạo thiết kế tổng quan
 
@@ -201,6 +209,19 @@ class Crawler(object):
 
 Mã nguồn đầy đủ của các đoạn trên: [web_crawler_snippets.py](../../solutions/system_design/web_crawler/web_crawler_snippets.py).
 
+<RealLife title="Người giao báo đánh dấu nhà đã giao">
+
+Người giao báo mỗi sáng đi theo tuyến đường đã đánh số nhà ưu tiên, và luôn đánh dấu nhà nào đã giao rồi. Gặp lại nhà đã đánh dấu, người này không giao lại — chỉ bỏ qua, đi tiếp nhà chưa giao, nhờ vậy không bao giờ đi vòng quanh khu phố mãi không dứt dù đường có ngõ cụt hay vòng lặp. Crawler Service làm đúng cơ chế này: lấy link ưu tiên cao nhất, kiểm tra đã crawl trang tương tự chưa, nếu rồi thì bỏ qua và lấy link tiếp theo. → Danh sách "đã giao" chính là thứ ngăn vòng lặp vô hạn.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgWebCrawlerVongLap}
+  alt="Vòng lặp crawl kiểm tra trùng trước khi crawl"
+  caption="Mỗi vòng lặp lấy URL ưu tiên cao nhất; nếu đã crawl trang tương tự thì bỏ qua và lấy tiếp, nếu chưa thì crawl rồi lưu vào index và crawled_links."
+/>
+
 ### Xử lý trùng lặp
 
 Chúng ta cần cẩn thận để web crawler không mắc kẹt trong vòng lặp vô hạn, điều xảy ra khi đồ thị có chu trình.
@@ -228,13 +249,38 @@ Mã nguồn đầy đủ: [web_crawler_mapreduce.py](../../solutions/system_desi
 
 Phát hiện nội dung trùng lặp phức tạp hơn. Ta có thể tạo chữ ký dựa trên nội dung trang rồi so sánh hai chữ ký để đo độ tương tự. Một số thuật toán có thể dùng là [chỉ số Jaccard (Jaccard index)](https://en.wikipedia.org/wiki/Jaccard_index) và [độ tương tự cosin (cosine similarity)](https://en.wikipedia.org/wiki/Cosine_similarity).
 
+<RealLife title="Vân tay giấy tờ, không cần đọc từng chữ">
+
+Công chứng viên so hai bản hợp đồng không cần đọc lại từng chữ — chỉ so vài đặc điểm cố định (số trang, chữ ký, con dấu) để biết hai bản có phải bản giống nhau không. Phát hiện trang trùng lặp trên web dùng nguyên lý tương tự: tạo một "chữ ký" ngắn tóm tắt nội dung trang, hai trang gần giống nhau thì hai chữ ký cũng gần giống nhau, không cần so từng ký tự của toàn bộ trang. → Đây là cách kiểm tra trùng lặp ở quy mô hàng tỷ trang mà vẫn đủ nhanh.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgWebCrawlerVanTay}
+  alt="So sánh vân tay nội dung giữa hai trang gần trùng lặp"
+  caption="Hai trang gần giống nhau tạo ra hai vân tay gần giống nhau; chỉ lệch một vài vị trí (khoảng cách nhỏ) vẫn được tính là gần trùng."
+/>
+
 ### Xác định khi nào cập nhật kết quả crawl
 
 Các trang cần được crawl định kỳ để đảm bảo độ tươi mới. Kết quả crawl có thể có một trường `timestamp` cho biết lần cuối trang được crawl. Sau một khoảng thời gian mặc định, chẳng hạn một tuần, mọi trang nên được làm mới. Các trang cập nhật thường xuyên hoặc phổ biến hơn có thể được làm mới với chu kỳ ngắn hơn.
 
 Dù không đi sâu vào phân tích số liệu, ta có thể khai phá dữ liệu (data mining) để xác định thời gian trung bình trước khi một trang cụ thể được cập nhật, và dùng thống kê đó để quyết định tần suất crawl lại trang.
 
+<RealLife title="Đi chợ định kỳ bổ sung hàng tươi">
+
+Người bán rau ở chợ không nhập hàng mới cho mọi loại theo cùng một lịch — rau lá dễ hỏng thì lấy mỗi sáng, gia vị khô để được lâu thì cả tuần mới lấy một lần. Web crawler làm giống hệt với việc crawl lại: trang tin tức đổi liên tục nên crawl lại mỗi ngày, trang tĩnh ít đổi thì một tuần một lần là đủ để giữ độ tươi mới. → Tần suất crawl lại nên theo tốc độ trang đó thực sự thay đổi, không theo một lịch cố định cho tất cả.
+
+</RealLife>
+
 Ta cũng có thể chọn hỗ trợ file `Robots.txt`, cho phép quản trị viên trang web (webmaster) kiểm soát tần suất crawl.
+
+<RealLife title="Biển báo giới hạn giờ giao hàng">
+
+Một số khu chung cư treo biển "xe tải chỉ được giao hàng 8h-17h" — tài xế giao hàng vẫn được vào, nhưng phải tuân theo khung giờ chủ nhà quy định, không phải muốn tới lúc nào cũng được. File `robots.txt` đóng vai trò tấm biển đó cho web crawler: quản trị viên trang web ghi rõ crawler được phép hay không được phép ghé những đường dẫn nào. → Crawler lịch sự luôn đọc biển báo này trước khi bước vào.
+
+</RealLife>
 
 ### Trường hợp sử dụng: Người dùng nhập một từ khóa tìm kiếm và thấy danh sách các trang liên quan cùng tiêu đề và đoạn trích
 

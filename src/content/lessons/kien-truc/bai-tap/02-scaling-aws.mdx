@@ -21,6 +21,8 @@ import img_scaling_aws_3 from '../../../../assets/legacy/system-design/scaling_a
 import img_scaling_aws_4 from '../../../../assets/legacy/system-design/scaling_aws_4.png';
 import img_scaling_aws_5 from '../../../../assets/legacy/system-design/scaling_aws_5.png';
 import img_scaling_aws_7 from '../../../../assets/legacy/system-design/scaling_aws_7.png';
+import svgScalingHanhTrinh from '../../../../assets/illustrations/kien-truc/bai-tap-scaling-aws-hanh-trinh-mo-rong.svg?raw';
+import svgScalingAutoscale from '../../../../assets/illustrations/kien-truc/bai-tap-scaling-aws-autoscaling-theo-gio.svg?raw';
 
 
 # Thiết kế hệ thống mở rộng tới hàng triệu người dùng trên AWS
@@ -121,6 +123,12 @@ Dùng **mở rộng theo chiều dọc (Vertical Scaling)**:
 * Mở rộng theo chiều dọc có thể trở nên rất đắt
 * Không có dự phòng (redundancy) hay chuyển đổi dự phòng (failover)
 
+<RealLife title="Nồi phở đổi cỡ khi đông khách">
+
+Quán phở nhỏ mới mở chỉ có một nồi nước dùng. Đông khách hơn, chủ quán không thuê thêm đầu bếp ngay — trước tiên đổi sang nồi to hơn, bếp mạnh hơn, để một mình vẫn nấu kịp. Cách này đơn giản, không phải sắp xếp lại quy trình bếp. Nhưng nồi chỉ to được tới một mức; quá cỡ đó, một người không xoay nổi dù nồi có to thêm nữa. Máy chủ mở rộng theo chiều dọc cũng vậy: đổi máy mạnh hơn là bước rẻ và nhanh nhất, nhưng luôn có trần. → Đó là lý do bước tiếp theo cần chiều ngang.
+
+</RealLife>
+
 *Đánh đổi, phương án thay thế và chi tiết bổ sung:*
 
 * Phương án thay thế cho **mở rộng theo chiều dọc** là [**mở rộng theo chiều ngang (horizontal scaling)**](/hoc/kien-truc/chu-de/load-balancer)
@@ -164,6 +172,13 @@ Thêm một **DNS** như Route 53 để ánh xạ tên miền tới IP công kha
 
 > Xác định và xử lý các nút thắt, dựa trên các ràng buộc.
 
+<Figure
+  added
+  svg={svgScalingHanhTrinh}
+  alt="Hành trình mở rộng qua các giai đoạn Users+ tới Users++++"
+  caption="Mỗi giai đoạn chỉ thêm đúng thành phần xử lý nút thắt vừa đo được ở giai đoạn trước, không nhảy thẳng lên thiết kế cuối."
+/>
+
 #### Users+
 
 <Figure src={img_scaling_aws_2} alt="Sơ đồ Users+: tách SQL và Object Store khỏi Web Server" />
@@ -202,6 +217,12 @@ Cho tới giờ ta đã xử lý được các vấn đề này bằng **mở r�
     * Dễ quản trị, dễ mở rộng
     * Nhiều vùng sẵn sàng (availability zone)
     * Mã hóa dữ liệu lưu trữ (encryption at rest)
+
+<RealLife title="Tách sổ sách khỏi quầy bán hàng">
+
+Tiệm tạp hóa nhỏ để sổ ghi nợ khách quen ngay dưới quầy thu ngân — tiện nhưng lộn xộn, nhân viên vừa bán hàng vừa lật sổ tìm số nợ cũ. Khi tiệm đông lên, chủ tách sổ sách ra một góc riêng, thuê người chuyên ghi chép, quầy chỉ lo bán. Hệ thống Users+ làm đúng vậy: tách nội dung tĩnh sang Object Store và cơ sở dữ liệu MySQL sang máy riêng, để Web Server không phải gánh luôn việc lưu trữ. → Mỗi phần giờ có thể phình to độc lập.
+
+</RealLife>
 
 ##### Bảo mật hệ thống
 
@@ -322,6 +343,19 @@ Kết quả **Benchmark/Load Test** và **Profiling** cho thấy lưu lượng t
         * Autoscaling có thể làm tăng độ phức tạp
         * Có thể mất một khoảng thời gian trước khi hệ thống tăng quy mô tương xứng với nhu cầu tăng, hoặc giảm quy mô khi nhu cầu giảm
 
+<RealLife title="Thuê nhân viên bán trưa theo giờ cao điểm">
+
+Quán cơm trưa văn phòng chỉ đông nghẹt từ 11 giờ tới 13 giờ. Chủ quán không thuê đủ người trực cả ngày theo giờ cao điểm — chỉ gọi thêm người bán trong khung giờ đó, rồi cho về khi vãn khách. Autoscaling trên AWS làm y hệt với server: theo dõi chỉ số tải, tự thêm máy khi lưu lượng tăng theo giờ hành chính, tự tắt bớt khi người dùng rời văn phòng ban đêm. → Trả tiền đúng lúc cần, không phải trả cho cả ngày ế khách.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgScalingAutoscale}
+  alt="Số server co giãn theo giờ trong ngày"
+  caption="Autoscaling thêm máy vào giờ cao điểm (trưa, chiều) và tự tắt bớt vào ban đêm, thay vì giữ cố định số máy cho cả ngày."
+/>
+
 #### Users+++++
 
 <Figure src={img_scaling_aws_7} alt="Sơ đồ Users+++++: thêm Queue, Worker Service, NoSQL, sharding và federation" />
@@ -360,6 +394,12 @@ Ta có thể tách tiếp các [**Application Server**](/hoc/kien-truc/chu-de/ap
         * Tạo thumbnail
         * Cập nhật **cơ sở dữ liệu**
         * Lưu thumbnail vào **Object Store**
+
+<RealLife title="Photocopy nhận đơn rồi giao sau">
+
+Tiệm photocopy nhận đơn in cả trăm trang không bắt khách đứng chờ tại chỗ — ghi phiếu hẹn, khách gửi lại rồi đi làm việc khác, tiệm xử lý dần phía sau và gọi khi xong. Ứng dụng ảnh làm tương tự khi tải ảnh lên: Application Server không tự tạo thumbnail ngay lập tức mà đặt một job vào Queue, để Worker Service xử lý dần ở phía sau, không bắt người dùng chờ. → Đây là lý do xử lý bất đồng bộ giúp phản hồi nhanh hơn dù việc thật vẫn mất thời gian.
+
+</RealLife>
 
 *Đánh đổi, phương án thay thế và chi tiết bổ sung:*
 

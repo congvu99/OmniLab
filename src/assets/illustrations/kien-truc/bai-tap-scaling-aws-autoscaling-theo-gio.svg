@@ -1,0 +1,19 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-bsa-autoscale-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-bsa-autoscale-title">Autoscaling co giãn số máy theo giờ trong ngày</title>
+
+  <line x1="10" y1="170" x2="350" y2="170" stroke="var(--ink-2)" stroke-width="1" />
+
+  <rect x="20" y="150" width="44" height="20" rx="6" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="88" y="110" width="44" height="60" rx="6" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="156" y="30" width="44" height="140" rx="6" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <rect x="224" y="50" width="44" height="120" rx="6" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="292" y="120" width="44" height="50" rx="6" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+
+  <text x="42" y="186" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Đêm</text>
+  <text x="110" y="186" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Sáng</text>
+  <text x="178" y="186" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Trưa</text>
+  <text x="246" y="186" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Chiều</text>
+  <text x="314" y="186" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Tối</text>
+
+  <text x="178" y="20" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--accent)">nhiều server nhất</text>
+</svg>

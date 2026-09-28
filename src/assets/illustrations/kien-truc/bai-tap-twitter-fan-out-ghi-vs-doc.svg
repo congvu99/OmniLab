@@ -1,0 +1,39 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-btw-fanoutcmp-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-btw-fanoutcmp-title">So sánh chi phí: fan-out lúc ghi (push) và fan-out lúc đọc (pull)</title>
+  <defs>
+    <marker id="svg-btw-fanoutcmp-arrow-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)" />
+    </marker>
+    <marker id="svg-btw-fanoutcmp-arrow-ink2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
+    </marker>
+  </defs>
+
+  <rect x="6" y="6" width="348" height="94" rx="12" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--line)" stroke-width="1" />
+
+  <text x="90" y="26" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--accent)">Đăng · nặng O(n)</text>
+  <circle cx="14" cy="40" r="4" fill="var(--accent)" />
+  <path d="M18 40 H160" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-btw-fanoutcmp-arrow-accent)" />
+  <rect x="160" y="26" width="180" height="28" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="250" y="44" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">N timeline cập nhật</text>
+
+  <text x="90" y="70" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Đọc · nhẹ O(1)</text>
+  <circle cx="14" cy="84" r="4" fill="var(--ink-2)" />
+  <path d="M18 84 H160" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-btw-fanoutcmp-arrow-ink2)" />
+  <rect x="160" y="70" width="180" height="28" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="250" y="88" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Hiển thị ngay</text>
+
+  <line x1="6" y1="110" x2="354" y2="110" stroke="var(--line)" stroke-width="1" />
+
+  <text x="90" y="130" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Đăng · nhẹ O(1)</text>
+  <circle cx="14" cy="144" r="4" fill="var(--ink-2)" />
+  <path d="M18 144 H160" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-btw-fanoutcmp-arrow-ink2)" />
+  <rect x="160" y="130" width="180" height="28" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="250" y="148" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">1 bản ghi</text>
+
+  <text x="90" y="174" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--accent)">Đọc · nặng O(n)</text>
+  <circle cx="14" cy="188" r="4" fill="var(--accent)" />
+  <path d="M18 188 H160" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-btw-fanoutcmp-arrow-accent)" />
+  <rect x="160" y="174" width="180" height="28" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="250" y="192" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Gộp N người đang theo dõi</text>
+</svg>
