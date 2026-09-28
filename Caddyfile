@@ -1,0 +1,72 @@
+# Custom Caddyfile for Railpack static-file serving.
+# Railpack auto-detects Astro (astro.config.mjs + output != "server") and
+# would otherwise generate its own Caddyfile from
+# https://github.com/railwayapp/railpack/blob/main/core/providers/staticfile/Caddyfile.template
+# — this file overrides that default. Port + admin/https settings mirror the
+# Railpack template so the platform's proxy/health-check assumptions still hold.
+{
+	admin off
+	persist_config off
+	auto_https off
+
+	log {
+		format json
+	}
+
+	servers {
+		trusted_proxies static private_ranges
+	}
+}
+
+:{$PORT:80} {
+	log {
+		format json
+	}
+
+	respond /health 200
+
+	root * dist
+
+	# Compression before headers/file_server so encoded responses still get them.
+	encode {
+		gzip
+		zstd
+	}
+
+	# --- Cache headers ---
+	# Astro fingerprints /_astro/* assets by content hash, so they are safe to
+	# cache forever. HTML must always be revalidated (no-cache != no-store: the
+	# browser still caches but must check freshness) so deploys show up.
+	@astroAssets path /_astro/*
+	header @astroAssets Cache-Control "public, max-age=31536000, immutable"
+
+	@html path *.html /
+	header @html Cache-Control "no-cache"
+
+	# --- Security headers (all responses) ---
+	header {
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		# Self only: no inline <style>/<script> in the build (astro.config.mjs
+		# sets build.inlineStylesheets: 'never'; Astro emits client scripts as
+		# external <script type="module" src="...">), so no 'unsafe-inline'
+		# needed. No Google Fonts: fonts are self-hosted (see Phase 2).
+		Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none';"
+		-Server
+	}
+
+	# Hide dotfiles, serve everything else. No SPA fallback: unmatched clean
+	# URLs (Astro emits /path/index.html) fall through to handle_errors below,
+	# producing a real 404 instead of masking it with index.html.
+	file_server {
+		hide .git
+		hide .env*
+	}
+
+	try_files {path} {path}.html {path}/index.html
+
+	handle_errors {
+		rewrite * /{err.status_code}.html
+		file_server
+	}
+}

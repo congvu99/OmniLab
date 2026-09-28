@@ -1,0 +1,19 @@
+---
+// Trang 404 thật (không SPA fallback). Caddyfile handle_errors trỏ về đây.
+const title = 'Không tìm thấy trang - OmniLab';
+---
+
+<html lang="vi">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{title}</title>
+	</head>
+	<body>
+		<main>
+			<h1>404 - Không tìm thấy trang</h1>
+			<p>Trang bạn tìm không tồn tại hoặc đã bị di chuyển.</p>
+			<p><a href="/">Về trang chủ</a></p>
+		</main>
+	</body>
+</html>
