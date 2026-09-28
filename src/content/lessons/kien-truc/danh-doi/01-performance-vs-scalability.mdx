@@ -11,7 +11,7 @@ source:
   license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
   translatedAt: "2026-09-21"
   snapshot: "system-design/01-danh-doi/01-performance-vs-scalability.md"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 4
 ---
 
@@ -31,13 +31,13 @@ Một cách nhìn khác về hiệu năng và khả năng mở rộng:
 
 <RealLife title="Nhân viên tính tiền chậm tay">
 
-Một nhân viên thu ngân gõ máy chậm, lóng ngóng tìm mã vạch dù cửa hàng vắng tanh chỉ có đúng 1 khách. Đổi ca đông người vẫn chậm y như vậy, vì vấn đề nằm ở chính người đó chứ không phải số khách. → Đây là vấn đề hiệu năng: chậm ngay cả khi tải thấp, phải tối ưu chính người/code đó, mở thêm quầy cũng vô ích.
+Một nhân viên thu ngân gõ máy chậm, lóng ngóng tìm mã vạch dù cửa hàng vắng tanh chỉ có đúng 1 khách. Lúc đông khách, mỗi lượt tính tiền vẫn chậm y như vậy, vì vấn đề nằm ở chính cách làm chứ không phải số khách. → Đây là vấn đề hiệu năng: chậm ngay cả khi tải thấp; mở thêm quầy cũng không làm từng khách được tính tiền nhanh hơn, phải sửa chính cách làm (tối ưu code).
 
 </RealLife>
 
 <RealLife title="Một quầy thu ngân duy nhất vào giờ cao điểm">
 
-Quầy thu ngân phục vụ rất nhanh khi vắng khách — quét mã, tính tiền chỉ vài giây. Nhưng giờ tan tầm, hàng dài dằng dặc vì một quầy không xử lý xuể lượng khách đổ về cùng lúc. → Đây là vấn đề khả năng mở rộng: nhanh với 1 khách, chậm khi tải nặng — mở thêm quầy (thêm tài nguyên) mới giải quyết được.
+Quầy thu ngân phục vụ rất nhanh khi vắng khách — quét mã, tính tiền chỉ vài giây. Nhưng giờ tan tầm, hàng dài dằng dặc vì một quầy không xử lý xuể lượng khách đổ về cùng lúc. Mở thêm quầy thì hàng vơi, miễn là các quầy không phải xếp hàng chờ chung một máy quẹt thẻ. → Đây là vấn đề khả năng mở rộng: nhanh với 1 khách, chậm khi tải nặng; thêm tài nguyên giúp được khi không có điểm nghẽn dùng chung.
 
 </RealLife>
 

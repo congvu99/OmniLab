@@ -11,7 +11,7 @@ source:
   license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
   translatedAt: "2026-09-28"
   snapshot: "system-design/01-danh-doi/03-cap-theorem.md"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 7
 ---
 
@@ -34,9 +34,9 @@ Trong một hệ thống máy tính phân tán, bạn chỉ có thể đáp ứn
 
 *Mạng vốn không đáng tin cậy, nên bạn buộc phải hỗ trợ khả năng chịu phân mảnh. Việc bạn phải làm là đánh đổi giữa tính nhất quán và tính sẵn sàng ở tầng phần mềm.*
 
-<RealLife title="Hai tổng đài ngân hàng mất kết nối">
+<RealLife title="Hai chi nhánh ngân hàng mất kết nối">
 
-Hai chi nhánh ngân hàng nối bằng một đường dây riêng để đồng bộ số dư. Nếu dây đứt (network partition), mỗi chi nhánh phải chọn: từ chối giao dịch tới khi nối lại (ưu tiên đúng số liệu — CP), hoặc vẫn cho rút tiền theo số dư đã biết gần nhất (ưu tiên phục vụ — AP). → Đó là lựa chọn CP/AP khi phân mảnh mạng. Giới hạn: đây không phải chọn trước tuỳ ý — nó chỉ xảy ra *khi* dây đứt; lúc bình thường cả hai vẫn vừa nhất quán vừa sẵn sàng.
+Hai chi nhánh ngân hàng nối bằng một đường dây riêng để đồng bộ số dư. Nếu dây đứt (network partition), mỗi chi nhánh phải chọn: từ chối giao dịch tới khi nối lại (ưu tiên đúng số liệu — CP), hoặc vẫn cho rút tiền theo số dư đã biết gần nhất (ưu tiên phục vụ — AP). Lúc dây còn nối thì chẳng phải chọn gì: cả hai vừa nhất quán vừa sẵn sàng. → Đó là lựa chọn CP/AP: không phải chọn trước tùy ý, mà chỉ buộc phải chọn *khi* mạng bị phân mảnh.
 
 </RealLife>
 
@@ -51,9 +51,9 @@ Hai chi nhánh ngân hàng nối bằng một đường dây riêng để đồn
 
 Việc chờ phản hồi từ node bị chia cắt có thể dẫn tới lỗi hết thời gian chờ (timeout). CP là lựa chọn tốt nếu nghiệp vụ của bạn đòi hỏi đọc và ghi mang tính nguyên tử (atomic).
 
-<RealLife title="Rút tiền ở ATM khi mất kết nối">
+<RealLife title="Quầy bán vé tàu Tết mất kết nối">
 
-Máy ATM mất kết nối tạm thời với trung tâm dữ liệu. Nếu ngân hàng chọn CP cho giao dịch rút tiền, máy sẽ từ chối giao dịch ("hệ thống đang bận") thay vì đoán số dư — thà báo lỗi còn hơn phát nhầm tiền hoặc để rút vượt hạn mức. → Khi buộc phải chọn, CP hy sinh khả năng phục vụ (availability) để giữ đúng dữ liệu.
+Mùa Tết, một quầy bán vé ở ga mất kết nối với hệ thống chỗ ngồi trung tâm. Nếu chọn CP, quầy tạm ngừng bán ("hệ thống gián đoạn, vui lòng chờ") thay vì đoán ghế nào còn trống: thà để khách chờ còn hơn bán một ghế cho hai người. Giữ chỗ là thao tác đọc rồi ghi phải nguyên tử. → Khi buộc phải chọn, CP hy sinh tính sẵn sàng (availability) để giữ đúng dữ liệu.
 
 </RealLife>
 
@@ -63,9 +63,9 @@ Phản hồi trả về phiên bản dữ liệu sẵn có nhất trên bất k�
 
 AP là lựa chọn tốt nếu nghiệp vụ cho phép nhất quán cuối cùng (eventual consistency), hoặc khi hệ thống cần tiếp tục chạy bất chấp lỗi từ bên ngoài.
 
-<RealLife title="Lượt thích vẫn hiển thị dù mạng chập chờn">
+<RealLife title="Lượt thích lệch nhau giữa hai trung tâm dữ liệu">
 
-Khi bạn nhấn thích một bài đăng lúc mạng yếu, ứng dụng vẫn hiển thị ngay số lượt thích tăng lên trên máy bạn, dù server thật có thể chưa đồng bộ kịp cho người khác thấy. Đây là AP: ứng dụng thà phục vụ ngay bằng dữ liệu tạm, còn hơn bắt bạn chờ đồng bộ xong mới cho thao tác. → Sai lệch vài giây ở lượt thích không ai thiệt hại gì.
+Hai trung tâm dữ liệu của một mạng xã hội, một ở Hà Nội, một ở TP.HCM, bỗng mất liên lạc với nhau. Mỗi bên vẫn nhận lượt thích và hiển thị con số mình đang có: bạn ở Hà Nội thấy 120, bạn ở TP.HCM thấy 118. Khi đường truyền nối lại, hai bên trao đổi các lượt bị lỡ rồi khớp số. → Đó là AP: vẫn trả lời bằng dữ liệu có thể cũ, và lệch vài lượt thích lúc phân mảnh thì không ai thiệt.
 
 </RealLife>
 

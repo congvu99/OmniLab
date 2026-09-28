@@ -1,5 +1,6 @@
-<svg viewBox="0 0 360 260" width="100%" role="img" aria-labelledby="svg-cap-partition-title" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 360 300" width="100%" role="img" aria-labelledby="svg-cap-partition-title" xmlns="http://www.w3.org/2000/svg">
   <title id="svg-cap-partition-title">Khi mạng bị phân mảnh, hệ thống phải chọn CP hoặc AP</title>
+  <g transform="translate(0,20)">
   <defs>
     <marker id="svg-cap-arrow-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0 0L10 5L0 10z" fill="var(--accent)" />
@@ -28,4 +29,5 @@
   <text x="255" y="186" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">AP</text>
   <text x="255" y="204" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">vẫn trả lời,</text>
   <text x="255" y="218" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">dữ liệu có thể cũ</text>
+  </g>
 </svg>

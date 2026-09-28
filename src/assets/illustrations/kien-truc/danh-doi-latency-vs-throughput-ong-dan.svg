@@ -1,5 +1,6 @@
-<svg viewBox="0 0 360 180" width="100%" role="img" aria-labelledby="svg-latency-throughput-ong-dan-title" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-latency-throughput-ong-dan-title" xmlns="http://www.w3.org/2000/svg">
   <title id="svg-latency-throughput-ong-dan-title">Độ trễ là thời gian đi hết ống, thông lượng là lượng qua một mặt cắt mỗi giây</title>
+  <g transform="translate(0,20)">
   <defs>
     <marker id="svg-ltp-arrow-ink2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
@@ -7,7 +8,7 @@
   </defs>
 
   <path d="M20 40 H340" fill="none" stroke="var(--ink-2)" stroke-width="1.5" stroke-linecap="round" marker-end="url(#svg-ltp-arrow-ink2)" />
-  <text x="180" y="30" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Độ trễ: 1 giọt đi từ đầu này sang đầu kia mất bao lâu</text>
+  <text x="180" y="30" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Độ trễ: một giọt đi hết ống mất bao lâu</text>
 
   <rect x="20" y="80" width="320" height="40" rx="20" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
   <circle cx="60" cy="100" r="7" fill="var(--accent)" />
@@ -18,4 +19,5 @@
 
   <line x1="200" y1="70" x2="200" y2="130" stroke="var(--danger)" stroke-width="2" stroke-dasharray="4 4" />
   <text x="200" y="152" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--danger)">Thông lượng: số giọt qua mặt cắt này / giây</text>
+  </g>
 </svg>

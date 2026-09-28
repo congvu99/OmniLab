@@ -11,7 +11,7 @@ source:
   license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
   translatedAt: "2026-09-28"
   snapshot: "system-design/01-danh-doi/04-consistency-patterns.md"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 7
 ---
 
@@ -46,7 +46,7 @@ Cách tiếp cận này xuất hiện trong các hệ như memcached. Nhất qu�
 
 <RealLife title="Bộ đếm lượt xem đôi lúc trôi mất vài lượt">
 
-Bộ đếm lượt xem video dùng bộ nhớ tạm để tăng cực nhanh. Nếu server bộ đếm khởi động lại đúng lúc, vài lượt xem gần nhất bị mất luôn — không ai biết, không có cơ chế nào bù lại. → Đó là nhất quán yếu: hệ thống cố gắng ở mức tốt nhất có thể, nhưng không hứa hẹn gì; dữ liệu mất là mất vĩnh viễn.
+Bộ đếm lượt xem video tăng số trong bộ nhớ tạm cho cực nhanh. Hai người mở cùng lúc có thể thấy hai con số khác nhau, và nếu server bộ đếm khởi động lại đúng lúc, vài lượt xem gần nhất mất luôn, không có cơ chế nào bù lại. → Đó là nhất quán yếu: hệ thống chỉ cố gắng ở mức tốt nhất có thể, lần đọc sau có thể thấy, cũng có thể không bao giờ thấy lần ghi trước.
 
 </RealLife>
 
@@ -56,9 +56,9 @@ Sau một lần ghi, các lần đọc rồi sẽ thấy dữ liệu mới (thư
 
 Cách tiếp cận này xuất hiện trong các hệ như DNS và email. Nhất quán cuối cùng phù hợp với các hệ thống có tính sẵn sàng cao.
 
-<RealLife title="Đăng bài mạng xã hội, bạn bè thấy sau vài giây">
+<RealLife title="Báo địa chỉ mới sau khi chuyển nhà">
 
-Bạn đăng một status, lập tức thấy ngay bài của mình, nhưng bạn bè ở xa có thể đợi vài giây mới thấy bài xuất hiện trên newsfeed — hệ thống cần thời gian đồng bộ dữ liệu ra các máy chủ khác. Đợi đủ lâu thì ai cũng thấy giống nhau. → Đó là nhất quán cuối cùng: không thấy ngay, nhưng chắc chắn sẽ thấy.
+Bạn chuyển nhà và báo địa chỉ mới cho ngân hàng, bưu điện, bạn bè. Vài ngày đầu vẫn có thư gửi về nhà cũ vì vài nơi chưa kịp sửa sổ, nhưng nếu bạn không chuyển thêm lần nữa, sớm muộn nơi nào cũng có địa chỉ mới. Trong hệ thống máy tính, khoảng "vài ngày" ấy thường chỉ là vài mili-giây, còn nguyên lý thì y hệt. → Đó là nhất quán cuối cùng: không phải nơi nào cũng thấy ngay, nhưng chắc chắn sẽ thấy.
 
 </RealLife>
 
@@ -68,9 +68,9 @@ Sau một lần ghi, các lần đọc sẽ thấy dữ liệu mới. Dữ liệ
 
 Cách tiếp cận này xuất hiện trong các hệ thống tệp và các hệ quản trị cơ sở dữ liệu quan hệ (RDBMS). Nhất quán mạnh phù hợp với các hệ thống cần giao dịch (transaction).
 
-<RealLife title="Chuyển khoản ngân hàng phải khớp ngay lập tức">
+<RealLife title="Hai sổ học phí phải ghi xong cùng lúc">
 
-Sau khi chuyển khoản thành công, bạn kiểm tra số dư ngay và phải thấy đúng số tiền đã trừ — không có chuyện "đợi vài giây mới cập nhật" như đăng bài mạng xã hội. Ngân hàng chấp nhận giao dịch chậm hơn một chút để đảm bảo điều này. → Đó là nhất quán mạnh: đọc ngay sau khi ghi luôn thấy đúng, đổi lại bằng việc phải chờ đồng bộ xong mới trả lời.
+Phòng tài vụ giữ sổ học phí chính, phòng đào tạo giữ một sổ sao để tra cứu. Thu tiền xong, thủ quỹ chỉ đưa biên nhận khi cả hai sổ đã ghi, nên sinh viên sang phòng đào tạo hỏi ngay vẫn thấy "đã đóng". Đổi lại, mỗi lượt đóng tiền lâu hơn vì phải chờ sổ bên kia ghi xong. → Đó là nhất quán mạnh: nhân bản đồng bộ, đọc ngay sau khi ghi luôn thấy dữ liệu mới, trả giá bằng độ trễ.
 
 </RealLife>
 

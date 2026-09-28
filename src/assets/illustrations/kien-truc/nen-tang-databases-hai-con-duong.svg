@@ -1,4 +1,4 @@
-<svg viewBox="0 0 360 240" width="100%" role="img" aria-labelledby="svg-databases-hai-con-duong-title" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-databases-hai-con-duong-title" xmlns="http://www.w3.org/2000/svg">
   <title id="svg-databases-hai-con-duong-title">Hai con đường khi database trở thành nút thắt cổ chai</title>
   <defs>
     <marker id="svg-dbp-arrow-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -26,12 +26,12 @@
   <text x="48" y="158" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Dữ liệu</text>
   <path d="M88 154 H104" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-dbp-arrow-accent)" />
   <rect x="104" y="134" width="140" height="40" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
-  <text x="174" y="158" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Tách theo đối tượng</text>
+  <text x="174" y="158" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Phi chuẩn hóa</text>
   <path d="M244 154 H260" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-dbp-arrow-accent)" />
   <rect x="260" y="134" width="92" height="40" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
   <text x="306" y="150" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink)">NoSQL / join</text>
   <text x="306" y="164" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink)">trong code</text>
 
-  <text x="180" y="210" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Con đường 1: mỗi bước cứu database đắt hơn bước trước</text>
-  <text x="180" y="228" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Con đường 2: sửa ít hơn nếu làm từ khi dữ liệu còn nhỏ</text>
+  <text x="180" y="196" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Đường 1: mỗi bước cứu sau đắt hơn bước trước</text>
+  <text x="180" y="213" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Đường 2: làm sớm khi dữ liệu còn nhỏ, sửa ít code</text>
 </svg>

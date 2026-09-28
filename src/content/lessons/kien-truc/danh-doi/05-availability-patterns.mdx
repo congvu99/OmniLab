@@ -11,7 +11,7 @@ source:
   license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
   translatedAt: "2026-09-28"
   snapshot: "system-design/01-danh-doi/05-availability-patterns.md"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 9
 ---
 
@@ -36,9 +36,9 @@ Với kiểu chủ động - bị động, các nhịp tim (heartbeat) được 
 
 Chuyển đổi dự phòng chủ động - bị động còn được gọi là chuyển đổi dự phòng master-slave.
 
-<RealLife title="Nhân viên dự phòng trực điện thoại ở nhà">
+<RealLife title="Pha chế dự phòng chờ tin nhắn từ quầy">
 
-Quán cà phê chỉ có 1 pha chế đứng quầy; một người khác luôn cầm điện thoại, sẵn sàng chạy tới thay nếu người đứng quầy báo ốm đột xuất giữa ca. Bình thường người dự phòng không pha một ly nào cả — chỉ đứng chờ. → Đó là active-passive: máy dự phòng không xử lý gì cho tới khi máy chính gặp sự cố mới tiếp quản.
+Quán cà phê có 1 pha chế đứng quầy và 1 người dự phòng không pha ly nào. Cứ vài phút, hai người nhắn nhau "vẫn ổn". Quá lâu không thấy tin từ quầy, người dự phòng tự bước ra đứng đúng chỗ đó phục vụ tiếp. Ngồi sẵn phòng sau thì thay ngay (chờ nóng); ở nhà mới chạy tới thì khách đợi lâu (chờ nguội). → Đó là active-passive: chỉ máy chủ động phục vụ, máy bị động theo dõi nhịp tim và tiếp quản khi nhịp tim tắt.
 
 </RealLife>
 
@@ -50,9 +50,9 @@ Nếu các máy chủ phục vụ công khai ra ngoài, DNS cần biết địa 
 
 Chuyển đổi dự phòng chủ động - chủ động còn được gọi là chuyển đổi dự phòng master-master.
 
-<RealLife title="Hai quầy thu ngân cùng mở song song">
+<RealLife title="Hai cửa soát vé cùng mở ở rạp phim">
 
-Siêu thị mở cùng lúc 2 quầy thu ngân, cả hai đều tính tiền cho khách, chia đôi lượng người xếp hàng. Quầy nào đông hơn thì khách tự chuyển bớt sang quầy kia. → Đó là active-active: cả hai bên đều xử lý thật, không bên nào "chờ không" như active-passive.
+Rạp chiếu phim mở cùng lúc 2 cửa soát vé, khách chia ra xếp cả hai hàng, cả hai nhân viên đều soát thật. Một máy quét hỏng, khách dồn hết sang cửa còn lại và vẫn vào được, chỉ là hàng dài hơn. Vì thế mỗi cửa phải còn dư sức gánh luôn phần của cửa kia. → Đó là active-active: cả hai bên cùng xử lý lưu lượng, chia tải cho nhau, không bên nào "chờ không" như active-passive.
 
 </RealLife>
 
@@ -99,9 +99,9 @@ Tính sẵn sàng thường được lượng hóa bằng thời gian hoạt đ�
 | Mỗi tuần | 1m 5s |
 | Mỗi ngày | 8,6s |
 
-<RealLife title="Ngân sách nghỉ ốm co lại khi đặt mục tiêu cao hơn">
+<RealLife title="Hạn mức đóng cửa của nhà thuốc trực 24/7">
 
-Một tài xế cam kết trễ chuyến tối đa 8 giờ mỗi năm thì dễ, chỉ cần cẩn thận bình thường. Nhưng nếu cam kết trễ tối đa 52 phút mỗi năm, gần như không được phép ốm hay gặp sự cố bất ngờ nào, phải chuẩn bị dự phòng kỹ hơn hẳn. → Cứ thêm một số 9 vào độ sẵn sàng, ngân sách "được phép hỏng" lại co lại gần 10 lần.
+Một nhà thuốc cam kết mở cửa 24/7 với độ sẵn sàng 99,9%: cả năm chỉ được đóng tổng cộng gần 8 giờ 46 phút, một dược sĩ mỗi ca vẫn xoay xở được. Nâng lên 99,99%, hạn mức chỉ còn chưa tới 53 phút: một lần dược sĩ ốm mà không ai thay là tiêu sạch, nên phải có người trực thay sẵn. → Mỗi số 9 thêm vào làm ngân sách thời gian chết co lại đúng 10 lần, và chi phí dự phòng tăng theo.
 
 </RealLife>
 
@@ -109,7 +109,7 @@ Một tài xế cam kết trễ chuyến tối đa 8 giờ mỗi năm thì dễ,
   added
   svg={svgAvailabilitySoNine}
   alt="Thêm một số 9 làm ngân sách thời gian chết mỗi năm co lại rất nhiều"
-  caption="Từ 99,9% lên 99,99%, ngân sách thời gian chết chấp nhận được mỗi năm co lại từ 8 giờ 45 phút xuống chỉ còn 52 phút."
+  caption="Từ 99,9% lên 99,99%, thời gian chết chấp nhận được mỗi năm co lại đúng 10 lần: từ 8 giờ 45 phút 57 giây xuống còn 52 phút 36 giây."
 />
 
 #### Sẵn sàng song song và nối tiếp
@@ -128,7 +128,7 @@ Nếu `Foo` và `Bar` mỗi cái có độ sẵn sàng 99,9%, tổng sẵn sàng
 
 <RealLife title="Đi qua nhiều trạm kiểm soát liên tiếp">
 
-Xe khách phải qua 3 trạm kiểm soát liên tiếp trên đường, mỗi trạm có một tỉ lệ nhỏ dừng xe kiểm tra đột xuất gây trễ giờ. Xe phải qua lọt cả 3 trạm mới tới đích đúng giờ — càng nhiều trạm, xác suất bị trễ ở đâu đó càng cao. → Đó là mắc nối tiếp: mọi thành phần đều phải "trôi chảy" thì cả chuyến mới đúng giờ, độ sẵn sàng nhân dồn xuống thấp hơn từng phần riêng lẻ.
+Xe khách phải qua 3 trạm kiểm soát liên tiếp; ở mỗi trạm, cứ 100 chuyến thì 99 chuyến được cho qua ngay. Xe phải lọt cả 3 trạm mới tới đích đúng giờ, nên tỉ lệ đúng giờ chỉ còn 99% × 99% × 99% ≈ 97%. Càng nhiều trạm, xác suất bị trễ ở đâu đó càng cao. → Đó là mắc nối tiếp: mọi thành phần đều phải chạy thì cả hệ mới chạy, độ sẵn sàng tổng là tích, thấp hơn từng phần riêng lẻ.
 
 </RealLife>
 
@@ -144,7 +144,7 @@ Nếu `Foo` và `Bar` mỗi cái có độ sẵn sàng 99,9%, tổng sẵn sàng
 
 <RealLife title="Hai con đường tới cùng một điểm">
 
-Từ nhà tới công ty có 2 con đường khác nhau. Đường A kẹt xe thì đi đường B, chỉ cần một trong hai đường thông là vẫn tới nơi đúng giờ. Cả hai đường cùng kẹt cùng lúc là chuyện hiếm. → Đó là mắc song song: chỉ cần một bản sao còn sống là hệ thống vẫn phục vụ được, độ sẵn sàng tổng cao hơn hẳn từng phần riêng lẻ.
+Từ nhà tới công ty có 2 con đường khác nhau. Đường A kẹt xe thì đi đường B, chỉ cần một trong hai đường thông là vẫn tới nơi đúng giờ. Giới hạn: điều này chỉ đúng khi hai đường tắc độc lập với nhau; mưa lớn ngập cả khu thì cả hai cùng tắc. → Đó là mắc song song: chỉ cần một thành phần còn sống là hệ thống vẫn phục vụ, với điều kiện các bản sao không chung một điểm hỏng.
 
 </RealLife>
 

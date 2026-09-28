@@ -11,7 +11,7 @@ source:
   license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
   translatedAt: "2026-09-18"
   snapshot: "system-design/00-nen-tang/01-clones.md"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 3
 ---
 
@@ -53,9 +53,9 @@ Session cần được lưu trong một **kho dữ liệu tập trung** (central
 
 "Bên ngoài" (external) ở đây nghĩa là: kho dữ liệu đó **không nằm trên chính các application server**. Thay vào đó, nó nằm đâu đó bên trong hoặc gần với data center chứa các application server của bạn.
 
-<RealLife title="Tủ gửi đồ dùng chung ở siêu thị">
+<RealLife title="Bệnh án nằm ở máy chung, không ở sổ tay y tá">
 
-Siêu thị lớn đặt tủ gửi đồ chung ở cửa ra vào, dùng cho mọi quầy thu ngân, không phải mỗi quầy tự giữ đồ khách riêng. Thanh toán ở quầy nào, bạn vẫn lấy đúng túi đồ đã gửi, vì tủ đó nằm tách biệt, không thuộc riêng quầy nào. → Session cũng cần nằm ở một kho dữ liệu tập trung bên ngoài, không dính vào một server ứng dụng cụ thể.
+Bệnh nhân nằm viện được nhiều y tá chăm theo ca, lượt này chị Lan, lượt sau anh Minh. Nếu mỗi y tá ghi tình trạng bệnh nhân vào sổ tay riêng, người trực ca sau sẽ không biết gì. Vì vậy bệnh án nằm trên hệ thống chung của khoa, y tá nào cũng mở ra xem và ghi tiếp được. → Session cũng phải nằm ở một kho dữ liệu tập trung bên ngoài mọi application server, để server nào nhận request cũng đọc được.
 
 </RealLife>
 
@@ -73,7 +73,7 @@ Dùng AMI này làm một "siêu bản sao" (super-clone) làm nền cho mọi i
 
 <RealLife title="In hàng loạt từ một bản kẽm gốc">
 
-Xưởng in danh thiếp làm một bản kẽm gốc hoàn chỉnh, rồi ép ra hàng nghìn bản giống hệt thay vì set lại máy in từ đầu mỗi lần. Cần thêm số lượng, cứ lấy bản kẽm gốc ra ép tiếp, không phải dựng lại từ số 0. → Đó chính là AMI: dựng sẵn một "bản gốc" server đã cấu hình đủ, rồi nhân ra các instance mới nhanh chóng.
+Xưởng in danh thiếp làm một bản kẽm gốc đã căn chỉnh hoàn chỉnh, rồi cứ thế in ra hàng nghìn tấm giống hệt, thay vì sắp chữ lại từ đầu cho mỗi đợt in. Cần thêm số lượng, lấy bản kẽm gốc ra in tiếp là xong. → Đó chính là AMI: dựng sẵn một "siêu bản sao" server đã cấu hình đủ; instance mới khởi chạy từ đó, chỉ cần deploy code mới nhất là sẵn sàng.
 
 </RealLife>
 

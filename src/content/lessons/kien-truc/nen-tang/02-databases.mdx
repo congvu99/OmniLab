@@ -11,7 +11,7 @@ source:
   license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
   translatedAt: "2026-09-18"
   snapshot: "system-design/00-nen-tang/02-databases.md"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 3
 ---
 
@@ -51,9 +51,9 @@ Vài tháng sau, DBA của bạn sẽ bắt đầu nhắc đến những từ nh
 
 Đến lúc đó, mỗi hành động mới để giữ database sống sót đều sẽ **đắt đỏ và tốn thời gian hơn hành động trước đó**. Có lẽ bạn đã khá hơn nhiều nếu chọn Con đường 2 ngay từ khi tập dữ liệu còn nhỏ và còn dễ di chuyển.
 
-<RealLife title="Thuê thêm kế toán mà sổ vẫn một cuốn">
+<RealLife title="Cứu cuốn sổ cái ngày càng tốn kém">
 
-Quán ăn đông khách thuê thêm người phụ ghi sổ, rồi mua sổ dày hơn, rồi thuê hẳn một kế toán riêng chỉ để quản lý cuốn sổ đó. Mỗi lần thêm người, chi phí và độ phức tạp phối hợp lại tăng, nhưng vẫn chỉ có một cuốn sổ trung tâm. → Giống hệt việc thêm RAM, thuê DBA, làm sharding cho một MySQL duy nhất: mỗi bước cứu vãn đắt hơn bước trước.
+Tiệm tạp hóa đông khách dần. Đầu tiên chủ tiệm photo thêm vài bản sao cuốn sổ cho người tra giá, còn mọi dòng ghi mới vẫn phải vào cuốn gốc. Rồi mua sổ dày hơn. Rồi tách sổ thành nhiều tập theo vần tên khách, phải thuê hẳn người đối chiếu. Mỗi bước tốn tiền và công sức hơn bước trước. → Giống replication (đọc từ slave, ghi vào master), thêm RAM, rồi sharding với MySQL: mỗi hành động cứu database sau lại đắt hơn hành động trước.
 
 </RealLife>
 
@@ -65,9 +65,9 @@ Bạn có thể vẫn ở lại với MySQL nhưng dùng nó như một database
 
 Việc Join giờ sẽ phải làm trong **code ứng dụng** của bạn. Bạn làm bước này càng sớm thì sau này càng phải sửa ít code.
 
-<RealLife title="Chia sổ theo từng quầy riêng">
+<RealLife title="Phiếu giao hàng chép sẵn địa chỉ khách">
 
-Quán ăn lớn chia thành nhiều quầy riêng — quầy nước, quầy đồ nướng, quầy thanh toán — mỗi quầy tự ghi sổ của mình, không cần tra cứu chéo sổ của quầy khác để hoàn tất một đơn. Order tới quầy nào, quầy đó tự xử lý xong luôn. → Đó là denormalize: mỗi phần dữ liệu tự đứng độc lập, không cần Join giữa nhiều bảng khi đọc.
+Tiệm giao hàng chép sẵn tên, địa chỉ, số điện thoại khách lên từng phiếu, thay vì chỉ ghi "khách số 37" rồi bắt shipper lật sổ khách hàng ra tra. Shipper cầm phiếu là đi ngay, không phải đối chiếu hai cuốn sổ. Cái giá: khách đổi địa chỉ thì tiệm phải tự sửa trên mọi phiếu còn tồn. → Đó là denormalize: chép thừa dữ liệu để đọc khỏi cần Join, đổi lại việc ghép và giữ dữ liệu khớp nhau dồn sang code ứng dụng.
 
 </RealLife>
 

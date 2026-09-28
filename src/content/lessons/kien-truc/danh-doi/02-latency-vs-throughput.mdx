@@ -11,7 +11,7 @@ source:
   license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
   translatedAt: "2026-09-22"
   snapshot: "system-design/01-danh-doi/02-latency-vs-throughput.md"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 6
 ---
 
@@ -27,7 +27,7 @@ import svgLatencyThroughputGomLo from '../../../../assets/illustrations/kien-tru
 
 <RealLife title="Gọi món ở quán ăn - chờ bao lâu mới có">
 
-Bạn gọi một tô phở, từ lúc gọi tới lúc tô phở bưng ra bàn mất 5 phút. Đó là thời gian cho **một** hành động cụ thể hoàn tất, không quan tâm quán đang phục vụ bao nhiêu bàn khác cùng lúc. → Đây chính là độ trễ: thời gian để một hành động hoàn thành.
+Bạn gọi một tô phở, từ lúc gọi tới lúc tô phở bưng ra bàn mất 5 phút. Con số đó đo cho **một** tô cụ thể của bạn, chưa nói gì về việc cả quán làm được bao nhiêu tô. → Đây chính là độ trễ: thời gian để một hành động hoàn thành.
 
 </RealLife>
 
@@ -35,7 +35,7 @@ Bạn gọi một tô phở, từ lúc gọi tới lúc tô phở bưng ra bàn 
 
 <RealLife title="Quán phở phục vụ được bao nhiêu tô mỗi giờ">
 
-Quán phở đó, dù mỗi tô vẫn mất 5 phút để làm xong, nhưng có 4 đầu bếp làm song song nên cứ mỗi phút lại có một tô mới ra bàn nào đó — tính chung cả quán phục vụ được khoảng 60 tô mỗi giờ. → Đó là thông lượng: tổng số việc hoàn tất trên một đơn vị thời gian, không phải thời gian của riêng một tô.
+Vẫn quán phở đó, mỗi tô vẫn mất 5 phút, nhưng có 5 đầu bếp làm song song, nên cứ mỗi phút lại có một tô mới ra bàn nào đó: tính chung cả quán khoảng 60 tô mỗi giờ. Thêm đầu bếp thì số tô mỗi giờ tăng, còn tô của bạn vẫn mất 5 phút. → Đó là thông lượng: tổng số việc hoàn tất trên một đơn vị thời gian, không phải thời gian của riêng một tô.
 
 </RealLife>
 
@@ -50,7 +50,7 @@ Nhìn chung, bạn nên nhắm tới **thông lượng tối đa** với **độ
 
 <RealLife title="Quán đặt ngưỡng chờ hợp lý rồi mới tối ưu số tô">
 
-Quán phở đặt mục tiêu "tô phở ra trong dưới 10 phút là khách chấp nhận được", rồi mới tối ưu để phục vụ được càng nhiều tô càng tốt trong khung đó — không cố ép xuống còn 3 phút bằng cách thuê thêm cả chục đầu bếp tốn kém, vì khách không phân biệt được 10 phút với 3 phút. → Đặt ngưỡng độ trễ chấp nhận được trước, rồi tối đa hóa thông lượng trong ngưỡng đó.
+Quán phở đặt mục tiêu: khách nhận tô trong vòng 10 phút là đạt. Trong khung đó, bếp gom 4-5 tô trụng bánh một lượt để mỗi giờ ra được nhiều tô nhất. Muốn tô nào cũng ra trong 3 phút thì phải trụng lẻ từng tô ngay khi có khách gọi, số tô mỗi giờ giảm hẳn, trong khi khách vốn đã hài lòng với 10 phút. → Đặt ngưỡng độ trễ chấp nhận được trước, rồi tối đa hóa thông lượng trong ngưỡng đó.
 
 </RealLife>
 

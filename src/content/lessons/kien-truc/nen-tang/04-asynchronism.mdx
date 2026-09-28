@@ -11,7 +11,7 @@ source:
   license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
   translatedAt: "2026-09-18"
   snapshot: "system-design/00-nen-tang/04-asynchronism.md"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 6
 ---
 
@@ -47,7 +47,7 @@ Cứ thử tưởng tượng khả năng mở rộng của website nếu script 
 
 <RealLife title="Cơm phần chuẩn bị sẵn ở căn tin">
 
-Căn tin công ty nấu sẵn hàng trăm suất cơm trước giờ trưa, xếp lên kệ. Đến giờ ăn, nhân viên chỉ việc lấy ngay một suất, không phải đợi nấu từ đầu. Nếu đợi từng người gọi món rồi mới nấu, giờ cao điểm sẽ vỡ trận. → Đó là bất đồng bộ kiểu 1: làm trước phần tốn thời gian, phục vụ kết quả có sẵn cực nhanh.
+Căn tin công ty nấu sẵn hàng trăm suất cơm trước giờ trưa, xếp lên kệ. Đến giờ ăn, mỗi người chỉ việc lấy một suất, không phải đợi nấu. Nếu chờ từng người gọi món rồi mới nấu, giờ cao điểm sẽ vỡ trận. Giới hạn: chỉ nấu sẵn được những món đoán trước là ai cũng ăn. → Đó là bất đồng bộ kiểu 1: làm trước phần tốn thời gian, phục vụ kết quả có sẵn cực nhanh.
 
 </RealLife>
 
@@ -76,15 +76,15 @@ Tiệm bánh **không thể đoán trước** những mong muốn kiểu này, n
 
 Tôi biết đây là một ví dụ đã được đơn giản hóa rất nhiều.
 
-<RealLife title="Gửi đồ ở tiệm giặt ủi, lấy số hẹn quay lại">
+<RealLife title="Gửi laptop đi bảo hành, cầm phiếu về trước">
 
-Bạn mang đồ tới tiệm giặt ủi, nhân viên nhận đồ, đưa vé hẹn "chiều mai quay lại lấy", rồi bạn đi làm việc khác ngay — không đứng đợi máy giặt chạy xong. Tiệm giặt xử lý đồ theo thứ tự nhận, và bạn chỉ quay lại khi đã xong. → Đó chính là bước 2 và 3 trong luồng job queue: gửi việc đi, nhận phản hồi ngay "đang xử lý", rồi lấy kết quả sau.
+Bạn mang laptop hỏng tới trung tâm bảo hành. Nhân viên nhận máy, đưa phiếu biên nhận có mã số, và bạn về làm việc khác ngay, không ngồi chờ sửa. Máy được xếp lên kệ chờ, kỹ thuật viên lấy lần lượt ra sửa. Bạn tra mã phiếu, thấy "đã sửa xong" thì quay lại lấy. → Đó là luồng job queue: đẩy việc vào hàng đợi, trả lời ngay "đang xử lý", worker làm ở phía sau, xong mới báo lại.
 
 </RealLife>
 
-<RealLife title="Nhiều bác sĩ cùng gọi số ở phòng khám">
+<RealLife title="Nhân viên đóng gói đơn mùa sale">
 
-Phòng khám đông bệnh nhân lấy số thứ tự xếp hàng, nhưng có tới 3 bác sĩ cùng khám song song, mỗi người gọi số riêng thay vì chỉ một bác sĩ xử lý lần lượt. Hàng đợi vơi nhanh hơn hẳn so với chỉ một bác sĩ. → Đó là vai trò của "nhóm worker" trong hàng đợi job: nhiều worker cùng lấy việc thì job được xử lý song song, không bị dồn ứ.
+Mùa sale, đơn của một shop online được in thành một chồng phiếu chung. Năm nhân viên đóng gói cùng rút phiếu trên cùng, gói xong lại rút tiếp, nên chồng phiếu vơi nhanh hơn hẳn so với một người làm. Nhưng nếu đơn đổ vào nhanh hơn tốc độ cả nhóm gói, chồng phiếu vẫn cao dần. → Đó là nhóm worker cùng lấy job từ một hàng đợi chung: thêm worker thì xử lý song song nhiều hơn, nhưng không thay được việc kiểm soát lượng job đổ vào.
 
 </RealLife>
 
@@ -92,7 +92,7 @@ Phòng khám đông bệnh nhân lấy số thứ tự xếp hàng, nhưng có t
   added
   svg={svgAsyncWorkerPool}
   alt="Nhiều worker cùng lấy job từ một hàng đợi chung"
-  caption="Worker càng nhiều, hàng đợi vơi càng nhanh — nhưng nếu job đổ vào nhanh hơn tốc độ xử lý, hàng đợi vẫn phình (back pressure)."
+  caption="Worker càng nhiều, hàng đợi vơi càng nhanh — nhưng nếu job đổ vào nhanh hơn tốc độ xử lý, hàng đợi vẫn phình; lúc đó cần back pressure: giới hạn kích thước hàng đợi và báo bận khi đầy."
 />
 
 ## Học tiếp ở đâu

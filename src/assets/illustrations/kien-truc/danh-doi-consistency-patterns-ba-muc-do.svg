@@ -1,27 +1,28 @@
-<svg viewBox="0 0 360 230" width="100%" role="img" aria-labelledby="svg-consistency-patterns-ba-muc-title" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-consistency-patterns-ba-muc-title" xmlns="http://www.w3.org/2000/svg">
   <title id="svg-consistency-patterns-ba-muc-title">Sau khi ghi, lần đọc kế tiếp thấy gì ở ba mức nhất quán</title>
 
   <text x="90" y="16" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--ink-2)">Ghi</text>
-  <text x="250" y="16" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--ink-2)">Đọc</text>
+  <text x="220" y="16" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--ink-2)">Đọc</text>
 
   <text x="8" y="46" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--ink)">Yếu</text>
   <circle cx="90" cy="42" r="7" fill="var(--accent)" />
-  <path d="M97 42 H243" fill="none" stroke="var(--ink-2)" stroke-width="1.5" stroke-dasharray="2 4" />
-  <circle cx="250" cy="42" r="7" fill="color-mix(in srgb, var(--danger) 30%, transparent)" stroke="var(--danger)" stroke-width="2" />
-  <text x="265" y="46" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">có thể không thấy</text>
+  <path d="M97 42 H213" fill="none" stroke="var(--ink-2)" stroke-width="1.5" stroke-dasharray="2 4" />
+  <circle cx="220" cy="42" r="7" fill="color-mix(in srgb, var(--danger) 30%, transparent)" stroke="var(--danger)" stroke-width="2" />
+  <text x="235" y="46" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">có thể không thấy</text>
 
   <text x="8" y="106" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--ink)">Cuối cùng</text>
   <circle cx="90" cy="102" r="7" fill="var(--accent)" />
-  <path d="M97 102 H243" fill="none" stroke="var(--ink-2)" stroke-width="1.5" stroke-dasharray="5 4" />
-  <circle cx="250" cy="102" r="7" fill="var(--accent)" />
-  <text x="265" y="99" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">thấy sau,</text>
-  <text x="265" y="112" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">chắc chắn</text>
+  <path d="M97 102 H213" fill="none" stroke="var(--ink-2)" stroke-width="1.5" stroke-dasharray="5 4" />
+  <circle cx="220" cy="102" r="7" fill="var(--accent)" />
+  <text x="235" y="99" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">thấy sau,</text>
+  <text x="235" y="112" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">chắc chắn</text>
 
   <text x="8" y="166" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--ink)">Mạnh</text>
   <circle cx="90" cy="162" r="7" fill="var(--accent)" />
-  <path d="M97 162 H243" fill="none" stroke="var(--accent)" stroke-width="2" />
-  <circle cx="250" cy="162" r="7" fill="var(--accent)" />
-  <text x="265" y="166" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">thấy ngay</text>
+  <path d="M97 162 H213" fill="none" stroke="var(--accent)" stroke-width="2" />
+  <circle cx="220" cy="162" r="7" fill="var(--accent)" />
+  <text x="235" y="166" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">thấy ngay</text>
 
-  <text x="180" y="204" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Càng mạnh, càng chắc chắn thấy dữ liệu mới — nhưng càng chậm</text>
+  <text x="180" y="196" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Càng mạnh, càng chắc thấy dữ liệu mới,</text>
+  <text x="180" y="212" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">nhưng mỗi lần ghi càng chậm</text>
 </svg>

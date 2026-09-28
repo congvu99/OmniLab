@@ -11,7 +11,7 @@ source:
   license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
   translatedAt: "2026-09-18"
   snapshot: "system-design/00-nen-tang/03-caches.md"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 6
 ---
 
@@ -66,7 +66,7 @@ Rất khó xóa một kết quả đã cache khi bạn cache một truy vấn ph
 
 <RealLife title="Ghi chú riêng cho từng câu hỏi của khách">
 
-Nhân viên phòng vé viết đáp án cho từng câu hỏi cụ thể ra một mảnh giấy riêng: "còn vé Sài Gòn - Hà Nội ngày 20 không?" → một tờ. "Còn vé ngày 21 không?" → tờ khác. Khi giá vé đổi, nhân viên phải lục cả chồng giấy để tìm và bỏ đúng những tờ liên quan. → Đó là cache truy vấn: mỗi câu hỏi một bản ghi riêng, khó dọn khi dữ liệu gốc đổi.
+Nhân viên phòng vé tàu viết đáp án cho từng câu hỏi ra một mảnh giấy riêng: "còn vé Sài Gòn - Hà Nội ngày 20 không?" một tờ, "chuyến nào rẻ nhất tuần này?" một tờ khác. Khi chuyến ngày 20 bán hết, phải lục cả chồng giấy tìm mọi tờ dính tới chuyến đó, sót một tờ là trả lời sai. → Đó là cache truy vấn: mỗi câu hỏi một bản ghi riêng, dữ liệu gốc đổi thì rất khó biết phải xóa những bản nào.
 
 </RealLife>
 
@@ -84,9 +84,9 @@ Giờ hãy làm thế này: **khi class của bạn lắp ráp xong mảng dữ 
 
 Cách này cho phép bạn dễ dàng vứt bỏ đối tượng mỗi khi có gì đó thay đổi, và làm cho toàn bộ hoạt động của code vừa nhanh hơn vừa hợp logic hơn.
 
-<RealLife title="Hồ sơ khách hàng đầy đủ một chỗ">
+<RealLife title="Mỗi chuyến tàu một tờ thông tin trọn gói">
 
-Thay vì viết giấy riêng cho từng câu hỏi, tiệm spa giữ một hồ sơ khách hàng đầy đủ: tên, lịch sử dịch vụ, ghi chú. Cần gì cứ mở đúng hồ sơ đó ra xem. Khách đổi số điện thoại, chỉ cần sửa đúng một hồ sơ, không phải lục lại từng mảnh giấy cũ. → Đây là cache đối tượng: gom mọi thứ liên quan vào một bản ghi duy nhất, xóa/sửa cũng chỉ đúng một chỗ.
+Thay vì mỗi câu hỏi một mảnh giấy, nhân viên phòng vé giữ cho mỗi chuyến tàu một tờ tổng hợp: giờ chạy, giá, số ghế còn. Khách hỏi giờ, hỏi giá hay hỏi chỗ, nhân viên cũng chỉ cần nhìn tờ của chuyến đó. Chuyến ngày 20 có thay đổi thì xé tờ đó, soạn lại tờ mới, không phải lục cả chồng. → Đây là cache đối tượng: lưu nguyên đối tượng đã lắp ráp xong, dữ liệu đổi thì chỉ cần vứt bỏ đúng đối tượng đó.
 
 </RealLife>
 
@@ -110,9 +110,9 @@ Hãy tưởng tượng một đội quân worker server chuyên đi lắp ráp c
 - luồng hoạt động (activity stream)
 - quan hệ bạn bè giữa các user
 
-<RealLife title="Vé giữ chỗ tạm ở quầy lễ tân">
+<RealLife title="Phiếu giữ phòng ghi tạm ở quầy lễ tân">
 
-Khách sạn không lưu vé giữ phòng tạm thời vào kho hồ sơ lưu trữ chính thức (nơi giữ hợp đồng, hóa đơn) — chỉ ghi tạm trên bảng ở quầy lễ tân, xóa ngay khi khách nhận phòng hoặc hết hạn giữ chỗ. Lưu vào kho lưu trữ chính thức sẽ chậm và thừa thãi cho một thứ tồn tại vài phút. → Session cũng vậy: dữ liệu sống ngắn, nên để ở cache nhanh, không phải ở database chính.
+Khách sạn không cất phiếu giữ phòng tạm thời vào kho hồ sơ chính thức (nơi giữ hợp đồng, hóa đơn). Lễ tân chỉ ghi lên bảng ngay tại quầy, liếc qua mỗi lần khách hỏi, và xóa khi khách nhận phòng hoặc hết hạn giữ chỗ. Cất vào kho rồi lấy ra liên tục sẽ chậm và thừa cho một thứ chỉ sống vài giờ. → Session cũng vậy: được đọc ở gần như mọi request, sống ngắn, nên để ở cache nhanh thay vì database chính.
 
 </RealLife>
 

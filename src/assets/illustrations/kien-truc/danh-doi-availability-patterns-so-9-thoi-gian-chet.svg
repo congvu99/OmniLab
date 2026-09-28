@@ -1,15 +1,17 @@
-<svg viewBox="0 0 360 180" width="100%" role="img" aria-labelledby="svg-availability-patterns-so-9-title" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-availability-patterns-so-9-title" xmlns="http://www.w3.org/2000/svg">
   <title id="svg-availability-patterns-so-9-title">Thêm một số 9 làm ngân sách thời gian chết mỗi năm co lại rất nhiều</title>
+  <g transform="translate(0,20)">
 
   <text x="180" y="16" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--ink-2)">Thời gian chết chấp nhận được / năm</text>
 
   <text x="10" y="58" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">99,9%</text>
   <rect x="90" y="42" width="240" height="26" rx="6" fill="color-mix(in srgb, var(--danger) 12%, transparent)" stroke="var(--danger)" stroke-width="2" />
-  <text x="210" y="60" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">8 giờ 45 phút</text>
+  <text x="210" y="60" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">8 giờ 45 phút 57 giây</text>
 
   <text x="10" y="118" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">99,99%</text>
   <rect x="90" y="102" width="24" height="26" rx="6" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
-  <text x="150" y="120" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">52 phút</text>
+  <text x="150" y="120" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">52 phút 36 giây</text>
 
-  <text x="180" y="158" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Thêm một số 9 = ngân sách chết co lại khoảng 10 lần</text>
+  <text x="180" y="158" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Thêm một số 9: thời gian chết giảm đúng 10 lần</text>
+  </g>
 </svg>

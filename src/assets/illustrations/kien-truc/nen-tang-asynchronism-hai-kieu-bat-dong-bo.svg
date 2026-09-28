@@ -1,4 +1,4 @@
-<svg viewBox="0 0 360 230" width="100%" role="img" aria-labelledby="svg-asynchronism-hai-kieu-title" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-asynchronism-hai-kieu-title" xmlns="http://www.w3.org/2000/svg">
   <title id="svg-asynchronism-hai-kieu-title">Hai kiểu bất đồng bộ: làm sẵn trước và xử lý qua hàng đợi</title>
   <defs>
     <marker id="svg-atp-arrow-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -14,7 +14,7 @@
   <text x="53" y="49" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Cronjob</text>
   <path d="M98 45 H124" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-atp-arrow-accent)" />
   <rect x="124" y="26" width="110" height="38" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
-  <text x="179" y="49" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Render tĩnh</text>
+  <text x="179" y="49" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Render sẵn</text>
   <path d="M234 45 H260" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-atp-arrow-accent)" />
   <rect x="260" y="26" width="92" height="38" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
   <text x="306" y="42" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink)">User nhận</text>
@@ -33,5 +33,5 @@
   <rect x="260" y="128" width="92" height="38" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
   <text x="306" y="151" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Worker</text>
 
-  <text x="180" y="198" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Người dùng được báo "đang xử lý", nhận kết quả sau</text>
+  <text x="180" y="198" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Báo ngay "đang xử lý", kết quả trả về sau</text>
 </svg>
