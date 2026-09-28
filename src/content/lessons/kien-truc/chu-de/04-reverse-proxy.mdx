@@ -16,6 +16,7 @@ readingMinutes: 6
 ---
 
 import img_n41Azff from '../../../../assets/legacy/system-design/n41Azff.png';
+import svgRpHide from '../../../../assets/illustrations/kien-truc/chu-de-reverse-proxy-an-may-chu-noi-bo.svg?raw';
 
 
 # Proxy ngược (Reverse Proxy - máy chủ web)
@@ -25,6 +26,19 @@ import img_n41Azff from '../../../../assets/legacy/system-design/n41Azff.png';
 <Figure src={img_n41Azff} alt="Sơ đồ proxy ngược đứng giữa Internet và các máy chủ nội bộ" credit={`Nguồn: <a href="https://upload.wikimedia.org/wikipedia/commons/6/67/Reverse_proxy_h2g2bob.svg">Wikipedia</a>`} />
 
 Proxy ngược (reverse proxy) là một máy chủ web tập trung các dịch vụ nội bộ và cung cấp giao diện thống nhất ra bên ngoài. Request từ client được chuyển tiếp tới một máy chủ có thể đáp ứng nó, rồi proxy ngược trả phản hồi của máy chủ đó về cho client.
+
+<RealLife title="Lễ tân ở sảnh toà nhà văn phòng">
+
+Khách tới toà nhà không cần biết công ty A ở tầng 5, công ty B ở tầng 12 — chỉ cần nói với lễ tân "tôi cần gặp phòng Kế toán", lễ tân sẽ gọi hoặc dẫn đúng người xuống. Khách không thấy cấu trúc bên trong: có bao nhiêu tầng, phòng nào đang sửa. Proxy ngược làm y hệt: client chỉ nói chuyện với một địa chỉ duy nhất, proxy tự chuyển tiếp tới đúng máy chủ nội bộ phù hợp. → Cấu trúc thật bên trong (bao nhiêu máy chủ, đặt ở đâu) được giấu kín khỏi client.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgRpHide}
+  alt="Proxy ngược gom nhiều client và giấu cấu trúc máy chủ nội bộ"
+  caption="Mọi client chỉ nói chuyện với một địa chỉ proxy ngược duy nhất; proxy tự chuyển tiếp tới đúng máy chủ phía sau, giấu kín số lượng và cấu trúc thật."
+/>
 
 Các lợi ích bổ sung gồm:
 
@@ -40,6 +54,12 @@ Các lợi ích bổ sung gồm:
     - Video
     - v.v.
 
+<RealLife title="Bảo vệ kiểm tra giấy tờ ở cổng thay cho từng phòng">
+
+Thay vì mỗi phòng ban trong toà nhà đều tự trang bị máy soi và nhân viên kiểm tra giấy tờ khách, toà nhà đặt một trạm kiểm tra duy nhất ở cổng chính; qua cổng rồi thì các phòng bên trong không cần làm lại việc đó. Proxy ngược làm việc tương tự với mã hoá: nó giải mã request ngay tại cổng vào (SSL termination), các máy chủ phía sau không phải tốn công làm việc này. → Việc tốn kém chỉ làm một lần, ở một chỗ, thay vì lặp lại ở từng máy chủ.
+
+</RealLife>
+
 ### Bộ cân bằng tải và proxy ngược
 
 - Triển khai bộ cân bằng tải hữu ích khi bạn có nhiều máy chủ. Thường thì bộ cân bằng tải định tuyến lưu lượng tới một nhóm máy chủ cùng thực hiện một chức năng.
@@ -50,6 +70,12 @@ Các lợi ích bổ sung gồm:
 
 - Thêm proxy ngược làm tăng độ phức tạp.
 - Một proxy ngược duy nhất là một điểm lỗi đơn; cấu hình nhiều proxy ngược (tức [chuyển đổi dự phòng - failover](https://en.wikipedia.org/wiki/Failover)) lại càng tăng thêm độ phức tạp.
+
+<RealLife title="Một cửa an ninh duy nhất của chung cư">
+
+Nếu chung cư chỉ có một cửa an ninh ra vào, cửa đó kẹt hoặc hỏng máy quét thẻ thì không ai vào/ra được, dù toàn bộ căn hộ bên trong vẫn bình thường. Proxy ngược cũng vậy: nó gom mọi request qua một cửa duy nhất, nên nếu chỉ dùng một proxy, chính nó trở thành điểm hỏng khiến cả hệ thống ngừng phục vụ. → Cách khắc phục: dựng ít nhất hai proxy ngược dự phòng cho nhau, giống hai cửa an ninh thay phiên nhau trực.
+
+</RealLife>
 
 ### Nguồn và đọc thêm
 

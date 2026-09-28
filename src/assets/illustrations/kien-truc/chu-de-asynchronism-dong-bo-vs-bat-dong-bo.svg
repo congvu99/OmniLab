@@ -1,0 +1,53 @@
+<svg viewBox="0 0 360 300" width="100%" role="img" aria-labelledby="svg-async-flow-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-async-flow-title">Luồng đồng bộ so với luồng bất đồng bộ qua hàng đợi</title>
+  <defs>
+    <marker id="svg-asf-arrow-ink2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
+    </marker>
+    <marker id="svg-asf-arrow-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)" />
+    </marker>
+  </defs>
+
+  <text x="8" y="20" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">Đồng bộ (in-line)</text>
+  <rect x="8" y="30" width="80" height="34" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="48" y="52" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Client</text>
+  <rect x="260" y="30" width="90" height="34" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="305" y="52" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Server</text>
+  <path d="M88 47 H260" fill="none" stroke="var(--ink-2)" stroke-width="2.5" stroke-linecap="round" marker-end="url(#svg-asf-arrow-ink2)" />
+  <text x="174" y="40" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">chờ đến khi xong (chậm)</text>
+
+  <line x1="0" y1="100" x2="360" y2="100" stroke="var(--line)" stroke-width="1" />
+
+  <text x="8" y="126" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">Bất đồng bộ</text>
+  <rect x="8" y="136" width="70" height="34" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="43" y="158" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Client</text>
+  <rect x="130" y="136" width="70" height="34" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="165" y="158" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Server</text>
+
+  <path class="svg-asf-flow" d="M78 148 H130" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-asf-arrow-accent)" />
+  <path d="M130 162 C 100 190, 100 190, 78 180" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-asf-arrow-accent)" />
+  <text x="20" y="200" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--accent)">
+    <tspan x="20" dy="0">nhận việc,</tspan>
+    <tspan x="20" dy="13">trả lời ngay</tspan>
+  </text>
+
+  <rect x="220" y="136" width="60" height="34" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="250" y="158" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Queue</text>
+  <path d="M200 153 H220" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-asf-arrow-ink2)" />
+
+  <rect x="300" y="136" width="52" height="34" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="326" y="158" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink)">Worker</text>
+  <path d="M280 153 H300" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-asf-arrow-ink2)" />
+  <text x="290" y="185" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">
+    <tspan x="290" dy="0">worker xử lý</tspan>
+    <tspan x="290" dy="13">ở chế độ nền</tspan>
+  </text>
+
+  <style>
+    @media (prefers-reduced-motion: no-preference) {
+      .svg-asf-flow { stroke-dasharray: 5 5; animation: svg-asf-dash 1.4s linear infinite; }
+    }
+    @keyframes svg-asf-dash { to { stroke-dashoffset: -20; } }
+  </style>
+</svg>

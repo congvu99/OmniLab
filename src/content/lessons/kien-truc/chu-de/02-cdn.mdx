@@ -16,6 +16,8 @@ readingMinutes: 7
 ---
 
 import img_h9TAuGI from '../../../../assets/legacy/system-design/h9TAuGI.jpg';
+import svgCdnProximity from '../../../../assets/illustrations/kien-truc/chu-de-cdn-may-chu-gan-nguoi-dung.svg?raw';
+import svgCdnPushPull from '../../../../assets/illustrations/kien-truc/chu-de-cdn-push-vs-pull.svg?raw';
 
 
 # Mạng phân phối nội dung (Content Delivery Network)
@@ -31,6 +33,19 @@ Phục vụ nội dung từ CDN có thể cải thiện hiệu năng đáng kể
 - Người dùng nhận nội dung từ các trung tâm dữ liệu ở gần họ
 - Máy chủ của bạn không phải phục vụ những request mà CDN đã đáp ứng
 
+<RealLife title="Kho hàng gần nhà thay vì chờ nhập từ nước ngoài">
+
+Thay vì mỗi lần mua hàng nhập khẩu bạn phải chờ hàng bay từ nước ngoài về, một chuỗi cửa hàng mở kho nhỏ ngay trong thành phố, trữ sẵn những món bán chạy. Bạn mua ở kho gần nhà, nhận hàng nhanh hơn nhiều so với chờ hàng nhập từ gốc. CDN làm y hệt với dữ liệu: đặt bản sao nội dung tĩnh (ảnh, CSS, JS) ở nhiều điểm gần người dùng khắp nơi, thay vì ai cũng phải tải từ một máy chủ gốc duy nhất ở xa. → Người dùng nhận nội dung nhanh hơn vì khoảng cách vật lý ngắn hơn.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgCdnProximity}
+  alt="Không có CDN so với có CDN: khoảng cách tới người dùng"
+  caption="Không có CDN, mọi request phải đi xa tới server gốc; có CDN, request được phục vụ từ điểm gần người dùng, chỉ đồng bộ với gốc khi cần."
+/>
+
 ### CDN kiểu đẩy (Push CDN)
 
 CDN kiểu đẩy nhận nội dung mới mỗi khi có thay đổi trên máy chủ của bạn. Bạn chịu toàn bộ trách nhiệm cung cấp nội dung: tải trực tiếp lên CDN và viết lại URL để trỏ tới CDN. Bạn có thể cấu hình khi nào nội dung hết hạn và khi nào được cập nhật. Nội dung chỉ được tải lên khi nó mới hoặc đã thay đổi, giúp giảm tối đa lưu lượng nhưng lại tốn tối đa dung lượng lưu trữ.
@@ -45,11 +60,30 @@ CDN kiểu kéo lấy nội dung mới từ máy chủ của bạn khi người 
 
 Những trang có lưu lượng lớn hợp với CDN kiểu kéo, vì lưu lượng được dàn đều hơn và chỉ nội dung vừa được yêu cầu gần đây mới nằm lại trên CDN.
 
+<RealLife title="Cửa hàng nhượng quyền nhập sẵn hàng vs đặt khi có khách">
+
+Có cửa hàng nhượng quyền chủ động nhập sẵn đủ hàng về kho trước khi mở bán — giống CDN kiểu đẩy, bạn tự tải nội dung lên CDN từ trước. Có cửa hàng khác chỉ đặt hàng từ kho tổng khi có khách hỏi mua món đó lần đầu, sau đó mới giữ lại để bán tiếp cho khách sau — giống CDN kiểu kéo, CDN chỉ lấy nội dung từ server gốc khi có request đầu tiên. → Cách đầu tốn công chuẩn bị trước; cách sau tiện nhưng khách đầu tiên phải chờ lâu hơn.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgCdnPushPull}
+  alt="CDN kiểu đẩy (push) so với kiểu kéo (pull)"
+  caption="Push: nội dung được tải lên CDN trước khi ai yêu cầu. Pull: CDN chỉ lấy nội dung từ gốc khi có request đầu tiên, sau đó tự phục vụ."
+/>
+
 ### Nhược điểm: CDN
 
 - Chi phí CDN có thể đáng kể tùy theo lưu lượng, dù cần cân nhắc so với những chi phí phát sinh thêm nếu bạn không dùng CDN.
 - Nội dung có thể bị cũ nếu nó được cập nhật trước khi TTL hết hạn.
 - CDN đòi hỏi phải đổi URL của nội dung tĩnh để trỏ tới CDN.
+
+<RealLife title="Poster quảng cáo cũ vẫn dán khắp thành phố">
+
+Một chuỗi rạp chiếu phim đổi lịch chiếu, nhưng poster quảng cáo cũ vẫn còn dán ở hàng chục bảng tin khắp thành phố cho tới khi có người đi gỡ từng cái. Nội dung trên CDN hoạt động tương tự: khi bạn cập nhật một file, các bản sao đã lưu ở CDN vẫn còn "cũ" cho tới khi TTL hết hạn hoặc bạn chủ động xóa (purge) từng điểm. → Càng nhiều điểm lưu bản sao, càng khó đảm bảo mọi nơi cùng thấy bản mới cùng lúc.
+
+</RealLife>
 
 ### Nguồn và đọc thêm
 

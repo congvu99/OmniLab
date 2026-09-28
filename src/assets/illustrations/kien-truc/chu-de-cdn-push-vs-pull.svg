@@ -1,0 +1,35 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-cdn-push-pull-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-cdn-push-pull-title">CDN kiểu đẩy (push) so với kiểu kéo (pull)</title>
+  <defs>
+    <marker id="svg-cdnpp-arrow-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)" />
+    </marker>
+    <marker id="svg-cdnpp-arrow-ink2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
+    </marker>
+  </defs>
+
+  <text x="8" y="16" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink-2)">Push</text>
+  <rect x="8" y="26" width="80" height="34" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="48" y="48" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Gốc</text>
+  <rect x="140" y="26" width="80" height="34" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="180" y="48" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">CDN</text>
+  <rect x="272" y="26" width="80" height="34" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="312" y="48" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Client</text>
+  <path d="M88 43 H140" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-cdnpp-arrow-accent)" />
+  <path d="M220 43 H272" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-cdnpp-arrow-ink2)" />
+  <text x="180" y="76" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--accent)">đẩy lên trước khi ai hỏi</text>
+
+  <line x1="0" y1="105" x2="360" y2="105" stroke="var(--line)" stroke-width="1" />
+
+  <text x="8" y="125" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink-2)">Pull</text>
+  <rect x="8" y="135" width="80" height="34" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="48" y="157" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Gốc</text>
+  <rect x="140" y="135" width="80" height="34" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="180" y="157" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">CDN</text>
+  <rect x="272" y="135" width="80" height="34" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="312" y="157" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Client</text>
+  <path d="M272 152 H220" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-cdnpp-arrow-accent)" />
+  <path d="M140 152 H88" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" marker-end="url(#svg-cdnpp-arrow-ink2)" />
+  <text x="180" y="185" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">chỉ lấy khi có request đầu tiên</text>
+</svg>

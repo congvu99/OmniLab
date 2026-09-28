@@ -16,6 +16,7 @@ readingMinutes: 7
 ---
 
 import img_yB5SYwm from '../../../../assets/legacy/system-design/yB5SYwm.png';
+import svgApplTiers from '../../../../assets/illustrations/kien-truc/chu-de-application-layer-tach-tang-web-ung-dung.svg?raw';
 
 
 # Tầng ứng dụng (Application Layer)
@@ -26,6 +27,19 @@ import img_yB5SYwm from '../../../../assets/legacy/system-design/yB5SYwm.png';
 
 Tách tầng web (web layer) khỏi tầng ứng dụng (application layer, còn gọi là tầng nền tảng - platform layer) cho phép bạn mở rộng và cấu hình hai tầng này một cách độc lập. Thêm một API mới đồng nghĩa với thêm máy chủ ứng dụng, mà không nhất thiết phải thêm máy chủ web. **Nguyên tắc đơn trách nhiệm (single responsibility principle)** khuyến khích các dịch vụ nhỏ, tự chủ, phối hợp với nhau. Các nhóm nhỏ phụ trách các dịch vụ nhỏ có thể lên kế hoạch mạnh tay hơn cho tăng trưởng nhanh.
 
+<RealLife title="Bếp và bộ phận phục vụ trong nhà hàng">
+
+Nhà hàng tách riêng bộ phận phục vụ bàn (đón khách, ghi order, bưng đồ) và bộ phận bếp (nấu ăn). Khi quán đông khách gọi món cầu kỳ, chủ quán chỉ cần thuê thêm đầu bếp mà không cần thuê thêm người phục vụ, và ngược lại nếu khách đông nhưng gọi món đơn giản. Tương tự, tách tầng web (đón request, trả file tĩnh) khỏi tầng ứng dụng (xử lý logic) cho phép mở rộng hoặc cấu hình riêng từng tầng đúng nơi đang quá tải. → Không phải lúc nào thêm tải cũng cần thêm cả hai tầng cùng lúc.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgApplTiers}
+  alt="Tách tầng web và tầng ứng dụng để mở rộng độc lập"
+  caption="Tầng web giữ số lượng cố định trong khi tầng ứng dụng co giãn riêng — thêm máy chủ ứng dụng mới không đòi hỏi phải thêm máy chủ web."
+/>
+
 Các worker ở tầng ứng dụng cũng giúp hiện thực hóa [xử lý bất đồng bộ (asynchronism)](/hoc/kien-truc/chu-de/asynchronism).
 
 ### Microservices
@@ -34,9 +48,21 @@ Liên quan tới chủ đề này là [microservices](https://en.wikipedia.org/w
 
 Ví dụ, Pinterest có thể có các microservice sau: hồ sơ người dùng, người theo dõi, bảng tin (feed), tìm kiếm, tải ảnh lên, v.v.
 
+<RealLife title="Mỗi quầy trong khu ẩm thực chỉ bán một món">
+
+Ở khu ẩm thực (food court), mỗi quầy chuyên bán một món: quầy phở, quầy cơm, quầy nước. Mỗi quầy tự quản lý nguyên liệu, nhân sự, công thức riêng, không phụ thuộc quầy khác — quầy phở đóng cửa sửa chữa không ảnh hưởng quầy cơm. Microservices chia hệ thống theo cách tương tự: mỗi dịch vụ nhỏ (hồ sơ người dùng, tìm kiếm, tải ảnh...) tự triển khai, tự mở rộng độc lập. → Đổi lại, phối hợp giữa các "quầy" (dịch vụ) phức tạp hơn một gian bếp chung duy nhất.
+
+</RealLife>
+
 ### Khám phá dịch vụ (Service Discovery)
 
 Các hệ thống như [Consul](https://www.consul.io/docs/index.html), [Etcd](https://coreos.com/etcd/docs/latest) và [Zookeeper](http://www.slideshare.net/sauravhaloi/introduction-to-apache-zookeeper) giúp các dịch vụ tìm thấy nhau bằng cách theo dõi tên, địa chỉ và cổng (port) đã được đăng ký. [Kiểm tra sức khỏe (health check)](https://www.consul.io/intro/getting-started/checks.html) giúp xác minh dịch vụ còn hoạt động đúng, và thường được thực hiện qua một endpoint [HTTP](/hoc/kien-truc/chu-de/communication). Cả Consul và Etcd đều có sẵn một [kho khóa - giá trị (key-value store)](/hoc/kien-truc/chu-de/database#kho-khóa---giá-trị-key-value-store), hữu ích để lưu giá trị cấu hình và các dữ liệu dùng chung khác.
+
+<RealLife title="Ứng dụng gọi xe biết tài xế nào đang online gần đó">
+
+Ứng dụng gọi xe không lưu cố định "tài xế A luôn chạy ở khu vực X"; mỗi tài xế liên tục báo vị trí và trạng thái (đang rảnh/đang chở khách) về hệ thống, ứng dụng tra danh sách này để ghép khách với tài xế đang thực sự online gần nhất. Cơ chế khám phá dịch vụ hoạt động tương tự: mỗi dịch vụ tự đăng ký tên, địa chỉ, tình trạng "còn sống" (qua health check), để các dịch vụ khác luôn tìm được bản sao đang hoạt động thay vì gọi vào một địa chỉ cố định có thể đã chết. → Danh sách "ai đang online ở đâu" luôn được cập nhật, không tra theo sổ địa chỉ cứng.
+
+</RealLife>
 
 ### Nhược điểm: tầng ứng dụng
 
