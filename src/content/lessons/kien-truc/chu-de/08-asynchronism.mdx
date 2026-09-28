@@ -11,7 +11,7 @@ source:
   license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
   translatedAt: "2026-09-28"
   snapshot: "system-design/02-chu-de/08-asynchronism.md"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 8
 ---
 
@@ -50,9 +50,9 @@ Hàng đợi thông điệp nhận, lưu giữ và chuyển phát thông điệp
 
 Người dùng không bị chặn (blocked) và công việc được xử lý ở chế độ nền. Trong khoảng thời gian này, client có thể tùy chọn tự xử lý một phần nhỏ để trông như tác vụ đã hoàn thành. Ví dụ, khi đăng một tweet, tweet đó có thể lập tức hiện trên dòng thời gian (timeline) của bạn, nhưng có thể mất một lúc trước khi tweet thực sự được chuyển tới tất cả người theo dõi bạn.
 
-<RealLife title="Đăng story thấy ngay, nhưng bạn bè nhận thông báo chậm hơn vài giây">
+<RealLife title="Đăng story thấy ngay, bạn bè thấy chậm hơn vài giây">
 
-Khi bạn đăng một story lên mạng xã hội, ứng dụng cho bạn thấy nó xuất hiện ngay trên trang cá nhân để cảm giác "đã xong". Nhưng việc gửi thông báo tới hàng nghìn người theo dõi thực tế chạy ở nền, có thể mất thêm vài giây mới xong hết. → Đó là cách một tác vụ nặng (gửi hàng loạt thông báo) được che giấu bằng phản hồi tức thời cho phần việc nhẹ (hiển thị bài của chính bạn).
+Khi bạn đăng một story lên mạng xã hội, ứng dụng cho bạn thấy nó ngay trên trang cá nhân để cảm giác "đã xong". Còn việc đưa story tới bảng tin của hàng nghìn người theo dõi được đẩy vào hàng đợi, worker xử lý dần ở nền, có thể mất thêm vài giây. → Đó là cách một tác vụ nặng (phát tới hàng loạt người theo dõi) được che giấu bằng phản hồi tức thời cho phần việc nhẹ (hiển thị bài của chính bạn).
 
 </RealLife>
 
@@ -89,9 +89,9 @@ Bãi giữ xe trước một trung tâm thương mại đông khách có giới 
 
 - Những trường hợp như tính toán rẻ và luồng công việc thời gian thực có thể phù hợp hơn với thao tác đồng bộ, vì việc đưa hàng đợi vào có thể làm tăng độ trễ và độ phức tạp.
 
-<RealLife title="Gọi cấp cứu không thể xếp hàng chờ xử lý sau">
+<RealLife title="Xe bánh mì không cần phát phiếu số">
 
-Khi gọi cấp cứu 115, bạn cần phản hồi ngay lập tức, không thể chấp nhận kiểu "đã nhận phiếu, sẽ có người gọi lại sau". Một số việc trong hệ thống cũng vậy: kiểm tra mật khẩu đăng nhập hay xác nhận còn hàng khi thanh toán cần trả lời ngay trong luồng chính — đưa chúng vào hàng đợi chỉ khiến người dùng chờ lâu hơn mà không được gì. → Không phải việc gì cũng nên làm bất đồng bộ; việc rẻ và cần trả lời ngay thì xử lý đồng bộ vẫn tốt hơn.
+Mua ổ bánh mì ở xe đẩy đầu hẻm: cô bán hàng kẹp xong trong nửa phút rồi đưa tận tay. Nếu xe bánh mì cũng phát phiếu số, bắt khách ngồi chờ gọi tên như quán đông, khách chỉ chờ lâu hơn và cô tốn thêm công ghi phiếu. Hệ thống cũng vậy: kiểm tra mật khẩu khi đăng nhập hay xác nhận còn hàng lúc thanh toán vừa nhanh vừa cần kết quả ngay — đưa qua hàng đợi chỉ thêm độ trễ và độ phức tạp. → Việc rẻ hoặc cần trả lời tức thì nên xử lý đồng bộ.
 
 </RealLife>
 

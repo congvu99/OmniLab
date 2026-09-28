@@ -11,7 +11,7 @@ source:
   license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
   translatedAt: "2026-09-28"
   snapshot: "system-design/02-chu-de/07-cache.md"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 12
 ---
 
@@ -35,7 +35,7 @@ Bộ nhớ đệm (caching) giúp cải thiện thời gian tải trang và có 
 
 <RealLife title="Tủ lạnh ở nhà">
 
-Tủ lạnh nhà bạn có sẵn đồ ăn: mở tủ, thấy quả trứng, lấy dùng ngay — nhanh, không cần đi đâu. Nếu tủ trống, bạn phải chạy ra chợ mua, tốn thời gian hơn nhiều. Ứng dụng cũng vậy: nếu dữ liệu đã có trong bộ nhớ đệm, trả về ngay; nếu chưa, phải hỏi cơ sở dữ liệu (giống "đi chợ") rồi mới trả kết quả. → Đây chính là cache hit (có sẵn trong tủ) và cache miss (phải đi chợ).
+Tủ lạnh nhà bạn có sẵn đồ ăn: mở tủ, thấy quả trứng, lấy dùng ngay — nhanh, không cần đi đâu. Nếu tủ trống, bạn phải chạy ra chợ mua, tốn thời gian hơn nhiều, rồi cất phần dư vào tủ cho lần sau. Ứng dụng cũng vậy: nếu dữ liệu đã có trong bộ nhớ đệm, trả về ngay; nếu chưa, phải hỏi cơ sở dữ liệu (giống "đi chợ"), lưu lại vào cache rồi mới trả kết quả. → Đây chính là cache hit (có sẵn trong tủ) và cache miss (phải đi chợ).
 
 </RealLife>
 
@@ -70,7 +70,7 @@ Các cache trong bộ nhớ (in-memory cache) như Memcached và Redis là các 
 
 <RealLife title="Tủ lạnh chật chỗ (LRU)">
 
-Tủ lạnh nhà bạn chỉ chứa được chừng ấy đồ. Khi mua thêm mà tủ đầy, bạn thường bỏ bớt món để lâu nhất, ít đụng tới nhất — không phải món mới mua nhất. Cache hoạt động tương tự: RAM có hạn, nên khi đầy, thuật toán như LRU sẽ loại bỏ mục "nguội" (lâu không dùng) để nhường chỗ cho mục "nóng" (đang cần). → Đó là cơ chế loại bỏ (eviction) khi cache hết chỗ.
+Tủ lạnh nhà bạn chỉ chứa được chừng ấy đồ. Khi mua thêm mà tủ đầy, bạn bỏ bớt món đã lâu nhất chưa ai lấy ra dùng — kể cả khi nó mới mua tuần trước; còn hũ dưa mua từ tháng trước nhưng sáng nay vừa ăn thì giữ lại. LRU xét lần dùng gần nhất, không xét ngày mua hay tổng số lần dùng. Cache cũng vậy: RAM có hạn, khi đầy thì loại mục "nguội" (lâu không dùng) để nhường chỗ cho mục "nóng". → Đó là cơ chế loại bỏ (eviction) khi cache hết chỗ.
 
 </RealLife>
 
@@ -154,7 +154,7 @@ Các lần đọc tiếp theo đối với dữ liệu đã được thêm vào 
 
 <RealLife title="Hạn sử dụng trên hộp sữa">
 
-Hộp sữa trong tủ có ghi hạn sử dụng. Trước hạn, bạn yên tâm dùng mà không cần kiểm tra lại. Sau hạn, dù sữa trông vẫn bình thường, bạn nên bỏ đi và mua hộp mới. TTL (time-to-live) của cache hoạt động y hệt: đặt một "hạn dùng" cho mỗi mục, hết hạn thì lần đọc sau sẽ bị coi là miss và cache phải nạp lại dữ liệu mới, dù dữ liệu cũ vẫn "trông ổn". → Đây là cách cache tự làm mới mà không cần ai canh tay.
+Hộp sữa trong tủ có ghi hạn sử dụng; hết hạn thì bỏ đi, mua hộp mới dù sữa trông vẫn bình thường. TTL của cache cũng là một "hạn dùng" cho mỗi mục: hết hạn, lần đọc sau bị coi là miss và ứng dụng phải nạp lại từ cơ sở dữ liệu. Khác hộp sữa ở chỗ: dữ liệu có thể "hỏng" (DB đã đổi) ngay khi còn hạn, và cache vẫn trả bản cũ. → TTL không ngăn dữ liệu cũ, chỉ giới hạn nó cũ tối đa bao lâu.
 
 </RealLife>
 
@@ -184,9 +184,9 @@ def set_user(user_id, values):
 
 Nhìn tổng thể, write-through là một thao tác chậm do phải ghi, nhưng các lần đọc tiếp theo đối với dữ liệu vừa ghi sẽ nhanh. Người dùng thường chấp nhận độ trễ khi cập nhật dữ liệu hơn là khi đọc dữ liệu. Dữ liệu trong cache không bị cũ.
 
-<RealLife title="Quán phở ghi order">
+<RealLife title="Sổ giá trong kho và sổ tay ở quầy tạp hoá">
 
-Quán phở nhỏ chỉ nấu khi có khách gọi — không nấu sẵn cả nồi rồi bỏ phí. Đây là cache-aside: ứng dụng (bà chủ) tự đi lấy nguyên liệu (hỏi DB) khi thiếu, rồi mới cập nhật tủ hâm (cache). Ngược lại, quán có bảng giá điện tử: mỗi lần đổi giá, nhân viên cập nhật bảng ngay lập tức, không đợi khách hỏi — đó là write-through: cache luôn được ghi ngay khi có thay đổi. → Khác nhau ở chỗ ai ghi trước: ứng dụng (cache-aside) hay chính cache (write-through).
+Tiệm tạp hoá có sổ giá gốc cất trong kho (DB) và một sổ tay nhỏ ở quầy (cache). Kiểu cache-aside: khách hỏi món chưa có trong sổ tay, chủ tiệm (ứng dụng) tự vào kho tra sổ gốc rồi chép sang sổ tay. Kiểu write-through: chủ tiệm chỉ đọc giá mới cho cô thu ngân giữ sổ tay; cô sửa sổ tay, chép ngay vào sổ gốc rồi mới báo "xong". → Khác nhau ở chỗ ai làm việc với DB: ứng dụng tự làm (cache-aside) hay cache làm hộ, đồng bộ (write-through).
 
 </RealLife>
 

@@ -29,7 +29,7 @@
   <text x="180" y="157" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">CDN</text>
   <rect x="272" y="135" width="80" height="34" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
   <text x="312" y="157" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Client</text>
-  <path d="M272 152 H220" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-cdnpp-arrow-accent)" />
-  <path d="M140 152 H88" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" marker-end="url(#svg-cdnpp-arrow-ink2)" />
-  <text x="180" y="185" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">chỉ lấy khi có request đầu tiên</text>
+  <path d="M272 152 H220" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-start="url(#svg-cdnpp-arrow-accent)" marker-end="url(#svg-cdnpp-arrow-accent)" />
+  <path d="M140 152 H88" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" marker-start="url(#svg-cdnpp-arrow-ink2)" marker-end="url(#svg-cdnpp-arrow-ink2)" />
+  <text x="180" y="185" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">miss đầu tiên: kéo từ gốc, cache theo TTL</text>
 </svg>

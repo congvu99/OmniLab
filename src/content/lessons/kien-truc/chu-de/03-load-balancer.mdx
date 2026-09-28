@@ -11,7 +11,7 @@ source:
   license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
   translatedAt: "2026-09-28"
   snapshot: "system-design/02-chu-de/03-load-balancer.md"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 10
 ---
 
@@ -34,13 +34,13 @@ Bộ cân bằng tải (load balancer) phân phối các request đến từ cli
 
 <RealLife title="Nhân viên xếp hàng ở ngân hàng">
 
-Ở ngân hàng đông khách, một nhân viên đứng giữa sảnh, nhìn quầy nào đang trống rồi mới xếp khách vào đó — thay vì để khách tự đoán quầy nào nhanh. Bộ cân bằng tải làm đúng việc đó với request: nhận request tới, chọn máy chủ đang rảnh nhất, rồi chuyển tới. Khách (client) không cần biết có bao nhiêu quầy (máy chủ) phía sau. → Đó là lý do load balancer giúp ẩn số lượng và tình trạng thật của các máy chủ khỏi client.
+Ở ngân hàng đông khách, một nhân viên đứng giữa sảnh xếp khách vào các quầy — lần lượt từng quầy, hoặc quầy đang ít người nhất — thay vì để khách tự đoán rồi dồn cục vào một quầy. Bộ cân bằng tải làm đúng việc đó với request: nhận request, chọn một máy chủ theo quy tắc đã cấu hình (vòng tròn, ít tải nhất...), chuyển tới rồi trả phản hồi về. Khách (client) không cần biết phía sau có bao nhiêu quầy. → Nhờ vậy không máy chủ nào bị quá tải trong khi máy khác ngồi không.
 
 </RealLife>
 
 <RealLife title="Quầy treo biển tạm nghỉ">
 
-Nếu một quầy giao dịch hỏng máy hoặc nhân viên tạm nghỉ, quầy đó treo biển "tạm nghỉ" — nhân viên xếp hàng thấy biển thì ngừng đưa khách tới quầy này, dù quầy trông vẫn còn đó. Load balancer làm y hệt bằng health check: định kỳ "hỏi thăm" từng máy chủ, máy nào không trả lời đúng thì tạm loại khỏi danh sách nhận request, cho tới khi nó khỏe lại. → Nhờ vậy request không bao giờ bị gửi tới một máy chủ đã chết.
+Nếu một quầy giao dịch hỏng máy hoặc nhân viên tạm nghỉ, quầy đó treo biển "tạm nghỉ" — nhân viên xếp hàng thấy biển thì ngừng đưa khách tới quầy này. Load balancer làm y hệt bằng health check: định kỳ "hỏi thăm" từng máy chủ, máy nào không trả lời đúng thì tạm loại khỏi danh sách nhận request, cho tới khi nó khỏe lại. Khác quầy có biển: máy vừa chết giữa hai lần kiểm tra vẫn có thể nhận vài request trước khi bị phát hiện. → Health check giúp ngừng gửi request tới máy chủ hỏng, chứ không chặn được tức thì.
 
 </RealLife>
 
@@ -80,9 +80,9 @@ Bộ cân bằng tải tầng 7 xem xét [tầng ứng dụng (application layer
 
 Phải hy sinh sự linh hoạt, nhưng bù lại cân bằng tải tầng 4 tốn ít thời gian và tài nguyên tính toán hơn tầng 7, dù ảnh hưởng về hiệu năng có thể rất nhỏ trên phần cứng phổ thông hiện đại.
 
-<RealLife title="Bảo vệ nhìn biển số vs lễ tân đọc thư">
+<RealLife title="Bưu cục chỉ đọc nhãn vs bưu cục mở kiện">
 
-Một bảo vệ ở cổng chỉ nhìn được biển số xe và cổng vào — không biết bên trong xe/thư viết gì; đó giống bộ cân bằng tải tầng 4, chỉ thấy địa chỉ IP và cổng. Một lễ tân ở sảnh thì mở được thư, đọc thấy "gửi phòng Kế toán" và dẫn đúng người tới đó — giống tầng 7, đọc được nội dung (URL, header) để định tuyến chính xác hơn. → Đổi lại, lễ tân (tầng 7) tốn thời gian xử lý hơn bảo vệ (tầng 4).
+Ở bưu cục thứ nhất, nhân viên chỉ đọc nhãn dán ngoài kiện hàng (giống IP, cổng) rồi chuyển nguyên kiện lên xe, không mở ra — đó là tầng 4. Ở bưu cục thứ hai, nhân viên mở kiện xem bên trong: đồ dễ vỡ lên xe chuyên chở đồ dễ vỡ, giấy tờ quan trọng lên xe có áp tải, rồi đóng gói lại gửi đi — đó là tầng 7, đọc nội dung (URL, header, cookie) rồi mở kết nối mới tới máy chủ phù hợp. → Tầng 7 linh hoạt hơn, nhưng mỗi kiện tốn thêm công mở ra, đóng lại.
 
 </RealLife>
 
@@ -97,9 +97,9 @@ Một bảo vệ ở cổng chỉ nhìn được biển số xe và cổng vào 
 
 Bộ cân bằng tải cũng hỗ trợ mở rộng theo chiều ngang, cải thiện hiệu năng và tính sẵn sàng. Mở rộng ra (scale out) bằng các máy phổ thông tiết kiệm chi phí hơn và cho tính sẵn sàng cao hơn so với nâng cấp (scale up) một máy chủ duy nhất lên phần cứng đắt tiền hơn, gọi là **mở rộng theo chiều dọc (vertical scaling)**. Tuyển người làm việc với phần cứng phổ thông cũng dễ hơn so với các hệ thống doanh nghiệp chuyên dụng.
 
-<RealLife title="Thuê thêm người thay vì ép một người làm gấp đôi">
+<RealLife title="Thêm shipper xe máy thay vì mua một xe tải khổng lồ">
 
-Một quán ăn đông khách có hai lựa chọn: thuê thêm nhân viên phổ thông (mở rộng theo chiều ngang) hoặc ép đầu bếp giỏi nhất làm nhanh gấp đôi bằng lương cao và dụng cụ đắt tiền (mở rộng theo chiều dọc). Thuê thêm người thường rẻ hơn và ít rủi ro hơn — mất một người vẫn còn người khác; mất "siêu đầu bếp" thì cả quán ngừng hoạt động. → Đó là lý do hệ thống web hiện đại ưu tiên scale out hơn scale up.
+Tiệm giao hàng quá tải có hai cách: mua một xe tải thật to, đắt tiền (mở rộng theo chiều dọc), hoặc thuê thêm vài shipper xe máy phổ thông (mở rộng theo chiều ngang). Xe tải to cũng có giới hạn, và hỏng là cả ngày ngừng giao; nhiều shipper thì một người nghỉ, người khác vẫn chạy. Nhưng muốn ai cũng nhận được bất kỳ đơn nào, thông tin đơn phải nằm trên app chung, không nằm trong đầu riêng một shipper. → Đó là scale out, kèm điều kiện máy chủ không trạng thái (stateless).
 
 </RealLife>
 

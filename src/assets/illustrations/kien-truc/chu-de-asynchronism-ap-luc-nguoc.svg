@@ -1,5 +1,5 @@
 <svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-async-backpressure-title" xmlns="http://www.w3.org/2000/svg">
-  <title id="svg-async-backpressure-title">Áp lực ngược: giới hạn hàng đợi và báo bận khi đầy</title>
+  <title id="svg-async-backpressure-title">Áp lực ngược: hàng đợi đầy tới giới hạn thì từ chối request mới bằng HTTP 503, client thử lại sau</title>
   <defs>
     <marker id="svg-asbp-arrow-danger" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0 0L10 5L0 10z" fill="var(--danger)" />
@@ -12,23 +12,26 @@
   <text x="8" y="18" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">Hàng đợi (queue)</text>
 
   <rect x="30" y="28" width="60" height="170" rx="10" fill="none" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="60" y="62" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--danger)">giới hạn</text>
   <line x1="30" y1="70" x2="90" y2="70" stroke="var(--danger)" stroke-width="2" stroke-dasharray="4 4" />
-  <text x="96" y="74" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--danger)">giới hạn</text>
   <rect x="36" y="76" width="48" height="24" rx="4" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
   <rect x="36" y="104" width="48" height="24" rx="4" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
   <rect x="36" y="132" width="48" height="24" rx="4" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
   <rect x="36" y="160" width="48" height="24" rx="4" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
   <text x="60" y="212" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">đã đầy tới giới hạn</text>
 
-  <rect x="230" y="60" width="110" height="40" rx="10" fill="color-mix(in srgb, var(--danger) 12%, transparent)" stroke="var(--danger)" stroke-width="2" />
-  <text x="285" y="84" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">HTTP 503</text>
+  <rect x="240" y="50" width="100" height="50" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="290" y="80" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Client</text>
 
-  <path d="M90 80 C 160 80, 180 80, 230 80" fill="none" stroke="var(--danger)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-asbp-arrow-danger)" />
-  <text x="160" y="70" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--danger)">từ chối bớt</text>
+  <path d="M240 62 H96" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-asbp-arrow-ink2)" />
+  <text x="168" y="55" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">request mới</text>
 
-  <path d="M230 110 C 180 130, 160 140, 96 140" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" marker-end="url(#svg-asbp-arrow-ink2)" />
-  <text x="285" y="126" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">
-    <tspan x="285" dy="0">client thử lại sau</tspan>
-    <tspan x="285" dy="13">(exponential backoff)</tspan>
+  <path d="M96 88 H240" fill="none" stroke="var(--danger)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-asbp-arrow-danger)" />
+  <text x="168" y="104" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--danger)">HTTP 503: đang bận</text>
+
+  <path d="M290 100 C 290 150, 160 150, 96 150" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" marker-end="url(#svg-asbp-arrow-ink2)" />
+  <text x="235" y="174" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">
+    <tspan x="235" dy="0">thử lại sau, giãn cách</tspan>
+    <tspan x="235" dy="13">lũy thừa (backoff)</tspan>
   </text>
 </svg>

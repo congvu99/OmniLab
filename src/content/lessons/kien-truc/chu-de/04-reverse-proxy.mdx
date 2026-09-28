@@ -11,7 +11,7 @@ source:
   license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
   translatedAt: "2026-09-28"
   snapshot: "system-design/02-chu-de/04-reverse-proxy.md"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 6
 ---
 
@@ -29,7 +29,7 @@ Proxy ngược (reverse proxy) là một máy chủ web tập trung các dịch 
 
 <RealLife title="Lễ tân ở sảnh toà nhà văn phòng">
 
-Khách tới toà nhà không cần biết công ty A ở tầng 5, công ty B ở tầng 12 — chỉ cần nói với lễ tân "tôi cần gặp phòng Kế toán", lễ tân sẽ gọi hoặc dẫn đúng người xuống. Khách không thấy cấu trúc bên trong: có bao nhiêu tầng, phòng nào đang sửa. Proxy ngược làm y hệt: client chỉ nói chuyện với một địa chỉ duy nhất, proxy tự chuyển tiếp tới đúng máy chủ nội bộ phù hợp. → Cấu trúc thật bên trong (bao nhiêu máy chủ, đặt ở đâu) được giấu kín khỏi client.
+Khách tới toà nhà chỉ cần đưa hồ sơ cho lễ tân ở sảnh: lễ tân chuyển lên đúng phòng phụ trách, nhận kết quả rồi trao lại cho khách. Khách không cần biết phòng nào ở tầng mấy, cũng không tự đi lên gặp ai. Kể cả toà nhà chỉ có một phòng làm việc, lễ tân vẫn có ích: đón khách, lọc người lạ. Proxy ngược làm y hệt: client chỉ nói chuyện với một địa chỉ, proxy chuyển request vào máy chủ nội bộ rồi trả phản hồi về. → Cấu trúc thật bên trong được giấu kín khỏi client.
 
 </RealLife>
 
@@ -56,7 +56,7 @@ Các lợi ích bổ sung gồm:
 
 <RealLife title="Bảo vệ kiểm tra giấy tờ ở cổng thay cho từng phòng">
 
-Thay vì mỗi phòng ban trong toà nhà đều tự trang bị máy soi và nhân viên kiểm tra giấy tờ khách, toà nhà đặt một trạm kiểm tra duy nhất ở cổng chính; qua cổng rồi thì các phòng bên trong không cần làm lại việc đó. Proxy ngược làm việc tương tự với mã hoá: nó giải mã request ngay tại cổng vào (SSL termination), các máy chủ phía sau không phải tốn công làm việc này. → Việc tốn kém chỉ làm một lần, ở một chỗ, thay vì lặp lại ở từng máy chủ.
+Thay vì mỗi phòng ban đều tự trang bị máy soi và người kiểm tra giấy tờ, toà nhà đặt một trạm kiểm tra duy nhất ở cổng chính; qua cổng rồi thì các phòng không làm lại việc đó. Proxy ngược cũng giải mã request ngay tại cổng vào (SSL termination), máy chủ phía sau khỏi tốn công. Giới hạn: sau cổng, lưu lượng nội bộ thường không còn mã hoá, nên mạng bên trong phải là vùng tin cậy. → Việc tốn kém chỉ làm một lần, ở một chỗ, thay vì lặp lại ở từng máy chủ.
 
 </RealLife>
 
@@ -71,9 +71,9 @@ Thay vì mỗi phòng ban trong toà nhà đều tự trang bị máy soi và nh
 - Thêm proxy ngược làm tăng độ phức tạp.
 - Một proxy ngược duy nhất là một điểm lỗi đơn; cấu hình nhiều proxy ngược (tức [chuyển đổi dự phòng - failover](https://en.wikipedia.org/wiki/Failover)) lại càng tăng thêm độ phức tạp.
 
-<RealLife title="Một cửa an ninh duy nhất của chung cư">
+<RealLife title="Cây cầu duy nhất vào cù lao">
 
-Nếu chung cư chỉ có một cửa an ninh ra vào, cửa đó kẹt hoặc hỏng máy quét thẻ thì không ai vào/ra được, dù toàn bộ căn hộ bên trong vẫn bình thường. Proxy ngược cũng vậy: nó gom mọi request qua một cửa duy nhất, nên nếu chỉ dùng một proxy, chính nó trở thành điểm hỏng khiến cả hệ thống ngừng phục vụ. → Cách khắc phục: dựng ít nhất hai proxy ngược dự phòng cho nhau, giống hai cửa an ninh thay phiên nhau trực.
+Cả cù lao chỉ nối vào đất liền bằng một cây cầu: cầu đóng để sửa là xe cộ, hàng hoá đều kẹt, dù nhà cửa, chợ búa trên cù lao vẫn bình thường. Proxy ngược cũng vậy: mọi request đi qua nó, nên nếu chỉ có một proxy, nó hỏng là cả hệ thống ngừng phục vụ dù máy chủ phía sau vẫn chạy tốt. Xây thêm cầu thứ hai (proxy dự phòng, failover) giải quyết được, nhưng tốn công xây và vận hành thêm. → Đó chính là cái giá về độ phức tạp mà bản gốc nhắc tới.
 
 </RealLife>
 

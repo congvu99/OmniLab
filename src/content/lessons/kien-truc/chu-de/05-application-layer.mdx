@@ -11,7 +11,7 @@ source:
   license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
   translatedAt: "2026-09-28"
   snapshot: "system-design/02-chu-de/05-application-layer.md"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 7
 ---
 
@@ -37,7 +37,7 @@ Nhà hàng tách riêng bộ phận phục vụ bàn (đón khách, ghi order, b
   added
   svg={svgApplTiers}
   alt="Tách tầng web và tầng ứng dụng để mở rộng độc lập"
-  caption="Tầng web giữ số lượng cố định trong khi tầng ứng dụng co giãn riêng — thêm máy chủ ứng dụng mới không đòi hỏi phải thêm máy chủ web."
+  caption="Tầng web giữ nguyên số máy trong khi tầng ứng dụng co giãn riêng — thêm máy chủ ứng dụng mới (ví dụ cho một API mới) không đòi hỏi phải thêm máy chủ web. Chiều ngược lại cũng đúng: tầng web có thể mở rộng mà không đụng tới tầng ứng dụng."
 />
 
 Các worker ở tầng ứng dụng cũng giúp hiện thực hóa [xử lý bất đồng bộ (asynchronism)](/hoc/kien-truc/chu-de/asynchronism).
@@ -60,7 +60,7 @@ Các hệ thống như [Consul](https://www.consul.io/docs/index.html), [Etcd](h
 
 <RealLife title="Ứng dụng gọi xe biết tài xế nào đang online gần đó">
 
-Ứng dụng gọi xe không lưu cố định "tài xế A luôn chạy ở khu vực X"; mỗi tài xế liên tục báo vị trí và trạng thái (đang rảnh/đang chở khách) về hệ thống, ứng dụng tra danh sách này để ghép khách với tài xế đang thực sự online gần nhất. Cơ chế khám phá dịch vụ hoạt động tương tự: mỗi dịch vụ tự đăng ký tên, địa chỉ, tình trạng "còn sống" (qua health check), để các dịch vụ khác luôn tìm được bản sao đang hoạt động thay vì gọi vào một địa chỉ cố định có thể đã chết. → Danh sách "ai đang online ở đâu" luôn được cập nhật, không tra theo sổ địa chỉ cứng.
+Ứng dụng gọi xe không ghi cứng "tài xế A luôn chạy ở khu X": tài xế bật app thì vào danh sách, lâu không thấy tín hiệu thì bị gạch tên, khách chỉ được ghép với người đang thực sự online. Khám phá dịch vụ cũng vậy: mỗi bản sao dịch vụ đăng ký tên, địa chỉ, cổng; hệ thống định kỳ gọi health check (thường là một endpoint HTTP) và gạch bản không trả lời. → Dịch vụ khác tra danh sách "đang sống" này, thay vì gọi vào một địa chỉ cứng có thể đã chết.
 
 </RealLife>
 

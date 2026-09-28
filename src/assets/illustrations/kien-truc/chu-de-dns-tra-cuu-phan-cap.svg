@@ -1,5 +1,5 @@
-<svg viewBox="0 0 360 260" width="100%" role="img" aria-labelledby="svg-dns-resolve-title" xmlns="http://www.w3.org/2000/svg">
-  <title id="svg-dns-resolve-title">Tra cứu DNS phân cấp và rút ngắn nhờ cache</title>
+<svg viewBox="0 -20 360 300" width="100%" role="img" aria-labelledby="svg-dns-resolve-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-dns-resolve-title">Tra cứu DNS phân cấp: resolver tự hỏi lần lượt từng cấp, và trả ngay nhờ cache</title>
   <defs>
     <marker id="svg-dnsr-arrow-ink2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
@@ -30,14 +30,22 @@
   <path d="M180 46 V88" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-dnsr-arrow-ink2)" />
   <text x="188" y="70" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">tên miền?</text>
 
-  <path d="M155 132 C 100 160, 75 185, 60 212" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" marker-end="url(#svg-dnsr-arrow-ink2)" />
-  <text x="20" y="188" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">
-    <tspan x="20" dy="0">trượt cache</tspan>
-    <tspan x="20" dy="14">→ hỏi lần lượt</tspan>
-  </text>
+  <path d="M150 132 L60 210" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" marker-start="url(#svg-dnsr-arrow-ink2)" marker-end="url(#svg-dnsr-arrow-ink2)" />
+  <path d="M180 132 V210" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" marker-start="url(#svg-dnsr-arrow-ink2)" marker-end="url(#svg-dnsr-arrow-ink2)" />
+  <path d="M210 132 L298 210" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" marker-start="url(#svg-dnsr-arrow-ink2)" marker-end="url(#svg-dnsr-arrow-ink2)" />
 
-  <path d="M108 229 H128" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-dnsr-arrow-ink2)" />
-  <path d="M228 229 H248" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-dnsr-arrow-ink2)" />
+  <circle cx="105" cy="171" r="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="105" y="175" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink)">1</text>
+  <circle cx="180" cy="171" r="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="180" y="175" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink)">2</text>
+  <circle cx="254" cy="171" r="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="254" y="175" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink)">3</text>
+
+  <text x="8" y="146" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">
+    <tspan x="8" dy="0">trượt cache:</tspan>
+    <tspan x="8" dy="14">resolver tự hỏi</tspan>
+    <tspan x="8" dy="14">1 → 2 → 3</tspan>
+  </text>
 
   <path class="svg-dnsr-flow" d="M230 105 C 300 105, 300 20, 230 20" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-dnsr-arrow-accent)" />
   <text x="298" y="58" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--accent)">

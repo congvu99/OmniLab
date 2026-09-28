@@ -11,7 +11,7 @@ source:
   license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
   translatedAt: "2026-09-28"
   snapshot: "system-design/02-chu-de/01-dns.md"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 8
 ---
 
@@ -35,9 +35,9 @@ Bạn gõ tên "Mẹ" trong danh bạ — dễ nhớ — và điện thoại t�
 
 DNS có cấu trúc phân cấp, với một vài máy chủ có thẩm quyền (authoritative server) ở cấp cao nhất. Bộ định tuyến (router) hoặc nhà cung cấp dịch vụ Internet (ISP) của bạn cung cấp thông tin về (các) máy chủ DNS cần liên hệ khi tra cứu. Các máy chủ DNS cấp thấp hơn lưu đệm (cache) các ánh xạ, và những ánh xạ này có thể trở nên lỗi thời do độ trễ lan truyền DNS (DNS propagation delay). Kết quả DNS cũng có thể được trình duyệt hoặc hệ điều hành lưu đệm trong một khoảng thời gian nhất định, xác định bởi [thời gian sống (time to live - TTL)](https://en.wikipedia.org/wiki/Time_to_live).
 
-<RealLife title="Hỏi thăm địa chỉ qua từng cấp">
+<RealLife title="Nhờ người quen hỏi đường hộ">
 
-Không biết nhà ai ở đâu, bạn hỏi bảo vệ khu phố; bảo vệ không rõ thì chỉ bạn lên hỏi tổ trưởng, tổ trưởng lại chỉ lên phường. Có địa chỉ rồi, bạn ghi tạm vào sổ tay để lần sau khỏi hỏi lại — nhưng nếu người ta đã chuyển nhà mà sổ tay chưa xóa, bạn sẽ chỉ đường sai một thời gian. DNS tra cứu qua từng cấp (root → tên miền cấp cao nhất → máy chủ có thẩm quyền) y hệt vậy, và kết quả cũng được "ghi sổ tay" (cache) theo TTL. → Đây là lý do một ánh xạ DNS đã đổi có thể vẫn còn "lỗi thời" cho tới khi TTL hết hạn.
+Bạn nhờ một người quen tìm căn hộ của bạn cũ. Người đó hỏi ban quản lý khu đô thị — chỉ được chỉ "hỏi toà C"; hỏi toà C mới biết đúng số căn. Mỗi nơi không trả lời hẳn, chỉ chỉ sang nơi cụ thể hơn. Người quen ghi kết quả vào sổ tay kèm hạn dùng để lần sau trả lời bạn ngay; nếu bạn cũ dọn đi trước hạn, sổ vẫn chỉ sai. → Resolver hỏi hộ bạn root → TLD → máy chủ có thẩm quyền y hệt vậy, rồi cache theo TTL — nên ánh xạ đã đổi vẫn "lỗi thời" tới khi TTL hết.
 
 </RealLife>
 
@@ -45,7 +45,7 @@ Không biết nhà ai ở đâu, bạn hỏi bảo vệ khu phố; bảo vệ kh
   added
   svg={svgDnsResolve}
   alt="Tra cứu DNS phân cấp và rút ngắn nhờ cache"
-  caption="Khi cache còn hạn, resolver trả kết quả ngay; khi trượt cache, resolver phải hỏi lần lượt root, tên miền cấp cao nhất rồi tới máy chủ có thẩm quyền."
+  caption="Khi cache còn hạn, resolver trả kết quả ngay; khi trượt cache, chính resolver lần lượt hỏi root, máy chủ tên miền cấp cao nhất (TLD) rồi máy chủ có thẩm quyền — mỗi cấp chỉ chỉ đường sang cấp tiếp theo — sau đó lưu kết quả vào cache theo TTL."
 />
 
 - **Bản ghi NS (name server)** - Chỉ định các máy chủ DNS cho tên miền/tên miền con của bạn.
@@ -70,7 +70,7 @@ Các dịch vụ như [CloudFlare](https://www.cloudflare.com/dns/) và [Route 5
 
 <RealLife title="Trạm cấp nước chung của cả khu">
 
-Nếu cả khu dùng chung một trạm bơm nước, trạm hỏng thì mọi nhà mất nước cùng lúc, dù đường ống riêng của từng nhà vẫn nguyên vẹn. DNS cũng là một điểm phụ thuộc dùng chung: hàng loạt trang web vẫn "sống" bình thường (server vẫn chạy), nhưng nếu dịch vụ DNS bị tấn công hoặc sập, không ai tra ra được địa chỉ IP để kết nối tới chúng nữa. → Đây là lý do các cuộc tấn công DDoS nhắm vào DNS gây thiệt hại diện rộng dù không đánh trực tiếp vào từng trang.
+Nếu cả khu dùng chung một trạm bơm nước, trạm hỏng thì mọi nhà mất nước cùng lúc, dù đường ống riêng của từng nhà vẫn nguyên vẹn — chỉ nhà nào còn nước trong bồn mới dùng tạm được. DNS cũng vậy: server của hàng loạt trang web vẫn chạy, nhưng nếu nhà cung cấp DNS mà chúng cùng dùng bị tấn công, người dùng không tra ra được IP để kết nối, trừ khi đã có sẵn trong cache. → Đây là lý do tấn công DDoS vào DNS gây thiệt hại diện rộng dù không đánh trực tiếp vào từng trang.
 
 </RealLife>
 

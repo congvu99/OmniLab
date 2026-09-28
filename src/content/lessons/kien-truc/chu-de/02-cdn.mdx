@@ -11,7 +11,7 @@ source:
   license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
   translatedAt: "2026-09-28"
   snapshot: "system-design/02-chu-de/02-cdn.md"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 7
 ---
 
@@ -60,9 +60,9 @@ CDN kiểu kéo lấy nội dung mới từ máy chủ của bạn khi người 
 
 Những trang có lưu lượng lớn hợp với CDN kiểu kéo, vì lưu lượng được dàn đều hơn và chỉ nội dung vừa được yêu cầu gần đây mới nằm lại trên CDN.
 
-<RealLife title="Cửa hàng nhượng quyền nhập sẵn hàng vs đặt khi có khách">
+<RealLife title="Thư viện chi nhánh: sách gửi sẵn hay mượn khi có người hỏi">
 
-Có cửa hàng nhượng quyền chủ động nhập sẵn đủ hàng về kho trước khi mở bán — giống CDN kiểu đẩy, bạn tự tải nội dung lên CDN từ trước. Có cửa hàng khác chỉ đặt hàng từ kho tổng khi có khách hỏi mua món đó lần đầu, sau đó mới giữ lại để bán tiếp cho khách sau — giống CDN kiểu kéo, CDN chỉ lấy nội dung từ server gốc khi có request đầu tiên. → Cách đầu tốn công chuẩn bị trước; cách sau tiện nhưng khách đầu tiên phải chờ lâu hơn.
+Kiểu đẩy: thư viện tổng tự gửi sách mới xuống chi nhánh ngay khi có, dù chưa ai hỏi — kệ chi nhánh phải đủ chỗ chứa hết. Kiểu kéo: chi nhánh chỉ mượn cuốn sách từ thư viện tổng khi bạn đọc đầu tiên hỏi (người đó phải chờ), giữ tới hạn trả; hết hạn mà có người hỏi thì mượn lại, dù sách chẳng có gì mới. → Push tốn chỗ chứa và công tải lên trước; pull tiết kiệm chỗ nhưng request đầu tiên (và sau mỗi lần hết TTL) chậm hơn.
 
 </RealLife>
 
@@ -70,7 +70,7 @@ Có cửa hàng nhượng quyền chủ động nhập sẵn đủ hàng về kh
   added
   svg={svgCdnPushPull}
   alt="CDN kiểu đẩy (push) so với kiểu kéo (pull)"
-  caption="Push: nội dung được tải lên CDN trước khi ai yêu cầu. Pull: CDN chỉ lấy nội dung từ gốc khi có request đầu tiên, sau đó tự phục vụ."
+  caption="Push: nội dung được tải lên CDN trước khi ai yêu cầu. Pull: CDN chỉ lấy nội dung từ gốc khi có request đầu tiên, sau đó tự phục vụ bản đã cache cho tới khi hết TTL."
 />
 
 ### Nhược điểm: CDN
@@ -81,7 +81,7 @@ Có cửa hàng nhượng quyền chủ động nhập sẵn đủ hàng về kh
 
 <RealLife title="Poster quảng cáo cũ vẫn dán khắp thành phố">
 
-Một chuỗi rạp chiếu phim đổi lịch chiếu, nhưng poster quảng cáo cũ vẫn còn dán ở hàng chục bảng tin khắp thành phố cho tới khi có người đi gỡ từng cái. Nội dung trên CDN hoạt động tương tự: khi bạn cập nhật một file, các bản sao đã lưu ở CDN vẫn còn "cũ" cho tới khi TTL hết hạn hoặc bạn chủ động xóa (purge) từng điểm. → Càng nhiều điểm lưu bản sao, càng khó đảm bảo mọi nơi cùng thấy bản mới cùng lúc.
+Một chuỗi rạp chiếu phim đổi lịch chiếu, nhưng poster quảng cáo cũ vẫn còn dán ở hàng chục bảng tin khắp thành phố cho tới khi có người đi gỡ từng cái. Nội dung trên CDN hoạt động tương tự: khi bạn cập nhật một file, các bản sao đã lưu ở CDN vẫn còn "cũ" cho tới khi TTL hết hạn hoặc bạn chủ động ra lệnh xoá (purge) — tuỳ CDN, lệnh này có thể mất một lúc mới lan tới mọi điểm. → Càng nhiều điểm lưu bản sao, càng khó đảm bảo mọi nơi cùng thấy bản mới cùng lúc.
 
 </RealLife>
 
