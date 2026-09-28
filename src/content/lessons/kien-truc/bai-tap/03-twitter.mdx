@@ -11,7 +11,7 @@ source:
   license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
   translatedAt: "2026-09-28"
   snapshot: "system-design/03-bai-tap/03-twitter.md"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 18
 ---
 
@@ -114,9 +114,9 @@ Bảng quy đổi tiện dụng:
 * 40 yêu cầu mỗi giây = 100 triệu yêu cầu mỗi tháng
 * 400 yêu cầu mỗi giây = 1 tỷ yêu cầu mỗi tháng
 
-<RealLife title="Sổ tay giao hàng ước lượng nhanh">
+<RealLife title="Hệ số nhẩm của tài xế xe khách">
 
-Trước khi nhận đơn giao hàng dịp lễ, chủ shop không đếm chính xác từng gói — chỉ nhẩm: trung bình 500 đơn/ngày, mỗi đơn cần 5 phút đóng gói, vậy cần khoảng 40 giờ nhân công mỗi ngày. Con số thô này đủ để quyết định thuê thêm bao nhiêu người, dù có thể lệch vài chục phần trăm. Bảng ước lượng của bài toán Twitter làm đúng việc đó: từ 500 triệu tweet/ngày, nhân kích thước trung bình, chia cho số giây mỗi tháng, ra ngay số tweet mỗi giây hệ thống cần chịu được. → Không cần đo chính xác mới quyết định được kiến trúc.
+Tài xế xe khách đường dài nhớ nằm lòng một hệ số: trung bình khoảng 50 km/giờ. Hỏi 300 km mất bao lâu, họ đáp ngay 6 tiếng, không cần bản đồ. Bảng quy đổi của bài cũng là một hệ số như thế: 1 tỷ yêu cầu/tháng ≈ 400 yêu cầu/giây. Nhờ đó 250 tỷ lượt đọc/tháng ra ngay 100 nghìn lượt đọc/giây, 15 tỷ tweet/tháng ra 6.000 tweet/giây. → Nhớ vài hệ số quy đổi là đủ để ước lượng tải, không cần đo chính xác.
 
 </RealLife>
 
@@ -150,9 +150,9 @@ Chúng ta có thể lưu media như ảnh hoặc video trên một **kho lưu tr
     * Dùng **Notification Service** để gửi thông báo đẩy tới các follower:
         * Dùng một **hàng đợi (Queue)** (không có trong hình) để gửi thông báo một cách bất đồng bộ
 
-<RealLife title="Nhóm chat lớp học báo bài ngay">
+<RealLife title="Thông báo nhét sẵn vào khe cửa từng phòng">
 
-Giáo viên đăng thông báo trong nhóm chat lớp, ứng dụng đẩy ngay lên điện thoại của từng học sinh trong lớp — học sinh không cần tự mở app kiểm tra xem có bài mới không. Twitter fan-out on write làm giống vậy: ngay khi có tweet mới, Fan Out Service ghi tweet đó vào home timeline của từng follower, dù họ có đang mở app hay không. → Đổi lại, tài khoản càng nhiều follower, số lượt ghi "báo tin" càng lớn.
+Chủ nhà trọ có thông báo mới thì photo 30 bản, nhét vào khe cửa cả 30 phòng. Tốn công lúc phát, nhưng ai về cũng thấy ngay ở cửa phòng mình, không phải đi tìm. Fan-out on write làm giống vậy: có tweet mới, Fan Out Service ghi tweet vào home timeline của từng follower trong Memory Cache, nên lúc đọc chỉ việc lấy danh sách có sẵn. → Đổi lại, 1.000 follower là 1.000 lần ghi (O(n)); tài khoản càng đông follower, chi phí lúc đăng càng lớn.
 
 </RealLife>
 
@@ -242,7 +242,7 @@ REST API sẽ tương tự home timeline, chỉ khác là mọi tweet đều đ�
 
 <RealLife title="Nhật ký cá nhân và bảng tin chung cư">
 
-Sổ nhật ký cá nhân chỉ ghi chuyện của riêng bạn, lật lại lúc nào cũng thấy đúng thứ tự bạn đã viết. Bảng tin dán ở sảnh chung cư thì khác — nó gom thông báo từ nhiều hộ khác nhau, mỗi lần đi ngang lại có tin mới của người khác chen vào. User timeline của Twitter giống cuốn nhật ký: chỉ chứa tweet của chính bạn. Home timeline giống bảng tin chung cư: gộp tweet của mọi người bạn theo dõi. → Hai loại timeline này cần hai cách dựng dữ liệu khác nhau.
+Sổ nhật ký chỉ ghi chuyện của riêng bạn. Bảng tin ở sảnh chung cư thì gom thông báo từ nhiều hộ, lúc nào cũng có tin mới chen vào. User timeline giống cuốn nhật ký: chỉ có tweet của chính bạn, đọc từ SQL. Home timeline giống bảng tin: gộp tweet của mọi người bạn theo dõi — khác ở chỗ mỗi người có một "bảng tin" riêng, dựng sẵn trong Memory Cache. → Hai loại timeline cần hai cách lưu và dựng khác nhau.
 
 </RealLife>
 
@@ -261,9 +261,9 @@ Sổ nhật ký cá nhân chỉ ghi chuyện của riêng bạn, lật lại lú
         * [Scatter gather](https://github.com/donnemartin/system-design-primer#under-development) tới từng máy chủ trong cụm để xác định có kết quả nào cho truy vấn không
         * Gộp (merge), xếp hạng (rank), sắp xếp (sort) và trả về kết quả
 
-<RealLife title="Mục lục cuối sách giáo khoa">
+<RealLife title="Bảng tra cứu thuật ngữ cuối sách">
 
-Sách giáo khoa dày có mục lục tra từ khóa ở cuối sách: tìm từ "quang hợp", mục lục chỉ thẳng tới trang 42, không phải lật từng trang tìm. Search Index của Twitter hoạt động cùng nguyên lý — đó là chỉ mục ngược (reverse index/inverted index): thay vì quét từng tweet khi có truy vấn, hệ thống tra ngược từ từ khóa ra thẳng danh sách tweet chứa từ đó. → Chỉ mục được xây trước, để lúc tìm kiếm chỉ còn việc tra cứu nhanh.
+Cuối sách giáo khoa dày thường có bảng tra cứu thuật ngữ: tìm "quang hợp", bảng chỉ ngay các trang 42, 57, 103, khỏi lật từng trang. Search Index Service dựa trên cùng nguyên lý, gọi là chỉ mục ngược (inverted index): thay vì quét từng tweet khi có truy vấn, hệ thống tra từ khóa ra thẳng danh sách tweet chứa từ đó, rồi gộp và xếp hạng. → Chỉ mục được xây sẵn lúc ghi, để lúc tìm chỉ còn việc tra cứu nhanh.
 
 </RealLife>
 
@@ -308,9 +308,9 @@ Chúng ta sẽ đưa vào một số thành phần để hoàn thiện thiết k
 
 Chúng ta cũng có thể tránh fan-out tweet của những người dùng có rất nhiều follower. Thay vào đó, ta có thể tìm kiếm để lấy tweet của những người dùng này, gộp kết quả tìm kiếm với kết quả home timeline của người dùng, rồi sắp xếp lại thứ tự tweet tại thời điểm phục vụ.
 
-<RealLife title="Đơn hàng khổng lồ của người bán livestream triệu follow">
+<RealLife title="Ca sĩ đăng lịch diễn lên trang chính thức">
 
-Một người bán hàng livestream có vài triệu người theo dõi chốt đơn giảm giá — kho không thể đóng gói và giao ngay lập tức cho từng người cùng lúc, dù đơn hàng bình thường chỉ mất vài phút xử lý. Twitter gặp đúng vấn đề này với tài khoản triệu follower: ghi tweet vào hàng triệu timeline cùng lúc (fan-out) làm nghẽn hệ thống. Giải pháp là không fan-out cho tài khoản quá lớn, mà tìm và gộp tweet của họ ngay lúc người xem mở timeline. → Vài tài khoản đặc biệt cần một đường xử lý riêng.
+Ca sĩ có vài triệu người hâm mộ không nhắn riêng lịch diễn cho từng người — họ đăng một lần lên trang chính thức, ai quan tâm tự vào xem; nhóm bạn thân vài chục người thì nhắn riêng vẫn nhanh. Twitter làm lai y vậy: người dùng thường vẫn fan-out lúc ghi; tài khoản quá nhiều follower thì bỏ fan-out, khi người xem mở home timeline mới tìm tweet của họ, gộp và sắp xếp lại lúc phục vụ. → Vài tài khoản đặc biệt cần đường xử lý riêng.
 
 </RealLife>
 
@@ -318,7 +318,7 @@ Một người bán hàng livestream có vài triệu người theo dõi chốt 
   added
   svg={svgTwitterFanOutCmp}
   alt="So sánh chi phí giữa fan-out lúc ghi và fan-out lúc đọc"
-  caption="Fan-out on write dồn chi phí vào lúc đăng (ghi N timeline); fan-out on read dồn chi phí vào lúc đọc (gộp N người đang theo dõi) — mô hình lai dùng cả hai tuỳ loại tài khoản."
+  caption="Fan-out on write dồn chi phí vào lúc đăng (ghi vào timeline của N follower); fan-out on read dồn chi phí vào lúc đọc (gộp tweet của M người mình theo dõi) — mô hình lai dùng cả hai tuỳ loại tài khoản."
 />
 
 Các tối ưu bổ sung gồm:

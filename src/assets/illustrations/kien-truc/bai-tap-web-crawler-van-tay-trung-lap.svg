@@ -27,5 +27,5 @@
 
   <path d="M117 101 H243" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" />
 
-  <text x="180" y="140" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">khác 1 vị trí → vẫn tính là gần trùng</text>
+  <text x="180" y="140" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">khác 1 bit → vẫn tính là gần trùng</text>
 </svg>

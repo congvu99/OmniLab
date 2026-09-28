@@ -11,7 +11,7 @@ source:
   license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
   translatedAt: "2026-09-28"
   snapshot: "system-design/03-bai-tap/02-scaling-aws.md"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 21
 ---
 
@@ -125,7 +125,7 @@ Dùng **mở rộng theo chiều dọc (Vertical Scaling)**:
 
 <RealLife title="Nồi phở đổi cỡ khi đông khách">
 
-Quán phở nhỏ mới mở chỉ có một nồi nước dùng. Đông khách hơn, chủ quán không thuê thêm đầu bếp ngay — trước tiên đổi sang nồi to hơn, bếp mạnh hơn, để một mình vẫn nấu kịp. Cách này đơn giản, không phải sắp xếp lại quy trình bếp. Nhưng nồi chỉ to được tới một mức; quá cỡ đó, một người không xoay nổi dù nồi có to thêm nữa. Máy chủ mở rộng theo chiều dọc cũng vậy: đổi máy mạnh hơn là bước rẻ và nhanh nhất, nhưng luôn có trần. → Đó là lý do bước tiếp theo cần chiều ngang.
+Quán phở mới mở chỉ có một nồi nước dùng. Đông khách, chủ quán chưa thuê thêm bếp mà đổi sang nồi to hơn, bếp mạnh hơn — đơn giản, không phải sắp xếp lại quy trình. Nhưng nồi càng to càng đắt, tới một cỡ thì hết to thêm được, và nồi hỏng là cả quán nghỉ. Mở rộng theo chiều dọc cũng vậy: đơn giản nhất, nhưng chi phí tăng nhanh, có trần và không có dự phòng. → Đó là lý do bước tiếp theo cần chiều ngang.
 
 </RealLife>
 
@@ -175,8 +175,8 @@ Thêm một **DNS** như Route 53 để ánh xạ tên miền tới IP công kha
 <Figure
   added
   svg={svgScalingHanhTrinh}
-  alt="Hành trình mở rộng qua các giai đoạn Users+ tới Users++++"
-  caption="Mỗi giai đoạn chỉ thêm đúng thành phần xử lý nút thắt vừa đo được ở giai đoạn trước, không nhảy thẳng lên thiết kế cuối."
+  alt="Hành trình mở rộng qua các giai đoạn từ một máy tới Users+++++"
+  caption="Từ một máy tới Users+++++, mỗi giai đoạn chỉ thêm đúng thành phần xử lý nút thắt vừa đo được ở giai đoạn trước, không nhảy thẳng lên thiết kế cuối."
 />
 
 #### Users+
@@ -220,7 +220,7 @@ Cho tới giờ ta đã xử lý được các vấn đề này bằng **mở r�
 
 <RealLife title="Tách sổ sách khỏi quầy bán hàng">
 
-Tiệm tạp hóa nhỏ để sổ ghi nợ khách quen ngay dưới quầy thu ngân — tiện nhưng lộn xộn, nhân viên vừa bán hàng vừa lật sổ tìm số nợ cũ. Khi tiệm đông lên, chủ tách sổ sách ra một góc riêng, thuê người chuyên ghi chép, quầy chỉ lo bán. Hệ thống Users+ làm đúng vậy: tách nội dung tĩnh sang Object Store và cơ sở dữ liệu MySQL sang máy riêng, để Web Server không phải gánh luôn việc lưu trữ. → Mỗi phần giờ có thể phình to độc lập.
+Tiệm tạp hóa nhỏ để sổ ghi nợ ngay dưới quầy thu ngân — tiện nhưng rối, nhân viên vừa bán vừa lật sổ. Tiệm đông lên, chủ chuyển sổ sách ra một góc riêng có người chuyên ghi chép, quầy chỉ lo bán. Users+ làm đúng vậy: chuyển MySQL sang máy riêng và nội dung tĩnh sang Object Store, để Web Server không còn gánh việc lưu trữ. → Giờ có thể nâng cấp riêng từng phần, đúng chỗ đang nghẽn.
 
 </RealLife>
 
@@ -345,7 +345,7 @@ Kết quả **Benchmark/Load Test** và **Profiling** cho thấy lưu lượng t
 
 <RealLife title="Thuê nhân viên bán trưa theo giờ cao điểm">
 
-Quán cơm trưa văn phòng chỉ đông nghẹt từ 11 giờ tới 13 giờ. Chủ quán không thuê đủ người trực cả ngày theo giờ cao điểm — chỉ gọi thêm người bán trong khung giờ đó, rồi cho về khi vãn khách. Autoscaling trên AWS làm y hệt với server: theo dõi chỉ số tải, tự thêm máy khi lưu lượng tăng theo giờ hành chính, tự tắt bớt khi người dùng rời văn phòng ban đêm. → Trả tiền đúng lúc cần, không phải trả cho cả ngày ế khách.
+Quán cơm văn phòng chỉ đông từ 11 tới 13 giờ. Chủ quán không trả lương cả ngày cho đủ người như giờ cao điểm — chỉ gọi thêm người phụ buổi trưa, vãn khách thì cho về. Nhưng người được gọi cần vài chục phút mới tới. Autoscaling cũng vậy: tự thêm máy khi tải tăng trong giờ hành chính, tắt bớt khi vắng, và máy mới cần thời gian khởi động. → Trả tiền theo tải thực tế, đổi lại chấp nhận độ trễ khi co giãn.
 
 </RealLife>
 
@@ -353,7 +353,7 @@ Quán cơm trưa văn phòng chỉ đông nghẹt từ 11 giờ tới 13 giờ. 
   added
   svg={svgScalingAutoscale}
   alt="Số server co giãn theo giờ trong ngày"
-  caption="Autoscaling thêm máy vào giờ cao điểm (trưa, chiều) và tự tắt bớt vào ban đêm, thay vì giữ cố định số máy cho cả ngày."
+  caption="Minh hoạ: số server bám theo tải trong ngày — nhiều nhất trong giờ hành chính của người dùng, tắt bớt khi họ rời văn phòng, nhưng không xuống dưới số instance tối thiểu đã đặt."
 />
 
 #### Users+++++
@@ -395,9 +395,9 @@ Ta có thể tách tiếp các [**Application Server**](/hoc/kien-truc/chu-de/ap
         * Cập nhật **cơ sở dữ liệu**
         * Lưu thumbnail vào **Object Store**
 
-<RealLife title="Photocopy nhận đơn rồi giao sau">
+<RealLife title="Thùng chờ phân loại ở bưu cục">
 
-Tiệm photocopy nhận đơn in cả trăm trang không bắt khách đứng chờ tại chỗ — ghi phiếu hẹn, khách gửi lại rồi đi làm việc khác, tiệm xử lý dần phía sau và gọi khi xong. Ứng dụng ảnh làm tương tự khi tải ảnh lên: Application Server không tự tạo thumbnail ngay lập tức mà đặt một job vào Queue, để Worker Service xử lý dần ở phía sau, không bắt người dùng chờ. → Đây là lý do xử lý bất đồng bộ giúp phản hồi nhanh hơn dù việc thật vẫn mất thời gian.
+Nhân viên quầy bưu cục nhận bưu phẩm, dán mã, bỏ vào thùng chờ rồi phục vụ ngay khách kế tiếp; đội phân loại phía sau lấy dần từng kiện ra xử lý, hàng dồn thì thêm người. Dịch vụ ảnh làm tương tự: Application Server đặt job vào Queue rồi trả lời client; Worker Service lấy job ra tạo thumbnail, cập nhật cơ sở dữ liệu, lưu vào Object Store. → Hàng đợi tách việc nhận yêu cầu khỏi việc xử lý, để mỗi bên mở rộng riêng.
 
 </RealLife>
 

@@ -11,7 +11,7 @@ source:
   license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
   translatedAt: "2026-09-28"
   snapshot: "system-design/03-bai-tap/01-pastebin.md"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 18
 ---
 
@@ -108,15 +108,15 @@ Bảng quy đổi tiện dụng:
 
 <RealLife title="Ước lượng nhanh trước khi mở rộng">
 
-Trước khi mở rộng quán, chủ quán không đếm từng khách — chỉ nhẩm nhanh: trung bình 100 khách/ngày, mỗi khách 1 món, vậy bếp cần chuẩn bị khoảng 100 phần. Con số này đủ để quyết định thuê thêm người, dù sai vài phần trăm. Kỹ sư hệ thống làm tương tự: nhân vài con số thô để ra một con số đủ tin cậy cho thiết kế, không cần đo đạc chính xác. → Đó là "ước lượng nhanh" trước khi bắt tay thiết kế.
+Trước khi mở rộng quán, chủ quán không đếm từng khách — chỉ nhẩm: trung bình 100 khách/ngày, mỗi khách 1 món, vậy bếp cần khoảng 100 phần. Con số thô này đủ để quyết định thuê thêm người, dù lệch vài phần trăm. Kỹ sư hệ thống cũng nhẩm như vậy: 10 triệu paste/tháng chia 2,5 triệu giây/tháng ra khoảng 4 lượt ghi/giây, gấp 10 lần là 40 lượt đọc/giây. → Đó là "ước lượng nhanh" trước khi bắt tay thiết kế.
 
 </RealLife>
 
 <Figure
   added
   svg={svgPastebinUocLuong}
-  alt="Ước lượng nhanh từ số paste mỗi tháng ra số lượt ghi mỗi giây"
-  caption="Nhân số paste mỗi tháng với kích thước trung bình, rồi chia cho số giây mỗi tháng — vài phép tính thô là đủ để ra con số 4 lượt ghi/giây."
+  alt="Ước lượng nhanh dung lượng và số lượt ghi, đọc mỗi giây từ 10 triệu paste mỗi tháng"
+  caption="Hai phép tính tách biệt từ cùng một con số: nhân với 1,27 KB/paste ra dung lượng (12,7 GB/tháng, khoảng 450 GB sau 3 năm); chia cho 2,5 triệu giây/tháng ra tải (4 lượt ghi/giây, gấp 10 là 40 lượt đọc/giây)."
 />
 
 ### Bước 2: Tạo thiết kế tổng quan (high level design)
@@ -135,9 +135,9 @@ Ta có thể dùng một [cơ sở dữ liệu quan hệ (relational database)](
 
 Thay vì tự quản lý một file server, ta có thể dùng một **kho lưu trữ đối tượng (Object Store)** được quản lý sẵn như Amazon S3 hoặc một [kho tài liệu NoSQL (document store)](/hoc/kien-truc/chu-de/database).
 
-<RealLife title="Kho gửi đồ tách khỏi quầy lễ tân">
+<RealLife title="Sổ hợp đồng và tủ ổ cứng ở studio ảnh cưới">
 
-Khách sạn không để hành lý khách ở ngay quầy lễ tân — hành lý cồng kềnh được đưa xuống kho riêng, quầy chỉ giữ một tấm phiếu ghi số kho. Cần lấy đồ, khách đưa phiếu, nhân viên ra kho lấy đúng món. Thiết kế pastebin làm tương tự: bảng `pastes` trong SQL chỉ lưu phiếu (đường dẫn), còn nội dung paste thật nằm trong Object Store riêng. → Tách kho khỏi quầy giúp mỗi bên phình to độc lập mà không giẫm chân nhau.
+Studio ảnh cưới không nhét hàng chục GB ảnh gốc vào sổ hợp đồng. Sổ chỉ ghi mỗi cặp một dòng: tên, ngày chụp, mã ổ cứng; ảnh thật cất trong tủ ổ cứng riêng. Cần giao ảnh, nhân viên tra sổ ra mã rồi lấy đúng ổ. Pastebin làm y vậy: bảng `pastes` trong SQL chỉ lưu `shortlink` và `paste_path`, nội dung paste nằm trong Object Store. → Tách phần tra cứu nhỏ khỏi phần dữ liệu lớn để mỗi bên mở rộng theo nhu cầu riêng.
 
 </RealLife>
 
@@ -196,17 +196,17 @@ def base_encode(num, base=62):
 url = base_encode(md5(ip_address+timestamp))[:URL_LENGTH]
 ```
 
-<RealLife title="Bốc số thứ tự ở phòng khám">
+<RealLife title="Chọn số sim còn trống">
 
-Phòng khám phát số thứ tự cho bệnh nhân. Nếu máy phát nhầm hai người cùng một số, lễ tân phải phát lại số khác, trước khi ai đó bị gọi nhầm lượt. Hệ thống sinh shortlink cũng vậy: sau khi băm ra một chuỗi ký tự, nó kiểm tra chuỗi đó đã có trong cơ sở dữ liệu chưa; nếu trùng, sinh lại chuỗi khác rồi kiểm tra tiếp, tới khi ra được mã chưa ai dùng. → Bước kiểm tra trước khi lưu là bắt buộc, không phải tùy chọn.
+Mua sim, bạn nghĩ ra một dãy số muốn dùng; nhân viên tra hệ thống, số đã có chủ thì chọn dãy khác, tới khi ra số còn trống mới kích hoạt. Write API làm tương tự: băm MD5 từ ip + timestamp, mã hoá base62, lấy 7 ký tự đầu, rồi tra SQL; trùng thì sinh mã khác. 62^7 ≈ 3,5 nghìn tỷ mã nên hiếm trùng, nhưng không phải không bao giờ. → Kiểm tra trùng là bắt buộc, không phải tùy chọn.
 
 </RealLife>
 
 <Figure
   added
   svg={svgPastebinShortlink}
-  alt="Luồng sinh shortlink từ băm, base62 tới kiểm tra trùng"
-  caption="Nội dung paste được băm và mã hoá base62 thành shortlink; nếu đã trùng trong SQL, hệ thống sinh lại tới khi ra một mã chưa ai dùng, rồi mới lưu."
+  alt="Luồng sinh shortlink: MD5 của ip + timestamp, base62, lấy 7 ký tự, kiểm tra trùng"
+  caption="Write API băm MD5 từ ip + timestamp (hoặc dữ liệu ngẫu nhiên), mã hoá base62 rồi lấy 7 ký tự đầu; nếu mã đã có trong SQL thì sinh lại với đầu vào mới, chưa trùng mới lưu vào SQL và Object Store."
 />
 
 Ta sẽ dùng một [**REST API**](/hoc/kien-truc/chu-de/communication) công khai:
@@ -331,7 +331,7 @@ Một **Object Store** như Amazon S3 có thể thoải mái đáp ứng ràng b
 
 <RealLife title="Hàng bán chạy để sẵn ngoài kệ">
 
-Tiệm tạp hóa không cất mọi thứ trong kho sâu — mấy món bán chạy nhất (nước ngọt, mì gói) được bày sẵn ngay kệ ngoài, lấy là có ngay, không phải sai người vào kho mỗi lần khách hỏi. Hệ thống pastebin đọc nhiều gấp 10 lần ghi cũng theo nguyên tắc đó: nội dung được xem nhiều giữ trong Memory Cache ở "ngoài kệ", chỉ paste hiếm ai đọc mới phải lục trong cơ sở dữ liệu ở "kho sâu". → Cache hấp thụ phần lớn lượt đọc trước khi chạm tới DB.
+Tiệm tạp hóa không cất mọi thứ trong kho sâu — vài món bán chạy nhất (nước ngọt, mì gói) bày sẵn ở kệ ngoài, khách hỏi là có ngay. Pastebin đọc gấp 10 lần ghi (40 so với 4 lượt/giây) cũng theo nguyên tắc đó: paste được xem nhiều nằm trong Memory Cache "ngoài kệ"; chỉ khi trượt cache mới phải xuống SQL Read Replicas và Object Store "trong kho". → Cache hấp thụ phần lớn lượt đọc trước khi chạm tới cơ sở dữ liệu.
 
 </RealLife>
 

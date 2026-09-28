@@ -1,5 +1,5 @@
-<svg viewBox="0 0 360 320" width="100%" role="img" aria-labelledby="svg-mint-phan-loai-title" xmlns="http://www.w3.org/2000/svg">
-  <title id="svg-mint-phan-loai-title">Phân loại giao dịch: tra bảng có sẵn, học thêm từ lựa chọn của người dùng</title>
+<svg viewBox="0 0 360 300" width="100%" role="img" aria-labelledby="svg-mint-phan-loai-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-mint-phan-loai-title">Phân loại giao dịch: tra bảng có sẵn, học thêm từ lựa chọn ghi đè của người dùng</title>
   <defs>
     <marker id="svg-mpl-arrow-ink2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
@@ -9,33 +9,33 @@
     </marker>
   </defs>
 
-  <rect x="115" y="12" width="130" height="32" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
-  <text x="180" y="33" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Giao dịch mới</text>
+  <rect x="115" y="10" width="130" height="32" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="180" y="31" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Giao dịch mới</text>
 
-  <path d="M180 44 V72" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-mpl-arrow-ink2)" />
+  <path d="M180 42 V64" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-mpl-arrow-ink2)" />
 
-  <rect x="60" y="72" width="240" height="44" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
-  <text x="180" y="98" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Bảng ánh xạ người bán</text>
+  <rect x="60" y="64" width="240" height="40" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="180" y="89" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Bảng ánh xạ người bán → danh mục</text>
 
-  <path d="M270 116 C 300 140, 300 150, 280 162" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-mpl-arrow-ink2)" />
-  <text x="305" y="140" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">trúng</text>
+  <path d="M270 104 C 300 124, 300 134, 280 150" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-mpl-arrow-ink2)" />
+  <text x="250" y="130" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">có sẵn</text>
 
-  <rect x="190" y="162" width="150" height="36" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
-  <text x="265" y="184" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Trả danh mục ngay</text>
+  <rect x="190" y="150" width="150" height="34" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="265" y="171" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Trả danh mục ngay</text>
 
-  <path d="M90 116 C 60 140, 60 150, 80 162" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-mpl-arrow-ink2)" />
-  <text x="55" y="140" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">chưa có</text>
+  <path d="M90 104 C 70 124, 80 134, 100 150" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-mpl-arrow-ink2)" />
+  <text x="124" y="130" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">chưa có</text>
 
-  <rect x="10" y="162" width="150" height="36" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
-  <text x="85" y="184" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Người dùng gán tạm</text>
+  <rect x="30" y="150" width="140" height="34" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="100" y="171" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Người dùng tự ghi đè</text>
 
-  <path d="M85 198 V218 H160 V236" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#svg-mpl-arrow-ink2)" />
+  <path d="M100 184 V202 H160 V220" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#svg-mpl-arrow-ink2)" />
 
-  <rect x="40" y="236" width="280" height="48" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
-  <text x="180" y="257" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Ghi đè phổ biến nhất</text>
-  <text x="180" y="274" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">→ cập nhật bảng ánh xạ</text>
+  <rect x="40" y="220" width="280" height="46" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="180" y="240" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Ghi đè phổ biến nhất</text>
+  <text x="180" y="257" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">→ ghi vào bảng ánh xạ</text>
 
-  <path class="svg-mpl-loop" d="M40 250 C 6 190, 6 90, 60 90" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-mpl-arrow-accent)" />
+  <path class="svg-mpl-loop" d="M40 236 C 4 180, 4 84, 60 84" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-mpl-arrow-accent)" />
 
   <style>
     @media (prefers-reduced-motion: no-preference) {

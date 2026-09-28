@@ -11,7 +11,7 @@ source:
   license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
   translatedAt: "2026-09-28"
   snapshot: "system-design/03-bai-tap/04-web-crawler.md"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 17
 ---
 
@@ -92,7 +92,7 @@ Bảng quy đổi tiện dụng:
 
 <RealLife title="Ước lượng số xe tải cho kho hàng mới">
 
-Trước khi thuê kho chứa hàng mới, chủ kho không đo chính xác từng kiện — chỉ nhẩm nhanh: trung bình 500 kiện/ngày, mỗi kiện 20kg, vậy cần khoảng 10 tấn hàng vào mỗi ngày để tính số xe tải cần thuê. Bài toán web crawler ước lượng dung lượng lưu trữ theo cách tương tự: 500 KB mỗi trang nhân với 4 tỷ trang crawl mỗi tháng, ra ngay con số petabyte cần chứa, dù chưa xây một dòng code nào. → Ước lượng thô giúp chọn đúng quy mô hạ tầng ngay từ đầu.
+Trước khi thuê kho mới, chủ kho không cân từng kiện — chỉ nhẩm: trung bình 500 kiện/ngày, mỗi kiện 20 kg, tức khoảng 10 tấn hàng vào mỗi ngày, đủ để tính số xe tải cần thuê. Web crawler ước lượng dung lượng theo cách tương tự: 500 KB mỗi trang nhân 4 tỷ lượt crawl mỗi tháng ra 2 PB/tháng, tức 72 PB sau 3 năm, khi chưa viết dòng code nào. → Ước lượng thô giúp chọn đúng quy mô hạ tầng ngay từ đầu.
 
 </RealLife>
 
@@ -211,7 +211,7 @@ Mã nguồn đầy đủ của các đoạn trên: [web_crawler_snippets.py](../
 
 <RealLife title="Người giao báo đánh dấu nhà đã giao">
 
-Người giao báo mỗi sáng đi theo tuyến đường đã đánh số nhà ưu tiên, và luôn đánh dấu nhà nào đã giao rồi. Gặp lại nhà đã đánh dấu, người này không giao lại — chỉ bỏ qua, đi tiếp nhà chưa giao, nhờ vậy không bao giờ đi vòng quanh khu phố mãi không dứt dù đường có ngõ cụt hay vòng lặp. Crawler Service làm đúng cơ chế này: lấy link ưu tiên cao nhất, kiểm tra đã crawl trang tương tự chưa, nếu rồi thì bỏ qua và lấy link tiếp theo. → Danh sách "đã giao" chính là thứ ngăn vòng lặp vô hạn.
+Người giao báo có sổ ghi nhà đã giao. Gặp căn nhà sổ đã ghi (dù số nhà viết kiểu khác), anh không giao lại mà dời nó xuống cuối lộ trình, để không đi vòng mãi quanh mấy con hẻm nối vòng. Crawler Service làm tương tự: lấy link ưu tiên cao nhất, tra `crawled_links` xem đã có trang chữ ký tương tự chưa; có thì giảm độ ưu tiên link đó rồi lấy link kế tiếp. → `crawled_links` chính là cuốn sổ giúp crawler tránh kẹt trong chu trình.
 
 </RealLife>
 
@@ -219,7 +219,7 @@ Người giao báo mỗi sáng đi theo tuyến đường đã đánh số nhà 
   added
   svg={svgWebCrawlerVongLap}
   alt="Vòng lặp crawl kiểm tra trùng trước khi crawl"
-  caption="Mỗi vòng lặp lấy URL ưu tiên cao nhất; nếu đã crawl trang tương tự thì bỏ qua và lấy tiếp, nếu chưa thì crawl rồi lưu vào index và crawled_links."
+  caption="Mỗi vòng lặp lấy URL ưu tiên cao nhất; nếu đã crawl trang có chữ ký tương tự thì giảm độ ưu tiên của link đó và lấy link tiếp theo, nếu chưa thì crawl, tạo chữ ký, đẩy job tạo chỉ mục rồi lưu vào crawled_links."
 />
 
 ### Xử lý trùng lặp
@@ -249,17 +249,17 @@ Mã nguồn đầy đủ: [web_crawler_mapreduce.py](../../solutions/system_desi
 
 Phát hiện nội dung trùng lặp phức tạp hơn. Ta có thể tạo chữ ký dựa trên nội dung trang rồi so sánh hai chữ ký để đo độ tương tự. Một số thuật toán có thể dùng là [chỉ số Jaccard (Jaccard index)](https://en.wikipedia.org/wiki/Jaccard_index) và [độ tương tự cosin (cosine similarity)](https://en.wikipedia.org/wiki/Cosine_similarity).
 
-<RealLife title="Vân tay giấy tờ, không cần đọc từng chữ">
+<RealLife title="So hai bản hợp đồng theo điều khoản">
 
-Công chứng viên so hai bản hợp đồng không cần đọc lại từng chữ — chỉ so vài đặc điểm cố định (số trang, chữ ký, con dấu) để biết hai bản có phải bản giống nhau không. Phát hiện trang trùng lặp trên web dùng nguyên lý tương tự: tạo một "chữ ký" ngắn tóm tắt nội dung trang, hai trang gần giống nhau thì hai chữ ký cũng gần giống nhau, không cần so từng ký tự của toàn bộ trang. → Đây là cách kiểm tra trùng lặp ở quy mô hàng tỷ trang mà vẫn đủ nhanh.
+Chuyên viên pháp chế so hai bản hợp đồng dày không đọc lại từng chữ: họ liệt kê điều khoản mỗi bản rồi xem trùng bao nhiêu phần trăm; trùng 95% thì coi là cùng mẫu. Crawler làm tương tự: tạo chữ ký từ nội dung trang, đo độ tương tự bằng Jaccard hay cosine, vượt ngưỡng thì coi là gần trùng. Hash thông thường không dùng được, vì đổi một chữ là hash đổi hẳn. → Nhờ vậy loại được trang gần trùng ở quy mô hàng tỷ trang.
 
 </RealLife>
 
 <Figure
   added
   svg={svgWebCrawlerVanTay}
-  alt="So sánh vân tay nội dung giữa hai trang gần trùng lặp"
-  caption="Hai trang gần giống nhau tạo ra hai vân tay gần giống nhau; chỉ lệch một vài vị trí (khoảng cách nhỏ) vẫn được tính là gần trùng."
+  alt="So sánh vân tay nội dung 8 bit giữa hai trang gần trùng lặp"
+  caption="Minh hoạ kiểu SimHash (thu gọn còn 8 bit, thực tế thường 64 bit): hai trang gần giống nhau cho hai vân tay chỉ lệch vài bit (khoảng cách Hamming nhỏ, dưới ngưỡng) nên được tính là gần trùng."
 />
 
 ### Xác định khi nào cập nhật kết quả crawl
@@ -268,17 +268,17 @@ Các trang cần được crawl định kỳ để đảm bảo độ tươi m�
 
 Dù không đi sâu vào phân tích số liệu, ta có thể khai phá dữ liệu (data mining) để xác định thời gian trung bình trước khi một trang cụ thể được cập nhật, và dùng thống kê đó để quyết định tần suất crawl lại trang.
 
-<RealLife title="Đi chợ định kỳ bổ sung hàng tươi">
+<RealLife title="Người bán rau nhập hàng theo độ tươi">
 
-Người bán rau ở chợ không nhập hàng mới cho mọi loại theo cùng một lịch — rau lá dễ hỏng thì lấy mỗi sáng, gia vị khô để được lâu thì cả tuần mới lấy một lần. Web crawler làm giống hệt với việc crawl lại: trang tin tức đổi liên tục nên crawl lại mỗi ngày, trang tĩnh ít đổi thì một tuần một lần là đủ để giữ độ tươi mới. → Tần suất crawl lại nên theo tốc độ trang đó thực sự thay đổi, không theo một lịch cố định cho tất cả.
+Người bán rau không nhập mọi mặt hàng theo một lịch: rau lá dễ héo thì lấy mỗi sáng, gia vị khô thì cả tuần mới lấy. Crawler cũng vậy: mặc định crawl lại mỗi trang khoảng một tuần một lần, trang cập nhật thường xuyên hoặc phổ biến thì làm mới dày hơn, dựa trên thống kê trang đó bao lâu mới thay đổi. → Tần suất crawl lại nên bám theo tốc độ thay đổi thật của trang, không dùng một lịch chung.
 
 </RealLife>
 
 Ta cũng có thể chọn hỗ trợ file `Robots.txt`, cho phép quản trị viên trang web (webmaster) kiểm soát tần suất crawl.
 
-<RealLife title="Biển báo giới hạn giờ giao hàng">
+<RealLife title="Biển báo khu vực nội bộ ở chung cư">
 
-Một số khu chung cư treo biển "xe tải chỉ được giao hàng 8h-17h" — tài xế giao hàng vẫn được vào, nhưng phải tuân theo khung giờ chủ nhà quy định, không phải muốn tới lúc nào cũng được. File `robots.txt` đóng vai trò tấm biển đó cho web crawler: quản trị viên trang web ghi rõ crawler được phép hay không được phép ghé những đường dẫn nào. → Crawler lịch sự luôn đọc biển báo này trước khi bước vào.
+Sảnh chung cư treo biển: tầng thượng và phòng kỹ thuật là khu nội bộ, khách không phận sự miễn vào. Người lịch sự tự tránh, dù cửa không khóa. File `robots.txt` là tấm biển cho web crawler: quản trị viên ghi rõ đường dẫn nào được hay không được crawl, có thể kèm gợi ý tần suất ghé. Nó chỉ là lời đề nghị, không chặn được crawler cố tình phớt lờ. → Crawler lịch sự luôn đọc `robots.txt` trước khi crawl một trang web.
 
 </RealLife>
 

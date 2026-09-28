@@ -3,14 +3,15 @@
 
   <line x1="30" y1="180" x2="330" y2="180" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
 
-  <rect x="90" y="30" width="70" height="150" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
-  <text x="125" y="22" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--accent)">Đọc</text>
-  <text x="125" y="105" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">~40.000</text>
-  <text x="125" y="120" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink)">req/giây</text>
+  <rect x="70" y="40" width="70" height="140" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="105" y="30" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--accent)">Đọc</text>
+  <text x="105" y="110" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">~40.000</text>
+  <text x="105" y="125" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink)">req/giây</text>
 
-  <rect x="220" y="163" width="70" height="17" rx="6" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
-  <text x="255" y="155" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink-2)">Ghi</text>
-  <text x="255" y="205" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">~400/giây</text>
+  <rect x="200" y="175" width="70" height="5" rx="2" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="235" y="166" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink-2)">Ghi</text>
+  <text x="235" y="200" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">~400/giây</text>
 
-  <text x="180" y="30" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">Tỉ lệ đọc : ghi ≈ 100 : 1</text>
+  <text x="255" y="66" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">Đọc : ghi ≈ 100 : 1</text>
+  <text x="255" y="86" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">(cột không theo tỉ lệ)</text>
 </svg>

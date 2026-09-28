@@ -11,7 +11,7 @@ source:
   license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
   translatedAt: "2026-09-28"
   snapshot: "system-design/03-bai-tap/06-sales-rank.md"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 15
 ---
 
@@ -211,9 +211,9 @@ class SalesRanker(MRJob):
         ]
 ```
 
-<RealLife title="Cân đo rồi mới xếp giá">
+<RealLife title="Kiểm phiếu bầu ban quản trị chung cư">
 
-Một vựa trái cây cuối ngày không xếp giá ngay lúc cân — họ cân hết các bao trước, ghi tổng khối lượng từng loại vào sổ, rồi mới sắp theo thứ tự nặng nhẹ lên kệ. Job MapReduce của Amazon làm hai bước tách biệt y vậy: bước 1 cộng dồn số lượng theo `(category, product_id)`, bước 2 mới sắp xếp phân tán theo số lượng đó. → Tách "tính tổng" và "sắp xếp" thành hai bước riêng giúp mỗi bước đơn giản, dễ chạy song song.
+Chung cư bầu ban quản trị cho nhiều chức danh cùng lúc. Tổ kiểm phiếu không vừa đếm vừa xếp: bước 1 cộng số phiếu theo từng cặp (chức danh, ứng viên); bước 2 mới xếp thứ tự ứng viên theo tổng phiếu trong từng chức danh. Job MapReduce của Amazon tách hai bước y vậy: bước 1 cộng số lượng bán theo `(category, product_id)`, bước 2 sắp xếp phân tán theo `(category, số lượng)`. → Tách "tính tổng" và "sắp xếp" giúp mỗi bước đơn giản, dễ chạy song song.
 
 </RealLife>
 
@@ -221,7 +221,7 @@ Một vựa trái cây cuối ngày không xếp giá ngay lúc cân — họ c�
   added
   svg={svgSalesRankMapreduce}
   alt="Luồng MapReduce hai bước: gộp số lượng rồi mới sắp xếp phân tán"
-  caption="Bước 1 gộp và cộng dồn số lượng bán theo danh mục/sản phẩm; bước 2 sắp xếp phân tán kết quả đó để có bảng xếp hạng."
+  caption="Bước 1: mapper phát ra số lượng theo (danh mục, sản phẩm) cho các giao dịch trong tuần qua, reducer cộng dồn; bước 2: đổi key thành (danh mục, số lượng) để shuffle/sort sắp xếp phân tán, cho ra bảng sales_rank theo từng danh mục."
 />
 
 Kết quả sẽ là danh sách đã sắp xếp sau đây, mà ta có thể chèn vào bảng `sales_rank`:
@@ -320,9 +320,9 @@ Ta có thể chỉ muốn lưu dữ liệu trong một khoảng thời gian gi�
 
 Để xử lý 40,000 yêu cầu đọc mỗi giây *trung bình* (cao hơn vào giờ cao điểm), lưu lượng cho nội dung phổ biến (và xếp hạng bán chạy của chúng) nên được xử lý bởi **Memory Cache** thay vì cơ sở dữ liệu. **Memory Cache** cũng hữu ích để xử lý lưu lượng phân bố không đều và các đợt tăng đột biến (spike). Với lượng đọc lớn như vậy, **SQL Read Replicas** có thể không kham nổi các lần cache miss. Nhiều khả năng ta sẽ cần áp dụng thêm các mẫu mở rộng SQL.
 
-<RealLife title="Kệ hàng bán chạy bày sẵn đầu chợ">
+<RealLife title="Tờ kết quả xổ số dán trước sạp">
 
-Hàng bán chạy nhất được bày sẵn ngay ngoài kệ đầu chợ để khách thấy là mua luôn, không cần chủ tiệm chạy vào kho lục lại mỗi lần có người hỏi. Vì bảng sales rank chỉ đổi mỗi giờ nhưng bị đọc 40.000 lần mỗi giây, đặt kết quả sẵn trong Memory Cache giúp phần lớn yêu cầu đọc không phải chạm tới cơ sở dữ liệu gốc. → Dữ liệu đổi chậm, đọc cực nhiều — cache gần như luôn trúng (cache hit).
+Kết quả xổ số mỗi ngày chỉ đổi một lần, nhưng cả xóm hỏi suốt. Sạp vé số chép sẵn một tờ dán trước sạp; ai hỏi cũng nhìn tờ đó, khỏi gọi lên công ty xổ số, có kết quả mới thì thay tờ. Bảng `sales_rank` cũng chỉ đổi mỗi giờ nhưng bị đọc khoảng 40.000 lần mỗi giây: giữ kết quả trong Memory Cache, phần lớn lượt đọc không phải chạm tới SQL. → Dữ liệu đổi chậm mà đọc cực nhiều thì tỉ lệ cache hit rất cao.
 
 </RealLife>
 
@@ -330,7 +330,7 @@ Hàng bán chạy nhất được bày sẵn ngay ngoài kệ đầu chợ để
   added
   svg={svgSalesRankDocGhi}
   alt="Tỉ lệ đọc so với ghi lệch 100:1"
-  caption="Đọc gấp khoảng 100 lần ghi — lý do chính để đặt Memory Cache trước cơ sở dữ liệu thay vì mở rộng SQL để chịu tải đọc."
+  caption="Đọc gấp khoảng 100 lần ghi (40.000 so với 400 mỗi giây, hình không theo tỉ lệ) — lý do chính để đặt Memory Cache trước cơ sở dữ liệu; phần cache miss vẫn đổ xuống SQL nên có thể cần thêm các mẫu mở rộng SQL."
 />
 
 400 thao tác ghi mỗi giây *trung bình* (cao hơn vào giờ cao điểm) có thể là quá sức với một **SQL Write Master-Slave** duy nhất, điều này cũng cho thấy cần thêm các kỹ thuật mở rộng.

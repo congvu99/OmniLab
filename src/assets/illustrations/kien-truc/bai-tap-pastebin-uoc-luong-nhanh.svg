@@ -1,26 +1,35 @@
 <svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-btp-uocluong-title" xmlns="http://www.w3.org/2000/svg">
-  <title id="svg-btp-uocluong-title">Ước lượng nhanh: từ số paste mỗi tháng ra số lượt ghi mỗi giây</title>
+  <title id="svg-btp-uocluong-title">Ước lượng nhanh: từ 10 triệu paste mỗi tháng ra dung lượng lưu trữ và số lượt ghi, đọc mỗi giây</title>
   <defs>
     <marker id="svg-btp-uocluong-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
     </marker>
   </defs>
 
-  <rect x="40" y="8" width="280" height="32" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
-  <text x="180" y="30" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">10 triệu paste / tháng</text>
+  <rect x="90" y="8" width="180" height="32" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="180" y="29" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">10 triệu paste / tháng</text>
 
-  <path d="M180 40 V62" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-btp-uocluong-arrow)" />
+  <path d="M150 40 L100 72" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-btp-uocluong-arrow)" />
+  <path d="M210 40 L260 72" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-btp-uocluong-arrow)" />
 
-  <rect x="20" y="62" width="320" height="32" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
-  <text x="180" y="84" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">× 1,27 KB/paste ≈ 12,7 GB/tháng</text>
+  <rect x="10" y="74" width="170" height="32" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="95" y="95" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">× 1,27 KB mỗi paste</text>
 
-  <path d="M180 94 V116" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-btp-uocluong-arrow)" />
+  <rect x="190" y="74" width="160" height="32" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="270" y="95" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">÷ 2,5 triệu giây / tháng</text>
 
-  <rect x="40" y="116" width="280" height="32" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
-  <text x="180" y="138" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">÷ 2,5 triệu giây / tháng</text>
+  <path d="M95 106 V126" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-btp-uocluong-arrow)" />
+  <path d="M270 106 V126" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-btp-uocluong-arrow)" />
 
-  <path d="M180 148 V170" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-btp-uocluong-arrow)" />
+  <rect x="10" y="128" width="170" height="32" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="95" y="149" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">≈ 12,7 GB / tháng</text>
 
-  <rect x="90" y="170" width="180" height="32" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
-  <text x="180" y="192" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">≈ 4 lượt ghi/giây</text>
+  <rect x="190" y="128" width="160" height="32" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <text x="270" y="149" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--ink)">≈ 4 lượt ghi / giây</text>
+
+  <path d="M95 160 V180" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-btp-uocluong-arrow)" />
+  <path d="M270 160 V180" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-btp-uocluong-arrow)" />
+
+  <text x="95" y="200" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">× 36 tháng ≈ 450 GB</text>
+  <text x="270" y="200" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">× 10 ≈ 40 lượt đọc / giây</text>
 </svg>

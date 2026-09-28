@@ -1,5 +1,5 @@
-<svg viewBox="0 0 360 240" width="100%" role="img" aria-labelledby="svg-query-cache-lru-title" xmlns="http://www.w3.org/2000/svg">
-  <title id="svg-query-cache-lru-title">Danh sách liên kết đôi giữ thứ tự LRU, bảng băm tra cứu node tức thời</title>
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-query-cache-lru-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-query-cache-lru-title">Danh sách liên kết đôi giữ thứ tự LRU: mục trúng được đưa lên đầu, mục cuối bị loại khi đầy, bảng băm tra node trong O(1)</title>
   <defs>
     <marker id="svg-qcl-arrow-ink2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
@@ -9,23 +9,24 @@
     </marker>
   </defs>
 
-  <text x="60" y="26" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--accent)">Đầu (mới nhất)</text>
-  <text x="300" y="26" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--danger)">Cuối (bị xoá)</text>
+  <text x="60" y="26" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--accent)">Đầu: mới dùng</text>
+  <text x="300" y="26" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--danger)">Cuối: loại khi đầy</text>
 
   <rect x="30" y="40" width="60" height="40" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
   <rect x="150" y="40" width="60" height="40" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
   <rect x="270" y="40" width="60" height="40" rx="8" fill="var(--surface-2)" stroke="var(--danger)" stroke-width="2" stroke-dasharray="4 4" />
 
-  <path d="M90 60 H150 M210 60 H270" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-qcl-arrow-ink2)" />
+  <path d="M96 60 H144" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-start="url(#svg-qcl-arrow-ink2)" marker-end="url(#svg-qcl-arrow-ink2)" />
+  <path d="M216 60 H264" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-start="url(#svg-qcl-arrow-ink2)" marker-end="url(#svg-qcl-arrow-ink2)" />
 
-  <path class="svg-qcl-mtf" d="M300 80 C 300 130, 60 130, 60 80" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-qcl-arrow-accent)" />
-  <text x="180" y="122" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--accent)">trúng: đưa lên đầu</text>
+  <path class="svg-qcl-mtf" d="M165 80 C 165 118, 60 118, 60 86" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-qcl-arrow-accent)" />
+  <text x="100" y="136" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--accent)">trúng: đưa lên đầu</text>
 
-  <rect x="130" y="160" width="100" height="40" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
-  <text x="180" y="182" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink)">Bảng băm</text>
-  <text x="180" y="196" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="10" fill="var(--ink-2)">query → node</text>
+  <rect x="150" y="160" width="110" height="44" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="205" y="179" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Bảng băm</text>
+  <text x="205" y="195" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">query → node, O(1)</text>
 
-  <path d="M180 160 V90" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 4" marker-end="url(#svg-qcl-arrow-ink2)" />
+  <path d="M200 160 V88" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 4" marker-end="url(#svg-qcl-arrow-ink2)" />
 
   <style>
     @media (prefers-reduced-motion: no-preference) {

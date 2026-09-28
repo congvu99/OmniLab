@@ -11,7 +11,7 @@ source:
   license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
   translatedAt: "2026-09-28"
   snapshot: "system-design/03-bai-tap/05-mint.md"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 18
 ---
 
@@ -57,7 +57,7 @@ Vì không có người phỏng vấn để trả lời các câu hỏi làm rõ
 
 <RealLife title="Sổ thu chi tự động">
 
-Nhiều gia đình có thói quen ghi sổ thu chi: cuối ngày chép lại từng khoản đã tiêu, xếp vào mục ăn uống, xăng xe, nhà ở, rồi so với hạn mức đã đặt. Mint.com làm đúng việc đó nhưng tự động: mỗi ngày tự vào tài khoản ngân hàng lấy giao dịch mới, tự xếp mục, rồi báo khi sắp vượt hạn mức — người dùng không cần cầm bút. → Đó là ba use case cốt lõi của bài: trích xuất, phân loại, và đề xuất ngân sách.
+Nhiều gia đình ghi sổ thu chi: cuối ngày chép từng khoản đã tiêu, xếp vào mục ăn uống, xăng xe, nhà ở, rồi so với hạn mức. Mint.com tự động hoá việc đó: người dùng kết nối tài khoản ngân hàng, dịch vụ mỗi ngày tự lấy giao dịch mới, tự xếp mục, rồi báo khi sắp chạm hoặc vượt ngân sách. → Đó là các use case cốt lõi: kết nối tài khoản, trích xuất và phân loại giao dịch, đề xuất ngân sách.
 
 </RealLife>
 
@@ -189,7 +189,7 @@ Mang đồ ra tiệm giặt ủi, bạn nhận một phiếu hẹn và ra về n
   added
   svg={svgMintHangDoi}
   alt="Luồng xử lý bất đồng bộ qua hàng đợi của Accounts API"
-  caption="Accounts API trả lời ngay cho client, còn việc trích xuất giao dịch thật được đẩy vào hàng đợi để worker xử lý sau."
+  caption="Accounts API đặt job vào hàng đợi rồi trả lời client ngay; Transaction Extraction Service (worker) lấy job ra, trích xuất và phân loại giao dịch, cập nhật DB rồi báo người dùng qua Notification Service."
 />
 
 Bảng `transactions` có thể có cấu trúc như sau:
@@ -263,7 +263,7 @@ class Categorizer(object):
 
 <RealLife title="Sổ tay phân loại do cả nhà cùng sửa">
 
-Một quán ăn gia đình ghi sẵn trong sổ: "Bách Hoá Xanh → thực phẩm", "Điện máy Xanh → đồ gia dụng" để khỏi nghĩ lại mỗi lần. Gặp cửa hàng lạ, cả nhà xếp tạm, ai xếp giống nhau nhiều nhất thì lần sau dùng luôn, ghi thẳng vào sổ. Category Service hoạt động y hệt: tra bảng ánh xạ có sẵn trước, gặp người bán mới thì học theo lựa chọn phổ biến nhất rồi ghi nhớ lại. → Bảng ánh xạ tự lớn dần theo thời gian.
+Một gia đình ghi sẵn trong sổ: "Cây xăng số 5 → xăng xe", "Tạp hoá Cô Ba → ăn uống". Gặp cửa hàng lạ, mỗi người tự xếp; cách được chọn nhiều nhất thì ghi vào sổ. Category Service làm y hệt: tra bảng người bán → danh mục trước; người bán chưa có thì lấy lựa chọn ghi đè phổ biến nhất rồi ghi vào bảng — chỉ khác là gom từ rất nhiều người dùng. → Bảng ánh xạ tự lớn dần theo thời gian.
 
 </RealLife>
 
@@ -318,9 +318,9 @@ Một phương án khác là chạy các job **MapReduce** trên các file giao 
 
 Chạy phân tích trên các file giao dịch có thể giảm đáng kể tải cho cơ sở dữ liệu.
 
-<RealLife title="Kế toán tổng kết cuối tháng">
+<RealLife title="Cộng sổ một lần cuối ngày">
 
-Một cửa hàng nhỏ không cộng doanh thu ngay sau mỗi lần bán — cuối tháng mới gom hoá đơn lại, chia theo từng loại hàng rồi cộng tổng một lần, chậm hơn realtime nhưng nhẹ hơn nhiều so với cộng lại cả sổ sách sau mỗi giao dịch. Job MapReduce tính `monthly_spending` cũng vậy: gom file giao dịch thô theo lô, chạy định kỳ thay vì cập nhật tức thời. → Đây là đánh đổi kinh điển giữa xử lý theo lô (batch) và thời gian thực (realtime).
+Cửa hàng nhỏ không cộng lại cả sổ sau mỗi lần bán — cuối ngày mới gom hoá đơn, chia theo loại hàng rồi cộng vào tổng tháng. Chậm hơn cộng tức thời, nhưng nhẹ việc hơn nhiều. Job MapReduce cũng vậy: chạy theo lô trên file giao dịch thô để phân loại và tính chi tiêu tháng theo danh mục, thay vì bắt SQL Database cộng lại sau từng giao dịch, nhờ đó giảm tải cho cơ sở dữ liệu. → Đây là đánh đổi kinh điển giữa batch và realtime.
 
 </RealLife>
 

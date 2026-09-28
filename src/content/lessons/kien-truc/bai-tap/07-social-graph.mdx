@@ -11,7 +11,7 @@ source:
   license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
   translatedAt: "2026-09-28"
   snapshot: "system-design/03-bai-tap/07-social-graph.md"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 17
 ---
 
@@ -323,7 +323,7 @@ Dưới đây là các tối ưu thêm:
 
 <RealLife title="Đường đi hay hỏi thì thuộc lòng sẵn">
 
-Nhân viên hướng dẫn ở hội chợ triển lãm không cần dò bản đồ lại mỗi lần có khách hỏi đường tới gian hàng nổi tiếng — hỏi hoài nên họ đã thuộc lòng đường đi ngắn nhất. Với những cặp người dùng có nhiều lượt tìm kiếm chung, hệ thống cũng lưu sẵn kết quả BFS đã tính vào Memory Cache, lần hỏi sau trả ngay không cần duyệt đồ thị lại. → Nhớ sẵn cho câu hỏi hay lặp lại, chỉ tính mới khi gặp cặp hiếm gặp.
+Nhân viên hướng dẫn ở hội chợ bị hỏi đường tới gian hàng nổi tiếng suốt ngày, nên thuộc lòng đường ngắn nhất, khỏi dò bản đồ lại. Hệ thống cũng lưu kết quả BFS toàn phần hoặc một phần vào Memory Cache cho lượt tìm hay lặp. Giới hạn: gian hàng dời chỗ thì đường thuộc lòng thành sai — kết bạn hay hủy kết bạn cũng làm đường đã cache lỗi thời. → Nhớ sẵn cho câu hỏi hay lặp, chỉ tính mới khi gặp cặp hiếm.
 
 </RealLife>
 
@@ -334,7 +334,7 @@ Nhân viên hướng dẫn ở hội chợ triển lãm không cần dò bản �
 
 <RealLife title="Hỏi cùng lúc hai đầu, gặp nhau giữa đường">
 
-Tìm người quen chung giữa hai nhóm bạn xa lạ sẽ nhanh hơn nhiều nếu cả hai phía cùng hỏi thăm đồng thời, thay vì một phía hỏi dần tới khi chạm phía kia. Bidirectional BFS áp dụng đúng ý này: chạy BFS từ người tìm và người được tìm cùng lúc, dừng ngay khi hai vòng quen biết chạm nhau ở giữa. → Mỗi phía chỉ dò một nửa quãng đường, giảm mạnh số node phải mở rộng so với dò một chiều.
+Tìm người quen chung giữa hai nhóm bạn xa lạ sẽ nhanh hơn nếu cả hai phía cùng hỏi thăm, thay vì một phía hỏi dần tới phía kia. BFS hai chiều làm đúng vậy: chạy BFS từ nguồn và từ đích cùng lúc, dừng khi hai vòng chạm nhau. Mỗi phía chỉ sâu một nửa: với 50 bạn/người, cách 4 bậc, cỡ 2 × 50² = 5.000 node thay vì 50⁴ ≈ 6,25 triệu. → Số node phải mở rộng giảm theo cấp số mũ, không chỉ một nửa.
 
 </RealLife>
 
@@ -342,7 +342,7 @@ Tìm người quen chung giữa hai nhóm bạn xa lạ sẽ nhanh hơn nhiều 
   added
   svg={svgSocialGraphBidirectional}
   alt="So sánh vùng phải duyệt giữa BFS một chiều và BFS hai chiều"
-  caption="BFS hai chiều dò từ cả nguồn lẫn đích, gặp nhau ở giữa — vùng phải duyệt nhỏ hơn nhiều so với dò một chiều từ đầu tới cuối."
+  caption="BFS một chiều phải mở rộng tới độ sâu d (khoảng b^d node, b là số bạn trung bình); BFS hai chiều dò từ cả nguồn lẫn đích, mỗi phía chỉ sâu d/2 rồi gặp nhau ở giữa (khoảng 2 × b^(d/2) node). Hình phẳng chỉ minh hoạ — chênh lệch thật là theo hàm mũ."
 />
 
 * Bắt đầu BFS từ những người có số lượng bạn bè lớn, vì họ có nhiều khả năng rút ngắn [số bậc phân cách (degrees of separation)](https://en.wikipedia.org/wiki/Six_degrees_of_separation) giữa người dùng hiện tại và người được tìm

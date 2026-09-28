@@ -1,5 +1,5 @@
 <svg viewBox="0 0 360 300" width="100%" role="img" aria-labelledby="svg-btp-shortlink-title" xmlns="http://www.w3.org/2000/svg">
-  <title id="svg-btp-shortlink-title">Luồng sinh shortlink: băm, mã hoá base62, kiểm tra trùng</title>
+  <title id="svg-btp-shortlink-title">Luồng sinh shortlink: MD5 của ip + timestamp, mã hoá base62, lấy 7 ký tự, kiểm tra trùng rồi mới lưu</title>
   <defs>
     <marker id="svg-btp-shortlink-arrow-ink2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
@@ -10,17 +10,17 @@
   </defs>
 
   <rect x="110" y="10" width="140" height="34" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
-  <text x="180" y="32" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Nội dung paste</text>
+  <text x="180" y="32" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">ip + timestamp</text>
 
   <path d="M180 44 V70" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-btp-shortlink-arrow-ink2)" />
 
   <rect x="85" y="70" width="190" height="34" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
-  <text x="180" y="92" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Băm (MD5) + Base62</text>
+  <text x="180" y="92" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">MD5 → mã hoá Base62</text>
 
   <path d="M180 104 V130" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-btp-shortlink-arrow-ink2)" />
 
   <rect x="95" y="130" width="170" height="34" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
-  <text x="180" y="152" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">shortlink 7 ký tự</text>
+  <text x="180" y="152" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Lấy 7 ký tự đầu</text>
 
   <path d="M180 164 V190" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-btp-shortlink-arrow-ink2)" />
 
@@ -33,6 +33,7 @@
   <rect x="75" y="250" width="210" height="34" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
   <text x="180" y="272" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Lưu SQL + Object Store</text>
 
-  <path d="M95 207 C 30 207, 30 87, 85 87" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-btp-shortlink-arrow-accent)" />
-  <text x="42" y="151" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--accent)">có</text>
+  <path d="M95 207 C 30 207, 30 27, 110 27" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-btp-shortlink-arrow-accent)" />
+  <text x="22" y="150" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--accent)">trùng</text>
+  <text x="22" y="166" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--accent)">sinh lại</text>
 </svg>
