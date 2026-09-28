@@ -1,0 +1,31 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-kiem-tra-mot-nguon-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-kiem-tra-mot-nguon-title">Kiểm tra một nguồn trước khi tin: có bán gì, hứa chắc chắn, hay có dẫn luật và số liệu</title>
+  <defs>
+    <marker id="svg-ktmn-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
+    </marker>
+  </defs>
+
+  <rect x="110" y="14" width="140" height="40" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="180" y="38" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">Đọc một nguồn</text>
+
+  <path d="M180 54 V72" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-ktmn-arrow)" />
+
+  <rect x="60" y="74" width="240" height="56" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="180" y="99" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">
+    <tspan x="180" dy="0">Có bán gì, hứa chắc chắn?</tspan>
+    <tspan x="180" dy="16">Có dẫn luật, số liệu?</tspan>
+  </text>
+
+  <path d="M140 130 V148 H95 V160" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#svg-ktmn-arrow)" />
+  <path d="M220 130 V148 H265 V160" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#svg-ktmn-arrow)" />
+
+  <text x="70" y="145" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--danger)">có dấu hiệu</text>
+  <text x="290" y="145" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--accent)">minh bạch</text>
+
+  <rect x="20" y="162" width="150" height="46" rx="10" fill="color-mix(in srgb, var(--danger) 12%, transparent)" stroke="var(--danger)" stroke-width="2.5" />
+  <text x="95" y="190" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--danger)">Cẩn trọng</text>
+
+  <rect x="190" y="162" width="150" height="46" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <text x="265" y="190" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--accent)">Dùng tham khảo</text>
+</svg>

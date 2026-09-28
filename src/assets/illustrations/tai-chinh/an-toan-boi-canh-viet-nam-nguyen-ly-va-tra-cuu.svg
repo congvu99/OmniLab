@@ -1,0 +1,34 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-nguyen-ly-tra-cuu-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-nguyen-ly-tra-cuu-title">Học nguyên lý chung rồi tra cứu điều kiện thật tại nguồn chính thức trước khi áp dụng</title>
+  <defs>
+    <marker id="svg-nltc-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
+    </marker>
+  </defs>
+
+  <rect x="8" y="70" width="104" height="80" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="60" y="105" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--ink)">
+    <tspan x="60" dy="0">Nguyên lý</tspan>
+    <tspan x="60" dy="16">chung</tspan>
+  </text>
+
+  <path d="M114 110 H140" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-nltc-arrow)" />
+
+  <rect x="142" y="60" width="104" height="100" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <text x="194" y="98" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--accent)">
+    <tspan x="194" dy="0">Tra cứu nguồn</tspan>
+    <tspan x="194" dy="16">chính thức</tspan>
+  </text>
+  <text x="194" y="140" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">luật, số liệu</text>
+
+  <path d="M248 110 H274" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-nltc-arrow)" />
+
+  <rect x="276" y="70" width="76" height="80" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="314" y="98" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--ink)">
+    <tspan x="314" dy="0">Áp dụng</tspan>
+    <tspan x="314" dy="16">trường hợp</tspan>
+    <tspan x="314" dy="16">của bạn</tspan>
+  </text>
+
+  <text x="194" y="188" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">có thể thay đổi theo thời gian</text>
+</svg>

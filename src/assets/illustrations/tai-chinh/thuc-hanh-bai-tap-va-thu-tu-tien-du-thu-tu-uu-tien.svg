@@ -1,0 +1,31 @@
+<svg viewBox="0 0 360 300" width="100%" role="img" aria-labelledby="svg-thu-tu-uu-tien-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-thu-tu-uu-tien-title">Thứ tự ưu tiên dùng tiền dư: thiết yếu, bộ đệm nhỏ, nợ chi phí cao, dự phòng, rồi mục tiêu dài hạn</title>
+  <defs>
+    <marker id="svg-ttud-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
+    </marker>
+  </defs>
+
+  <rect x="20" y="10" width="320" height="44" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <text x="34" y="37" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--accent)">① Thiết yếu &amp; nghĩa vụ đến hạn</text>
+
+  <path d="M180 54 V66" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-ttud-arrow)" />
+
+  <rect x="20" y="68" width="320" height="44" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="34" y="95" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">② Bộ đệm nhỏ</text>
+
+  <path d="M180 112 V124" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-ttud-arrow)" />
+
+  <rect x="20" y="126" width="320" height="44" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="34" y="153" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">③ Nợ chi phí cao</text>
+
+  <path d="M180 170 V182" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-ttud-arrow)" />
+
+  <rect x="20" y="184" width="320" height="44" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="34" y="211" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">④ Dự phòng phù hợp</text>
+
+  <path d="M180 228 V240" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-ttud-arrow)" />
+
+  <rect x="20" y="242" width="320" height="44" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="34" y="269" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">⑤ Mục tiêu dài hạn</text>
+</svg>

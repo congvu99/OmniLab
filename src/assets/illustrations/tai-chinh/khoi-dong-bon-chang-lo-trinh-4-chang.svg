@@ -1,0 +1,26 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-bon-chang-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-bon-chang-title">Bốn chặng học nối tiếp nhau: kiểm soát tiền, bảo vệ và đầu tư, ra quyết định, rồi mở rộng theo nhu cầu</title>
+
+  <line x1="15" y1="110" x2="345" y2="110" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+  <rect x="30" y="104" width="200" height="12" rx="6" fill="color-mix(in srgb, var(--accent) 12%, transparent)" />
+  <line x1="230" y1="110" x2="330" y2="110" stroke="var(--ink-2)" stroke-width="2" stroke-dasharray="4 4" stroke-linecap="round" />
+
+  <circle cx="30" cy="110" r="6" fill="var(--accent)" />
+  <text x="30" y="88" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">Chặng 1</text>
+  <text x="30" y="140" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">Tuần 1-4</text>
+
+  <circle cx="130" cy="110" r="6" fill="var(--accent)" />
+  <text x="130" y="88" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">Chặng 2</text>
+  <text x="130" y="140" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">Tuần 5-8</text>
+
+  <circle cx="230" cy="110" r="6" fill="var(--accent)" />
+  <text x="230" y="88" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">Chặng 3</text>
+  <text x="230" y="140" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">Tuần 9-12</text>
+
+  <circle cx="330" cy="110" r="6" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="330" y="88" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">Chặng 4</text>
+  <text x="330" y="140" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">
+    <tspan x="330" dy="0">Sau</tspan>
+    <tspan x="330" dy="14">cốt lõi</tspan>
+  </text>
+</svg>

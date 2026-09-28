@@ -1,0 +1,27 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-ba-cach-to-chuc-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-ba-cach-to-chuc-title">Ba cách tổ chức lộ trình học: theo giáo trình, theo sản phẩm, theo quyết định</title>
+
+  <rect x="8" y="40" width="108" height="150" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="126" y="40" width="108" height="150" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="244" y="40" width="108" height="150" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+
+  <text x="62" y="64" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">Theo giáo trình</text>
+  <text x="62" y="100" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">
+    <tspan x="62" dy="0">dễ hệ thống,</tspan>
+    <tspan x="62" dy="16">xa nhu cầu</tspan>
+  </text>
+
+  <text x="180" y="64" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">Theo sản phẩm</text>
+  <text x="180" y="100" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">
+    <tspan x="180" dy="0">sát giao dịch,</tspan>
+    <tspan x="180" dy="16">dễ bị dẫn dắt</tspan>
+  </text>
+
+  <text x="298" y="64" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--accent)">Theo quyết định</text>
+  <text x="298" y="100" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">
+    <tspan x="298" dy="0">gần bài tập</tspan>
+    <tspan x="298" dy="16">thực hành</tspan>
+  </text>
+
+  <text x="298" y="170" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--accent)">✓ Sổ tay chọn</text>
+</svg>
