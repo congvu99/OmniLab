@@ -35,13 +35,15 @@
 
 	# --- Cache headers ---
 	# Astro fingerprints /_astro/* assets by content hash, so they are safe to
-	# cache forever. HTML must always be revalidated (no-cache != no-store: the
-	# browser still caches but must check freshness) so deploys show up.
+	# cache forever. Everything else (clean-URL HTML, JSON indexes, manifest,
+	# icons) must be revalidated (no-cache != no-store: the browser still caches
+	# but checks freshness), otherwise a cached page can reference /_astro files
+	# that a later deploy removed.
 	@astroAssets path /_astro/*
 	header @astroAssets Cache-Control "public, max-age=31536000, immutable"
 
-	@html path *.html /
-	header @html Cache-Control "no-cache"
+	@notHashed not path /_astro/*
+	header @notHashed Cache-Control "no-cache"
 
 	# --- Security headers (all responses) ---
 	header {
