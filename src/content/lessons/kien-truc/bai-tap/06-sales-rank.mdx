@@ -17,6 +17,8 @@ readingMinutes: 15
 
 import img_sales_rank_basic from '../../../../assets/legacy/system-design/sales_rank_basic.png';
 import img_sales_rank from '../../../../assets/legacy/system-design/sales_rank.png';
+import svgSalesRankMapreduce from '../../../../assets/illustrations/kien-truc/bai-tap-sales-rank-luong-mapreduce.svg?raw';
+import svgSalesRankDocGhi from '../../../../assets/illustrations/kien-truc/bai-tap-sales-rank-doc-ghi-lech-100-1.svg?raw';
 
 
 # Thiết kế tính năng xếp hạng bán chạy theo danh mục của Amazon (sales rank)
@@ -40,6 +42,12 @@ Vì không có người phỏng vấn để trả lời các câu hỏi làm rõ
 * **Dịch vụ (Service)** tính toán các sản phẩm phổ biến nhất trong tuần qua theo từng danh mục
 * **Người dùng (User)** xem các sản phẩm phổ biến nhất trong tuần qua theo từng danh mục
 * **Dịch vụ** có tính sẵn sàng cao (high availability)
+
+<RealLife title="Bảng xếp hạng bán chạy ở chợ">
+
+Ở chợ, cô bán trái cây mỗi tối ngồi đếm sổ xem hôm nay bán chạy nhất là mặt hàng gì, để mai lấy thêm hàng đó. Amazon làm việc tương tự nhưng ở quy mô hàng triệu sản phẩm: tổng hợp số lượng bán theo từng danh mục trong tuần qua, xếp hạng, rồi cập nhật mỗi giờ để khách xem "đang bán chạy nhất". → Đó là toàn bộ mục tiêu của tính năng sales rank.
+
+</RealLife>
 
 ##### Ngoài phạm vi
 
@@ -88,6 +96,12 @@ Bảng quy đổi tiện dụng:
 * 1 yêu cầu mỗi giây = 2.5 triệu yêu cầu mỗi tháng
 * 40 yêu cầu mỗi giây = 100 triệu yêu cầu mỗi tháng
 * 400 yêu cầu mỗi giây = 1 tỷ yêu cầu mỗi tháng
+
+<RealLife title="Giờ mới xếp lại một lần, không phải tức khắc">
+
+Bảng giá niêm yết ở siêu thị không đổi theo từng giây có khách mua — nhân viên chỉ in lại sau mỗi đợt kiểm kê. Sales rank cũng chấp nhận độ trễ tương tự: dù có 40.000 lượt đọc mỗi giây, dữ liệu xếp hạng chỉ cần tính lại mỗi giờ một lần, không phải sau từng giao dịch. → Đọc gấp trăm lần ghi, cộng dữ liệu chỉ cần "gần đúng theo giờ" — lý tưởng để dồn tính toán vào job chạy theo lô.
+
+</RealLife>
 
 ### Bước 2: Tạo thiết kế tổng quan (high level design)
 
@@ -197,6 +211,19 @@ class SalesRanker(MRJob):
         ]
 ```
 
+<RealLife title="Cân đo rồi mới xếp giá">
+
+Một vựa trái cây cuối ngày không xếp giá ngay lúc cân — họ cân hết các bao trước, ghi tổng khối lượng từng loại vào sổ, rồi mới sắp theo thứ tự nặng nhẹ lên kệ. Job MapReduce của Amazon làm hai bước tách biệt y vậy: bước 1 cộng dồn số lượng theo `(category, product_id)`, bước 2 mới sắp xếp phân tán theo số lượng đó. → Tách "tính tổng" và "sắp xếp" thành hai bước riêng giúp mỗi bước đơn giản, dễ chạy song song.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgSalesRankMapreduce}
+  alt="Luồng MapReduce hai bước: gộp số lượng rồi mới sắp xếp phân tán"
+  caption="Bước 1 gộp và cộng dồn số lượng bán theo danh mục/sản phẩm; bước 2 sắp xếp phân tán kết quả đó để có bảng xếp hạng."
+/>
+
 Kết quả sẽ là danh sách đã sắp xếp sau đây, mà ta có thể chèn vào bảng `sales_rank`:
 
 ```
@@ -292,6 +319,19 @@ Ta sẽ bổ sung một số thành phần để hoàn thiện thiết kế và 
 Ta có thể chỉ muốn lưu dữ liệu trong một khoảng thời gian giới hạn trong cơ sở dữ liệu, phần còn lại lưu trong data warehouse hoặc trong **Object Store**. Một **Object Store** như Amazon S3 có thể dễ dàng đáp ứng ràng buộc 40 GB nội dung mới mỗi tháng.
 
 Để xử lý 40,000 yêu cầu đọc mỗi giây *trung bình* (cao hơn vào giờ cao điểm), lưu lượng cho nội dung phổ biến (và xếp hạng bán chạy của chúng) nên được xử lý bởi **Memory Cache** thay vì cơ sở dữ liệu. **Memory Cache** cũng hữu ích để xử lý lưu lượng phân bố không đều và các đợt tăng đột biến (spike). Với lượng đọc lớn như vậy, **SQL Read Replicas** có thể không kham nổi các lần cache miss. Nhiều khả năng ta sẽ cần áp dụng thêm các mẫu mở rộng SQL.
+
+<RealLife title="Kệ hàng bán chạy bày sẵn đầu chợ">
+
+Hàng bán chạy nhất được bày sẵn ngay ngoài kệ đầu chợ để khách thấy là mua luôn, không cần chủ tiệm chạy vào kho lục lại mỗi lần có người hỏi. Vì bảng sales rank chỉ đổi mỗi giờ nhưng bị đọc 40.000 lần mỗi giây, đặt kết quả sẵn trong Memory Cache giúp phần lớn yêu cầu đọc không phải chạm tới cơ sở dữ liệu gốc. → Dữ liệu đổi chậm, đọc cực nhiều — cache gần như luôn trúng (cache hit).
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgSalesRankDocGhi}
+  alt="Tỉ lệ đọc so với ghi lệch 100:1"
+  caption="Đọc gấp khoảng 100 lần ghi — lý do chính để đặt Memory Cache trước cơ sở dữ liệu thay vì mở rộng SQL để chịu tải đọc."
+/>
 
 400 thao tác ghi mỗi giây *trung bình* (cao hơn vào giờ cao điểm) có thể là quá sức với một **SQL Write Master-Slave** duy nhất, điều này cũng cho thấy cần thêm các kỹ thuật mở rộng.
 

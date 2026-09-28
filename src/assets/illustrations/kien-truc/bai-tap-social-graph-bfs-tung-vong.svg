@@ -1,0 +1,23 @@
+<svg viewBox="0 0 360 260" width="100%" role="img" aria-labelledby="svg-social-graph-bfs-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-social-graph-bfs-title">BFS mở rộng từng vòng quen biết: bạn trực tiếp trước, bạn của bạn sau</title>
+
+  <text x="140" y="22" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--ink-2)">Vòng 1</text>
+  <text x="270" y="22" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--ink-2)">Vòng 2</text>
+
+  <path d="M45 130 L140 60 M45 130 L140 130 M45 130 L140 200" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+  <path d="M140 60 L270 60 M140 130 L270 130 M140 130 L270 190" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+
+  <circle cx="45" cy="130" r="18" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <text x="45" y="135" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink)">Bạn</text>
+  <text x="45" y="164" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">nguồn</text>
+
+  <circle cx="140" cy="60" r="14" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <circle cx="140" cy="130" r="14" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <circle cx="140" cy="200" r="14" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+
+  <circle cx="270" cy="60" r="14" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <circle cx="270" cy="130" r="16" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <circle cx="270" cy="190" r="14" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+
+  <text x="270" y="150" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" font-weight="700" fill="var(--accent)">Đích</text>
+</svg>

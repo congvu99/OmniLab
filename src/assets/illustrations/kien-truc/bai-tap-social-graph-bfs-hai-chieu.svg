@@ -1,0 +1,17 @@
+<svg viewBox="0 0 360 260" width="100%" role="img" aria-labelledby="svg-social-graph-bidirectional-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-social-graph-bidirectional-title">So sánh vùng phải duyệt: BFS một chiều so với BFS hai chiều gặp nhau ở giữa</title>
+
+  <text x="180" y="22" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--ink-2)">Một chiều — dò hết từ nguồn</text>
+  <circle cx="180" cy="90" r="62" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" stroke-dasharray="4 4" />
+  <circle cx="128" cy="90" r="10" fill="var(--accent)" />
+  <circle cx="232" cy="90" r="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="180" y="160" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">vùng duyệt lớn</text>
+
+  <line x1="20" y1="180" x2="340" y2="180" stroke="var(--ink-2)" stroke-width="1" stroke-dasharray="2 4" />
+
+  <text x="180" y="200" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--ink-2)">Hai chiều — dò từ cả 2 đầu</text>
+  <circle cx="128" cy="240" r="28" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" stroke-dasharray="4 4" />
+  <circle cx="232" cy="240" r="28" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" stroke-dasharray="4 4" />
+  <circle cx="128" cy="240" r="10" fill="var(--accent)" />
+  <circle cx="232" cy="240" r="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+</svg>

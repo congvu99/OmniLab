@@ -17,6 +17,8 @@ readingMinutes: 18
 
 import img_mint_basic from '../../../../assets/legacy/system-design/mint_basic.png';
 import img_mint from '../../../../assets/legacy/system-design/mint.png';
+import svgMintHangDoi from '../../../../assets/illustrations/kien-truc/bai-tap-mint-hang-doi-bat-dong-bo.svg?raw';
+import svgMintPhanLoai from '../../../../assets/illustrations/kien-truc/bai-tap-mint-phan-loai-hoc-dan.svg?raw';
 
 
 # Thiết kế Mint.com
@@ -52,6 +54,12 @@ Vì không có người phỏng vấn để trả lời các câu hỏi làm rõ
 ##### Ngoài phạm vi
 
 * **Dịch vụ** thực hiện thêm việc ghi log và phân tích (analytics)
+
+<RealLife title="Sổ thu chi tự động">
+
+Nhiều gia đình có thói quen ghi sổ thu chi: cuối ngày chép lại từng khoản đã tiêu, xếp vào mục ăn uống, xăng xe, nhà ở, rồi so với hạn mức đã đặt. Mint.com làm đúng việc đó nhưng tự động: mỗi ngày tự vào tài khoản ngân hàng lấy giao dịch mới, tự xếp mục, rồi báo khi sắp vượt hạn mức — người dùng không cần cầm bút. → Đó là ba use case cốt lõi của bài: trích xuất, phân loại, và đề xuất ngân sách.
+
+</RealLife>
 
 #### Ràng buộc và giả định
 
@@ -171,6 +179,19 @@ Luồng dữ liệu:
     * Thông báo cho người dùng rằng việc xử lý giao dịch đã hoàn tất thông qua **Notification Service**:
         * Dùng một **Queue** (không vẽ trong hình) để gửi thông báo bất đồng bộ
 
+<RealLife title="Phiếu hẹn ở tiệm giặt ủi">
+
+Mang đồ ra tiệm giặt ủi, bạn nhận một phiếu hẹn và ra về ngay — không đứng chờ máy giặt chạy xong. Tiệm xử lý theo lượt, xong thì gọi điện báo. Accounts API cũng vậy: nhận yêu cầu trích xuất giao dịch, bỏ vào hàng đợi rồi trả lời ngay cho client, không bắt người dùng chờ cả tác vụ chạy xong (có thể mất vài giây tới vài phút). → Đây là lý do xử lý bất đồng bộ giúp web server phản hồi nhanh.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgMintHangDoi}
+  alt="Luồng xử lý bất đồng bộ qua hàng đợi của Accounts API"
+  caption="Accounts API trả lời ngay cho client, còn việc trích xuất giao dịch thật được đẩy vào hàng đợi để worker xử lý sau."
+/>
+
 Bảng `transactions` có thể có cấu trúc như sau:
 
 ```
@@ -240,6 +261,19 @@ class Categorizer(object):
         return None
 ```
 
+<RealLife title="Sổ tay phân loại do cả nhà cùng sửa">
+
+Một quán ăn gia đình ghi sẵn trong sổ: "Bách Hoá Xanh → thực phẩm", "Điện máy Xanh → đồ gia dụng" để khỏi nghĩ lại mỗi lần. Gặp cửa hàng lạ, cả nhà xếp tạm, ai xếp giống nhau nhiều nhất thì lần sau dùng luôn, ghi thẳng vào sổ. Category Service hoạt động y hệt: tra bảng ánh xạ có sẵn trước, gặp người bán mới thì học theo lựa chọn phổ biến nhất rồi ghi nhớ lại. → Bảng ánh xạ tự lớn dần theo thời gian.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgMintPhanLoai}
+  alt="Phân loại giao dịch: tra bảng có sẵn, học thêm từ lựa chọn người dùng"
+  caption="Gặp người bán đã biết thì trả danh mục ngay; gặp người bán mới thì dùng lựa chọn phổ biến nhất của người dùng rồi ghi thêm vào bảng ánh xạ."
+/>
+
 Cài đặt lớp Transaction:
 
 ```python
@@ -283,6 +317,12 @@ Một phương án khác là chạy các job **MapReduce** trên các file giao 
 * Tạo tổng chi tiêu hằng tháng theo danh mục
 
 Chạy phân tích trên các file giao dịch có thể giảm đáng kể tải cho cơ sở dữ liệu.
+
+<RealLife title="Kế toán tổng kết cuối tháng">
+
+Một cửa hàng nhỏ không cộng doanh thu ngay sau mỗi lần bán — cuối tháng mới gom hoá đơn lại, chia theo từng loại hàng rồi cộng tổng một lần, chậm hơn realtime nhưng nhẹ hơn nhiều so với cộng lại cả sổ sách sau mỗi giao dịch. Job MapReduce tính `monthly_spending` cũng vậy: gom file giao dịch thô theo lô, chạy định kỳ thay vì cập nhật tức thời. → Đây là đánh đổi kinh điển giữa xử lý theo lô (batch) và thời gian thực (realtime).
+
+</RealLife>
 
 Ta có thể gọi **Budget Service** để chạy lại phân tích nếu người dùng cập nhật một danh mục.
 

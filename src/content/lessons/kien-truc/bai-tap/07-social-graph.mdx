@@ -17,6 +17,8 @@ readingMinutes: 17
 
 import img_social_graph_basic from '../../../../assets/legacy/system-design/social_graph_basic.png';
 import img_social_graph from '../../../../assets/legacy/system-design/social_graph.png';
+import svgSocialGraphBfs from '../../../../assets/illustrations/kien-truc/bai-tap-social-graph-bfs-tung-vong.svg?raw';
+import svgSocialGraphBidirectional from '../../../../assets/illustrations/kien-truc/bai-tap-social-graph-bfs-hai-chieu.svg?raw';
 
 
 # Thiết kế cấu trúc dữ liệu cho một mạng xã hội
@@ -39,6 +41,12 @@ Vì không có người phỏng vấn để trả lời các câu hỏi làm rõ
 
 * **Người dùng (User)** tìm kiếm một người nào đó và thấy đường đi ngắn nhất (shortest path) tới người được tìm
 * **Dịch vụ (Service)** có tính sẵn sàng cao (high availability)
+
+<RealLife title="Bạn của bạn">
+
+Khi muốn quen ai đó, cách tự nhiên nhất là hỏi "có quen chung ai không" rồi nhờ người quen chung giới thiệu — tức tìm đường ngắn nhất qua các mối quan hệ. "Friend search" của mạng xã hội làm đúng việc đó bằng máy: mỗi người là một điểm (node), mỗi tình bạn là một đường nối (edge), rồi tìm đường ngắn nhất từ bạn tới người muốn tìm. → Đây là bài toán đồ thị (graph) kinh điển, không phải tìm kiếm văn bản.
+
+</RealLife>
 
 #### Ràng buộc và giả định
 
@@ -121,6 +129,19 @@ class Graph(Graph):
                     adj_node.visit_state = State.visited
         return None
 ```
+
+<RealLife title="Dò từng vòng quen biết, gần trước xa sau">
+
+Muốn tìm một người lạ qua quen biết, cách chắc ăn nhất là hỏi hết bạn trực tiếp trước ("vòng 1"), không thấy mới nhờ bạn của bạn hỏi tiếp ("vòng 2"), cứ thế mở rộng dần ra xa. BFS hoạt động y hệt: duyệt hết node cách nguồn 1 bước trước khi sang node cách 2 bước, đảm bảo tìm được đường ngắn nhất. → Đây là lý do BFS dùng hàng đợi (queue) chứ không phải ngăn xếp (stack).
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgSocialGraphBfs}
+  alt="BFS mở rộng từng vòng quen biết từ nguồn tới đích"
+  caption="BFS duyệt hết bạn trực tiếp (vòng 1) trước khi sang bạn của bạn (vòng 2), nên đường đi tìm được luôn là ngắn nhất."
+/>
 
 Ta sẽ không thể chứa toàn bộ người dùng trên cùng một máy, nên cần [phân mảnh (shard)](/hoc/kien-truc/chu-de/database) người dùng ra nhiều **Person Server** và truy cập chúng thông qua một **Lookup Service** (dịch vụ tra cứu).
 
@@ -299,10 +320,31 @@ Ta sẽ bổ sung một số thành phần để hoàn thiện thiết kế và 
 Dưới đây là các tối ưu thêm:
 
 * Lưu kết quả duyệt BFS toàn phần hoặc một phần vào **Memory Cache** để tăng tốc các lần tra cứu sau
+
+<RealLife title="Đường đi hay hỏi thì thuộc lòng sẵn">
+
+Nhân viên hướng dẫn ở hội chợ triển lãm không cần dò bản đồ lại mỗi lần có khách hỏi đường tới gian hàng nổi tiếng — hỏi hoài nên họ đã thuộc lòng đường đi ngắn nhất. Với những cặp người dùng có nhiều lượt tìm kiếm chung, hệ thống cũng lưu sẵn kết quả BFS đã tính vào Memory Cache, lần hỏi sau trả ngay không cần duyệt đồ thị lại. → Nhớ sẵn cho câu hỏi hay lặp lại, chỉ tính mới khi gặp cặp hiếm gặp.
+
+</RealLife>
+
 * Tính toán theo lô (batch) ngoại tuyến rồi lưu kết quả duyệt BFS toàn phần hoặc một phần vào một **NoSQL Database** để tăng tốc các lần tra cứu sau
 * Giảm số lần nhảy giữa các máy bằng cách gộp các lượt tra cứu bạn bè nằm trên cùng một **Person Server** thành một lô
     * [Shard](/hoc/kien-truc/chu-de/database) các **Person Server** theo vị trí địa lý để cải thiện thêm, vì bạn bè thường sống gần nhau
 * Chạy hai lượt BFS cùng lúc, một bắt đầu từ nguồn (source) và một từ đích (destination), rồi ghép hai đường đi lại
+
+<RealLife title="Hỏi cùng lúc hai đầu, gặp nhau giữa đường">
+
+Tìm người quen chung giữa hai nhóm bạn xa lạ sẽ nhanh hơn nhiều nếu cả hai phía cùng hỏi thăm đồng thời, thay vì một phía hỏi dần tới khi chạm phía kia. Bidirectional BFS áp dụng đúng ý này: chạy BFS từ người tìm và người được tìm cùng lúc, dừng ngay khi hai vòng quen biết chạm nhau ở giữa. → Mỗi phía chỉ dò một nửa quãng đường, giảm mạnh số node phải mở rộng so với dò một chiều.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgSocialGraphBidirectional}
+  alt="So sánh vùng phải duyệt giữa BFS một chiều và BFS hai chiều"
+  caption="BFS hai chiều dò từ cả nguồn lẫn đích, gặp nhau ở giữa — vùng phải duyệt nhỏ hơn nhiều so với dò một chiều từ đầu tới cuối."
+/>
+
 * Bắt đầu BFS từ những người có số lượng bạn bè lớn, vì họ có nhiều khả năng rút ngắn [số bậc phân cách (degrees of separation)](https://en.wikipedia.org/wiki/Six_degrees_of_separation) giữa người dùng hiện tại và người được tìm
 * Đặt giới hạn theo thời gian hoặc số bước nhảy (hop) trước khi hỏi người dùng có muốn tiếp tục tìm không, vì trong một số trường hợp việc tìm kiếm có thể mất khá nhiều thời gian
 * Dùng một **Graph Database** như [Neo4j](https://neo4j.com/) hoặc một ngôn ngữ truy vấn chuyên cho đồ thị như [GraphQL](http://graphql.org/) (nếu không có ràng buộc cấm dùng **Graph Database**)

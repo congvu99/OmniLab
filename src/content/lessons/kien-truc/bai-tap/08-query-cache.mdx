@@ -17,6 +17,8 @@ readingMinutes: 15
 
 import img_query_cache_basic from '../../../../assets/legacy/system-design/query_cache_basic.png';
 import img_query_cache from '../../../../assets/legacy/system-design/query_cache.png';
+import svgQueryCacheLru from '../../../../assets/illustrations/kien-truc/bai-tap-query-cache-lru-danh-sach-lien-ket.svg?raw';
+import svgQueryCacheSharding from '../../../../assets/illustrations/kien-truc/bai-tap-query-cache-sharding-hash.svg?raw';
 
 
 # Thiết kế cache key-value lưu kết quả các truy vấn gần nhất của web server
@@ -40,6 +42,12 @@ Vì không có người phỏng vấn để trả lời các câu hỏi làm rõ
 * **Người dùng (User)** gửi một yêu cầu tìm kiếm và trúng cache (cache hit)
 * **Người dùng** gửi một yêu cầu tìm kiếm và trượt cache (cache miss)
 * **Dịch vụ (Service)** có tính sẵn sàng cao (high availability)
+
+<RealLife title="Ghi chú câu hỏi hay gặp">
+
+Khi ôn thi, nhiều bạn ghi sẵn một tờ ghi chú các câu hỏi hay gặp kèm đáp án — gặp lại câu quen là chép ngay, không cần tính lại; câu lạ thì mới ngồi giải kỹ. Hệ thống tìm kiếm cũng vậy: truy vấn phổ biến được lưu sẵn kết quả trong cache, hỏi lại trả ngay (cache hit); truy vấn lạ phải tính lại qua Reverse Index Service (cache miss). → Đây chính là hai use case cốt lõi của bài: trúng và trượt cache.
+
+</RealLife>
 
 #### Ràng buộc và giả định
 
@@ -219,6 +227,19 @@ class Cache(object):
             self.lookup[query] = new_node
 ```
 
+<RealLife title="Xếp lại chồng ghi chú mỗi lần dùng">
+
+Một chồng ghi chú trên bàn: tờ vừa xem xong đặt lên trên cùng, tờ lâu không đụng tới dần chìm xuống đáy; bàn đầy chỗ thì tờ dưới đáy — lâu nhất chưa dùng — bị bỏ trước. Cache trong bài dùng đúng cơ chế: danh sách liên kết đôi giữ thứ tự "mới dùng gần đây", mục vừa truy cập đưa lên đầu (`move_to_front`), mục cuối bị xoá khi đầy (`remove_from_tail`). → Bảng băm giúp tìm đúng vị trí ngay lập tức, không cần lật từng tờ.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgQueryCacheLru}
+  alt="Danh sách liên kết đôi giữ thứ tự LRU với bảng băm tra cứu"
+  caption="Mục vừa dùng được đưa lên đầu danh sách; mục cũ nhất ở cuối bị loại khi cache đầy. Bảng băm giúp tìm đúng node ngay lập tức."
+/>
+
 ##### Khi nào cập nhật cache
 
 Cache cần được cập nhật khi:
@@ -230,6 +251,12 @@ Cache cần được cập nhật khi:
 Cách đơn giản nhất để xử lý các trường hợp này là đặt một khoảng thời gian tối đa mà một mục được phép nằm trong cache trước khi được cập nhật, thường gọi là thời gian sống (TTL - time to live).
 
 Tham khảo [Khi nào cập nhật cache](/hoc/kien-truc/chu-de/cache) để biết các đánh đổi và phương án thay thế. Cách làm ở trên chính là mẫu [cache-aside](/hoc/kien-truc/chu-de/cache).
+
+<RealLife title="Rao vặt hết hạn nhưng chưa ai gỡ xuống">
+
+Một tờ rao vặt dán ở bảng tin chung cư vẫn còn đó dù phòng trọ đã cho người khác thuê từ tuần trước — ai đọc muộn vẫn gọi tới, chỉ hết hiệu lực khi bị gỡ hoặc quá hạn ghi trên giấy. Kết quả tìm kiếm đã cache cũng vậy: trang đã đổi nội dung nhưng cache chưa biết, vẫn trả bản cũ tới khi hết TTL. → Đặt TTL là cách đơn giản nhất để buộc cache tự làm mới theo chu kỳ.
+
+</RealLife>
 
 ### Bước 4: Mở rộng thiết kế (scale the design)
 
@@ -263,6 +290,19 @@ Ta sẽ bổ sung một số thành phần để hoàn thiện thiết kế và 
 * **Mỗi máy trong cụm cache có cache riêng của nó** - Đơn giản, nhưng nhiều khả năng dẫn tới tỷ lệ trúng cache (cache hit rate) thấp.
 * **Mỗi máy trong cụm cache giữ một bản sao của toàn bộ cache** - Đơn giản, nhưng sử dụng bộ nhớ kém hiệu quả.
 * **Cache được [phân mảnh (shard)](/hoc/kien-truc/chu-de/database) trên tất cả các máy trong cụm cache** - Phức tạp hơn, nhưng nhiều khả năng là phương án tốt nhất. Ta có thể dùng hàm băm để xác định máy nào có thể chứa kết quả cache của một truy vấn bằng `machine = hash(query)`. Nhiều khả năng ta sẽ muốn dùng [băm nhất quán (consistent hashing)](https://github.com/donnemartin/system-design-primer#under-development).
+
+<RealLife title="Chia ghi chú ra nhiều ngăn kéo theo vần">
+
+Một tủ hồ sơ lớn chia thành nhiều ngăn kéo theo vần chữ cái — biết trước hồ sơ tên "Nguyễn" luôn ở ngăn N nên không phải lục cả tủ. Cụm Memory Cache của bài chia dữ liệu theo cách tương tự: dùng `machine = hash(query)` để biết chắc kết quả một truy vấn nằm ở máy nào trong cụm, không cần hỏi từng máy. → Đây là sharding: chia dữ liệu theo hàm băm để mỗi máy chỉ giữ phần việc của mình.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgQueryCacheSharding}
+  alt="Sharding cache: hash(query) chọn đúng một máy trong cụm"
+  caption="Mỗi truy vấn qua hàm hash(query) để xác định đúng một máy chịu trách nhiệm, thay vì phải hỏi lần lượt từng máy trong cụm."
+/>
 
 ### Các điểm thảo luận thêm (Additional talking points)
 
