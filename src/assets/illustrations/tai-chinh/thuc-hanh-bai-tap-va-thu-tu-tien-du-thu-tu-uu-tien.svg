@@ -1,5 +1,5 @@
 <svg viewBox="0 0 360 300" width="100%" role="img" aria-labelledby="svg-thu-tu-uu-tien-title" xmlns="http://www.w3.org/2000/svg">
-  <title id="svg-thu-tu-uu-tien-title">Thứ tự ưu tiên dùng tiền dư: thiết yếu, bộ đệm nhỏ, nợ chi phí cao, dự phòng, rồi mục tiêu dài hạn</title>
+  <title id="svg-thu-tu-uu-tien-title">Thứ tự ưu tiên dùng tiền dư (đề xuất có điều kiện): thiết yếu, bộ đệm nhỏ, nợ chi phí cao, dự phòng, rồi mục tiêu dài hạn</title>
   <defs>
     <marker id="svg-ttud-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />

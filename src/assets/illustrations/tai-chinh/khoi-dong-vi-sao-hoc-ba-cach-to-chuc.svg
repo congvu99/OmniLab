@@ -8,7 +8,8 @@
   <text x="62" y="64" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">Theo giáo trình</text>
   <text x="62" y="100" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">
     <tspan x="62" dy="0">dễ hệ thống,</tspan>
-    <tspan x="62" dy="16">xa nhu cầu</tspan>
+    <tspan x="62" dy="16">có thể xa</tspan>
+    <tspan x="62" dy="16">việc đang cần</tspan>
   </text>
 
   <text x="180" y="64" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">Theo sản phẩm</text>

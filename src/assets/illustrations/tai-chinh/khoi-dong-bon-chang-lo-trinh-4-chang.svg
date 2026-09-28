@@ -1,7 +1,7 @@
 <svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-bon-chang-title" xmlns="http://www.w3.org/2000/svg">
   <title id="svg-bon-chang-title">Bốn chặng học nối tiếp nhau: kiểm soát tiền, bảo vệ và đầu tư, ra quyết định, rồi mở rộng theo nhu cầu</title>
 
-  <line x1="15" y1="110" x2="345" y2="110" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+  <line x1="15" y1="110" x2="230" y2="110" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
   <rect x="30" y="104" width="200" height="12" rx="6" fill="color-mix(in srgb, var(--accent) 12%, transparent)" />
   <line x1="230" y1="110" x2="330" y2="110" stroke="var(--ink-2)" stroke-width="2" stroke-dasharray="4 4" stroke-linecap="round" />
 

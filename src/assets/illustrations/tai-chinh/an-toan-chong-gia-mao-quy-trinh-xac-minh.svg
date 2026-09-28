@@ -1,12 +1,12 @@
 <svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-xac-minh-gia-mao-title" xmlns="http://www.w3.org/2000/svg">
-  <title id="svg-xac-minh-gia-mao-title">Ba bước xác minh khi có yêu cầu chuyển tiền bất thường: dừng lại, kiểm tra kênh chính thức, rồi gọi lại số đã biết</title>
+  <title id="svg-xac-minh-gia-mao-title">Ba bước xác minh khi có yêu cầu chuyển tiền bất thường: dừng lại, kiểm tra kênh chính thức, rồi gọi lại số tự tra; không đưa OTP cho ai</title>
   <defs>
     <marker id="svg-xm-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
     </marker>
   </defs>
 
-  <text x="180" y="16" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Yêu cầu chuyển tiền / đọc OTP bất thường</text>
+  <text x="180" y="16" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Yêu cầu chuyển tiền bất thường / đòi OTP</text>
   <path d="M180 22 V38" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-xm-arrow)" />
 
   <rect x="8" y="42" width="104" height="66" rx="10" fill="color-mix(in srgb, var(--danger) 12%, transparent)" stroke="var(--danger)" stroke-width="2.5" />
@@ -25,10 +25,10 @@
 
   <rect x="276" y="42" width="76" height="66" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
   <text x="314" y="72" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--accent)">③ Gọi lại</text>
-  <text x="314" y="90" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">số đã biết</text>
+  <text x="314" y="90" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">số tự tra</text>
 
   <text x="180" y="140" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">
-    <tspan x="180" dy="0">Không chắc chắn? Đừng chuyển tiền,</tspan>
-    <tspan x="180" dy="16">đừng đọc OTP</tspan>
+    <tspan x="180" dy="0">Không chắc chắn? Đừng chuyển tiền.</tspan>
+    <tspan x="180" dy="16">OTP không đọc cho bất kỳ ai.</tspan>
   </text>
 </svg>

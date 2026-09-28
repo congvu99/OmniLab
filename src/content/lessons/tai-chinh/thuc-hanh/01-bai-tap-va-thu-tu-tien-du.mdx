@@ -9,7 +9,7 @@ source:
   author: "OmniLab (tổng hợp)"
   license: "Chưa xác định — cần user xác nhận"
   snapshot: "finance/index.html"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 3
 ---
 
@@ -36,7 +36,7 @@ Còn **3 triệu/tháng**. Thiết yếu và nợ tối thiểu là 9 triệu/th
 
 <RealLife title="Tự thay số liệu thật vào bài tập ngân sách">
 
-Bài tập trên dùng số giả định (thu nhập 15 triệu, thiết yếu 8 triệu...) để minh họa cách tính, không phải số của bạn. Một người thu nhập 9 triệu/tháng, thiết yếu 6 triệu, có thể áp cùng công thức: lấy thu nhập trừ thiết yếu, chi linh hoạt, khoản dành theo năm và nợ tối thiểu để ra số dư thật. → Công thức giữ nguyên, chỉ số liệu đổi theo hoàn cảnh từng người.
+Bài tập trên dùng số giả định (thu nhập 15 triệu, thiết yếu 8 triệu...) để minh họa cách tính, không phải số của bạn. Thử một bộ số giả định khác: thu nhập 9 triệu/tháng, thiết yếu 6 triệu, linh hoạt 1,5 triệu, dành cho chi theo năm 0,5 triệu, nợ tối thiểu 0,5 triệu. Cùng công thức: 9 − 6 − 1,5 − 0,5 − 0,5 = 0,5 triệu/tháng, nên mục tiêu dự phòng sẽ cần lâu hơn nhiều. → Công thức giữ nguyên, chỉ số liệu đổi theo hoàn cảnh từng người.
 
 </RealLife>
 
@@ -80,9 +80,9 @@ Còn 16 triệu; cần tăng 4 ÷ 16 = **25%**. Nếu giảm 40%, cần tăng kh
 
 </Note>
 
-<RealLife title="Mất 50% cần lãi 100% mới hòa vốn">
+<RealLife title="Món hàng giảm giá 50% rồi tăng lại 50%">
 
-Một khoản đầu tư mất nửa giá trị (giảm 50%) nghe như "chỉ cần tăng 50% là huề" — nhưng thực tế phải tăng đúng 100% từ mức còn lại mới về bằng số tiền ban đầu, vì gốc so sánh đã nhỏ đi một nửa. Nhiều người đánh giá thấp mức độ khó của việc hồi phục khi chỉ nhìn phần trăm giảm mà quên điều này. → Phần trăm giảm và phần trăm cần tăng không đối xứng, càng giảm sâu chênh lệch càng lớn.
+Ví dụ minh hoạ, số giả định: một món hàng 100.000 đồng giảm giá 50% còn 50.000 đồng. Nếu sau đó tăng giá 50%, nó chỉ lên 75.000 đồng; phải tăng 100% mới về lại 100.000 đồng, vì phần trăm tăng được tính trên mức đã nhỏ đi một nửa. Khoản đầu tư cũng vậy: giảm 20% cần tăng 25%, giảm 40% cần khoảng 66,7%, giảm 50% cần 100%. → Phần trăm giảm và phần trăm cần tăng không đối xứng, càng giảm sâu chênh lệch càng lớn.
 
 </RealLife>
 
@@ -90,7 +90,7 @@ Một khoản đầu tư mất nửa giá trị (giảm 50%) nghe như "chỉ c�
   added
   svg={svgLoVaPhucHoi}
   alt="Lỗ và phục hồi không đối xứng: giảm 20% cần tăng 25%, giảm 40% cần tăng 66,7%"
-  caption="Giảm càng nhiều thì phần trăm cần tăng lại để về mức ban đầu càng lớn hơn phần trăm đã giảm."
+  caption="Giảm càng nhiều thì phần trăm cần tăng lại để về mức ban đầu càng lớn hơn phần trăm đã giảm: cần tăng = mức giảm ÷ phần còn lại (20 ÷ 80 = 25%; 40 ÷ 60 ≈ 66,7%)."
 />
 
 ### Thứ tự dùng tiền dư: đề xuất có điều kiện
@@ -101,7 +101,7 @@ Chi thiết yếu & nghĩa vụ đến hạn **→** Bộ đệm nhỏ **→** N
   added
   svg={svgThuTuUuTien}
   alt="Thứ tự ưu tiên dùng tiền dư: thiết yếu, bộ đệm nhỏ, nợ chi phí cao, dự phòng, rồi mục tiêu dài hạn"
-  caption="Thứ tự đề xuất khi có tiền dư: ưu tiên nghĩa vụ đến hạn trước, mục tiêu dài hạn xếp cuối cùng."
+  caption="Thứ tự đề xuất có điều kiện khi có tiền dư: nghĩa vụ đến hạn trước, mục tiêu dài hạn sau cùng; mất thu nhập, nợ quá hạn hay nghĩa vụ đặc biệt có thể làm đổi ưu tiên."
 />
 
 SEC ưu tiên loại bỏ nợ lãi cao; CFPB khuyến khích dự phòng theo hoàn cảnh, kể cả bắt đầu nhỏ. Từ hai hướng dẫn, sổ tay đề xuất thứ tự trên để hạn chế vay lại khi có sự cố. Đây là **tổng hợp thực hành**, chưa phải thứ tự tối ưu đã được thử nghiệm cho mọi hộ. Mất thu nhập, nợ quá hạn hay nghĩa vụ đặc biệt có thể làm thay đổi ưu tiên. [SEC: nợ lãi cao](https://www.investor.gov/introduction-investing/investing-basics/save-and-invest/pay-credit-cards-or-other-high-interest); [CFPB: dự phòng](https://www.consumerfinance.gov/an-essential-guide-to-building-an-emergency-fund/).

@@ -1,21 +1,23 @@
 <svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-hai-ket-qua-nghien-cuu-title" xmlns="http://www.w3.org/2000/svg">
-  <title id="svg-hai-ket-qua-nghien-cuu-title">Hai tổng hợp nghiên cứu, hai kết luận khác nhau vì cách đo và bộ dữ liệu khác nhau</title>
+  <title id="svg-hai-ket-qua-nghien-cuu-title">Hai tổng hợp nghiên cứu, hai kết luận khác nhau vì bộ dữ liệu và thước đo khác nhau: phần trăm phương sai so với tác động nhân quả trung bình</title>
 
   <rect x="20" y="30" width="150" height="140" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
-  <text x="95" y="54" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--ink)">Fernandes (2014)</text>
-  <path d="M40 90 L150 128" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
-  <text x="95" y="148" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">
-    <tspan x="95" dy="0">hiệu ứng rất nhỏ,</tspan>
-    <tspan x="95" dy="16">giảm dần</tspan>
+  <text x="95" y="56" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--ink)">Fernandes (2014)</text>
+  <text x="95" y="84" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">
+    <tspan x="95" dy="0">201 nghiên cứu</tspan>
+    <tspan x="95" dy="18">đo: % phương sai</tspan>
+    <tspan x="95" dy="16">hành vi (≈0,1%)</tspan>
+    <tspan x="95" dy="18">hiệu ứng giảm dần</tspan>
   </text>
 
-  <rect x="190" y="30" width="150" height="140" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
-  <text x="265" y="54" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--accent)">Kaiser &amp; cộng sự</text>
-  <path d="M210 128 L320 82" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" />
-  <text x="265" y="148" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">
-    <tspan x="265" dy="0">76 thử nghiệm,</tspan>
-    <tspan x="265" dy="16">tác động tích cực</tspan>
+  <rect x="190" y="30" width="150" height="140" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="265" y="56" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--ink)">Kaiser &amp; cộng sự</text>
+  <text x="265" y="84" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">
+    <tspan x="265" dy="0">76 thử nghiệm</tspan>
+    <tspan x="265" dy="18">đo: tác động nhân</tspan>
+    <tspan x="265" dy="16">quả trung bình</tspan>
+    <tspan x="265" dy="18">tích cực</tspan>
   </text>
 
-  <text x="180" y="200" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">Khác dữ liệu, khác cách đo → khác kết luận</text>
+  <text x="180" y="200" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--accent)">Khác dữ liệu, khác cách đo → khác kết luận</text>
 </svg>

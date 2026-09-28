@@ -1,5 +1,5 @@
 <svg viewBox="0 0 360 300" width="100%" role="img" aria-labelledby="svg-kiem-tra-tuyen-bo-title" xmlns="http://www.w3.org/2000/svg">
-  <title id="svg-kiem-tra-tuyen-bo-title">Kiểm tra một tuyên bố trước khi tin: tìm nguồn, đối chiếu ngày và cơ quan phát hành</title>
+  <title id="svg-kiem-tra-tuyen-bo-title">Kiểm tra một tuyên bố trước khi tin: tìm nguồn, đối chiếu ngày, cơ quan phát hành và tình trạng hiệu lực</title>
   <defs>
     <marker id="svg-ktb-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
@@ -17,7 +17,7 @@
   <path d="M180 112 V124" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-ktb-arrow)" />
 
   <rect x="20" y="126" width="320" height="44" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
-  <text x="34" y="153" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">③ Đối chiếu ngày &amp; cơ quan phát hành</text>
+  <text x="34" y="153" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">③ Đối chiếu ngày, cơ quan, hiệu lực</text>
 
   <path d="M180 170 V182" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-ktb-arrow)" />
 
