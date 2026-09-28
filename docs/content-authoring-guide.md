@@ -27,8 +27,9 @@ mới) cho **mọi** bài học OmniLab. Phase 6 batch 0 chốt style trên 6 b�
 - Đặt **ngay sau** đoạn/mục mà nó minh hoạ, cách nhau bằng dòng trống trước
   và sau (MDX cần blank line quanh JSX block để parser nhận đúng là block,
   không phải inline).
-- Mỗi bài: **3–5 khối** `<RealLife>`. Rải đều theo các khái niệm chính của
-  bài, không dồn hết vào đầu/cuối.
+- Mỗi bài: **3–5 khối** `<RealLife>` (bài ngắn < ~600 tiếng hoặc bài danh
+  mục nguồn: **1–2 khối**). Rải đều theo các khái niệm chính của bài, không
+  dồn hết vào đầu/cuối.
 - Cú pháp:
 
   ```mdx
@@ -48,8 +49,9 @@ mới) cho **mọi** bài học OmniLab. Phase 6 batch 0 chốt style trên 6 b�
 ## Quy tắc viết 1 khối `<RealLife>`
 
 1. **1 ví dụ = 1 phép so sánh.** Không nhồi 2-3 ẩn dụ vào cùng 1 khối.
-2. **≤ 90 từ.** Đếm cả tiêu đề phụ nếu có — đây là callout ngắn, không phải
-   đoạn văn phụ.
+2. **≤ 90 tiếng (≈ 110 khi cần câu giới hạn ẩn dụ).** Tiếng Việt đếm theo
+   dấu cách là đếm âm tiết; tính cả tiêu đề phụ — đây là callout ngắn, không
+   phải đoạn văn phụ.
 3. **Kết thúc bằng câu nối lại khái niệm gốc**, dùng mũi tên `→`. Ví dụ:
    "→ Đây chính là cache hit." / "→ Đó là lý do CAP không cho bạn 'chọn 2
    trong 3' một cách tuỳ ý."
@@ -166,7 +168,7 @@ không phải giả định sai từ đầu.
 
 ## Checklist trước khi coi một bài là "xong" (cho các batch sau)
 
-1. [ ] 3–5 `<RealLife>`, mỗi cái ≤ 90 từ, kết bằng câu nối "→ ...".
+1. [ ] 3–5 `<RealLife>` (bài ngắn 1–2), mỗi cái ≤ 90 tiếng, kết bằng câu nối "→ ...".
 2. [ ] Bối cảnh Việt Nam, không sáo rỗng, không lặp ẩn dụ giữa các khối
        trong cùng 1 bài.
 3. [ ] Tài chính: không số liệu thời sự (trừ khi ghi "số giả định"), không
