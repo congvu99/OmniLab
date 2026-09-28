@@ -15,6 +15,9 @@ examplesReviewed: false
 readingMinutes: 6
 ---
 
+import svgAsyncHaiKieu from '../../../../assets/illustrations/kien-truc/nen-tang-asynchronism-hai-kieu-bat-dong-bo.svg?raw';
+import svgAsyncWorkerPool from '../../../../assets/illustrations/kien-truc/nen-tang-asynchronism-worker-pool.svg?raw';
+
 
 # Khả năng mở rộng cho người mới - Phần 4: Bất đồng bộ (Asynchronism)
 
@@ -42,6 +45,19 @@ Thường thì các tác vụ tính toán này được chạy định kỳ, ch�
 
 Cứ thử tưởng tượng khả năng mở rộng của website nếu script đó còn upload luôn các trang HTML đã render sẵn lên AWS S3, CloudFront hay một CDN nào khác! Website của bạn sẽ phản hồi cực nhanh và **gánh được hàng triệu lượt truy cập mỗi giờ!**
 
+<RealLife title="Cơm phần chuẩn bị sẵn ở căn tin">
+
+Căn tin công ty nấu sẵn hàng trăm suất cơm trước giờ trưa, xếp lên kệ. Đến giờ ăn, nhân viên chỉ việc lấy ngay một suất, không phải đợi nấu từ đầu. Nếu đợi từng người gọi món rồi mới nấu, giờ cao điểm sẽ vỡ trận. → Đó là bất đồng bộ kiểu 1: làm trước phần tốn thời gian, phục vụ kết quả có sẵn cực nhanh.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgAsyncHaiKieu}
+  alt="Hai kiểu bất đồng bộ: làm sẵn từ trước và xử lý qua hàng đợi"
+  caption="Kiểu 1 tính toán trước, phục vụ ngay khi có request. Kiểu 2 đẩy việc vào hàng đợi, worker xử lý rồi báo lại sau."
+/>
+
 ## Bất đồng bộ kiểu 2: Nhận việc rồi trả kết quả sau
 
 Quay lại tiệm bánh. Đáng tiếc là đôi khi khách có những yêu cầu đặc biệt, kiểu bánh sinh nhật có dòng chữ "Chúc mừng sinh nhật, Steve!" ở trên.
@@ -59,6 +75,25 @@ Tiệm bánh **không thể đoán trước** những mong muốn kiểu này, n
 5. Frontend - vốn liên tục kiểm tra xem có tín hiệu "job đã xong" nào mới không - thấy job đã hoàn tất và báo lại cho người dùng.
 
 Tôi biết đây là một ví dụ đã được đơn giản hóa rất nhiều.
+
+<RealLife title="Gửi đồ ở tiệm giặt ủi, lấy số hẹn quay lại">
+
+Bạn mang đồ tới tiệm giặt ủi, nhân viên nhận đồ, đưa vé hẹn "chiều mai quay lại lấy", rồi bạn đi làm việc khác ngay — không đứng đợi máy giặt chạy xong. Tiệm giặt xử lý đồ theo thứ tự nhận, và bạn chỉ quay lại khi đã xong. → Đó chính là bước 2 và 3 trong luồng job queue: gửi việc đi, nhận phản hồi ngay "đang xử lý", rồi lấy kết quả sau.
+
+</RealLife>
+
+<RealLife title="Nhiều bác sĩ cùng gọi số ở phòng khám">
+
+Phòng khám đông bệnh nhân lấy số thứ tự xếp hàng, nhưng có tới 3 bác sĩ cùng khám song song, mỗi người gọi số riêng thay vì chỉ một bác sĩ xử lý lần lượt. Hàng đợi vơi nhanh hơn hẳn so với chỉ một bác sĩ. → Đó là vai trò của "nhóm worker" trong hàng đợi job: nhiều worker cùng lấy việc thì job được xử lý song song, không bị dồn ứ.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgAsyncWorkerPool}
+  alt="Nhiều worker cùng lấy job từ một hàng đợi chung"
+  caption="Worker càng nhiều, hàng đợi vơi càng nhanh — nhưng nếu job đổ vào nhanh hơn tốc độ xử lý, hàng đợi vẫn phình (back pressure)."
+/>
 
 ## Học tiếp ở đâu
 

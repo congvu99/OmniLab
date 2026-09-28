@@ -1,0 +1,34 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-performance-vs-scalability-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-performance-vs-scalability-title">Chẩn đoán vấn đề hiệu năng so với vấn đề khả năng mở rộng</title>
+  <defs>
+    <marker id="svg-pvs-arrow-danger" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--danger)" />
+    </marker>
+    <marker id="svg-pvs-arrow-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)" />
+    </marker>
+  </defs>
+
+  <text x="10" y="16" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--ink-2)">Vấn đề hiệu năng</text>
+  <rect x="10" y="26" width="150" height="34" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="85" y="48" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">1 người dùng</text>
+  <path d="M85 60 V78" fill="none" stroke="var(--danger)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-pvs-arrow-danger)" />
+  <rect x="10" y="78" width="150" height="34" rx="8" fill="color-mix(in srgb, var(--danger) 12%, transparent)" stroke="var(--danger)" stroke-width="2" />
+  <text x="85" y="100" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">Chậm</text>
+  <text x="85" y="130" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">Chậm dù ít hay đông</text>
+
+  <line x1="180" y1="0" x2="180" y2="220" stroke="var(--line)" stroke-width="1" />
+
+  <text x="200" y="16" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" font-weight="700" fill="var(--ink-2)">Vấn đề mở rộng</text>
+  <rect x="200" y="26" width="150" height="32" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="275" y="47" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">1 người dùng</text>
+  <path d="M275 58 V72" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-pvs-arrow-accent)" />
+  <rect x="200" y="72" width="150" height="30" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="275" y="92" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">Nhanh</text>
+
+  <rect x="200" y="118" width="150" height="32" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="275" y="139" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Nhiều người dùng</text>
+  <path d="M275 150 V164" fill="none" stroke="var(--danger)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-pvs-arrow-danger)" />
+  <rect x="200" y="164" width="150" height="30" rx="8" fill="color-mix(in srgb, var(--danger) 12%, transparent)" stroke="var(--danger)" stroke-width="2" />
+  <text x="275" y="184" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">Chậm khi tải nặng</text>
+</svg>

@@ -15,6 +15,8 @@ examplesReviewed: false
 readingMinutes: 3
 ---
 
+import svgClonesDinhTuyen from '../../../../assets/illustrations/kien-truc/nen-tang-clones-dinh-tuyen-khong-trang-thai.svg?raw';
+
 
 # Khả năng mở rộng cho người mới - Phần 1: Bản sao (Clones)
 
@@ -32,11 +34,30 @@ Steve phải **luôn nhận về cùng một kết quả** cho request của mì
 
 > **Mọi server phải chứa chính xác cùng một codebase, và không được lưu bất kỳ dữ liệu nào liên quan đến người dùng - như session hay ảnh đại diện - trên ổ đĩa hoặc bộ nhớ cục bộ của chính nó.**
 
+<RealLife title="Quán photocopy nhiều chi nhánh">
+
+Một chuỗi tiệm photocopy có 5 chi nhánh giống hệt nhau: cùng máy, cùng giá, cùng cách phục vụ. Bạn in tài liệu ở chi nhánh A sáng nay, chiều ghé chi nhánh B vẫn được phục vụ y hệt, vì không chi nhánh nào "nhớ" riêng bạn — mọi thông tin đơn hàng nằm ở sổ quản lý chung của cả chuỗi. → Đó là lý do server phải giống hệt nhau và không giữ dữ liệu người dùng riêng trên đĩa của chính nó.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgClonesDinhTuyen}
+  alt="LB định tuyến cùng một client tới nhiều server khác nhau, tất cả dùng chung một kho session"
+  caption="Steve có thể đáp xuống Server A, B hay C tùy request — vì không server nào giữ session cục bộ, kết quả vẫn nhất quán nhờ kho session dùng chung."
+/>
+
 ## Session phải để ở đâu
 
 Session cần được lưu trong một **kho dữ liệu tập trung** (centralized data store) mà tất cả application server đều truy cập được. Kho đó có thể là một database bên ngoài, hoặc một persistent cache bên ngoài như **Redis**. Một persistent cache bên ngoài sẽ cho hiệu năng tốt hơn database bên ngoài.
 
 "Bên ngoài" (external) ở đây nghĩa là: kho dữ liệu đó **không nằm trên chính các application server**. Thay vào đó, nó nằm đâu đó bên trong hoặc gần với data center chứa các application server của bạn.
+
+<RealLife title="Tủ gửi đồ dùng chung ở siêu thị">
+
+Siêu thị lớn đặt tủ gửi đồ chung ở cửa ra vào, dùng cho mọi quầy thu ngân, không phải mỗi quầy tự giữ đồ khách riêng. Thanh toán ở quầy nào, bạn vẫn lấy đúng túi đồ đã gửi, vì tủ đó nằm tách biệt, không thuộc riêng quầy nào. → Session cũng cần nằm ở một kho dữ liệu tập trung bên ngoài, không dính vào một server ứng dụng cụ thể.
+
+</RealLife>
 
 ## Còn triển khai (deployment) thì sao?
 
@@ -49,6 +70,12 @@ Vấn đề hóc búa này may thay đã được giải quyết bởi một cô
 Sau khi đã "đưa session ra ngoài" và phục vụ cùng một codebase từ mọi server, giờ bạn có thể tạo một **image file** từ một trong các server đó. AWS gọi cái này là **AMI** (Amazon Machine Image).
 
 Dùng AMI này làm một "siêu bản sao" (super-clone) làm nền cho mọi instance mới. Mỗi khi khởi chạy một instance/clone mới, chỉ cần deploy code mới nhất lần đầu là xong, sẵn sàng chạy!
+
+<RealLife title="In hàng loạt từ một bản kẽm gốc">
+
+Xưởng in danh thiếp làm một bản kẽm gốc hoàn chỉnh, rồi ép ra hàng nghìn bản giống hệt thay vì set lại máy in từ đầu mỗi lần. Cần thêm số lượng, cứ lấy bản kẽm gốc ra ép tiếp, không phải dựng lại từ số 0. → Đó chính là AMI: dựng sẵn một "bản gốc" server đã cấu hình đủ, rồi nhân ra các instance mới nhanh chóng.
+
+</RealLife>
 
 ---
 

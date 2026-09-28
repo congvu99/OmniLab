@@ -1,0 +1,38 @@
+<svg viewBox="0 0 360 260" width="100%" role="img" aria-labelledby="svg-clones-dinh-tuyen-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-clones-dinh-tuyen-title">Cùng một client, nhiều server khác nhau, nhưng dùng chung một kho session</title>
+  <defs>
+    <marker id="svg-cln-arrow-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)" />
+    </marker>
+    <marker id="svg-cln-arrow-ink2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
+    </marker>
+  </defs>
+
+  <rect x="140" y="12" width="80" height="34" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="180" y="34" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" fill="var(--ink)">Steve</text>
+
+  <path d="M180 46 V78" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-cln-arrow-ink2)" />
+
+  <rect x="140" y="78" width="80" height="34" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="180" y="100" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" fill="var(--ink)">LB</text>
+
+  <path d="M180 112 C 120 112, 90 130, 55 150" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-cln-arrow-accent)" />
+  <path d="M180 112 V150" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-cln-arrow-accent)" />
+  <path d="M180 112 C 240 112, 270 130, 305 150" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-cln-arrow-accent)" />
+
+  <rect x="10" y="150" width="90" height="36" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="55" y="172" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Server A</text>
+  <rect x="135" y="150" width="90" height="36" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="180" y="172" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Server B</text>
+  <rect x="260" y="150" width="90" height="36" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="305" y="172" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Server C</text>
+
+  <path d="M55 186 C 55 200, 80 205, 100 208" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-cln-arrow-ink2)" />
+  <path d="M180 186 V208" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-cln-arrow-ink2)" />
+  <path d="M305 186 C 305 200, 280 205, 260 208" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-cln-arrow-ink2)" />
+
+  <rect x="60" y="208" width="240" height="42" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="180" y="227" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">Session store dùng chung</text>
+  <text x="180" y="243" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">(Redis / DB, nằm ngoài mọi server)</text>
+</svg>

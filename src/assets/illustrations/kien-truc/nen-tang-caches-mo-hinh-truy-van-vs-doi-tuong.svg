@@ -1,0 +1,20 @@
+<svg viewBox="0 0 360 230" width="100%" role="img" aria-labelledby="svg-caches-mo-hinh-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-caches-mo-hinh-title">Cache theo từng câu truy vấn so với cache theo đối tượng đầy đủ</title>
+
+  <text x="8" y="16" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink-2)">Mô hình 1: cache truy vấn</text>
+  <rect x="10" y="26" width="100" height="36" rx="8" fill="color-mix(in srgb, var(--danger) 12%, transparent)" stroke="var(--danger)" stroke-width="2" />
+  <text x="60" y="49" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Câu hỏi A</text>
+  <rect x="130" y="26" width="100" height="36" rx="8" fill="color-mix(in srgb, var(--danger) 12%, transparent)" stroke="var(--danger)" stroke-width="2" />
+  <text x="180" y="49" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Câu hỏi B</text>
+  <rect x="250" y="26" width="100" height="36" rx="8" fill="color-mix(in srgb, var(--danger) 12%, transparent)" stroke="var(--danger)" stroke-width="2" />
+  <text x="300" y="49" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Câu hỏi C</text>
+  <text x="180" y="82" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Đổi 1 dữ liệu → phải dò từng câu hỏi để xoá</text>
+
+  <line x1="0" y1="102" x2="360" y2="102" stroke="var(--line)" stroke-width="1" />
+
+  <text x="8" y="126" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink-2)">Mô hình 2: cache đối tượng</text>
+  <rect x="80" y="140" width="200" height="52" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="180" y="163" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">Object</text>
+  <text x="180" y="180" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">(vd: Product #1, đầy đủ)</text>
+  <text x="180" y="214" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Đổi dữ liệu → xoá đúng 1 object, không cần dò</text>
+</svg>

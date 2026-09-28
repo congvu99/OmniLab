@@ -1,0 +1,28 @@
+<svg viewBox="0 0 360 240" width="100%" role="img" aria-labelledby="svg-availability-patterns-mac-noi-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-availability-patterns-mac-noi-title">Mắc nối tiếp làm giảm độ sẵn sàng, mắc song song làm tăng độ sẵn sàng</title>
+  <defs>
+    <marker id="svg-asp-arrow-ink2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
+    </marker>
+  </defs>
+
+  <text x="8" y="16" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink-2)">Nối tiếp</text>
+  <rect x="20" y="26" width="80" height="36" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="60" y="49" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Foo</text>
+  <path d="M100 44 H150" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-asp-arrow-ink2)" />
+  <rect x="150" y="26" width="80" height="36" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="190" y="49" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Bar</text>
+  <text x="180" y="88" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--danger)">99,9% × 99,9% = 99,8%</text>
+
+  <line x1="0" y1="106" x2="360" y2="106" stroke="var(--line)" stroke-width="1" />
+
+  <text x="8" y="130" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink-2)">Song song</text>
+  <rect x="120" y="140" width="80" height="34" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="160" y="162" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Foo</text>
+  <rect x="120" y="184" width="80" height="34" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="160" y="206" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Bar</text>
+  <path d="M60 157 C 90 157, 90 157, 120 157" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-asp-arrow-ink2)" />
+  <path d="M60 157 C 90 157, 90 201, 120 201" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-asp-arrow-ink2)" />
+  <circle cx="60" cy="179" r="4" fill="var(--ink-2)" />
+  <text x="290" y="178" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--accent)">→ 99,9999%</text>
+</svg>

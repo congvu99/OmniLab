@@ -15,6 +15,9 @@ examplesReviewed: false
 readingMinutes: 7
 ---
 
+import svgConsistencyBaMucDo from '../../../../assets/illustrations/kien-truc/danh-doi-consistency-patterns-ba-muc-do.svg?raw';
+import svgConsistencyDongBoVsBatDongBo from '../../../../assets/illustrations/kien-truc/danh-doi-consistency-patterns-dong-bo-vs-bat-dong-bo.svg?raw';
+
 
 # Các mẫu nhất quán (Consistency Patterns)
 
@@ -22,11 +25,30 @@ readingMinutes: 7
 
 Khi có nhiều bản sao của cùng một dữ liệu, ta đứng trước các lựa chọn về cách đồng bộ chúng sao cho client nhìn thấy dữ liệu một cách nhất quán. Nhắc lại định nghĩa tính nhất quán trong [định lý CAP](/hoc/kien-truc/danh-doi/cap-theorem): mọi lần đọc đều nhận được kết quả của lần ghi gần nhất, hoặc nhận lỗi.
 
+<RealLife title="Nhiều chi nhánh cùng một chuỗi cà phê">
+
+Một chuỗi cà phê có nhiều chi nhánh, mỗi chi nhánh giữ một bản sao bảng giá. Khi đổi giá, mỗi chi nhánh cập nhật vào lúc khác nhau — có nơi ngay lập tức, có nơi vài giờ sau. Câu hỏi "khách ở chi nhánh khác thấy giá mới lúc nào" chính là bài toán nhất quán. → Ba mức dưới đây là ba câu trả lời khác nhau cho câu hỏi đó.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgConsistencyBaMucDo}
+  alt="Sau khi ghi, lần đọc kế tiếp thấy gì ở ba mức nhất quán"
+  caption="Yếu: có thể không bao giờ thấy dữ liệu mới. Cuối cùng: thấy sau, nhưng chắc chắn. Mạnh: thấy ngay lập tức."
+/>
+
 ### Nhất quán yếu (Weak consistency)
 
 Sau một lần ghi, các lần đọc có thể thấy hoặc không thấy dữ liệu mới. Hệ thống chỉ cố gắng ở mức tốt nhất có thể (best effort).
 
 Cách tiếp cận này xuất hiện trong các hệ như memcached. Nhất quán yếu phù hợp với những tình huống thời gian thực như VoIP, video chat, game nhiều người chơi thời gian thực. Ví dụ, nếu bạn đang gọi điện và mất sóng vài giây, khi có sóng lại bạn sẽ không nghe được những gì đã nói trong lúc mất kết nối.
+
+<RealLife title="Bộ đếm lượt xem đôi lúc trôi mất vài lượt">
+
+Bộ đếm lượt xem video dùng bộ nhớ tạm để tăng cực nhanh. Nếu server bộ đếm khởi động lại đúng lúc, vài lượt xem gần nhất bị mất luôn — không ai biết, không có cơ chế nào bù lại. → Đó là nhất quán yếu: hệ thống cố gắng ở mức tốt nhất có thể, nhưng không hứa hẹn gì; dữ liệu mất là mất vĩnh viễn.
+
+</RealLife>
 
 ### Nhất quán cuối cùng (Eventual consistency)
 
@@ -34,11 +56,30 @@ Sau một lần ghi, các lần đọc rồi sẽ thấy dữ liệu mới (thư
 
 Cách tiếp cận này xuất hiện trong các hệ như DNS và email. Nhất quán cuối cùng phù hợp với các hệ thống có tính sẵn sàng cao.
 
+<RealLife title="Đăng bài mạng xã hội, bạn bè thấy sau vài giây">
+
+Bạn đăng một status, lập tức thấy ngay bài của mình, nhưng bạn bè ở xa có thể đợi vài giây mới thấy bài xuất hiện trên newsfeed — hệ thống cần thời gian đồng bộ dữ liệu ra các máy chủ khác. Đợi đủ lâu thì ai cũng thấy giống nhau. → Đó là nhất quán cuối cùng: không thấy ngay, nhưng chắc chắn sẽ thấy.
+
+</RealLife>
+
 ### Nhất quán mạnh (Strong consistency)
 
 Sau một lần ghi, các lần đọc sẽ thấy dữ liệu mới. Dữ liệu được nhân bản đồng bộ.
 
 Cách tiếp cận này xuất hiện trong các hệ thống tệp và các hệ quản trị cơ sở dữ liệu quan hệ (RDBMS). Nhất quán mạnh phù hợp với các hệ thống cần giao dịch (transaction).
+
+<RealLife title="Chuyển khoản ngân hàng phải khớp ngay lập tức">
+
+Sau khi chuyển khoản thành công, bạn kiểm tra số dư ngay và phải thấy đúng số tiền đã trừ — không có chuyện "đợi vài giây mới cập nhật" như đăng bài mạng xã hội. Ngân hàng chấp nhận giao dịch chậm hơn một chút để đảm bảo điều này. → Đó là nhất quán mạnh: đọc ngay sau khi ghi luôn thấy đúng, đổi lại bằng việc phải chờ đồng bộ xong mới trả lời.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgConsistencyDongBoVsBatDongBo}
+  alt="Nhân bản đồng bộ (nhất quán mạnh) so với bất đồng bộ (nhất quán cuối cùng)"
+  caption="Nhân bản đồng bộ chờ replica ghi xong mới trả lời client (mạnh, chậm hơn). Nhân bản bất đồng bộ trả lời ngay, replica cập nhật sau (cuối cùng, nhanh hơn nhưng có cửa sổ dữ liệu cũ)."
+/>
 
 ### Nguồn và đọc thêm
 

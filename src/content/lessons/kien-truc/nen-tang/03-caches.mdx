@@ -15,6 +15,8 @@ examplesReviewed: false
 readingMinutes: 6
 ---
 
+import svgCachesMoHinh from '../../../../assets/illustrations/kien-truc/nen-tang-caches-mo-hinh-truy-van-vs-doi-tuong.svg?raw';
+
 
 # Khả năng mở rộng cho người mới - Phần 3: Bộ nhớ đệm (Cache)
 
@@ -44,6 +46,12 @@ Ví dụ, Redis chạy trên một server tiêu chuẩn có thể thực hiện 
 
 Thử làm điều đó với một database mà xem!
 
+<RealLife title="Ngăn kéo bàn làm việc so với kho hàng dưới tầng hầm">
+
+Giấy tờ cần dùng ngay bạn để trong ngăn kéo bàn, với tay là lấy được. Hồ sơ ít dùng thì phải xuống kho hàng dưới tầng hầm, tìm đúng kệ, đúng thùng, mất vài phút. Ngăn kéo chứa được ít hơn kho nhiều, nhưng lấy đồ nhanh hơn hẳn. → RAM (cache) giống ngăn kéo: nhanh nhưng nhỏ; đĩa (database) giống kho hầm: chứa được nhiều nhưng chậm hơn.
+
+</RealLife>
+
 ## Hai mô hình cache dữ liệu
 
 Có 2 mô hình để cache dữ liệu: một cũ và một mới.
@@ -55,6 +63,12 @@ Có 2 mô hình để cache dữ liệu: một cũ và một mới.
 Mô hình này có vài vấn đề. Vấn đề chính là **chuyện hết hạn (expiration)**.
 
 Rất khó xóa một kết quả đã cache khi bạn cache một truy vấn phức tạp - mà ai chẳng có truy vấn phức tạp? Khi một mẩu dữ liệu thay đổi (ví dụ một ô trong bảng), bạn phải xóa **tất cả** các truy vấn đã cache có thể có chứa ô đó. Bạn hiểu vấn đề rồi chứ?
+
+<RealLife title="Ghi chú riêng cho từng câu hỏi của khách">
+
+Nhân viên phòng vé viết đáp án cho từng câu hỏi cụ thể ra một mảnh giấy riêng: "còn vé Sài Gòn - Hà Nội ngày 20 không?" → một tờ. "Còn vé ngày 21 không?" → tờ khác. Khi giá vé đổi, nhân viên phải lục cả chồng giấy để tìm và bỏ đúng những tờ liên quan. → Đó là cache truy vấn: mỗi câu hỏi một bản ghi riêng, khó dọn khi dữ liệu gốc đổi.
+
+</RealLife>
 
 ### Mô hình 2 - Cache đối tượng (Cached Objects)
 
@@ -70,6 +84,19 @@ Giờ hãy làm thế này: **khi class của bạn lắp ráp xong mảng dữ 
 
 Cách này cho phép bạn dễ dàng vứt bỏ đối tượng mỗi khi có gì đó thay đổi, và làm cho toàn bộ hoạt động của code vừa nhanh hơn vừa hợp logic hơn.
 
+<RealLife title="Hồ sơ khách hàng đầy đủ một chỗ">
+
+Thay vì viết giấy riêng cho từng câu hỏi, tiệm spa giữ một hồ sơ khách hàng đầy đủ: tên, lịch sử dịch vụ, ghi chú. Cần gì cứ mở đúng hồ sơ đó ra xem. Khách đổi số điện thoại, chỉ cần sửa đúng một hồ sơ, không phải lục lại từng mảnh giấy cũ. → Đây là cache đối tượng: gom mọi thứ liên quan vào một bản ghi duy nhất, xóa/sửa cũng chỉ đúng một chỗ.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgCachesMoHinh}
+  alt="Cache theo từng câu truy vấn so với cache theo đối tượng đầy đủ"
+  caption="Mô hình 1 lưu mỗi câu hỏi thành một mảnh riêng, khó dọn khi dữ liệu đổi. Mô hình 2 lưu nguyên một object, đổi dữ liệu chỉ cần xóa đúng object đó."
+/>
+
 ### Và phần hay nhất: xử lý bất đồng bộ
 
 Nó **mở đường cho xử lý bất đồng bộ (asynchronous processing)**!
@@ -82,6 +109,12 @@ Hãy tưởng tượng một đội quân worker server chuyên đi lắp ráp c
 - bài blog đã render hoàn chỉnh
 - luồng hoạt động (activity stream)
 - quan hệ bạn bè giữa các user
+
+<RealLife title="Vé giữ chỗ tạm ở quầy lễ tân">
+
+Khách sạn không lưu vé giữ phòng tạm thời vào kho hồ sơ lưu trữ chính thức (nơi giữ hợp đồng, hóa đơn) — chỉ ghi tạm trên bảng ở quầy lễ tân, xóa ngay khi khách nhận phòng hoặc hết hạn giữ chỗ. Lưu vào kho lưu trữ chính thức sẽ chậm và thừa thãi cho một thứ tồn tại vài phút. → Session cũng vậy: dữ liệu sống ngắn, nên để ở cache nhanh, không phải ở database chính.
+
+</RealLife>
 
 ## Lời cuối
 

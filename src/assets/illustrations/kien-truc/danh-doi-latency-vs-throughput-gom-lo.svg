@@ -1,0 +1,32 @@
+<svg viewBox="0 0 360 240" width="100%" role="img" aria-labelledby="svg-latency-throughput-gom-lo-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-latency-throughput-gom-lo-title">Gửi ngay từng item so với gom lô rồi gửi một lần</title>
+  <defs>
+    <marker id="svg-ltb-arrow-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)" />
+    </marker>
+  </defs>
+
+  <text x="8" y="16" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink-2)">Gửi ngay từng cái</text>
+  <rect x="10" y="26" width="26" height="26" rx="5" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <rect x="46" y="26" width="26" height="26" rx="5" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <rect x="82" y="26" width="26" height="26" rx="5" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <path d="M20 52 V72" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#svg-ltb-arrow-accent)" />
+  <path d="M56 52 V72" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#svg-ltb-arrow-accent)" />
+  <path d="M92 52 V72" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#svg-ltb-arrow-accent)" />
+  <rect x="150" y="26" width="80" height="52" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="190" y="56" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">DB</text>
+  <text x="10" y="98" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Độ trễ mỗi lần thấp, nhưng tổng thông lượng thấp hơn</text>
+
+  <line x1="0" y1="112" x2="360" y2="112" stroke="var(--line)" stroke-width="1" />
+
+  <text x="8" y="136" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink-2)">Gom lô rồi gửi 1 lần</text>
+  <rect x="10" y="146" width="26" height="26" rx="5" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <rect x="46" y="146" width="26" height="26" rx="5" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <rect x="82" y="146" width="26" height="26" rx="5" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <path d="M20 172 C 20 190, 140 200, 150 202" fill="none" stroke="var(--accent)" stroke-width="1.5" marker-end="url(#svg-ltb-arrow-accent)" />
+  <path d="M56 172 C 56 190, 140 200, 150 202" fill="none" stroke="var(--accent)" stroke-width="1.5" />
+  <path d="M92 172 C 92 190, 140 200, 150 202" fill="none" stroke="var(--accent)" stroke-width="1.5" />
+  <rect x="150" y="184" width="80" height="40" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="190" y="208" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">DB</text>
+  <text x="10" y="230" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Item đầu chờ lâu hơn, nhưng thông lượng tăng</text>
+</svg>

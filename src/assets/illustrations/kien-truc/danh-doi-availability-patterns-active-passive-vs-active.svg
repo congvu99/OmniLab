@@ -1,0 +1,33 @@
+<svg viewBox="0 0 360 240" width="100%" role="img" aria-labelledby="svg-availability-patterns-failover-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-availability-patterns-failover-title">Chuyển đổi dự phòng chủ động-bị động so với chủ động-chủ động</title>
+  <defs>
+    <marker id="svg-apa-arrow-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)" />
+    </marker>
+  </defs>
+
+  <text x="8" y="16" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink-2)">Chủ động - bị động</text>
+  <rect x="8" y="26" width="70" height="34" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="43" y="48" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Client</text>
+  <path d="M78 43 H124" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-apa-arrow-accent)" />
+  <rect x="124" y="18" width="110" height="34" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="179" y="40" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Chủ động</text>
+  <rect x="124" y="60" width="110" height="34" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" stroke-dasharray="4 3" />
+  <text x="179" y="82" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Bị động (chờ)</text>
+  <path d="M234 35 C 250 35, 250 77, 234 77" fill="none" stroke="var(--ink-2)" stroke-width="1.5" stroke-dasharray="2 3" />
+  <text x="270" y="60" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">nhịp tim</text>
+
+  <line x1="0" y1="110" x2="360" y2="110" stroke="var(--line)" stroke-width="1" />
+
+  <text x="8" y="134" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink-2)">Chủ động - chủ động</text>
+  <rect x="8" y="150" width="70" height="60" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="43" y="184" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Client</text>
+  <path d="M78 165 C 100 165, 105 158, 124 152" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-apa-arrow-accent)" />
+  <path d="M78 195 C 100 195, 105 202, 124 208" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-apa-arrow-accent)" />
+  <rect x="124" y="144" width="110" height="34" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="179" y="166" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Server A</text>
+  <rect x="124" y="190" width="110" height="34" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="179" y="212" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Server B</text>
+  <text x="255" y="170" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">cả hai cùng</text>
+  <text x="255" y="183" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">phục vụ</text>
+</svg>

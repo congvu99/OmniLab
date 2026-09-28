@@ -15,6 +15,8 @@ examplesReviewed: false
 readingMinutes: 4
 ---
 
+import svgPerfVsScaleChanDoan from '../../../../assets/illustrations/kien-truc/danh-doi-performance-vs-scalability-chan-doan.svg?raw';
+
 
 # Hiệu năng và khả năng mở rộng (Performance vs Scalability)
 
@@ -26,6 +28,25 @@ Một cách nhìn khác về hiệu năng và khả năng mở rộng:
 
 - Nếu bạn gặp vấn đề về **hiệu năng**, hệ thống của bạn **chậm với một người dùng duy nhất**.
 - Nếu bạn gặp vấn đề về **khả năng mở rộng**, hệ thống của bạn **nhanh với một người dùng, nhưng chậm khi tải nặng**.
+
+<RealLife title="Nhân viên tính tiền chậm tay">
+
+Một nhân viên thu ngân gõ máy chậm, lóng ngóng tìm mã vạch dù cửa hàng vắng tanh chỉ có đúng 1 khách. Đổi ca đông người vẫn chậm y như vậy, vì vấn đề nằm ở chính người đó chứ không phải số khách. → Đây là vấn đề hiệu năng: chậm ngay cả khi tải thấp, phải tối ưu chính người/code đó, mở thêm quầy cũng vô ích.
+
+</RealLife>
+
+<RealLife title="Một quầy thu ngân duy nhất vào giờ cao điểm">
+
+Quầy thu ngân phục vụ rất nhanh khi vắng khách — quét mã, tính tiền chỉ vài giây. Nhưng giờ tan tầm, hàng dài dằng dặc vì một quầy không xử lý xuể lượng khách đổ về cùng lúc. → Đây là vấn đề khả năng mở rộng: nhanh với 1 khách, chậm khi tải nặng — mở thêm quầy (thêm tài nguyên) mới giải quyết được.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgPerfVsScaleChanDoan}
+  alt="Chẩn đoán vấn đề hiệu năng so với vấn đề khả năng mở rộng"
+  caption="Vấn đề hiệu năng: chậm dù ít hay đông người dùng. Vấn đề khả năng mở rộng: nhanh khi ít người, chậm hẳn khi tải nặng."
+/>
 
 ### Nguồn và đọc thêm
 

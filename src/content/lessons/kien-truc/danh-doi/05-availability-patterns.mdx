@@ -15,6 +15,10 @@ examplesReviewed: false
 readingMinutes: 9
 ---
 
+import svgAvailabilityFailover from '../../../../assets/illustrations/kien-truc/danh-doi-availability-patterns-active-passive-vs-active.svg?raw';
+import svgAvailabilitySoNine from '../../../../assets/illustrations/kien-truc/danh-doi-availability-patterns-so-9-thoi-gian-chet.svg?raw';
+import svgAvailabilityNoiTiepSongSong from '../../../../assets/illustrations/kien-truc/danh-doi-availability-patterns-noi-tiep-vs-song-song.svg?raw';
+
 
 # Các mẫu sẵn sàng (Availability Patterns)
 
@@ -32,6 +36,12 @@ Với kiểu chủ động - bị động, các nhịp tim (heartbeat) được 
 
 Chuyển đổi dự phòng chủ động - bị động còn được gọi là chuyển đổi dự phòng master-slave.
 
+<RealLife title="Nhân viên dự phòng trực điện thoại ở nhà">
+
+Quán cà phê chỉ có 1 pha chế đứng quầy; một người khác luôn cầm điện thoại, sẵn sàng chạy tới thay nếu người đứng quầy báo ốm đột xuất giữa ca. Bình thường người dự phòng không pha một ly nào cả — chỉ đứng chờ. → Đó là active-passive: máy dự phòng không xử lý gì cho tới khi máy chính gặp sự cố mới tiếp quản.
+
+</RealLife>
+
 #### Chủ động - chủ động (Active-active)
 
 Ở kiểu chủ động - chủ động, cả hai máy chủ cùng xử lý lưu lượng, chia tải cho nhau.
@@ -39,6 +49,19 @@ Chuyển đổi dự phòng chủ động - bị động còn được gọi là
 Nếu các máy chủ phục vụ công khai ra ngoài, DNS cần biết địa chỉ IP công khai của cả hai. Nếu chúng phục vụ nội bộ, logic ứng dụng cần biết cả hai máy chủ.
 
 Chuyển đổi dự phòng chủ động - chủ động còn được gọi là chuyển đổi dự phòng master-master.
+
+<RealLife title="Hai quầy thu ngân cùng mở song song">
+
+Siêu thị mở cùng lúc 2 quầy thu ngân, cả hai đều tính tiền cho khách, chia đôi lượng người xếp hàng. Quầy nào đông hơn thì khách tự chuyển bớt sang quầy kia. → Đó là active-active: cả hai bên đều xử lý thật, không bên nào "chờ không" như active-passive.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgAvailabilityFailover}
+  alt="Chuyển đổi dự phòng chủ động-bị động so với chủ động-chủ động"
+  caption="Active-passive: chỉ bên chủ động phục vụ, bên bị động chờ qua nhịp tim. Active-active: cả hai bên cùng phục vụ, chia tải thật sự."
+/>
 
 ### Nhược điểm: chuyển đổi dự phòng
 
@@ -76,6 +99,19 @@ Tính sẵn sàng thường được lượng hóa bằng thời gian hoạt đ�
 | Mỗi tuần | 1m 5s |
 | Mỗi ngày | 8,6s |
 
+<RealLife title="Ngân sách nghỉ ốm co lại khi đặt mục tiêu cao hơn">
+
+Một tài xế cam kết trễ chuyến tối đa 8 giờ mỗi năm thì dễ, chỉ cần cẩn thận bình thường. Nhưng nếu cam kết trễ tối đa 52 phút mỗi năm, gần như không được phép ốm hay gặp sự cố bất ngờ nào, phải chuẩn bị dự phòng kỹ hơn hẳn. → Cứ thêm một số 9 vào độ sẵn sàng, ngân sách "được phép hỏng" lại co lại gần 10 lần.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgAvailabilitySoNine}
+  alt="Thêm một số 9 làm ngân sách thời gian chết mỗi năm co lại rất nhiều"
+  caption="Từ 99,9% lên 99,99%, ngân sách thời gian chết chấp nhận được mỗi năm co lại từ 8 giờ 45 phút xuống chỉ còn 52 phút."
+/>
+
 #### Sẵn sàng song song và nối tiếp
 
 Nếu một dịch vụ gồm nhiều thành phần có thể hỏng, tính sẵn sàng tổng thể phụ thuộc vào việc các thành phần được mắc nối tiếp hay song song.
@@ -90,6 +126,12 @@ Sẵn sàng (Tổng) = Sẵn sàng (Foo) * Sẵn sàng (Bar)
 
 Nếu `Foo` và `Bar` mỗi cái có độ sẵn sàng 99,9%, tổng sẵn sàng khi mắc nối tiếp là 99,8%.
 
+<RealLife title="Đi qua nhiều trạm kiểm soát liên tiếp">
+
+Xe khách phải qua 3 trạm kiểm soát liên tiếp trên đường, mỗi trạm có một tỉ lệ nhỏ dừng xe kiểm tra đột xuất gây trễ giờ. Xe phải qua lọt cả 3 trạm mới tới đích đúng giờ — càng nhiều trạm, xác suất bị trễ ở đâu đó càng cao. → Đó là mắc nối tiếp: mọi thành phần đều phải "trôi chảy" thì cả chuyến mới đúng giờ, độ sẵn sàng nhân dồn xuống thấp hơn từng phần riêng lẻ.
+
+</RealLife>
+
 **Song song**
 
 Tính sẵn sàng tổng thể **tăng** khi hai thành phần có độ sẵn sàng dưới 100% được mắc song song:
@@ -99,6 +141,19 @@ Sẵn sàng (Tổng) = 1 - (1 - Sẵn sàng (Foo)) * (1 - Sẵn sàng (Bar))
 ```
 
 Nếu `Foo` và `Bar` mỗi cái có độ sẵn sàng 99,9%, tổng sẵn sàng khi mắc song song là 99,9999%.
+
+<RealLife title="Hai con đường tới cùng một điểm">
+
+Từ nhà tới công ty có 2 con đường khác nhau. Đường A kẹt xe thì đi đường B, chỉ cần một trong hai đường thông là vẫn tới nơi đúng giờ. Cả hai đường cùng kẹt cùng lúc là chuyện hiếm. → Đó là mắc song song: chỉ cần một bản sao còn sống là hệ thống vẫn phục vụ được, độ sẵn sàng tổng cao hơn hẳn từng phần riêng lẻ.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgAvailabilityNoiTiepSongSong}
+  alt="Mắc nối tiếp làm giảm độ sẵn sàng, mắc song song làm tăng độ sẵn sàng"
+  caption="Nối tiếp: cả Foo và Bar đều phải sống, 99,9% × 99,9% = 99,8%. Song song: chỉ cần một trong hai sống, độ sẵn sàng tăng lên 99,9999%."
+/>
 
 ---
 

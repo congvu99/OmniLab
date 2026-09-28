@@ -15,6 +15,9 @@ examplesReviewed: false
 readingMinutes: 6
 ---
 
+import svgLatencyThroughputOngDan from '../../../../assets/illustrations/kien-truc/danh-doi-latency-vs-throughput-ong-dan.svg?raw';
+import svgLatencyThroughputGomLo from '../../../../assets/illustrations/kien-truc/danh-doi-latency-vs-throughput-gom-lo.svg?raw';
+
 
 # Độ trễ và thông lượng (Latency vs Throughput)
 
@@ -22,9 +25,41 @@ readingMinutes: 6
 
 **Độ trễ (latency)** là khoảng thời gian để thực hiện một hành động hoặc tạo ra một kết quả.
 
+<RealLife title="Gọi món ở quán ăn - chờ bao lâu mới có">
+
+Bạn gọi một tô phở, từ lúc gọi tới lúc tô phở bưng ra bàn mất 5 phút. Đó là thời gian cho **một** hành động cụ thể hoàn tất, không quan tâm quán đang phục vụ bao nhiêu bàn khác cùng lúc. → Đây chính là độ trễ: thời gian để một hành động hoàn thành.
+
+</RealLife>
+
 **Thông lượng (throughput)** là số lượng hành động hoặc kết quả như vậy trên một đơn vị thời gian.
 
+<RealLife title="Quán phở phục vụ được bao nhiêu tô mỗi giờ">
+
+Quán phở đó, dù mỗi tô vẫn mất 5 phút để làm xong, nhưng có 4 đầu bếp làm song song nên cứ mỗi phút lại có một tô mới ra bàn nào đó — tính chung cả quán phục vụ được khoảng 60 tô mỗi giờ. → Đó là thông lượng: tổng số việc hoàn tất trên một đơn vị thời gian, không phải thời gian của riêng một tô.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgLatencyThroughputOngDan}
+  alt="Độ trễ là thời gian đi hết ống, thông lượng là lượng qua một mặt cắt mỗi giây"
+  caption="Hai đại lượng đo hai thứ khác nhau trên cùng một luồng: độ trễ đo theo chiều dài, thông lượng đo tại một điểm cắt ngang."
+/>
+
 Nhìn chung, bạn nên nhắm tới **thông lượng tối đa** với **độ trễ chấp nhận được**.
+
+<RealLife title="Quán đặt ngưỡng chờ hợp lý rồi mới tối ưu số tô">
+
+Quán phở đặt mục tiêu "tô phở ra trong dưới 10 phút là khách chấp nhận được", rồi mới tối ưu để phục vụ được càng nhiều tô càng tốt trong khung đó — không cố ép xuống còn 3 phút bằng cách thuê thêm cả chục đầu bếp tốn kém, vì khách không phân biệt được 10 phút với 3 phút. → Đặt ngưỡng độ trễ chấp nhận được trước, rồi tối đa hóa thông lượng trong ngưỡng đó.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgLatencyThroughputGomLo}
+  alt="Gửi ngay từng item so với gom lô rồi gửi một lần"
+  caption="Gom lô đánh đổi độ trễ của item đầu tiên để lấy tổng thông lượng cao hơn — một cách cụ thể để 'tối đa thông lượng trong ngưỡng độ trễ chấp nhận được'."
+/>
 
 ### Nguồn và đọc thêm
 

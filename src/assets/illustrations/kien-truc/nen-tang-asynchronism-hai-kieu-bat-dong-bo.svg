@@ -1,0 +1,37 @@
+<svg viewBox="0 0 360 230" width="100%" role="img" aria-labelledby="svg-asynchronism-hai-kieu-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-asynchronism-hai-kieu-title">Hai kiểu bất đồng bộ: làm sẵn trước và xử lý qua hàng đợi</title>
+  <defs>
+    <marker id="svg-atp-arrow-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)" />
+    </marker>
+    <marker id="svg-atp-arrow-ink2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
+    </marker>
+  </defs>
+
+  <text x="8" y="16" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink-2)">Kiểu 1: làm sẵn từ trước</text>
+  <rect x="8" y="26" width="90" height="38" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="53" y="49" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Cronjob</text>
+  <path d="M98 45 H124" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-atp-arrow-accent)" />
+  <rect x="124" y="26" width="110" height="38" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="179" y="49" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Render tĩnh</text>
+  <path d="M234 45 H260" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-atp-arrow-accent)" />
+  <rect x="260" y="26" width="92" height="38" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="306" y="42" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink)">User nhận</text>
+  <text x="306" y="55" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink)">ngay</text>
+
+  <line x1="0" y1="94" x2="360" y2="94" stroke="var(--line)" stroke-width="1" />
+
+  <text x="8" y="118" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink-2)">Kiểu 2: hàng đợi job</text>
+  <rect x="8" y="128" width="90" height="38" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="53" y="147" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink)">Request</text>
+  <text x="53" y="160" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink)">người dùng</text>
+  <path d="M98 147 H124" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-atp-arrow-ink2)" />
+  <rect x="124" y="128" width="110" height="38" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="179" y="151" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Job queue</text>
+  <path d="M234 147 H260" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-atp-arrow-ink2)" />
+  <rect x="260" y="128" width="92" height="38" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="306" y="151" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Worker</text>
+
+  <text x="180" y="198" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Người dùng được báo "đang xử lý", nhận kết quả sau</text>
+</svg>

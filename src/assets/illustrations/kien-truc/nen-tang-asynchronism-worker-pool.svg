@@ -1,0 +1,30 @@
+<svg viewBox="0 0 360 200" width="100%" role="img" aria-labelledby="svg-asynchronism-worker-pool-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-asynchronism-worker-pool-title">Nhiều worker cùng lấy job từ một hàng đợi chung</title>
+  <defs>
+    <marker id="svg-awp-arrow-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)" />
+    </marker>
+    <marker id="svg-awp-arrow-ink2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
+    </marker>
+  </defs>
+
+  <rect x="10" y="40" width="110" height="68" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="65" y="34" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink-2)">Hàng đợi job</text>
+  <rect x="24" y="52" width="26" height="20" rx="4" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <rect x="60" y="52" width="26" height="20" rx="4" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <rect x="24" y="80" width="26" height="20" rx="4" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+
+  <path d="M120 60 C 170 60, 170 40, 220 40" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-awp-arrow-accent)" />
+  <path d="M120 88 C 170 88, 170 108, 220 108" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-awp-arrow-accent)" />
+
+  <rect x="220" y="22" width="120" height="36" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="280" y="44" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Worker A</text>
+  <rect x="220" y="90" width="120" height="36" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="280" y="112" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Worker B</text>
+
+  <path d="M280 58 V90" fill="none" stroke="var(--ink-2)" stroke-width="1" stroke-dasharray="3 3" />
+
+  <text x="180" y="150" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Nhiều worker cùng xử lý song song → hàng đợi vơi nhanh hơn</text>
+  <text x="180" y="170" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Job đổ vào nhanh hơn worker xử lý → hàng đợi phình (back pressure)</text>
+</svg>
