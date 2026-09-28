@@ -1,0 +1,40 @@
+<svg viewBox="0 0 360 260" width="100%" role="img" aria-labelledby="svg-cache-aside-write-through-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-cache-aside-write-through-title">So sánh cache-aside và write-through: ai nói chuyện với DB</title>
+  <defs>
+    <marker id="svg-caw-arrow-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)" />
+    </marker>
+    <marker id="svg-caw-arrow-ink2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
+    </marker>
+  </defs>
+
+  <text x="8" y="16" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">Cache-aside — ứng dụng tự đọc/ghi cả hai</text>
+  <rect x="8" y="30" width="90" height="38" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="53" y="54" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Ứng dụng</text>
+  <rect x="135" y="30" width="90" height="38" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="180" y="54" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Cache</text>
+  <rect x="262" y="30" width="90" height="38" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="307" y="54" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">DB</text>
+
+  <path d="M98 49 H135" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-start="url(#svg-caw-arrow-accent)" marker-end="url(#svg-caw-arrow-accent)" />
+  <text x="116" y="42" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--accent)">đọc/ghi</text>
+
+  <path d="M53 68 C 53 100, 307 100, 307 68" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-start="url(#svg-caw-arrow-ink2)" marker-end="url(#svg-caw-arrow-ink2)" />
+  <text x="180" y="98" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">đọc/ghi DB trực tiếp khi miss</text>
+
+  <text x="8" y="150" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">Write-through — ứng dụng chỉ biết Cache</text>
+  <rect x="8" y="164" width="90" height="38" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="53" y="188" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Ứng dụng</text>
+  <rect x="135" y="164" width="90" height="38" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="180" y="188" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Cache</text>
+  <rect x="262" y="164" width="90" height="38" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="307" y="188" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">DB</text>
+
+  <path d="M98 183 H135" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-start="url(#svg-caw-arrow-accent)" marker-end="url(#svg-caw-arrow-accent)" />
+  <text x="116" y="176" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--accent)">ghi</text>
+
+  <path d="M225 183 H262" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-caw-arrow-ink2)" />
+  <text x="243" y="212" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">cache tự ghi</text>
+  <text x="243" y="228" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">xuống DB (đồng bộ)</text>
+</svg>

@@ -1,0 +1,44 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-cache-hit-miss-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-cache-hit-miss-title">Luồng cache hit và cache miss</title>
+  <defs>
+    <marker id="svg-chm-arrow-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)" />
+    </marker>
+    <marker id="svg-chm-arrow-ink2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
+    </marker>
+  </defs>
+
+  <rect x="60" y="10" width="120" height="38" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="120" y="34" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" fill="var(--ink)">Client</text>
+
+  <rect x="60" y="91" width="120" height="38" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="120" y="115" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" fill="var(--ink)">Cache</text>
+
+  <rect x="60" y="172" width="120" height="38" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="120" y="196" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" fill="var(--ink)">DB</text>
+
+  <path d="M120 48 V91" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-chm-arrow-ink2)" />
+  <text x="16" y="73" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink-2)">yêu cầu</text>
+
+  <path d="M120 129 V172" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-chm-arrow-ink2)" />
+  <text x="16" y="154" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink-2)">miss</text>
+
+  <path class="svg-chm-flow" d="M180 110 C 300 110, 300 29, 180 29" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-chm-arrow-accent)" />
+  <text x="290" y="72" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--accent)">Hit – trả ngay</text>
+
+  <path d="M180 191 C 300 191, 300 110, 180 110" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-chm-arrow-ink2)" />
+  <text x="290" y="153" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink-2)">nạp + lưu vào cache</text>
+
+  <style>
+    @media (prefers-reduced-motion: no-preference) {
+      .svg-chm-flow {
+        stroke-dasharray: 6 6;
+        animation: svg-chm-dash 1.6s linear infinite;
+      }
+    }
+    @keyframes svg-chm-dash {
+      to { stroke-dashoffset: -24; }
+    }
+  </style>
+</svg>

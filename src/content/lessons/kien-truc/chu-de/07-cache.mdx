@@ -20,6 +20,9 @@ import img_ONjORqk from '../../../../assets/legacy/system-design/ONjORqk.png';
 import img_0vBc0hN from '../../../../assets/legacy/system-design/0vBc0hN.png';
 import img_rgSrvjG from '../../../../assets/legacy/system-design/rgSrvjG.png';
 import img_kxtjqgE from '../../../../assets/legacy/system-design/kxtjqgE.png';
+import svgCacheHitMiss from '../../../../assets/illustrations/kien-truc/chu-de-cache-cache-hit-miss.svg?raw';
+import svgCacheTtlEviction from '../../../../assets/illustrations/kien-truc/chu-de-cache-ttl-eviction.svg?raw';
+import svgCacheAsideWriteThrough from '../../../../assets/illustrations/kien-truc/chu-de-cache-cache-aside-vs-write-through.svg?raw';
 
 
 # Bộ nhớ đệm (Cache)
@@ -29,6 +32,19 @@ import img_kxtjqgE from '../../../../assets/legacy/system-design/kxtjqgE.png';
 <Figure src={img_Q6z24La} alt="Sơ đồ bộ điều phối tra cache trước khi thực thi request" credit={`Nguồn: <a href="http://horicky.blogspot.com/2010/10/scalable-system-design-patterns.html">Scalable system design patterns</a>`} />
 
 Bộ nhớ đệm (caching) giúp cải thiện thời gian tải trang và có thể giảm tải cho máy chủ và cơ sở dữ liệu. Trong mô hình này, bộ điều phối (dispatcher) trước hết sẽ tra xem request này đã từng được thực hiện chưa và cố tìm kết quả trước đó để trả về, nhằm tiết kiệm việc thực thi thật.
+
+<RealLife title="Tủ lạnh ở nhà">
+
+Tủ lạnh nhà bạn có sẵn đồ ăn: mở tủ, thấy quả trứng, lấy dùng ngay — nhanh, không cần đi đâu. Nếu tủ trống, bạn phải chạy ra chợ mua, tốn thời gian hơn nhiều. Ứng dụng cũng vậy: nếu dữ liệu đã có trong bộ nhớ đệm, trả về ngay; nếu chưa, phải hỏi cơ sở dữ liệu (giống "đi chợ") rồi mới trả kết quả. → Đây chính là cache hit (có sẵn trong tủ) và cache miss (phải đi chợ).
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgCacheHitMiss}
+  alt="Luồng cache hit và cache miss"
+  caption="Khi dữ liệu có sẵn trong cache (hit), trả ngay; khi không (miss), lấy từ DB rồi lưu lại vào cache để lần sau nhanh hơn."
+/>
 
 Cơ sở dữ liệu thường hoạt động tốt nhất khi các thao tác đọc và ghi được phân bố đều trên các phân vùng (partition) của nó. Những mục phổ biến (popular items) có thể làm lệch sự phân bố này, gây ra nút thắt cổ chai. Đặt một cache phía trước cơ sở dữ liệu có thể giúp hấp thụ tải không đều và các đợt tăng đột biến lưu lượng.
 
@@ -51,6 +67,19 @@ Cơ sở dữ liệu của bạn thường đã có sẵn một mức cache nào
 ### Cache ở tầng ứng dụng (Application caching)
 
 Các cache trong bộ nhớ (in-memory cache) như Memcached và Redis là các kho key-value nằm giữa ứng dụng và kho dữ liệu của bạn. Vì dữ liệu được giữ trong RAM, chúng nhanh hơn nhiều so với cơ sở dữ liệu thông thường, nơi dữ liệu được lưu trên đĩa. RAM hạn chế hơn đĩa, nên các thuật toán [vô hiệu hóa cache (cache invalidation)](https://en.wikipedia.org/wiki/Cache_algorithms) như [ít được dùng gần đây nhất (least recently used - LRU)](https://en.wikipedia.org/wiki/Cache_replacement_policies#Least_recently_used_(LRU)) có thể giúp loại bỏ các mục "nguội" (cold) và giữ dữ liệu "nóng" (hot) trong RAM.
+
+<RealLife title="Tủ lạnh chật chỗ (LRU)">
+
+Tủ lạnh nhà bạn chỉ chứa được chừng ấy đồ. Khi mua thêm mà tủ đầy, bạn thường bỏ bớt món để lâu nhất, ít đụng tới nhất — không phải món mới mua nhất. Cache hoạt động tương tự: RAM có hạn, nên khi đầy, thuật toán như LRU sẽ loại bỏ mục "nguội" (lâu không dùng) để nhường chỗ cho mục "nóng" (đang cần). → Đó là cơ chế loại bỏ (eviction) khi cache hết chỗ.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgCacheTtlEviction}
+  alt="TTL hết hạn và loại bỏ theo LRU khi cache đầy"
+  caption="Mỗi mục cache có một 'hạn dùng' (TTL); khi cache đầy, mục lâu chưa dùng nhất (LRU) bị loại trước để nhường chỗ cho mục mới."
+/>
 
 Redis có thêm các tính năng sau:
 
@@ -123,6 +152,12 @@ Các lần đọc tiếp theo đối với dữ liệu đã được thêm vào 
 - Dữ liệu có thể bị cũ (stale) nếu nó được cập nhật trong cơ sở dữ liệu. Vấn đề này được giảm nhẹ bằng cách đặt thời gian sống (time-to-live - TTL) để buộc cập nhật mục cache, hoặc bằng cách dùng write-through.
 - Khi một node hỏng, nó được thay bằng một node mới, rỗng, làm tăng độ trễ.
 
+<RealLife title="Hạn sử dụng trên hộp sữa">
+
+Hộp sữa trong tủ có ghi hạn sử dụng. Trước hạn, bạn yên tâm dùng mà không cần kiểm tra lại. Sau hạn, dù sữa trông vẫn bình thường, bạn nên bỏ đi và mua hộp mới. TTL (time-to-live) của cache hoạt động y hệt: đặt một "hạn dùng" cho mỗi mục, hết hạn thì lần đọc sau sẽ bị coi là miss và cache phải nạp lại dữ liệu mới, dù dữ liệu cũ vẫn "trông ổn". → Đây là cách cache tự làm mới mà không cần ai canh tay.
+
+</RealLife>
+
 #### Write-through
 
 <Figure src={img_0vBc0hN} alt="Sơ đồ mẫu write-through" credit={`Nguồn: <a href="http://www.slideshare.net/jboner/scalability-availability-stability-patterns/">Scalability, availability, stability, patterns</a>`} />
@@ -148,6 +183,19 @@ def set_user(user_id, values):
 ```
 
 Nhìn tổng thể, write-through là một thao tác chậm do phải ghi, nhưng các lần đọc tiếp theo đối với dữ liệu vừa ghi sẽ nhanh. Người dùng thường chấp nhận độ trễ khi cập nhật dữ liệu hơn là khi đọc dữ liệu. Dữ liệu trong cache không bị cũ.
+
+<RealLife title="Quán phở ghi order">
+
+Quán phở nhỏ chỉ nấu khi có khách gọi — không nấu sẵn cả nồi rồi bỏ phí. Đây là cache-aside: ứng dụng (bà chủ) tự đi lấy nguyên liệu (hỏi DB) khi thiếu, rồi mới cập nhật tủ hâm (cache). Ngược lại, quán có bảng giá điện tử: mỗi lần đổi giá, nhân viên cập nhật bảng ngay lập tức, không đợi khách hỏi — đó là write-through: cache luôn được ghi ngay khi có thay đổi. → Khác nhau ở chỗ ai ghi trước: ứng dụng (cache-aside) hay chính cache (write-through).
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgCacheAsideWriteThrough}
+  alt="So sánh cache-aside và write-through"
+  caption="Cache-aside: ứng dụng tự đọc/ghi cả cache lẫn DB. Write-through: ứng dụng chỉ nói chuyện với cache, cache tự đồng bộ xuống DB."
+/>
 
 ##### Nhược điểm: write-through
 
@@ -185,6 +233,12 @@ Refresh-ahead có thể giúp giảm độ trễ so với read-through nếu cac
 - Cần duy trì tính nhất quán giữa cache và nguồn dữ liệu gốc (source of truth) như cơ sở dữ liệu thông qua [vô hiệu hóa cache](https://en.wikipedia.org/wiki/Cache_algorithms).
 - Vô hiệu hóa cache là một bài toán khó, kéo theo độ phức tạp bổ sung liên quan tới việc khi nào cập nhật cache.
 - Cần thay đổi ứng dụng, chẳng hạn thêm Redis hoặc memcached.
+
+<RealLife title="Thực đơn treo tường">
+
+Quán ăn đổi món nhưng quên gỡ bảng thực đơn treo tường — khách vẫn gọi món đã hết, nhân viên phải xin lỗi và chữa cháy. Đó là cache đã "cũ" (stale) so với dữ liệu thật. Giữ mọi bản sao dữ liệu (bảng thực đơn, cache, bộ nhớ trình duyệt...) luôn khớp nhau — gọi là vô hiệu hóa cache — khó vì phải nhớ *mọi nơi* đã lưu bản sao đó. → Càng nhiều tầng cache, càng nhiều "bảng thực đơn" phải cập nhật đồng thời.
+
+</RealLife>
 
 ### Nguồn và đọc thêm
 

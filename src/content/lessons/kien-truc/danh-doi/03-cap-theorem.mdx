@@ -16,6 +16,8 @@ readingMinutes: 7
 ---
 
 import img_bgLMI2u from '../../../../assets/legacy/system-design/bgLMI2u.png';
+import svgCapPartitionChoice from '../../../../assets/illustrations/kien-truc/danh-doi-cap-theorem-partition-choice.svg?raw';
+import svgCapCpApViDu from '../../../../assets/illustrations/kien-truc/danh-doi-cap-theorem-cp-vs-ap-vi-du.svg?raw';
 
 
 # Định lý CAP (CAP Theorem)
@@ -32,15 +34,53 @@ Trong một hệ thống máy tính phân tán, bạn chỉ có thể đáp ứn
 
 *Mạng vốn không đáng tin cậy, nên bạn buộc phải hỗ trợ khả năng chịu phân mảnh. Việc bạn phải làm là đánh đổi giữa tính nhất quán và tính sẵn sàng ở tầng phần mềm.*
 
+<RealLife title="Hai tổng đài ngân hàng mất kết nối">
+
+Hai chi nhánh ngân hàng nối bằng một đường dây riêng để đồng bộ số dư. Nếu dây đứt (network partition), mỗi chi nhánh phải chọn: từ chối giao dịch tới khi nối lại (ưu tiên đúng số liệu — CP), hoặc vẫn cho rút tiền theo số dư đã biết gần nhất (ưu tiên phục vụ — AP). → Đó là lựa chọn CP/AP khi phân mảnh mạng. Giới hạn: đây không phải chọn trước tuỳ ý — nó chỉ xảy ra *khi* dây đứt; lúc bình thường cả hai vẫn vừa nhất quán vừa sẵn sàng.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgCapPartitionChoice}
+  alt="Khi mạng bị phân mảnh, hệ thống phải chọn CP hoặc AP"
+  caption="Lúc mạng bình thường không có đánh đổi nào; chỉ khi phân mảnh xảy ra, hệ thống mới buộc phải chọn CP (từ chối/chờ) hoặc AP (vẫn trả lời, có thể cũ)."
+/>
+
 ### CP - nhất quán và chịu phân mảnh
 
 Việc chờ phản hồi từ node bị chia cắt có thể dẫn tới lỗi hết thời gian chờ (timeout). CP là lựa chọn tốt nếu nghiệp vụ của bạn đòi hỏi đọc và ghi mang tính nguyên tử (atomic).
+
+<RealLife title="Rút tiền ở ATM khi mất kết nối">
+
+Máy ATM mất kết nối tạm thời với trung tâm dữ liệu. Nếu ngân hàng chọn CP cho giao dịch rút tiền, máy sẽ từ chối giao dịch ("hệ thống đang bận") thay vì đoán số dư — thà báo lỗi còn hơn phát nhầm tiền hoặc để rút vượt hạn mức. → Khi buộc phải chọn, CP hy sinh khả năng phục vụ (availability) để giữ đúng dữ liệu.
+
+</RealLife>
 
 ### AP - sẵn sàng và chịu phân mảnh
 
 Phản hồi trả về phiên bản dữ liệu sẵn có nhất trên bất kỳ node nào, và phiên bản đó có thể không phải mới nhất. Các thao tác ghi có thể mất một khoảng thời gian để lan truyền khi tình trạng phân mảnh được khắc phục.
 
 AP là lựa chọn tốt nếu nghiệp vụ cho phép nhất quán cuối cùng (eventual consistency), hoặc khi hệ thống cần tiếp tục chạy bất chấp lỗi từ bên ngoài.
+
+<RealLife title="Lượt thích vẫn hiển thị dù mạng chập chờn">
+
+Khi bạn nhấn thích một bài đăng lúc mạng yếu, ứng dụng vẫn hiển thị ngay số lượt thích tăng lên trên máy bạn, dù server thật có thể chưa đồng bộ kịp cho người khác thấy. Đây là AP: ứng dụng thà phục vụ ngay bằng dữ liệu tạm, còn hơn bắt bạn chờ đồng bộ xong mới cho thao tác. → Sai lệch vài giây ở lượt thích không ai thiệt hại gì.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgCapCpApViDu}
+  alt="Ví dụ chọn CP hay AP theo từng chức năng"
+  caption="Chuyển khoản, đặt vé giới hạn nên chọn CP; lượt thích, giỏ hàng, feed mạng xã hội chọn AP được — quyết định theo từng chức năng, không phải toàn hệ thống."
+/>
+
+<RealLife title="Một hệ thống, nhiều lựa chọn khác nhau">
+
+Một ví điện tử vừa có tính năng chuyển tiền (chọn CP: chờ hoặc báo lỗi nếu chưa chắc chắn) vừa có tính năng "bạn bè đang dùng app" (chọn AP: hiển thị danh sách hơi cũ vẫn được). → CP/AP không phải nhãn dán cho cả hệ thống, mà là quyết định cho từng chức năng riêng lẻ.
+
+</RealLife>
 
 ### Nguồn và đọc thêm
 

@@ -1,0 +1,26 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-du-no-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-du-no-title">Lãi tính trên dư nợ giảm dần theo từng kỳ trả góp</title>
+  <defs>
+    <marker id="svg-dn-arrow-ink2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
+    </marker>
+  </defs>
+
+  <line x1="20" y1="190" x2="330" y2="190" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+
+  <rect x="30" y="40" width="50" height="150" rx="6" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <rect x="110" y="80" width="50" height="110" rx="6" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <rect x="190" y="115" width="50" height="75" rx="6" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <rect x="270" y="150" width="50" height="40" rx="6" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+
+  <text x="55" y="206" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Kỳ 1</text>
+  <text x="135" y="206" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Kỳ 2</text>
+  <text x="215" y="206" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Kỳ 3</text>
+  <text x="295" y="206" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Kỳ 4</text>
+
+  <path d="M55 30 V38" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-dn-arrow-ink2)" />
+  <text x="55" y="20" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">dư nợ đầu kỳ</text>
+
+  <text x="295" y="140" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--accent)">lãi thấp dần</text>
+  <text x="295" y="130" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--accent)">theo dư nợ</text>
+</svg>

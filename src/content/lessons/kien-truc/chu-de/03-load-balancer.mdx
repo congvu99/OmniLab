@@ -16,6 +16,8 @@ readingMinutes: 10
 ---
 
 import img_h81n9iK from '../../../../assets/legacy/system-design/h81n9iK.png';
+import svgLbHealthCheck from '../../../../assets/illustrations/kien-truc/chu-de-load-balancer-health-check.svg?raw';
+import svgLbLayer4Vs7 from '../../../../assets/illustrations/kien-truc/chu-de-load-balancer-layer4-vs-layer7.svg?raw';
 
 
 # Bộ cân bằng tải (Load Balancer)
@@ -29,6 +31,25 @@ Bộ cân bằng tải (load balancer) phân phối các request đến từ cli
 - Ngăn request đi tới các máy chủ không khỏe (unhealthy)
 - Ngăn tài nguyên bị quá tải
 - Giúp loại bỏ điểm lỗi đơn (single point of failure)
+
+<RealLife title="Nhân viên xếp hàng ở ngân hàng">
+
+Ở ngân hàng đông khách, một nhân viên đứng giữa sảnh, nhìn quầy nào đang trống rồi mới xếp khách vào đó — thay vì để khách tự đoán quầy nào nhanh. Bộ cân bằng tải làm đúng việc đó với request: nhận request tới, chọn máy chủ đang rảnh nhất, rồi chuyển tới. Khách (client) không cần biết có bao nhiêu quầy (máy chủ) phía sau. → Đó là lý do load balancer giúp ẩn số lượng và tình trạng thật của các máy chủ khỏi client.
+
+</RealLife>
+
+<RealLife title="Quầy treo biển tạm nghỉ">
+
+Nếu một quầy giao dịch hỏng máy hoặc nhân viên tạm nghỉ, quầy đó treo biển "tạm nghỉ" — nhân viên xếp hàng thấy biển thì ngừng đưa khách tới quầy này, dù quầy trông vẫn còn đó. Load balancer làm y hệt bằng health check: định kỳ "hỏi thăm" từng máy chủ, máy nào không trả lời đúng thì tạm loại khỏi danh sách nhận request, cho tới khi nó khỏe lại. → Nhờ vậy request không bao giờ bị gửi tới một máy chủ đã chết.
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgLbHealthCheck}
+  alt="Load balancer loại máy chủ không khỏe khỏi vòng chia tải"
+  caption="Health check định kỳ dò từng máy chủ; máy không trả lời đúng bị tạm loại khỏi vòng chia tải cho tới khi khỏe lại."
+/>
 
 Bộ cân bằng tải có thể được hiện thực bằng phần cứng (đắt đỏ) hoặc bằng phần mềm như HAProxy.
 
@@ -59,9 +80,28 @@ Bộ cân bằng tải tầng 7 xem xét [tầng ứng dụng (application layer
 
 Phải hy sinh sự linh hoạt, nhưng bù lại cân bằng tải tầng 4 tốn ít thời gian và tài nguyên tính toán hơn tầng 7, dù ảnh hưởng về hiệu năng có thể rất nhỏ trên phần cứng phổ thông hiện đại.
 
+<RealLife title="Bảo vệ nhìn biển số vs lễ tân đọc thư">
+
+Một bảo vệ ở cổng chỉ nhìn được biển số xe và cổng vào — không biết bên trong xe/thư viết gì; đó giống bộ cân bằng tải tầng 4, chỉ thấy địa chỉ IP và cổng. Một lễ tân ở sảnh thì mở được thư, đọc thấy "gửi phòng Kế toán" và dẫn đúng người tới đó — giống tầng 7, đọc được nội dung (URL, header) để định tuyến chính xác hơn. → Đổi lại, lễ tân (tầng 7) tốn thời gian xử lý hơn bảo vệ (tầng 4).
+
+</RealLife>
+
+<Figure
+  added
+  svg={svgLbLayer4Vs7}
+  alt="Tầng 4 chuyển cả kết nối, tầng 7 định tuyến theo URL"
+  caption="Tầng 4 chỉ thấy IP/cổng nên chuyển cả kết nối tới một máy chủ; tầng 7 đọc được URL/header nên định tuyến từng request theo nội dung."
+/>
+
 ### Mở rộng theo chiều ngang (Horizontal scaling)
 
 Bộ cân bằng tải cũng hỗ trợ mở rộng theo chiều ngang, cải thiện hiệu năng và tính sẵn sàng. Mở rộng ra (scale out) bằng các máy phổ thông tiết kiệm chi phí hơn và cho tính sẵn sàng cao hơn so với nâng cấp (scale up) một máy chủ duy nhất lên phần cứng đắt tiền hơn, gọi là **mở rộng theo chiều dọc (vertical scaling)**. Tuyển người làm việc với phần cứng phổ thông cũng dễ hơn so với các hệ thống doanh nghiệp chuyên dụng.
+
+<RealLife title="Thuê thêm người thay vì ép một người làm gấp đôi">
+
+Một quán ăn đông khách có hai lựa chọn: thuê thêm nhân viên phổ thông (mở rộng theo chiều ngang) hoặc ép đầu bếp giỏi nhất làm nhanh gấp đôi bằng lương cao và dụng cụ đắt tiền (mở rộng theo chiều dọc). Thuê thêm người thường rẻ hơn và ít rủi ro hơn — mất một người vẫn còn người khác; mất "siêu đầu bếp" thì cả quán ngừng hoạt động. → Đó là lý do hệ thống web hiện đại ưu tiên scale out hơn scale up.
+
+</RealLife>
 
 #### Nhược điểm: mở rộng theo chiều ngang
 
@@ -75,6 +115,12 @@ Bộ cân bằng tải cũng hỗ trợ mở rộng theo chiều ngang, cải th
 - Bộ cân bằng tải có thể trở thành nút thắt cổ chai về hiệu năng nếu không đủ tài nguyên hoặc không được cấu hình đúng.
 - Việc thêm bộ cân bằng tải để giúp loại bỏ điểm lỗi đơn lại làm tăng độ phức tạp.
 - Một bộ cân bằng tải duy nhất chính là một điểm lỗi đơn; cấu hình nhiều bộ cân bằng tải lại càng tăng thêm độ phức tạp.
+
+<RealLife title="Một cổng bảo vệ duy nhất">
+
+Nếu toà nhà chỉ có một cổng bảo vệ, cổng đó kẹt xe hay hỏng thì không ai vào được nữa — dù bên trong vẫn hoạt động bình thường. Bộ cân bằng tải cũng vậy: nó giải quyết vấn đề "một máy chủ duy nhất là điểm lỗi", nhưng nếu chỉ dùng một bộ cân bằng tải, chính nó lại trở thành điểm lỗi đơn mới. → Cách chữa: dựng ít nhất hai bộ cân bằng tải dự phòng cho nhau.
+
+</RealLife>
 
 ### Nguồn và đọc thêm
 

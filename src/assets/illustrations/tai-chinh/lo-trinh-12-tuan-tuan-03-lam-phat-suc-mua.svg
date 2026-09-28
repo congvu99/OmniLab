@@ -1,0 +1,20 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-lam-phat-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-lam-phat-title">Cùng một số tiền nhưng lạm phát khiến mua được ít hàng hoá hơn</title>
+
+  <text x="10" y="20" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">Hôm nay — 100.000đ mua được</text>
+  <rect x="10" y="34" width="32" height="32" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <rect x="48" y="34" width="32" height="32" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <rect x="86" y="34" width="32" height="32" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <rect x="124" y="34" width="32" height="32" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <rect x="162" y="34" width="32" height="32" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+
+  <text x="10" y="118" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">5 năm sau (có lạm phát) — vẫn 100.000đ</text>
+  <rect x="10" y="132" width="32" height="32" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <rect x="48" y="132" width="32" height="32" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <rect x="86" y="132" width="32" height="32" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <rect x="124" y="132" width="32" height="32" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <rect x="162" y="132" width="32" height="32" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" stroke-dasharray="4 4" />
+  <path d="M167 137 L189 159 M189 137 L167 159" stroke="var(--danger)" stroke-width="2" stroke-linecap="round" />
+
+  <text x="180" y="196" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">100.000đ hôm nay ≠ 100.000đ sau 5 năm</text>
+</svg>

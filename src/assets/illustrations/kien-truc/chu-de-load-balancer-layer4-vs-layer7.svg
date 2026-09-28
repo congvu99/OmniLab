@@ -1,0 +1,37 @@
+<svg viewBox="0 0 360 260" width="100%" role="img" aria-labelledby="svg-lb-l4-l7-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-lb-l4-l7-title">Tầng 4 chuyển cả kết nối, tầng 7 định tuyến theo URL</title>
+  <defs>
+    <marker id="svg-lbl-arrow-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)" />
+    </marker>
+  </defs>
+
+  <text x="8" y="16" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink-2)">Tầng 4</text>
+  <rect x="8" y="26" width="80" height="36" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="48" y="49" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Client</text>
+  <rect x="135" y="26" width="80" height="36" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="175" y="49" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">LB</text>
+  <rect x="262" y="26" width="90" height="36" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="307" y="49" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Server</text>
+  <path d="M88 44 H135" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-lbl-arrow-accent)" />
+  <path d="M215 44 H262" fill="none" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" marker-end="url(#svg-lbl-arrow-accent)" />
+
+  <line x1="0" y1="110" x2="360" y2="110" stroke="var(--line)" stroke-width="1" />
+
+  <text x="8" y="136" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink-2)">Tầng 7</text>
+  <rect x="8" y="146" width="80" height="36" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="48" y="169" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Client</text>
+  <rect x="135" y="146" width="80" height="36" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="175" y="169" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">LB</text>
+
+  <rect x="262" y="118" width="90" height="34" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="307" y="139" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Server A</text>
+  <rect x="262" y="178" width="90" height="34" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="307" y="199" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Server B</text>
+
+  <path d="M88 164 H135" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-lbl-arrow-accent)" />
+  <path d="M215 155 C 240 155, 240 135, 262 135" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-lbl-arrow-accent)" />
+  <path d="M215 173 C 240 173, 240 195, 262 195" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-lbl-arrow-accent)" />
+  <text x="238" y="128" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--accent)">/api</text>
+  <text x="238" y="222" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--accent)">/img</text>
+</svg>

@@ -1,7 +1,18 @@
 ---
 // <RealLife title?> — life example callout. This is ADDED content (never
 // original translated text) so verify-fidelity removes this subtree wholesale
-// when comparing a lesson against its source snapshot.
+// when comparing a lesson against its source snapshot. See
+// docs/content-authoring-guide.md for the writing rules and usage pattern.
+//
+// Draft badge: while a lesson's `examplesReviewed` frontmatter is still
+// `false`, Phase 4's reader layout sets `data-examples-reviewed="false"` on
+// an ancestor of the article body. We key the "Nháp" badge off that
+// attribute with a pure-CSS descendant selector (no JS, no prop) so the
+// badge automatically disappears the moment the fact-check agent flips
+// `examplesReviewed: true` in frontmatter — nothing here needs to change
+// when that happens.
+import Lightbulb from '@lucide/astro/icons/lightbulb';
+
 interface Props {
   title?: string;
 }
@@ -9,7 +20,11 @@ const { title = 'Ví dụ đời sống' } = Astro.props;
 ---
 
 <aside class="real-life">
-  <p class="real-life__title">{title}</p>
+  <p class="real-life__title">
+    <Lightbulb size={16} stroke-width={2} aria-hidden="true" class="real-life__icon" />
+    <span>{title}</span>
+    <span class="real-life__badge">Nháp</span>
+  </p>
   <div class="real-life__body">
     <slot />
   </div>
@@ -24,10 +39,35 @@ const { title = 'Ví dụ đời sống' } = Astro.props;
     border-radius: var(--radius-card);
   }
   .real-life__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
     margin: 0 0 var(--space-2);
     font-weight: 700;
     font-size: var(--text-footnote);
     color: var(--accent);
+  }
+  .real-life__icon {
+    flex: none;
+    color: var(--accent);
+  }
+  .real-life__badge {
+    display: none;
+    flex: none;
+    margin-left: auto;
+    padding: 2px var(--space-2);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--accent-on);
+    background: var(--accent);
+    border-radius: var(--radius-full);
+  }
+  /* Ancestor set by Phase 4's reader layout while examplesReviewed: false —
+     see comment above. */
+  :global([data-examples-reviewed='false']) .real-life .real-life__badge {
+    display: inline-block;
   }
   .real-life__body {
     color: var(--ink);

@@ -1,12 +1,27 @@
 ---
-// <Figure src? alt caption? credit? added?> — image or inline SVG (via
-// slot) with an accessible caption/credit. `alt` is always required: no
-// decorative-only figures in lesson content.
+// <Figure src? alt caption? credit? added? svg?> — image or inline SVG with
+// an accessible caption/credit. `alt` is always required: no decorative-only
+// figures in lesson content.
 //
 // `added` marks a figure that is NOT from the original source (e.g. a new
-// SVG drawn for the pilot lessons in Phase 6) — verify-fidelity strips these
-// entirely, while figures converted from the original raw HTML <img> blocks
-// keep their alt/caption/credit text counted as original content.
+// SVG drawn from Phase 6 onward) — verify-fidelity strips these entirely,
+// while figures converted from the original raw HTML <img> blocks keep their
+// alt/caption/credit text counted as original content.
+//
+// `svg` (new, optional, backward-compatible — every existing `<Figure src=
+// .../>` call keeps working untouched) takes a raw SVG string, typically
+// from a Vite `?raw` import (`import xyz from '../../../../assets/
+// illustrations/<domain>/<file>.svg?raw'`) and renders it inline via
+// `set:html`. This is required (not just nicer) for the illustration style
+// guide's rule of theming SVGs with `fill="var(--accent)"`-style presentation
+// attributes: those only resolve against the page's live CSS custom
+// properties (light/dark) when the <svg> is part of the document itself.
+// astro:assets' <Image>/a plain <img src="*.svg"> loads the file as an
+// opaque external resource with no access to the host page's CSS, so
+// `var(--accent)` inside it would never resolve — confirmed against MDN/CSS
+// WG guidance, see docs/illustration-style-guide.md "Inline via ?raw, not
+// <img>". Each illustration SVG carries its own <title>/role="img"/
+// aria-labelledby, so the wrapper below adds no redundant aria-label.
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 
@@ -16,15 +31,18 @@ interface Props {
   caption?: string;
   credit?: string;
   added?: boolean;
+  svg?: string;
 }
 
-const { src, alt, caption, credit, added = false } = Astro.props;
+const { src, alt, caption, credit, added = false, svg } = Astro.props;
 const isImageMetadata = typeof src === 'object' && src !== null;
 ---
 
 <figure class="figure" data-added={added ? 'true' : undefined}>
   {
-    isImageMetadata ? (
+    svg ? (
+      <div class="figure__svg" set:html={svg} />
+    ) : isImageMetadata ? (
       <Image src={src as ImageMetadata} alt={alt} />
     ) : typeof src === 'string' ? (
       <img src={src} alt={alt} loading="lazy" />
@@ -51,6 +69,18 @@ const isImageMetadata = typeof src === 'object' && src !== null;
     height: auto;
     border-radius: var(--radius-card);
     border: 1px solid var(--line);
+  }
+  /* Diagram SVGs carry their own text labels, so give them breathing room
+     against a tinted panel instead of the photo-style flush border above. */
+  .figure__svg {
+    padding: var(--space-4);
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+  }
+  .figure__svg :global(svg) {
+    border: none;
+    border-radius: 0;
   }
   figcaption {
     margin-top: var(--space-2);

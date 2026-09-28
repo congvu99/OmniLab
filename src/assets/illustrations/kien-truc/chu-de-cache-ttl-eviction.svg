@@ -1,0 +1,41 @@
+<svg viewBox="0 0 360 260" width="100%" role="img" aria-labelledby="svg-cache-ttl-eviction-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-cache-ttl-eviction-title">TTL hết hạn theo thời gian và loại bỏ theo LRU khi cache đầy</title>
+  <defs>
+    <marker id="svg-cte-arrow-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)" />
+    </marker>
+    <marker id="svg-cte-arrow-ink2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
+    </marker>
+  </defs>
+
+  <text x="8" y="16" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">TTL — hết hạn theo thời gian</text>
+  <line x1="24" y1="60" x2="336" y2="60" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+  <rect x="40" y="52" width="180" height="16" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="none" />
+  <circle cx="40" cy="60" r="5" fill="var(--accent)" />
+  <circle cx="220" cy="60" r="5" fill="var(--danger)" />
+  <text x="40" y="46" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">ghi lúc t0</text>
+  <text x="130" y="46" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--accent)">còn hạn (TTL)</text>
+  <text x="220" y="46" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--danger)">hết hạn</text>
+  <line x1="220" y1="60" x2="330" y2="60" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" marker-end="url(#svg-cte-arrow-ink2)" />
+  <text x="278" y="82" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">đọc sau đó → miss, nạp lại</text>
+
+  <text x="8" y="132" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">Hết chỗ — loại theo LRU</text>
+
+  <path d="M285 165 C 285 138, 45 138, 45 165" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-cte-arrow-accent)" />
+  <text x="165" y="134" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--accent)">D vào, đẩy A ra</text>
+
+  <rect x="20" y="170" width="50" height="36" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" stroke-dasharray="4 4" />
+  <rect x="90" y="170" width="50" height="36" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <rect x="160" y="170" width="50" height="36" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <rect x="260" y="170" width="50" height="36" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" stroke-dasharray="4 4" />
+
+  <text x="45" y="193" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">A</text>
+  <text x="115" y="193" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">B</text>
+  <text x="185" y="193" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">C</text>
+  <text x="285" y="193" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">D mới</text>
+
+  <path d="M45 206 V220" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-cte-arrow-ink2)" />
+  <text x="45" y="236" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">lâu chưa</text>
+  <text x="45" y="250" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">dùng nhất</text>
+</svg>
