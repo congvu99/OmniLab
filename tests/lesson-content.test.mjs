@@ -8,17 +8,19 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { parseLessonFrontmatter } from '../scripts/lib/frontmatter.mjs';
+import { loadDomains } from '../scripts/lib/parse-domain-yaml.mjs';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const LESSONS_DIR = path.join(ROOT, 'src', 'content', 'lessons');
+const DOMAINS_DIR = path.join(ROOT, 'src', 'content', 'domains');
 
-// Mirrors src/content/domains/*.yaml `modules[].id` — see
-// scripts/lib/frontmatter.mjs for why these tests don't parse YAML
-// generically (no YAML parser in this phase's allowed dependencies).
-const DOMAIN_MODULES = {
-  'kien-truc': ['nen-tang', 'danh-doi', 'chu-de', 'bai-tap'],
-  'tai-chinh': ['khoi-dong', 'lo-trinh-12-tuan', 'thuc-hanh', 'an-toan', 'nguon-hoc', 'di-tiep'],
-};
+// Derived from src/content/domains/*.yaml — so adding a new domain (just a
+// new YAML file + lesson folder, per docs/system-architecture.md "Thêm
+// domain") needs no change here (this used to be a hardcoded copy of the
+// YAML that a new domain would fail against).
+const DOMAIN_MODULES = Object.fromEntries(
+  loadDomains(DOMAINS_DIR).map((d) => [d.id, d.modules.map((m) => m.id)]),
+);
 
 function walkMdxFiles(dir) {
   const out = [];

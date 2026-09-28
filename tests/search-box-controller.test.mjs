@@ -15,6 +15,8 @@ const fixtureDocs = [
     summary: 'Bộ nhớ đệm giúp giảm tải cho hệ thống.',
     headings: 'Cache là gì',
     text: 'Bộ nhớ đệm cache giúp giảm tải.',
+    domainAccent: '#4F46E5',
+    domainAccentDark: '#A5B4FC',
   },
 ];
 
@@ -42,6 +44,12 @@ function createFakeEl(tag = 'div') {
     dataset: {},
     href: '',
     children: [],
+    style: {
+      _props: {},
+      setProperty(name, value) {
+        this._props[name] = value;
+      },
+    },
     addEventListener(type, fn) {
       listeners[type] = fn;
     },
@@ -90,6 +98,7 @@ describe('attachSearchBox', () => {
   let empty;
   let resultsList;
   let template;
+  let resultCount;
   let attachSearchBox;
   let rows;
 
@@ -119,7 +128,8 @@ describe('attachSearchBox', () => {
         },
       },
     };
-    els = { root: createFakeEl(), input, hint, loading, error, empty, resultsList, template };
+    resultCount = createFakeEl();
+    els = { root: createFakeEl(), input, hint, loading, error, empty, resultsList, template, resultCount };
 
     vi.useFakeTimers();
   });
@@ -163,6 +173,19 @@ describe('attachSearchBox', () => {
     expect(rows).toHaveLength(1); // exactly one search ran, not three
     expect(rows[0].title.textContent).toBe('Bộ nhớ đệm (Cache)');
     expect(rows[0].link.href).toBe('/hoc/kien-truc/chu-de/cache');
+    // One sr-only status announcement instead of aria-live on every row.
+    expect(resultCount.textContent).toBe('1 kết quả');
+  });
+
+  it('sets the domain accent as CSS custom properties on the row (no hardcoded domain color map)', async () => {
+    attachSearchBox(els);
+    const onInput = input.addEventListener.mock.calls.find((c) => c[0] === 'input')[1];
+    input.value = 'cache';
+    onInput();
+    await vi.advanceTimersByTimeAsync(200);
+
+    expect(rows[0].link.style._props['--card-accent']).toBe('#4F46E5');
+    expect(rows[0].link.style._props['--card-accent-dark']).toBe('#A5B4FC');
   });
 
   it('shows the empty state for a query with no results', async () => {
@@ -173,6 +196,7 @@ describe('attachSearchBox', () => {
     await vi.advanceTimersByTimeAsync(200);
     expect(empty.hidden).toBe(false);
     expect(resultsList.hidden).toBe(true);
+    expect(resultCount.textContent).toBe('0 kết quả');
   });
 
   it('cleanup() removes the input listener', () => {

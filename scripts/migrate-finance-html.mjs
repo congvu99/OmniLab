@@ -20,7 +20,6 @@ import {
 } from './lib/finance-extract.mjs';
 import { escapeBraces } from './lib/system-design-transform.mjs';
 import { stringifyLessonFrontmatter } from './lib/frontmatter.mjs';
-import { computeReadingMinutes } from './lib/reading-time.mjs';
 import { truncateAtSentence } from './lib/summary.mjs';
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
@@ -32,9 +31,10 @@ const SPLIT_MAP_PATH = path.join(SCRIPT_DIR, 'finance-split-map.json');
 
 const SOURCE_NAME = 'Lộ trình nền tảng tài chính — Sổ tay thực hành';
 const SOURCE_AUTHOR = 'OmniLab (tổng hợp)';
-// Copyright/license of the source deliverable was not specified by the
-// author at hand-off — flagged in the phase-03 report as needing the user's
-// confirmation (matches plan.md's existing "Unresolved Questions").
+// Copyright/license of the source deliverable was not specified by its
+// author at hand-off — needs the content owner's confirmation before v1
+// can claim a definite license for this domain (see README.md "Bản quyền
+// và ghi công").
 const LICENSE = 'Chưa xác định — cần user xác nhận';
 
 function ensureDir(dir) {
@@ -81,8 +81,11 @@ function main() {
     const hastRoot = resolveLessonHast(entry, { heroEl, sectionsById });
     const bodyMarkdown = hastToMarkdown(hastRoot);
     const summary = deriveSummary(bodyMarkdown);
-    const readingMinutes = computeReadingMinutes(bodyMarkdown);
 
+    // readingMinutes is intentionally not part of the written frontmatter —
+    // it's derived at query time from the lesson body
+    // (src/lib/content-queries.ts), so a value frozen here would just go
+    // stale the moment the body changes.
     const frontmatterData = {
       domain: 'tai-chinh',
       module: entry.module,
@@ -96,7 +99,6 @@ function main() {
         snapshot: 'finance/index.html',
       },
       examplesReviewed: false,
-      readingMinutes,
     };
 
     const outFilePath = path.join(

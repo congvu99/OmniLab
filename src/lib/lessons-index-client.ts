@@ -1,10 +1,10 @@
 /**
  * Browser-only fetch wrapper for /lessons-index.json (see
  * src/pages/lessons-index.json.ts), memoized per page-session so multiple
- * islands (continue-reading-card, saved-list, domain-progress-decorator)
- * share one network request instead of each fetching independently. The
- * memo is a module-level singleton, so it also survives client-router
- * (View Transitions) soft navigations — "fetch 1 lần" per the phase-05 spec.
+ * islands (continue-reading-card, saved-list, progress-ring) share one
+ * network request instead of each fetching independently. The memo is a
+ * module-level singleton, so it also survives client-router (View
+ * Transitions) soft navigations — fetched at most once per browser session.
  */
 export interface LessonIndexEntry {
   id: string;

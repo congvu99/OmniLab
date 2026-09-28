@@ -1,15 +1,17 @@
 ---
 // Shared SVG "% complete" ring markup — used by both domain-card.astro and
-// domain-hero.astro (see phase-05 spec: "vòng % trên domain-card và hero
-// domain"). Purely presentational + static (0%) at server-render time;
-// domain-progress-decorator.astro (a page-level script-only island) fills in
-// the real ratio client-side by reading this exact DOM shape. `role="img"`
-// + `aria-label` (set by the script) carries the info for screen readers;
-// the "%" text inside the ring (and, when `showFraction`, the "x/y bài"
-// text beside it) means sighted users never rely on color alone.
+// domain-hero.astro. Purely presentational + static (0%) at server-render
+// time; this component's own bootstrap <script> below fills in the real
+// ratio client-side by reading this exact DOM shape. Astro hoists/dedupes
+// identical component <script> content, so the script runs once per page
+// no matter how many progress-ring instances render on it (domain-card can
+// render several). `role="img"` + `aria-label` (set by the script) carries
+// the info for screen readers; the "%" text inside the ring (and, when
+// `showFraction`, the "x/y bài" text beside it) means sighted users never
+// rely on color alone.
 //
 // `showFraction` lives on this shared component (rather than being
-// duplicated per call-site) so the decorator script can query for
+// duplicated per call-site) so the bootstrap script can query for
 // `[data-progress-ring-fraction]` uniformly regardless of which page/variant
 // it's decorating.
 interface Props {
@@ -88,3 +90,48 @@ const fontSize = Math.max(10, Math.round(size * 0.26));
     color: var(--ink-2);
   }
 </style>
+
+<script>
+  // Fills in every `.progress-ring-slot` on the page (there may be several —
+  // one per progress-ring instance, e.g. several domain-card rows on
+  // /linh-vuc) with the real % done.
+  import { getProgressStore } from '../../lib/progress-store';
+  import { fetchLessonsIndex } from '../../lib/lessons-index-client';
+  import { applyProgressRing } from '../../lib/progress-ring-apply';
+  import { onPageLoad } from '../../lib/page-lifecycle';
+
+  onPageLoad(() => {
+    const rings = Array.from(document.querySelectorAll<HTMLElement>('.progress-ring-slot[data-progress-ring]'));
+    if (rings.length === 0) return;
+
+    // `fetchLessonsIndex()` is async, so a navigation can happen before it
+    // resolves; `cancelled` discards a stale resolution instead of
+    // subscribing rings that already got torn down (previously: an
+    // in-flight `init()` could resume after a *later* init's own
+    // `unsubscribe()` already ran, re-subscribing detached rings and
+    // clobbering `unsubscribe` — a leaked subscription that lived for the
+    // rest of the session).
+    let cancelled = false;
+    let unsubscribe: (() => void) | undefined;
+
+    void (async () => {
+      let lessons;
+      try {
+        lessons = await fetchLessonsIndex();
+      } catch {
+        return; // stays at the static server-rendered 0% ring — acceptable degradation
+      }
+      if (cancelled) return;
+
+      const store = getProgressStore();
+      unsubscribe = store.subscribe((state) => {
+        for (const ring of rings) applyProgressRing(ring, state, lessons);
+      });
+    })();
+
+    return () => {
+      cancelled = true;
+      unsubscribe?.();
+    };
+  });
+</script>

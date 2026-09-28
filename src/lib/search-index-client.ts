@@ -1,9 +1,8 @@
 /**
  * Browser-only fetch wrapper for /search-index.json (see
  * src/pages/search-index.json.ts). Only imported by search-box.astro, so it
- * only ever loads on `/tim-kiem` — "lazy-load index only on the search
- * page" per the phase-05 spec. Memoized so re-focusing the search input
- * doesn't refetch.
+ * only ever loads on `/tim-kiem` (lazy-loaded, not shipped on every page).
+ * Memoized so re-focusing the search input doesn't refetch.
  */
 import type { SearchDoc } from './search-index';
 

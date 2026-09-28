@@ -14,6 +14,13 @@ export interface ScrollThrottleOptions {
 
 export interface ScrollThrottle {
   save(id: string, ratio: number): void;
+  /**
+   * Immediately flush any pending write(s) (bypassing the throttle window).
+   * With no `id`, flushes every lesson that has a pending write — call this
+   * before the page/tab is torn down (e.g. `astro:before-swap`, `pagehide`)
+   * so the trailing up-to-`throttleMs` write is never silently lost.
+   */
+  flush(id?: string): void;
 }
 
 export function createScrollThrottle({ throttleMs, now, onFlush }: ScrollThrottleOptions): ScrollThrottle {
@@ -21,7 +28,9 @@ export function createScrollThrottle({ throttleMs, now, onFlush }: ScrollThrottl
   const pending = new Map<string, number>();
   const lastFlush = new Map<string, number>();
 
-  function flush(id: string) {
+  function flushOne(id: string) {
+    const timer = timers.get(id);
+    if (timer !== undefined) clearTimeout(timer);
     timers.delete(id);
     const ratio = pending.get(id);
     pending.delete(id);
@@ -35,12 +44,20 @@ export function createScrollThrottle({ throttleMs, now, onFlush }: ScrollThrottl
       pending.set(id, ratio);
       const elapsed = now() - (lastFlush.get(id) ?? 0);
       if (elapsed >= throttleMs) {
-        flush(id);
+        flushOne(id);
         return;
       }
       if (!timers.has(id)) {
-        timers.set(id, setTimeout(() => flush(id), throttleMs - elapsed));
+        timers.set(id, setTimeout(() => flushOne(id), throttleMs - elapsed));
       }
+    },
+
+    flush(id) {
+      if (id !== undefined) {
+        flushOne(id);
+        return;
+      }
+      for (const pendingId of [...pending.keys()]) flushOne(pendingId);
     },
   };
 }

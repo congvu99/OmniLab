@@ -1,0 +1,149 @@
+{
+  "h1": {
+    "largeTitleCollapsesOnScroll": {
+      "lthCollapsedAfterScroll": "true",
+      "lthCollapsedAtTop": "false",
+      "pass": true
+    },
+    "searchFocusHidesTabBar": {
+      "tabBarHiddenAfterFocus": "true",
+      "tabBarHiddenAfterBlur": "false",
+      "pass": true
+    },
+    "progressBarMovesOnSecondLesson": {
+      "firstLessonHref": "/hoc/kien-truc/nen-tang/clones",
+      "secondLessonHref": "/hoc/kien-truc/nen-tang/databases",
+      "progressLesson1": "matrix(0.0739508, 0, 0, 1, 0, 0)",
+      "progressBeforeScrollLesson2": "matrix(0, 0, 0, 1, 0, 0)",
+      "progressAfterScrollLesson2": "matrix(0.0845309, 0, 0, 1, 0, 0)",
+      "pass": true
+    }
+  },
+  "h2": {
+    "continueReadingCard": {
+      "lessonATitle": "Khả năng mở rộng cho người mới - Phần 1: Bản sao (Clones)",
+      "crcTitle": "Khả năng mở rộng cho người mới - Phần 1: Bản sao (Clones)",
+      "crcPercentText": "60% đã đọc",
+      "crcHidden": false,
+      "targetPercent": 60
+    },
+    "scrollRestored": {
+      "targetScrollY": 3245,
+      "restoredScrollY": 3245,
+      "restoredRatio": 0.5999260491772971,
+      "withinTolerance": true
+    }
+  },
+  "csp": {
+    "count": 0,
+    "violations": []
+  },
+  "search": {
+    "cache": {
+      "top3": [
+        {
+          "href": "/hoc/kien-truc/nen-tang/caches",
+          "title": "Khả năng mở rộng cho người mới - Phần 3: Bộ nhớ đệm (Cache)"
+        },
+        {
+          "href": "/hoc/kien-truc/chu-de/cache",
+          "title": "Bộ nhớ đệm (Cache)"
+        },
+        {
+          "href": "/hoc/kien-truc/bai-tap/query-cache",
+          "title": "Thiết kế cache key-value lưu kết quả các truy vấn gần nhất của web server"
+        }
+      ],
+      "pass": true
+    },
+    "bộ nhớ đệm": {
+      "top3": [
+        {
+          "href": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-03",
+          "title": "Tuần 3 · Lãi kép, lạm phát & bộ đệm nhỏ"
+        },
+        {
+          "href": "/hoc/kien-truc/chu-de/cache",
+          "title": "Bộ nhớ đệm (Cache)"
+        },
+        {
+          "href": "/hoc/kien-truc/nen-tang/caches",
+          "title": "Khả năng mở rộng cho người mới - Phần 3: Bộ nhớ đệm (Cache)"
+        }
+      ],
+      "pass": true
+    },
+    "bo nho dem": {
+      "top3": [
+        {
+          "href": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-03",
+          "title": "Tuần 3 · Lãi kép, lạm phát & bộ đệm nhỏ"
+        },
+        {
+          "href": "/hoc/kien-truc/chu-de/cache",
+          "title": "Bộ nhớ đệm (Cache)"
+        },
+        {
+          "href": "/hoc/kien-truc/nen-tang/caches",
+          "title": "Khả năng mở rộng cho người mới - Phần 3: Bộ nhớ đệm (Cache)"
+        }
+      ],
+      "pass": true
+    },
+    "can bang tai": {
+      "top3": [
+        {
+          "href": "/hoc/kien-truc/chu-de/load-balancer",
+          "title": "Bộ cân bằng tải (Load Balancer)"
+        },
+        {
+          "href": "/hoc/kien-truc/nen-tang/clones",
+          "title": "Khả năng mở rộng cho người mới - Phần 1: Bản sao (Clones)"
+        },
+        {
+          "href": "/hoc/kien-truc/chu-de/reverse-proxy",
+          "title": "Proxy ngược (Reverse Proxy - máy chủ web)"
+        }
+      ],
+      "pass": true
+    },
+    "lai kep": {
+      "top3": [
+        {
+          "href": "/hoc/tai-chinh/lo-trinh-12-tuan/tuan-03",
+          "title": "Tuần 3 · Lãi kép, lạm phát & bộ đệm nhỏ"
+        },
+        {
+          "href": "/hoc/tai-chinh/thuc-hanh/bai-tap-va-thu-tu-tien-du",
+          "title": "Bốn bài tập có thể làm ngay"
+        },
+        {
+          "href": "/hoc/tai-chinh/di-tiep/tu-danh-gia",
+          "title": "Bạn làm được, không chỉ nhận ra đáp án"
+        }
+      ],
+      "pass": true
+    },
+    "consistent hashing": {
+      "top3": [
+        {
+          "href": "/hoc/kien-truc/danh-doi/consistency-patterns",
+          "title": "Các mẫu nhất quán (Consistency Patterns)"
+        },
+        {
+          "href": "/hoc/kien-truc/danh-doi/cap-theorem",
+          "title": "Định lý CAP (CAP Theorem)"
+        },
+        {
+          "href": "/hoc/kien-truc/chu-de/database",
+          "title": "Cơ sở dữ liệu (Database)"
+        }
+      ],
+      "pass": true
+    }
+  },
+  "console": {
+    "count": 0,
+    "errors": []
+  }
+}

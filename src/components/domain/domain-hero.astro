@@ -19,8 +19,7 @@ interface Props {
 const { icon, tagline, accent, accentDark, lessonCount, totalReadingMinutes } = Astro.props;
 // domain-hero is only ever rendered on /linh-vuc/[domain] — deriving the id
 // from the URL here (instead of adding a new prop) keeps this component
-// self-contained and avoids touching that page, which is outside this
-// phase's file ownership (see phase-05 report).
+// self-contained.
 const domainId = Astro.url.pathname.split('/').filter(Boolean)[1] ?? '';
 
 function toPascalCase(kebab: string): string {
@@ -103,38 +102,3 @@ const Icon = icons[toPascalCase(icon) as keyof typeof icons] ?? icons.Layers;
     }
   }
 </style>
-
-<script>
-  // Fills in this page's `.progress-ring-slot` (domain-hero renders exactly
-  // once per /linh-vuc/[domain] page) with the real % done. Duplicated from
-  // domain-card.astro's identical bootstrap rather than shared via a
-  // page-level island — see that file's script comment for why (this
-  // component's own page isn't in this phase's file-ownership grant).
-  import { getProgressStore } from '../../lib/progress-store';
-  import { fetchLessonsIndex } from '../../lib/lessons-index-client';
-  import { applyProgressRing } from '../../lib/progress-ring-apply';
-
-  let unsubscribe: (() => void) | null = null;
-
-  async function init() {
-    unsubscribe?.();
-    unsubscribe = null;
-
-    const rings = Array.from(document.querySelectorAll<HTMLElement>('.progress-ring-slot[data-progress-ring]'));
-    if (rings.length === 0) return;
-
-    let lessons;
-    try {
-      lessons = await fetchLessonsIndex();
-    } catch {
-      return;
-    }
-
-    const store = getProgressStore();
-    unsubscribe = store.subscribe((state) => {
-      for (const ring of rings) applyProgressRing(ring, state, lessons);
-    });
-  }
-
-  document.addEventListener('astro:page-load', init);
-</script>

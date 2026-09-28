@@ -39,7 +39,7 @@ Nền tảng học tập mã nguồn mở, bền vững, cho developer Việt. �
 | Lighthouse (mobile) | ≥95 | Xem plans/260928-1725-omnilab-v1-learning-app/reports/phase-07-qa-report.md |
 | Build time | <30s | Node 24, pnpm cache |
 | JS budget | ≤30KB gzip/page | Home/domain/lesson: 6–7KB, search: 13KB |
-| Search index | ≤50KB gzip | 45KB hiện tại (50 bài, text cap 2500 char/bài) |
+| Search index | ≤90KB gzip | ~84KB hiện tại (50 bài, text cap 6000 ký tự/bài) |
 | CSP | script-src 'self' | No hashes, all scripts external |
 | Nội dung gốc | 100% bất biến | `pnpm verify:fidelity` gate |
 | Browser | Modern (iOS 16+, Chrome 120+) | No polyfill |

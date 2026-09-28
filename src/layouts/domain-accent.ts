@@ -9,9 +9,10 @@
  * itself (i.e. <html>, the same element) — setting it on <body> or lower
  * would never reach that `:root` rule's computed value.
  *
- * Values come from trusted content YAML (Phase 3/6), not user input, but are
- * still validated as plausible hex colors before being interpolated into an
- * HTML attribute, so a malformed value can't break out of the style string.
+ * Values come from trusted content YAML (src/content/domains/*.yaml), not
+ * user input, but are still validated as plausible hex colors before being
+ * interpolated into an HTML attribute, so a malformed value can't break out
+ * of the style string.
  */
 const HEX_COLOR = /^#[0-9a-fA-F]{3,8}$/;
 

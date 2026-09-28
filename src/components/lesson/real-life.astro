@@ -5,12 +5,12 @@
 // docs/content-authoring-guide.md for the writing rules and usage pattern.
 //
 // Draft badge: while a lesson's `examplesReviewed` frontmatter is still
-// `false`, Phase 4's reader layout sets `data-examples-reviewed="false"` on
-// an ancestor of the article body. We key the "Nháp" badge off that
-// attribute with a pure-CSS descendant selector (no JS, no prop) so the
-// badge automatically disappears the moment the fact-check agent flips
-// `examplesReviewed: true` in frontmatter — nothing here needs to change
-// when that happens.
+// `false`, the reader page ([slug].astro) sets
+// `data-examples-reviewed="false"` on an ancestor of the article body. We
+// key the "Nháp" badge off that attribute with a pure-CSS descendant
+// selector (no JS, no prop) so the badge automatically disappears the
+// moment a content reviewer flips `examplesReviewed: true` in
+// frontmatter — nothing here needs to change when that happens.
 import Lightbulb from '@lucide/astro/icons/lightbulb';
 
 interface Props {
@@ -64,8 +64,8 @@ const { title = 'Ví dụ đời sống' } = Astro.props;
     background: var(--accent);
     border-radius: var(--radius-full);
   }
-  /* Ancestor set by Phase 4's reader layout while examplesReviewed: false —
-     see comment above. */
+  /* Ancestor set by the reader page while examplesReviewed: false — see
+     comment above. */
   :global([data-examples-reviewed='false']) .real-life .real-life__badge {
     display: inline-block;
   }

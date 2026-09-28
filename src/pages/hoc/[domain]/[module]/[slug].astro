@@ -1,8 +1,8 @@
 ---
-// Lesson reader — replaces Phase 3's temporary bare-render route. Full-bleed
-// ReaderLayout (back -> domain page), cover, meta, collapsible TOC,
-// <Disclaimer> for finance lessons, MDX body, source/license attribution,
-// end-of-lesson slot + next-lesson navigation.
+// Lesson reader — the real per-lesson page for every `/hoc/<domain>/<module>/<slug>`
+// route. Full-bleed ReaderLayout (back -> domain page), cover, meta,
+// collapsible TOC, <Disclaimer> for isFinance-domain lessons, MDX body,
+// source/license attribution, end-of-lesson slot + next-lesson navigation.
 import { getCollection, render } from 'astro:content';
 import ReaderLayout from '../../../../layouts/reader-layout.astro';
 import { lessonMdxComponents } from '../../../../components/lesson/mdx-components';
@@ -16,7 +16,7 @@ import MarkCompleteButton from '../../../../components/islands/mark-complete-but
 import BookmarkButton from '../../../../components/islands/bookmark-button.astro';
 import ReaderProgressTracker from '../../../../components/islands/reader-progress-tracker.astro';
 import { lessonIdOf } from '../../../../lib/lesson-id';
-import { getAdjacent, getDomain, getModules } from '../../../../lib/content-queries';
+import { computeReadingMinutes, getAdjacent, getDomain, getModules } from '../../../../lib/content-queries';
 
 export async function getStaticPaths() {
   const lessons = await getCollection('lessons');
@@ -57,12 +57,11 @@ const toc = headings.filter((h) => h.depth === 2);
     data-lesson-id={lessonId}
     data-domain={domainId}
     data-examples-reviewed={lesson.data.examplesReviewed ? 'true' : 'false'}
-    data-pagefind-body
   >
     <LessonCover cover={lesson.data.cover} title={lesson.data.title} domainIcon={domain.data.icon} />
     <LessonMeta
       moduleTitle={currentModule?.title ?? moduleId}
-      readingMinutes={lesson.data.readingMinutes ?? 1}
+      readingMinutes={computeReadingMinutes(lesson)}
       sourceName={lesson.data.source.name}
     />
     <LessonToc headings={toc} />

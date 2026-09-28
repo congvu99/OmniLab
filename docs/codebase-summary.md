@@ -56,7 +56,7 @@ src/
 
 **Phase 5 spike**: Pagefind fail query "bo nho dem" (cache vắng top 15).  
 **MiniSearch**: Diacritic folding (Đ↔d, ô↔o) → cache/bộ nhớ đệm/bo nho dem identical.  
-**Index**: 45KB gzip, lazy-load keystroke đầu (không load page).
+**Index**: ~84KB gzip, lazy-load keystroke đầu (không load page).
 
 ## Build & Astro config
 

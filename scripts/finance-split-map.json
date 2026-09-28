@@ -1,5 +1,5 @@
 {
-  "_comment": "Declarative map from content-sources/finance/index.html <section id> to lessons. `boundary` tells migrate-finance-html.mjs how to slice a section's children when one <section> becomes >1 lesson (see phase-03 report 'Finance split table' for the human-readable version). Every section id below must be consumed by exactly one lesson (script asserts this).",
+  "_comment": "Declarative map from content-sources/finance/index.html <section id> to lessons. `boundary` tells migrate-finance-html.mjs how to slice a section's children when one <section> becomes >1 lesson. Every section id below must be consumed by exactly one lesson (script asserts this).",
   "lessons": [
     {
       "module": "khoi-dong",

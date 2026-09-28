@@ -1,7 +1,7 @@
 /**
  * Single source of truth for the app's 4 top-level tabs. Consumed by both
  * tab-bar.astro (<1024px, fixed bottom) and sidebar-nav.astro (>=1024px,
- * fixed left) so the two never drift apart (DRY — see phase-02 spec).
+ * fixed left) so the two never drift apart.
  *
  * `icon` is a key into the icon map each nav renderer builds locally from
  * individually-imported `@lucide/astro/icons/*` components (kept out of this

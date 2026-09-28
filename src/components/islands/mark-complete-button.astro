@@ -1,10 +1,10 @@
 ---
-// Toggle button for `.lesson-complete-slot` (reader page, see phase-04 DOM
-// contract). Both icon states + the undo toast are server-rendered (hidden
-// via CSS/[hidden]) so the client script only ever mutates attributes/text —
-// no innerHTML/createElement, so Astro's scoped <style> below applies
-// correctly to every state (see phase-05 report re: the client-DOM-creation
-// scoping pitfall this file deliberately avoids).
+// Toggle button for `.lesson-complete-slot` (rendered by the reader page,
+// [slug].astro). Both icon states + the undo toast are server-rendered
+// (hidden via CSS/[hidden]) so the client script only ever mutates
+// attributes/text — no innerHTML/createElement, so Astro's scoped <style>
+// below applies correctly to every state (creating DOM client-side instead
+// would render outside Astro's per-component style scoping).
 import Circle from '@lucide/astro/icons/circle';
 import CircleCheck from '@lucide/astro/icons/circle-check';
 
@@ -16,15 +16,22 @@ const { lessonId } = Astro.props;
 ---
 
 <div class="mcb" data-mcb data-lesson-id={lessonId} data-done="false">
-  <button type="button" class="mcb-button tap-scale" data-mcb-button aria-pressed="false">
+  <button
+    type="button"
+    class="mcb-button tap-scale"
+    data-mcb-button
+    aria-pressed="false"
+    aria-label="Đánh dấu hoàn thành bài học"
+  >
     <Circle size={20} stroke-width={2} aria-hidden="true" class="mcb-icon mcb-icon--todo" />
     <CircleCheck size={20} stroke-width={2} aria-hidden="true" class="mcb-icon mcb-icon--done" />
-    <span data-mcb-label>Đánh dấu hoàn thành</span>
+    <span data-mcb-label aria-hidden="true">Đánh dấu hoàn thành</span>
   </button>
-  <div class="mcb-toast" role="status" aria-live="polite" data-mcb-toast hidden>
+  <div class="mcb-toast" data-mcb-toast hidden>
     <span data-mcb-toast-text></span>
     <button type="button" class="mcb-undo tap-scale" data-mcb-undo>Hoàn tác</button>
   </div>
+  <span class="sr-only" role="status" aria-live="polite" data-mcb-announce></span>
 </div>
 
 <style>
@@ -67,10 +74,10 @@ const { lessonId } = Astro.props;
   /* [hidden] and an unconditional `display` on the same element are equal
      specificity, and author styles win cascade ties over the UA stylesheet
      — so `display: flex` below would silently defeat `.hidden = true`
-     without this explicit override (found via real-browser e2e testing,
-     not just code review — see phase-05 report). Same fix applied to every
-     other hidden-toggled element with a non-default `display` in this
-     phase's islands. */
+     without this explicit override (found via real-browser testing, not
+     just static CSS reasoning). The same fix is applied to every other
+     hidden-toggled element with a non-default `display` across this
+     codebase's islands. */
   .mcb-toast[hidden] {
     display: none;
   }
@@ -117,13 +124,19 @@ const { lessonId } = Astro.props;
     const toast = root.querySelector<HTMLElement>('[data-mcb-toast]');
     const toastText = root.querySelector<HTMLElement>('[data-mcb-toast-text]');
     const undoButton = root.querySelector<HTMLButtonElement>('[data-mcb-undo]');
-    if (!button || !label || !toast || !toastText || !undoButton) return;
+    const announce = root.querySelector<HTMLElement>('[data-mcb-announce]');
+    if (!button || !label || !toast || !toastText || !undoButton || !announce) return;
 
     const store = getProgressStore();
     let toastTimer: ReturnType<typeof setTimeout> | undefined;
 
     function render(done: boolean) {
       root!.dataset.done = String(done);
+      // The button's accessible name is the constant aria-label in markup
+      // (never touched here) — only aria-pressed conveys state, so a screen
+      // reader announces one clear "pressed"/"not pressed" toggle instead
+      // of aria-pressed AND a changing visible label both trying to say the
+      // same thing. `label` (aria-hidden) still gets the sighted-only text.
       button!.setAttribute('aria-pressed', String(done));
       label!.textContent = done ? 'Đã hoàn thành' : 'Đánh dấu hoàn thành';
     }
@@ -131,6 +144,12 @@ const { lessonId } = Astro.props;
     function showToast(message: string) {
       toastText!.textContent = message;
       toast!.hidden = false;
+      // `announce` (a permanently-rendered, never-hidden aria-live region —
+      // see the .sr-only element in markup) is what a screen reader
+      // actually picks up: toggling [hidden] and setting text on the same
+      // element in one tick is unreliable for triggering the announcement,
+      // confirmed via real-browser testing, not just spec reasoning.
+      announce!.textContent = message;
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => {
         toast!.hidden = true;

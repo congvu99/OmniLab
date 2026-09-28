@@ -7,9 +7,20 @@ import sitemap from '@astrojs/sitemap';
 import { remarkReadingTime } from './src/lib/remark-reading-time.mjs';
 import rehypeWrapTables from './src/lib/rehype-wrap-tables.mjs';
 
-// SITE_URL is read at build time so sitemap.xml/canonical URLs match the real
-// deploy domain. Fallback keeps `pnpm build` reproducible before the user
-// sets SITE_URL on Vibe Deploy. Documented in docs/deployment-guide.md.
+// SITE_URL is read at build time so sitemap.xml's URLs match the real
+// deploy domain (no <link rel="canonical"> is emitted in v1 — sitemap.xml
+// is the only place `site` is consumed, via @astrojs/sitemap below).
+// Fallback keeps `pnpm build` reproducible before the user sets SITE_URL on
+// Vibe Deploy — documented in docs/deployment-guide.md — but a real deploy
+// running with the placeholder would ship a sitemap full of
+// https://omnilab.example URLs silently, so warn loudly when it's missing.
+if (!process.env.SITE_URL) {
+  console.warn(
+    '[astro.config.mjs] SITE_URL is not set — sitemap.xml will use the placeholder ' +
+      'https://omnilab.example. Set SITE_URL to the real deploy domain before shipping ' +
+      'a production build (see docs/deployment-guide.md).',
+  );
+}
 const site = process.env.SITE_URL ?? 'https://omnilab.example';
 
 export default defineConfig({

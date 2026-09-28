@@ -98,6 +98,22 @@ p {
   border-radius: 4px;
 }
 
+/* --- Screen-reader-only content: visually hidden, still in the a11y tree
+   (unlike [hidden]/display:none, which removes it from both). Used for
+   permanently-rendered aria-live announcement regions and sr-only headings,
+   where "in the DOM and exposed to AT at all times" is the whole point. --- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* --- Skip link (keyboard users jump straight to <main>) --- */
 .skip-link {
   position: absolute;
@@ -121,7 +137,8 @@ p {
 
 /* --- Tap feedback: subtle scale, transform/opacity only (no layout shift,
    no reliance on iOS's quirky :active-without-touch-listener behavior —
-   see the touchstart no-op registered in base-head.astro's init script). --- */
+   see the touchstart no-op registered in app-layout.astro/reader-layout.astro,
+   which "arms" :active for the whole page). --- */
 .tap-scale {
   transition: transform var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease-out);
 }

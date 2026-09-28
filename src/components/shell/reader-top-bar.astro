@@ -1,9 +1,9 @@
 ---
 // Reader-mode top bar: back button (>=44pt target), title that fades in once
 // the article's own <h1> (rendered inside reader-layout's #reader-content)
-// scrolls behind the bar, a slot for actions (Phase 5's bookmark button),
-// and a reading-progress bar driven by `transform: scaleX()` (not `width`,
-// per animation perf guidance — avoids layout/paint, GPU-composited).
+// scrolls behind the bar, a slot for actions (bookmark-button.astro), and a
+// reading-progress bar driven by `transform: scaleX()` (not `width` — avoids
+// layout/paint, GPU-composited).
 import ChevronLeft from '@lucide/astro/icons/chevron-left';
 
 interface Props {
@@ -13,11 +13,18 @@ interface Props {
 }
 
 const { title, backHref, backLabel = 'Quay lại' } = Astro.props;
+// `backLabel` is usually the target's own name (e.g. the domain title,
+// "Kiến trúc hệ thống") for the VISIBLE label — but used alone as the
+// accessible name, a screen reader announces just that name with no
+// indication this link goes BACK, not forward into it. Always prefix the
+// accessible name with "Quay lại" (skipped only when backLabel already IS
+// "Quay lại", the no-target-name fallback, to avoid announcing it twice).
+const backAriaLabel = backLabel === 'Quay lại' ? backLabel : `Quay lại ${backLabel}`;
 ---
 
 <header class="rtb-bar" data-rtb-bar>
   <div class="rtb-row">
-    <a href={backHref} class="rtb-back tap-scale" aria-label={backLabel}>
+    <a href={backHref} class="rtb-back tap-scale" aria-label={backAriaLabel}>
       <ChevronLeft size={22} stroke-width={2.5} />
       <span class="rtb-back-label">{backLabel}</span>
     </a>
@@ -115,44 +122,60 @@ const { title, backHref, backLabel = 'Quay lại' } = Astro.props;
 </style>
 
 <script>
-  const bar = document.querySelector<HTMLElement>('[data-rtb-bar]');
-  const progress = document.querySelector<HTMLElement>('[data-rtb-progress]');
-  // reader-layout.astro wraps the slotted lesson body in <main id="reader-content">;
-  // its first <h1> is the article's own "large title" that this bar's small
-  // title stands in for once scrolled away.
-  const articleHeading = document.querySelector<HTMLElement>('#reader-content h1');
+  // Re-bound on every soft navigation (onPageLoad): the bar, progress track
+  // and article heading are fresh DOM nodes after each swap, and the
+  // IntersectionObserver/scroll listener from the previous page must be
+  // disconnected before that page's nodes are discarded (see page-lifecycle.ts).
+  import { onPageLoad } from '../../lib/page-lifecycle';
 
-  if (bar && articleHeading && 'IntersectionObserver' in window) {
-    const navbarHeight = 44; // keep in sync with --shell-navbar-h
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        bar.dataset.collapsed = entry.isIntersecting ? 'false' : 'true';
-      },
-      { rootMargin: `-${navbarHeight}px 0px 0px 0px`, threshold: 0 },
-    );
-    observer.observe(articleHeading);
-  } else if (bar) {
-    // No article heading found (shouldn't happen for real lesson content) —
-    // show the title immediately rather than leaving it permanently blank.
-    bar.dataset.collapsed = 'true';
-  }
+  onPageLoad(() => {
+    const bar = document.querySelector<HTMLElement>('[data-rtb-bar]');
+    const progress = document.querySelector<HTMLElement>('[data-rtb-progress]');
+    // reader-layout.astro wraps the slotted lesson body in <main id="reader-content">;
+    // its first <h1> is the article's own "large title" that this bar's small
+    // title stands in for once scrolled away.
+    const articleHeading = document.querySelector<HTMLElement>('#reader-content h1');
 
-  if (progress) {
-    let ticking = false;
-    const updateProgress = () => {
-      ticking = false;
-      const doc = document.documentElement;
-      const scrollable = doc.scrollHeight - doc.clientHeight;
-      const ratio = scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 0;
-      progress.style.transform = `scaleX(${ratio})`;
+    let observer: IntersectionObserver | undefined;
+    let onScroll: (() => void) | undefined;
+
+    if (bar && articleHeading && 'IntersectionObserver' in window) {
+      const navbarHeight = 44; // keep in sync with --shell-navbar-h
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          bar.dataset.collapsed = entry.isIntersecting ? 'false' : 'true';
+        },
+        { rootMargin: `-${navbarHeight}px 0px 0px 0px`, threshold: 0 },
+      );
+      observer.observe(articleHeading);
+    } else if (bar) {
+      // No article heading found (shouldn't happen for real lesson content) —
+      // show the title immediately rather than leaving it permanently blank.
+      bar.dataset.collapsed = 'true';
+    }
+
+    if (progress) {
+      let ticking = false;
+      const updateProgress = () => {
+        ticking = false;
+        const doc = document.documentElement;
+        const scrollable = doc.scrollHeight - doc.clientHeight;
+        const ratio = scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 0;
+        progress.style.transform = `scaleX(${ratio})`;
+      };
+      onScroll = () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(updateProgress);
+        }
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      updateProgress();
+    }
+
+    return () => {
+      observer?.disconnect();
+      if (onScroll) window.removeEventListener('scroll', onScroll);
     };
-    const onScroll = () => {
-      if (!ticking) {
-        ticking = true;
-        requestAnimationFrame(updateProgress);
-      }
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    updateProgress();
-  }
+  });
 </script>

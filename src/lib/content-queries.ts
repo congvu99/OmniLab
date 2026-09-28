@@ -3,7 +3,7 @@
  * in" across every page (domain list, domain detail, reader prev/next,
  * homepage). All pages that need content collection data go through here
  * instead of calling `getCollection`/`getEntry` directly, so there is exactly
- * one place that defines ordering (see phase-04 spec, "Architecture").
+ * one place that defines ordering.
  *
  * Ordering/adjacency itself is implemented in ./content-order.ts as pure
  * functions over plain arrays (no astro:content import there) so it's unit
@@ -14,6 +14,8 @@ import { getCollection, getEntry } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import { lessonIdOf, lessonUrlOf } from './lesson-id';
 import { adjacentInOrder, sortByOrder, sortLessons, type Adjacent } from './content-order';
+import { mdxToPlainText } from './search-mdx-to-text';
+import { countWords, minutesForWordCount } from './compute-reading-time';
 
 export type DomainEntry = CollectionEntry<'domains'>;
 export type LessonEntry = CollectionEntry<'lessons'>;
@@ -31,13 +33,24 @@ export interface QueriedLesson {
   title: string;
   /** Ordering within the module. */
   order: number;
-  /** Always populated at migrate/build time (see content.config.ts); defaults to 1 defensively. */
+  /**
+   * Computed here from `entry.body` (not read from frontmatter — the
+   * build-time remark plugin's `readingMinutes` write only ever surfaces via
+   * `render().remarkPluginFrontmatter`, which nothing in this app calls; see
+   * src/lib/remark-reading-time.mjs and src/lib/compute-reading-time.ts).
+   */
   readingMinutes: number;
 }
 
 function domainIdOf(entry: LessonEntry): string {
   const domain = entry.data.domain;
   return typeof domain === 'string' ? domain : domain.id;
+}
+
+/** Same ~200 wpm math as the build-time remark plugin, applied to the raw MDX body's plain text. */
+export function computeReadingMinutes(entry: LessonEntry): number {
+  const plainText = mdxToPlainText(entry.body ?? '', Infinity);
+  return minutesForWordCount(countWords(plainText));
 }
 
 function toQueriedLesson(entry: LessonEntry): QueriedLesson {
@@ -49,7 +62,7 @@ function toQueriedLesson(entry: LessonEntry): QueriedLesson {
     moduleId: entry.data.module,
     title: entry.data.title,
     order: entry.data.order,
-    readingMinutes: entry.data.readingMinutes ?? 1,
+    readingMinutes: computeReadingMinutes(entry),
   };
 }
 

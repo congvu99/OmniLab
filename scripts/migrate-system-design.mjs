@@ -2,7 +2,7 @@
 // Migrates the 27 translated system-design lessons + README.md from
 // D:\HardSkills\system-design-primer\hoc-tap-vi (read-only source) into
 // MDX content collection entries. Idempotent: re-running produces
-// byte-identical output (see reports/phase-03-report.md checksum run).
+// byte-identical output.
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, copyFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -13,7 +13,6 @@ import remarkGfm from 'remark-gfm';
 import { toString as mdastToString } from 'mdast-util-to-string';
 import { stringifyLessonFrontmatter } from './lib/frontmatter.mjs';
 import { MODULE_DIR_TO_ID, PRIMER_GITHUB_ROOT, PRIMER_GITHUB_BLOB, imageImportName } from './lib/links.mjs';
-import { computeReadingMinutes } from './lib/reading-time.mjs';
 import { truncateAtSentence } from './lib/summary.mjs';
 import {
   escapeBraces,
@@ -145,12 +144,15 @@ function transformFile({ absPath, moduleDir, isReadme }) {
   const { title, summary } = deriveTitleAndSummary(main);
 
   const finalBody = translatorNote ? `${main}<TranslatorNote>\n${translatorNote}\n</TranslatorNote>\n` : main;
-  const readingMinutes = computeReadingMinutes(finalBody);
 
-  return { title, summary, finalBody, usedImages, origFrontmatter, readingMinutes };
+  return { title, summary, finalBody, usedImages, origFrontmatter };
 }
 
-function buildFrontmatter({ moduleId, order, title, summary, origFrontmatter, snapshotRel, isReadme, readingMinutes }) {
+// readingMinutes is intentionally not part of the written frontmatter — it's
+// derived at query time from the lesson body (src/lib/content-queries.ts),
+// so a value frozen here at migration time would just go stale the moment
+// the body changes.
+function buildFrontmatter({ moduleId, order, title, summary, origFrontmatter, snapshotRel, isReadme }) {
   if (isReadme) {
     return {
       domain: 'kien-truc',
@@ -166,7 +168,6 @@ function buildFrontmatter({ moduleId, order, title, summary, origFrontmatter, sn
         snapshot: snapshotRel,
       },
       examplesReviewed: false,
-      readingMinutes,
     };
   }
   return {
@@ -184,7 +185,6 @@ function buildFrontmatter({ moduleId, order, title, summary, origFrontmatter, sn
       snapshot: snapshotRel,
     },
     examplesReviewed: false,
-    readingMinutes,
   };
 }
 
@@ -249,7 +249,6 @@ function main() {
         origFrontmatter: result.origFrontmatter,
         snapshotRel,
         isReadme: false,
-        readingMinutes: result.readingMinutes,
       });
       const outFilePath = path.join(LESSONS_OUT_DIR, moduleId, `${numPrefix}-${slug}.mdx`);
       writeLessonFile({

@@ -1,8 +1,10 @@
-// Tests written BEFORE scripts/verify-fidelity.mjs (see phase-03 step 4):
-// pin down exactly what verify-fidelity must accept/reject before it exists.
+// Pins down exactly what verify-fidelity must accept (added RealLife/Figure
+// content, URL changes) vs reject (changed/deleted original text, injected
+// MDX expressions) — see scripts/verify-fidelity.mjs.
 import { describe, expect, it } from 'vitest';
 import {
   compareNormalized,
+  findForbiddenMdxConstructs,
   normalizeText,
   textFromHtmlDocument,
   textFromLessonMdx,
@@ -142,5 +144,47 @@ describe('finance HTML document text extraction', () => {
     const text = normalizeText(textFromHtmlDocument(html));
     expect(text).toContain('Tiêu đề');
     expect(text).toContain('Nội dung quan trọng.');
+  });
+});
+
+describe('<Note title> text is fidelity-checked', () => {
+  it('fails when a Note title differs from the original', () => {
+    const mdx = toMdx(`${BASELINE_MDX_BODY}\n<Note title="Tiêu đề chèn thêm">\n\nGhi chú.\n\n</Note>\n`);
+    // The Note's title itself is added text not in ORIGINAL_MD, so any
+    // non-empty title necessarily diverges from the source — this pins the
+    // fix (title used to be silently ignored) rather than testing one
+    // specific string.
+    const result = compareNormalized(sourceText(), normalizeText(textFromLessonMdx(mdx)));
+    expect(result.ok).toBe(false);
+  });
+});
+
+describe('findForbiddenMdxConstructs (block silent text injection)', () => {
+  it('is clean for plain import statements', () => {
+    const mdx = toMdx(`import svg from '../../../../assets/illustrations/kien-truc/foo.svg?raw';\n\n${BASELINE_MDX_BODY}`);
+    expect(findForbiddenMdxConstructs(mdx)).toEqual([]);
+  });
+
+  it('flags a bare {"..."} mdxFlowExpression', () => {
+    const mdx = toMdx(`${BASELINE_MDX_BODY}\n{"Câu chèn thêm"}\n`);
+    const violations = findForbiddenMdxConstructs(mdx);
+    expect(violations.length).toBeGreaterThan(0);
+    expect(violations[0]).toMatch(/mdxFlowExpression/);
+  });
+
+  it('flags an inline {expr} mdxTextExpression', () => {
+    const mdx = toMdx(`Đoạn văn có {"chèn"} ở giữa câu.\n`);
+    const violations = findForbiddenMdxConstructs(mdx);
+    expect(violations.length).toBeGreaterThan(0);
+    expect(violations[0]).toMatch(/mdxTextExpression/);
+  });
+
+  it('flags export statements (not just their {x} usage)', () => {
+    const mdx = toMdx(`export const x = "chèn";\n\n{x}\n`);
+    const violations = findForbiddenMdxConstructs(mdx);
+    // Both the export and the {x} read (a block-level {x} parses as
+    // mdxFlowExpression, not mdxTextExpression) are separately flagged.
+    expect(violations.some((v) => v.includes('ExportNamedDeclaration'))).toBe(true);
+    expect(violations.some((v) => v.includes('mdxFlowExpression'))).toBe(true);
   });
 });

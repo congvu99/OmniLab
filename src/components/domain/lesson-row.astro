@@ -1,9 +1,9 @@
 ---
 // One lesson row inside a module section on /linh-vuc/[domain]. The row root
-// (this <a>) carries data-lesson-id/data-domain — the DOM contract Phase 5's
-// progress-tracking island reads to know which row it's decorating (see
-// phase-04 report, "DOM contracts for Phase 5"). `.lesson-status-slot` is the
-// empty element Phase 5 fills with a checkmark once a lesson is marked done.
+// (this <a>) carries data-lesson-id/data-domain — the DOM contract the
+// progress-tracking scripts (progress-store subscribers) read to know which
+// row they're decorating. `.lesson-status-slot` is the empty element those
+// scripts fill with a checkmark once a lesson is marked done.
 import CircleCheck from '@lucide/astro/icons/circle-check';
 
 interface Props {

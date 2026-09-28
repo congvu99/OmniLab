@@ -49,13 +49,20 @@
 	header {
 		X-Content-Type-Options "nosniff"
 		Referrer-Policy "strict-origin-when-cross-origin"
+		# No feature on this site needs any of these — deny all as defense in
+		# depth (nothing regresses if a future page tries to use one; it just
+		# gets a clear permission denial to fix instead of silent access).
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
 		# script-src 'self': astro.config.mjs sets vite.build.assetsInlineLimit: 0
 		# so every component script ships as an external /_astro/*.js file (no
 		# inline scripts, no hashes to keep in sync).
-		# style-src allows 'unsafe-inline' only for style attributes emitted by
-		# Shiki syntax highlighting in code blocks. Threat model: static content
-		# site, no user-generated input, no auth/cookies, so inline-style
-		# injection has no realistic attack path. Fonts are self-hosted.
+		# style-src allows 'unsafe-inline' for every inline style attribute this
+		# app renders: Shiki syntax highlighting in code blocks, the
+		# domain-accent CSS custom properties set on <html> and on progress-ring/
+		# search-result elements, and the handful of inline SVG illustrations
+		# with their own <style> blocks. Threat model: static content site, no
+		# user-generated input, no auth/cookies, so inline-style injection has no
+		# realistic attack path. Fonts are self-hosted.
 		Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none';"
 		-Server
 	}

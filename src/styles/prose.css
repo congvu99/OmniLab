@@ -1,7 +1,8 @@
 /*
  * `.prose` — long-form lesson body typography (reader-layout content only).
- * Measure ~60-68ch, body 17px/1.7. Content markup itself (MDX -> HTML) is
- * owned by Phase 3/4; this file only styles the standard elements it emits.
+ * Measure ~60-68ch, body 17px/1.7. Content markup itself (MDX -> HTML) comes
+ * from the lesson MDX + mdx-components.ts; this file only styles the
+ * standard elements it emits.
  */
 
 .prose {

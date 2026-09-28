@@ -5,13 +5,15 @@
 import { getCollection } from 'astro:content';
 import AppLayout from '../layouts/app-layout.astro';
 
-// Third-party image credits: derived at build time from each kien-truc
-// lesson's raw MDX body (only that domain carries legacy <Figure> images —
-// see phase-03 report). `entry.body` is the loader's retained raw source
-// text (glob loader default `retainAsBody: true`); regex-extracting
-// `<Figure ... credit={...} />` here avoids re-rendering every lesson just to
-// read a figcaption. Falls back to a general statement below if none are
-// found (e.g. if a future loader config stops retaining body text).
+// Third-party image credits: derived at build time from EVERY lesson's raw
+// MDX body, across all domains (not just kien-truc — a new domain with a
+// legacy <Figure credit=...> image should show up here with no code
+// change). `entry.body` is the loader's retained raw source text (glob
+// loader default `retainAsBody: true`);
+// regex-extracting `<Figure ... credit={...} />` here avoids re-rendering
+// every lesson just to read a figcaption. Falls back to a general statement
+// below if none are found (e.g. if a future loader config stops retaining
+// body text).
 function extractFigureCredits(body: string): string[] {
   // Scan for the `credit={\`...\`}` / `credit="..."` prop value directly
   // (rather than first isolating each `<Figure ... />` tag): the credit
@@ -24,12 +26,8 @@ function extractFigureCredits(body: string): string[] {
   return [...credits];
 }
 
-const kienTrucLessons = (await getCollection('lessons')).filter((l) => {
-  const domain = l.data.domain;
-  return (typeof domain === 'string' ? domain : domain.id) === 'kien-truc';
-});
-
-const imageCredits = [...new Set(kienTrucLessons.flatMap((l) => extractFigureCredits(l.body ?? '')))].sort();
+const allLessons = await getCollection('lessons');
+const imageCredits = [...new Set(allLessons.flatMap((l) => extractFigureCredits(l.body ?? '')))].sort();
 ---
 
 <AppLayout title="Giới thiệu - OmniLab" largeTitle="Giới thiệu">
@@ -70,8 +68,8 @@ const imageCredits = [...new Set(kienTrucLessons.flatMap((l) => extractFigureCre
         imageCredits.length > 0 ? (
           <>
             <p>
-              Một số bài "Kiến trúc hệ thống" giữ lại ảnh/sơ đồ minh hoạ gốc (chưa thay bằng SVG tự vẽ),
-              kèm nguồn credit bên dưới, trích từ bài học tương ứng:
+              Một số bài giữ lại ảnh/sơ đồ minh hoạ gốc (chưa thay bằng SVG tự vẽ), kèm nguồn credit bên
+              dưới, trích từ bài học tương ứng:
             </p>
             <details class="credit-list">
               <summary>Xem {imageCredits.length} nguồn ảnh</summary>
@@ -84,8 +82,8 @@ const imageCredits = [...new Set(kienTrucLessons.flatMap((l) => extractFigureCre
           </>
         ) : (
           <p>
-            Một số bài "Kiến trúc hệ thống" giữ lại ảnh/sơ đồ minh hoạ gốc (chưa thay bằng SVG tự vẽ); mỗi
-            ảnh có ghi nguồn ngay trong bài học tương ứng.
+            Một số bài giữ lại ảnh/sơ đồ minh hoạ gốc (chưa thay bằng SVG tự vẽ); mỗi ảnh có ghi nguồn ngay
+            trong bài học tương ứng.
           </p>
         )
       }

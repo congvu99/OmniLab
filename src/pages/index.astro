@@ -1,6 +1,7 @@
 ---
-// "Học tiếp" tab — no reading-progress data yet (Phase 5 fills
-// .continue-reading-slot), so below it we always show every domain with a
+// "Học tiếp" tab — continue-reading-card.astro fills `.continue-reading-slot`
+// client-side from localStorage (empty on a first visit, before any lesson
+// has been read), so below it we always show every domain with a
 // "Bắt đầu từ bài 1" CTA straight into its first lesson.
 import AppLayout from '../layouts/app-layout.astro';
 import DomainCard from '../components/domain/domain-card.astro';

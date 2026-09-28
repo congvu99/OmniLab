@@ -4,7 +4,7 @@
  * bare px magic numbers for color/spacing/radius/duration.
  *
  * Dark mode: driven entirely by `@media (prefers-color-scheme: dark)` — no
- * manual toggle/class (product decision, see plan.md "Decisions đã chốt").
+ * manual toggle/class.
  *
  * Domain accent: `--domain-accent` / `--domain-accent-dark` are set as an
  * inline style on the layout root (see app-layout.astro / reader-layout.astro
@@ -12,7 +12,7 @@
  * resolves to the light or dark variant depending on system theme, with a
  * neutral fallback (Kiến trúc indigo) when a page has no domain context
  * (e.g. Tìm kiếm, Đã lưu). Contrast for both domain accents verified
- * ≥4.5:1 against surface/bg in light AND dark — see phase-02 report.
+ * ≥4.5:1 against surface/bg in light AND dark.
  */
 
 :root {
@@ -28,16 +28,6 @@
   --domain-accent-dark: #A5B4FC;
   --accent: var(--domain-accent, #4F46E5);
   --accent-on: #FFFFFF; /* text/icon color placed on top of a solid --accent fill */
-
-  /* Named per-domain accents (plan.md "Decisions đã chốt"), for the rare case
-     a component must show >1 domain's color at once (e.g. the /linh-vuc list
-     — each card needs its own domain's color simultaneously, so the single
-     current-page --domain-accent slot doesn't apply). Everywhere else, use
-     --accent via the layout's domainAccent/domainAccentDark props instead. */
-  --domain-kien-truc-accent: #4F46E5;
-  --domain-kien-truc-accent-dark: #A5B4FC;
-  --domain-tai-chinh-accent: #1F7A5A;
-  --domain-tai-chinh-accent-dark: #6EE7B7;
 
   --danger: #B3261E;
   --success: #1F7A5A;

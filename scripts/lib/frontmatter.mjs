@@ -64,17 +64,18 @@ export function stringifyLessonFrontmatter(data) {
   if (data.source.translatedAt) lines.push(`  translatedAt: ${yamlScalar(data.source.translatedAt)}`);
   lines.push(`  snapshot: ${yamlScalar(data.source.snapshot)}`);
   lines.push(`examplesReviewed: ${yamlScalar(data.examplesReviewed ?? false)}`);
-  if (typeof data.readingMinutes === 'number') {
-    lines.push(`readingMinutes: ${yamlScalar(data.readingMinutes)}`);
-  }
   lines.push('---');
   return lines.join('\n');
 }
 
 /**
- * Parses back exactly what `stringifyLessonFrontmatter` writes. Only used by
- * verify-fidelity.mjs / tests to read `source.snapshot` etc. — not a general
- * YAML reader.
+ * Parses back what `stringifyLessonFrontmatter` writes — the fixed lesson
+ * frontmatter shape (src/content.config.ts). Not a general YAML reader, but
+ * tolerant of hand-edited variations content authors actually use: single-
+ * OR double-quoted scalars, and a trailing ` # comment` after a value (both
+ * previously caused a lesson to be silently misclassified, e.g.
+ * `domain: 'kien-truc'` or `domain: kien-truc # x` parsing as a domain
+ * string that doesn't match verify-fidelity's expected literal).
  */
 export function parseLessonFrontmatter(source) {
   const { yaml } = splitFrontmatter(source);
@@ -82,10 +83,11 @@ export function parseLessonFrontmatter(source) {
   const data = { source: {} };
   let inSource = false;
   for (const rawLine of lines) {
-    if (rawLine.trim() === '') continue;
+    if (rawLine.trim() === '' || /^\s*#/.test(rawLine)) continue;
     const indented = /^\s{2}/.test(rawLine);
-    const line = rawLine.trim();
-    const match = line.match(/^([A-Za-z]+):\s*(.*)$/);
+    const line = stripTrailingComment(rawLine).trim();
+    if (line === '') continue;
+    const match = line.match(/^([A-Za-z][A-Za-z0-9_-]*):\s*(.*)$/);
     if (!match) continue;
     const [, key, rawValue] = match;
     if (key === 'source' && rawValue === '') {
@@ -103,16 +105,42 @@ export function parseLessonFrontmatter(source) {
   return data;
 }
 
+/**
+ * Strips a trailing ` # comment` that is NOT inside a quoted string (YAML
+ * only treats `#` as a comment marker when preceded by whitespace or at
+ * line start — a literal `#` inside a quoted value, e.g. a title, must
+ * survive).
+ */
+function stripTrailingComment(line) {
+  let inSingle = false;
+  let inDouble = false;
+  for (let i = 0; i < line.length; i += 1) {
+    const ch = line[i];
+    if (ch === "'" && !inDouble) inSingle = !inSingle;
+    else if (ch === '"' && !inSingle) inDouble = !inDouble;
+    else if (ch === '#' && !inSingle && !inDouble && (i === 0 || /\s/.test(line[i - 1]))) {
+      return line.slice(0, i);
+    }
+  }
+  return line;
+}
+
 function parseScalar(raw) {
-  if (raw.startsWith('"') && raw.endsWith('"')) {
-    return raw
+  const trimmed = raw.trim();
+  if (trimmed.startsWith('"') && trimmed.endsWith('"') && trimmed.length >= 2) {
+    return trimmed
       .slice(1, -1)
       .replace(/\\n/g, '\n')
       .replace(/\\"/g, '"')
       .replace(/\\\\/g, '\\');
   }
-  if (raw === 'true') return true;
-  if (raw === 'false') return false;
-  if (/^-?\d+(\.\d+)?$/.test(raw)) return Number(raw);
-  return raw;
+  if (trimmed.startsWith("'") && trimmed.endsWith("'") && trimmed.length >= 2) {
+    // YAML single-quoted scalars escape an embedded `'` by doubling it
+    // (`''`) and do not support backslash escapes.
+    return trimmed.slice(1, -1).replace(/''/g, "'");
+  }
+  if (trimmed === 'true') return true;
+  if (trimmed === 'false') return false;
+  if (/^-?\d+(\.\d+)?$/.test(trimmed)) return Number(trimmed);
+  return trimmed;
 }

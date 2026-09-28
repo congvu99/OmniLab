@@ -88,11 +88,11 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
   /* iOS Safari, not running standalone, not yet dismissed — see
      src/lib/ios-hint.ts. Shown/hidden via [hidden] after a client-side
      check, so there's a small one-time layout shift for the (narrow)
-     audience that sees it; accepted trade-off, see phase-05 report. */
+     audience that sees it; accepted trade-off. */
   /* [hidden] + an unconditional `display` tie in specificity, and author
      styles win ties over the UA stylesheet — without this, `display: flex`
      below would silently defeat `.hidden = true`/the [hidden] attribute
-     (found via real-browser e2e testing — see phase-05 report). */
+     (found via real-browser testing, not just static CSS reasoning). */
   .ios-hint[hidden] {
     display: none;
   }
@@ -113,6 +113,11 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
   }
 
   .ios-hint__dismiss {
+    /* Visual box stays a compact 32px (matches the banner's tight height),
+       but the tappable area is expanded to the >=44px target via the
+       out-of-flow ::after below — it doesn't affect layout/adjacent
+       spacing, only the hit-test area. */
+    position: relative;
     flex-shrink: 0;
     width: 32px;
     height: 32px;
@@ -120,6 +125,12 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
     align-items: center;
     justify-content: center;
     color: var(--ink-2);
+  }
+
+  .ios-hint__dismiss::after {
+    content: '';
+    position: absolute;
+    inset: -6px;
   }
 
   /* Non-dismissible on purpose (see the script above): in private mode

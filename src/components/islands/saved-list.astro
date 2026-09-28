@@ -9,7 +9,7 @@ import X from '@lucide/astro/icons/x';
 ---
 
 <div data-saved-list>
-  <div class="empty-state" data-saved-empty>
+  <div class="empty-state" data-saved-empty tabindex="-1">
     <Bookmark size={40} stroke-width={1.75} aria-hidden="true" />
     <p class="empty-title">Chưa có bài đã lưu</p>
     <p class="empty-body">
@@ -124,68 +124,14 @@ import X from '@lucide/astro/icons/x';
 <script>
   import { getProgressStore } from '../../lib/progress-store';
   import { fetchLessonsIndex } from '../../lib/lessons-index-client';
+  import { attachSavedList, readSavedListElements } from '../../lib/saved-list-controller';
+  import { onPageLoad } from '../../lib/page-lifecycle';
 
-  let unsubscribe: (() => void) | null = null;
-
-  function init() {
-    unsubscribe?.();
-    unsubscribe = null;
-
+  onPageLoad(() => {
     const root = document.querySelector<HTMLElement>('[data-saved-list]');
-    const emptyState = root?.querySelector<HTMLElement>('[data-saved-empty]');
-    const rowsList = root?.querySelector<HTMLUListElement>('[data-saved-rows]');
-    const template = root?.querySelector<HTMLTemplateElement>('[data-saved-row-template]');
-    if (!root || !emptyState || !rowsList || !template) return;
+    const els = root && readSavedListElements(root);
+    if (!els) return;
 
-    const store = getProgressStore();
-
-    async function render() {
-      const bookmarks = store.get().bookmarks;
-      if (bookmarks.length === 0) {
-        emptyState!.hidden = false;
-        rowsList!.hidden = true;
-        rowsList!.replaceChildren();
-        return;
-      }
-
-      let lessons;
-      try {
-        lessons = await fetchLessonsIndex();
-      } catch {
-        // Keep the empty-state message visible rather than showing a broken list.
-        emptyState!.hidden = false;
-        rowsList!.hidden = true;
-        return;
-      }
-
-      const byId = new Map(lessons.map((l) => [l.id, l]));
-      rowsList!.replaceChildren();
-
-      for (const id of bookmarks) {
-        const entry = byId.get(id);
-        if (!entry) continue;
-        const node = template!.content.cloneNode(true) as DocumentFragment;
-        const link = node.querySelector<HTMLAnchorElement>('[data-saved-row-link]')!;
-        const title = node.querySelector<HTMLElement>('[data-saved-row-title]')!;
-        const domain = node.querySelector<HTMLElement>('[data-saved-row-domain]')!;
-        const removeButton = node.querySelector<HTMLButtonElement>('[data-saved-row-remove]')!;
-
-        link.href = entry.url;
-        title.textContent = entry.title;
-        domain.textContent = entry.domainTitle;
-        removeButton.addEventListener('click', () => store.toggleBookmark(id));
-
-        rowsList!.append(node);
-      }
-
-      emptyState!.hidden = true;
-      rowsList!.hidden = false;
-    }
-
-    unsubscribe = store.subscribe(() => {
-      void render();
-    });
-  }
-
-  document.addEventListener('astro:page-load', init);
+    return attachSavedList(els, getProgressStore(), fetchLessonsIndex);
+  });
 </script>

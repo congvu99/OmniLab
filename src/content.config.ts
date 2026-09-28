@@ -22,7 +22,7 @@ const domains = defineCollection({
     // Lucide icon name (see @lucide/astro), e.g. "network" / "wallet".
     icon: z.string(),
     order: z.number(),
-    // Drives <Disclaimer> rendering in the lesson layout (Phase 4).
+    // Drives <Disclaimer> rendering in the reader layout for this domain's lessons.
     isFinance: z.boolean().optional(),
     modules: z.array(moduleSchema),
   }),
@@ -56,9 +56,14 @@ const lessons = defineCollection({
         snapshot: z.string(),
       }),
       examplesReviewed: z.boolean().default(false),
-      // Populated at build time by the remark-reading-time plugin
-      // (astro.config.mjs markdown/mdx remarkPlugins) — not authored.
-      readingMinutes: z.number().optional(),
+      // Reading time is NOT stored here — it's derived from `entry.body` at
+      // query time (src/lib/content-queries.ts) so it always matches the
+      // lesson's actual current word count. Some existing lesson files still
+      // carry a legacy `readingMinutes:` frontmatter key from before this
+      // fix; zod silently drops unrecognized keys, and it is outside
+      // verify-fidelity's comparison (frontmatter is ignored), so those
+      // stray values are harmless and were left in place rather than
+      // rewriting lesson files.
     }),
 });
 

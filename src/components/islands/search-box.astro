@@ -1,9 +1,11 @@
 ---
 // Renders into `/tim-kiem`'s body — debounced full-text search over
-// /search-index.json via MiniSearch (see src/lib/search-index.ts + phase-05
-// report for why MiniSearch was chosen over Pagefind). All states (hint,
-// loading, error, empty, results) are server-rendered and toggled via
-// [hidden] — see mark-complete-button.astro's header comment for why.
+// /search-index.json via MiniSearch (see src/lib/search-index.ts and
+// docs/system-architecture.md "Tìm kiếm" for why MiniSearch was chosen over
+// Pagefind: Pagefind's own Vietnamese folding missed the target lesson for
+// a fully-unaccented query). All states (hint, loading, error, empty,
+// results) are server-rendered and toggled via [hidden] — see
+// mark-complete-button.astro's header comment for why.
 import Search from '@lucide/astro/icons/search';
 import LoaderCircle from '@lucide/astro/icons/loader-circle';
 import Inbox from '@lucide/astro/icons/inbox';
@@ -35,7 +37,12 @@ import WifiOff from '@lucide/astro/icons/wifi-off';
     <Inbox size={18} stroke-width={2} aria-hidden="true" /> Không tìm thấy kết quả phù hợp.
   </p>
 
-  <ul class="search-results" data-search-results hidden aria-live="polite"></ul>
+  <!-- One concise status announcement ("N kết quả") instead of aria-live on
+       the whole list below — the list can render many rows per keystroke,
+       which would otherwise have a screen reader read out every title,
+       domain and snippet on every result set. -->
+  <p class="sr-only" role="status" aria-live="polite" data-search-result-count></p>
+  <ul class="search-results" data-search-results hidden></ul>
 
   <template data-search-result-template>
     <li class="search-result">
@@ -78,7 +85,12 @@ import WifiOff from '@lucide/astro/icons/wifi-off';
     color: var(--ink-2);
   }
 
-  .search-field input:focus {
+  /* Suppress the outline for a mouse/touch click (no visible keyboard focus
+     ring needed there — the border-color change below is enough), but keep
+     it for real keyboard focus (:focus-visible) — a border-color-only
+     change is not a strong enough focus indicator on its own for keyboard
+     users. */
+  .search-field input:focus:not(:focus-visible) {
     outline: none;
   }
 
@@ -141,25 +153,23 @@ import WifiOff from '@lucide/astro/icons/wifi-off';
     color: var(--ink);
   }
 
+  /* Colored via --card-accent/--card-accent-dark, set inline on the row's
+     <a> by search-box-controller.ts from that lesson's own domain metadata
+     (search-index.json's domainAccent/domainAccentDark). Falls back to the
+     default accent token so a result row still looks correct before that
+     inline style is applied (e.g. a domain with no accent color, which
+     shouldn't happen but must not render invisible/unstyled text). */
   .search-result__domain {
     display: inline-block;
     align-self: flex-start;
     font-size: var(--text-caption);
     font-weight: 600;
-    color: var(--domain-kien-truc-accent);
-  }
-
-  .search-result__domain[data-domain='tai-chinh'] {
-    color: var(--domain-tai-chinh-accent);
+    color: var(--card-accent, var(--accent));
   }
 
   @media (prefers-color-scheme: dark) {
     .search-result__domain {
-      color: var(--domain-kien-truc-accent-dark);
-    }
-
-    .search-result__domain[data-domain='tai-chinh'] {
-      color: var(--domain-tai-chinh-accent-dark);
+      color: var(--card-accent-dark, var(--accent));
     }
   }
 

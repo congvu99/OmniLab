@@ -1,9 +1,9 @@
 ---
-// Renders into `.continue-reading-slot` on `/` (see phase-04 DOM contract).
-// Both states (empty prompt + card) are server-rendered so the client
-// script only ever mutates text/attributes/hidden — never innerHTML/
-// createElement — matching this phase's established scoping-safe pattern
-// (see mark-complete-button.astro's header comment for why that matters).
+// Renders into `.continue-reading-slot` on `/`. Both states (empty prompt +
+// card) are server-rendered so the client script only ever mutates
+// text/attributes/hidden — never innerHTML/createElement — matching the
+// scoping-safe pattern every island in this codebase follows (see
+// mark-complete-button.astro's header comment for why that matters).
 ---
 
 <div class="crc" data-crc>
@@ -110,32 +110,43 @@
     }
 
     async function render() {
-      const id = store.lastUnfinished();
+      let lessons;
+      try {
+        lessons = await fetchLessonsIndex();
+      } catch {
+        showEmpty();
+        return;
+      }
+
+      // Only ever pick a lesson id that still exists in the index — a
+      // renamed/removed lesson's last-visited timestamp must not blank out
+      // "Học tiếp" when an older, still-valid unfinished lesson exists.
+      const knownIds = new Set(lessons.map((l) => l.id));
+      const id = store.lastUnfinished(knownIds);
       if (!id) {
         showEmpty();
         return;
       }
-      try {
-        const lessons = await fetchLessonsIndex();
-        const entry = lessons.find((l) => l.id === id);
-        if (!entry) {
-          showEmpty();
-          return;
-        }
-        const ratio = store.get().lessons[id]?.scroll ?? 0;
-        const percent = Math.round(ratio * 100);
 
-        eyebrow!.textContent = `Học tiếp · ${entry.domainTitle}`;
-        title!.textContent = entry.title;
-        card!.href = entry.url;
-        progressBar!.style.width = `${percent}%`;
-        percentText!.textContent = `${percent}% đã đọc`;
-
-        empty!.hidden = true;
-        card!.hidden = false;
-      } catch {
+      const entry = lessons.find((l) => l.id === id);
+      if (!entry) {
+        // Unreachable in practice (id came from knownIds, built from this
+        // same `lessons` array), kept as a defensive fallback.
         showEmpty();
+        return;
       }
+
+      const ratio = store.get().lessons[id]?.scroll ?? 0;
+      const percent = Math.round(ratio * 100);
+
+      eyebrow!.textContent = `Học tiếp · ${entry.domainTitle}`;
+      title!.textContent = entry.title;
+      card!.href = entry.url;
+      progressBar!.style.width = `${percent}%`;
+      percentText!.textContent = `${percent}% đã đọc`;
+
+      empty!.hidden = true;
+      card!.hidden = false;
     }
 
     unsubscribe = store.subscribe(() => {

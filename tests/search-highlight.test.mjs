@@ -38,4 +38,36 @@ describe('buildHighlightSegments', () => {
     const segments = buildHighlightSegments(original, ['can', 'bang', 'may']);
     expect(segments.map((s) => s.text).join('')).toBe(original);
   });
+
+  describe('word-boundary only (short terms must not light up mid-word)', () => {
+    it('does not highlight a term that only occurs mid-word', () => {
+      // "de" occurs inside "video" ("vi-DE-o"), not at a word start — must
+      // NOT be highlighted (a short fuzzy/prefix term must not light up
+      // mid-word inside an unrelated term).
+      const segments = buildHighlightSegments('Xem video hướng dẫn.', ['de']);
+      expect(segments.every((s) => !s.match)).toBe(true);
+    });
+
+    it('still highlights the same short term when it does start a word', () => {
+      const segments = buildHighlightSegments('Đệm giúp giảm tải.', ['de']);
+      expect(segments[0]).toEqual({ text: 'Đệ', match: true });
+    });
+
+    it('treats punctuation as a boundary (start of a parenthesized word matches)', () => {
+      const segments = buildHighlightSegments('Bộ nhớ đệm (cache) giúp nhanh hơn.', ['cache']);
+      const matched = segments.filter((s) => s.match).map((s) => s.text);
+      expect(matched).toEqual(['cache']);
+    });
+  });
+
+  describe('NFC normalization (decomposed input must not shift match offsets)', () => {
+    it('produces the same, correctly-sliced result for NFD and NFC input', () => {
+      const nfc = 'Bộ nhớ đệm giúp giảm tải.';
+      const nfd = nfc.normalize('NFD');
+      const segmentsFromNfc = buildHighlightSegments(nfc, ['dem']);
+      const segmentsFromNfd = buildHighlightSegments(nfd, ['dem']);
+      expect(segmentsFromNfd).toEqual(segmentsFromNfc);
+      expect(segmentsFromNfc.find((s) => s.match)?.text).toBe('đệm');
+    });
+  });
 });

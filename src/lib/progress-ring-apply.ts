@@ -4,11 +4,10 @@
  * `[data-progress-ring-fill]`/`[data-progress-ring-text]`/optional
  * `[data-progress-ring-fraction]`). Takes a minimal DOM-like interface
  * (not the full `HTMLElement`) so this is unit-testable without jsdom — see
- * tests/progress-ring-apply.test.mjs. Shared by domain-card.astro and
- * domain-hero.astro's own bootstrap scripts (each page only ever renders
- * one of the two, so each carries its own tiny `<script>` — see phase-05
- * report re: file-ownership constraints that ruled out a shared page-level
- * decorator island here).
+ * tests/progress-ring-apply.test.mjs. Called by progress-ring.astro's own
+ * bootstrap script, which applies it to every `.progress-ring-slot` on the
+ * page (domain-card.astro can render several at once, e.g. on /linh-vuc;
+ * domain-hero.astro renders exactly one).
  */
 import type { ProgressState } from './progress-state';
 import type { LessonIndexEntry } from './lessons-index-client';

@@ -1,16 +1,17 @@
 // Remark plugin: computes `frontmatter.readingMinutes` from the rendered
-// markdown/MDX body (~200 words/minute, Vietnamese included since it is
-// whitespace-tokenized). Registered in astro.config.mjs markdown/mdx
-// `remarkPlugins` so it runs for every lesson.
+// markdown/MDX body. Registered in astro.config.mjs markdown `remarkPlugins`
+// so it runs for every lesson. Astro only surfaces this write via
+// `render(entry).then(r => r.remarkPluginFrontmatter)`, never on
+// `entry.data` — so content-queries.ts computes the same number itself from
+// `entry.body` (via the same shared math in compute-reading-time.ts) rather
+// than depending on this plugin's output. This plugin still runs so the
+// `render()` result stays correct for any future caller that does use it.
 import { toString } from 'mdast-util-to-string';
-
-const WORDS_PER_MINUTE = 200;
+import { countWords, minutesForWordCount } from './compute-reading-time.ts';
 
 export function remarkReadingTime() {
   return (tree, file) => {
-    const text = toString(tree);
-    const words = text.trim().length === 0 ? 0 : text.trim().split(/\s+/).length;
-    const minutes = Math.max(1, Math.round(words / WORDS_PER_MINUTE));
+    const minutes = minutesForWordCount(countWords(toString(tree)));
     const frontmatter = file.data.astro?.frontmatter;
     if (frontmatter) {
       frontmatter.readingMinutes = minutes;

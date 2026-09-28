@@ -1,16 +1,18 @@
 /**
  * Best-effort MDX -> plain-text stripper for the build-time search index
- * (src/pages/search-index.json.ts). Input is `entry.body` (glob loader's
- * raw MDX source, frontmatter already stripped — same field phase-04's
- * /gioi-thieu credit scan reads). This is a search corpus, not a renderer:
- * approximate stripping (regex-based, no real MDX/JSX parser) is an
- * accepted trade-off — leftover stray punctuation is harmless for a search
- * index, unlike phase-04's credit-link extraction which needed exact matches.
+ * (src/pages/search-index.json.ts) and for content-queries.ts's reading-time
+ * calculation. Input is `entry.body` (glob loader's raw MDX source,
+ * frontmatter already stripped — same field /gioi-thieu's credit scan
+ * reads). This is a search corpus, not a renderer: approximate stripping
+ * (regex-based, no real MDX/JSX parser) is an accepted trade-off — leftover
+ * stray punctuation is harmless for a search index, unlike an exact-match
+ * use like credit-link extraction.
  *
  * Known custom components with a `>`-bearing attribute value (Figure's
  * `credit={\`...<a href="...">...\`}`) are dropped whole *before* the
  * generic tag-strip pass, so that pass's simpler no-embedded-`>` regex stays
- * safe (mirrors the gotcha phase-04's report documented for the same reason).
+ * safe (the same gotcha applies to any regex-based extractor that tries to
+ * scan this content without first isolating such attributes).
  */
 
 /** Components whose entire content (attrs + children) should be dropped — not useful search text. */
@@ -30,7 +32,7 @@ function unwrapTag(text: string, tag: string): string {
   return text.replace(new RegExp(`</?${tag}[^>]*>`, 'g'), ' ');
 }
 
-export function mdxToPlainText(raw: string, maxLength = 2500): string {
+export function mdxToPlainText(raw: string, maxLength = 6000): string {
   let text = raw;
 
   text = text.replace(/^\s*import\s.*$/gm, ' ');

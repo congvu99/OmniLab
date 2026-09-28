@@ -10,7 +10,7 @@ Trạng thái: toàn bộ 7 phase trong [plan v1](../plans/260928-1725-omnilab-v
 | Ví dụ đời sống (`<RealLife>`) | 167 khối, cả 50 bài `examplesReviewed: true` sau fact-check agent |
 | Minh hoạ | 78 SVG mới (inline, theo theme) + 44 ảnh gốc có ghi nguồn |
 | Tiến độ, bookmark, Học tiếp | `localStorage` (`omnilab:v1:state`), fallback in-memory ở private mode |
-| Tìm kiếm | MiniSearch, gập dấu tiếng Việt; index ~45KB gzip, chỉ tải ở `/tim-kiem` |
+| Tìm kiếm | MiniSearch, gập dấu tiếng Việt; index ~84KB gzip, chỉ tải ở `/tim-kiem` |
 | JS mỗi trang | 6,6–13KB gzip (ngân sách 30KB) |
 | Lighthouse mobile (5 trang) | Performance 96–97, Accessibility 98–100, Best Practices 100, SEO 100 — [QA report](../plans/260928-1725-omnilab-v1-learning-app/reports/phase-07-qa-report.md) |
 | Test | 174 unit test (vitest) |

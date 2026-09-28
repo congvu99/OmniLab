@@ -2,7 +2,7 @@
 // injected (no jsdom/real localStorage needed, see that file's header).
 import { describe, expect, it, vi } from 'vitest';
 import { createProgressStore } from '../src/lib/progress-store.ts';
-import { migrate } from '../src/lib/progress-state.ts';
+import { isUnknownFutureVersion, migrate } from '../src/lib/progress-state.ts';
 
 /** In-memory Storage-like double. `throwOnWrite`/`throwOnRead` simulate Safari private mode. */
 function createFakeStorage({ throwOnWrite = false, throwOnRead = false } = {}) {
@@ -111,6 +111,24 @@ describe('lastUnfinished', () => {
 
     expect(store.lastUnfinished()).toBe('unfinished/lesson');
   });
+
+  it('with knownIds, skips the most recent visit if its lesson no longer exists, falling back to an older valid one', () => {
+    const clock = createClock();
+    const store = createProgressStore({ storage: createFakeStorage(), now: clock.now });
+
+    store.visit('still/exists');
+    clock.advance(100);
+    store.visit('renamed/away'); // most recent, but not in knownIds below
+
+    expect(store.lastUnfinished()).toBe('renamed/away'); // no filter: still picks the most recent
+    expect(store.lastUnfinished(new Set(['still/exists']))).toBe('still/exists');
+  });
+
+  it('with knownIds, returns null (not a stale id) when every visited lesson is unknown', () => {
+    const store = createProgressStore({ storage: createFakeStorage() });
+    store.visit('deleted/lesson');
+    expect(store.lastUnfinished(new Set(['other/lesson']))).toBeNull();
+  });
 });
 
 describe('saveScroll (throttled ~1s per lesson)', () => {
@@ -145,6 +163,86 @@ describe('saveScroll (throttled ~1s per lesson)', () => {
     expect(store.get().lessons['a/b/c'].scroll).toBe(1);
     store.saveScroll('x/y/z', -0.2);
     expect(store.get().lessons['x/y/z'].scroll).toBe(0);
+  });
+});
+
+describe('flushScroll', () => {
+  it('immediately persists a pending throttled write for one lesson id', () => {
+    vi.useFakeTimers();
+    try {
+      const clock = createClock();
+      const store = createProgressStore({ storage: createFakeStorage(), now: clock.now });
+
+      store.saveScroll('a/b/c', 0.1); // flushes immediately (first call)
+      store.saveScroll('a/b/c', 0.7); // within window -> scheduled, not yet written
+      expect(store.get().lessons['a/b/c'].scroll).toBe(0.1);
+
+      store.flushScroll('a/b/c');
+      expect(store.get().lessons['a/b/c'].scroll).toBe(0.7);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('with no id, flushes every lesson with a pending write (e.g. on pagehide/before-swap)', () => {
+    vi.useFakeTimers();
+    try {
+      const clock = createClock();
+      const store = createProgressStore({ storage: createFakeStorage(), now: clock.now });
+
+      store.saveScroll('a/b/c', 0.1);
+      store.saveScroll('a/b/c', 0.6);
+      store.saveScroll('x/y/z', 0.2);
+      store.saveScroll('x/y/z', 0.9);
+
+      store.flushScroll();
+      expect(store.get().lessons['a/b/c'].scroll).toBe(0.6);
+      expect(store.get().lessons['x/y/z'].scroll).toBe(0.9);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('is a no-op when there is nothing pending', () => {
+    const store = createProgressStore({ storage: createFakeStorage() });
+    expect(() => store.flushScroll('never/saved')).not.toThrow();
+    expect(() => store.flushScroll()).not.toThrow();
+  });
+});
+
+describe('cross-tab write race (two store instances sharing one storage)', () => {
+  it('does not lose tab B\'s bookmark when tab A writes moments later, without tab A having seen B\'s change yet', () => {
+    const storage = createFakeStorage();
+    const tabA = createProgressStore({ storage });
+    const tabB = createProgressStore({ storage });
+
+    // Tab B bookmarks something and persists it — tab A has NOT received a
+    // 'storage' event for this yet (no eventTarget wired in this test), so
+    // tab A's own in-memory `state` is still stale.
+    tabB.toggleBookmark('b/lesson');
+
+    // Tab A now does an unrelated mutation. Before the fix, this would
+    // `persist()` off tab A's stale snapshot (bookmarks: []) and silently
+    // wipe out tab B's write. The fix re-reads storage fresh before
+    // merging, so B's bookmark must survive.
+    tabA.markDone('a/lesson', true);
+
+    const onDisk = JSON.parse(storage._dump()['omnilab:v1:state']);
+    expect(onDisk.bookmarks).toEqual(['b/lesson']);
+    expect(onDisk.lessons['a/lesson'].done).toBe(true);
+  });
+
+  it('does not lose tab B\'s scroll-throttle flush when tab A writes moments later', () => {
+    const storage = createFakeStorage();
+    const tabA = createProgressStore({ storage });
+    const tabB = createProgressStore({ storage });
+
+    tabB.saveScroll('shared/lesson', 0.42); // flushes immediately (first call for this id)
+    tabA.markDone('a/lesson', true);
+
+    const onDisk = JSON.parse(storage._dump()['omnilab:v1:state']);
+    expect(onDisk.lessons['shared/lesson'].scroll).toBe(0.42);
+    expect(onDisk.lessons['a/lesson'].done).toBe(true);
   });
 });
 
@@ -218,6 +316,51 @@ describe('migrate', () => {
   it('clamps out-of-range scroll ratios during migration', () => {
     const raw = { v: 1, lessons: { a: { scroll: 5 }, b: { scroll: -3 } }, bookmarks: [] };
     expect(migrate(raw).lessons).toEqual({ a: { scroll: 1 }, b: { scroll: 0 } });
+  });
+});
+
+describe('isUnknownFutureVersion', () => {
+  it('is true only for a numeric v greater than 1', () => {
+    expect(isUnknownFutureVersion({ v: 2 })).toBe(true);
+    expect(isUnknownFutureVersion({ v: 99 })).toBe(true);
+  });
+
+  it('is false for v1, missing v, non-numeric v, or non-object input', () => {
+    expect(isUnknownFutureVersion({ v: 1 })).toBe(false);
+    expect(isUnknownFutureVersion({})).toBe(false);
+    expect(isUnknownFutureVersion({ v: '2' })).toBe(false);
+    expect(isUnknownFutureVersion(null)).toBe(false);
+    expect(isUnknownFutureVersion('not an object')).toBe(false);
+  });
+});
+
+describe('rollback safety: a future-version payload on disk is never overwritten', () => {
+  it('does not call storage.setItem after reading a v2+ payload, even after a local mutation', () => {
+    const storage = createFakeStorage();
+    const futurePayload = { v: 2, somethingNew: true };
+    storage.setItem('omnilab:v1:state', JSON.stringify(futurePayload));
+    const setItemSpy = vi.spyOn(storage, 'setItem');
+
+    const store = createProgressStore({ storage });
+    // Unrecognized shape -> in-memory state starts empty for this tab, but
+    // that must never be WRITTEN — the real v2 payload on disk must survive.
+    expect(store.get()).toEqual({ v: 1, lessons: {}, bookmarks: [] });
+
+    store.markDone('a/b/c', true); // works in-memory...
+    expect(store.get().lessons['a/b/c'].done).toBe(true);
+
+    // setItem IS called once for the constructor's read/write probe (a
+    // throwaway ":probe" key, unrelated to real state) — the real state key
+    // must never be among its calls.
+    expect(setItemSpy.mock.calls.some(([key]) => key === 'omnilab:v1:state')).toBe(false);
+    expect(storage._dump()['omnilab:v1:state']).toBe(JSON.stringify(futurePayload)); // untouched on disk
+  });
+
+  it('persists normally once the same tab later reads back a real v1/empty payload', () => {
+    const storage = createFakeStorage();
+    const store = createProgressStore({ storage }); // nothing on disk yet -> v1 empty, not "future"
+    store.markDone('a/b/c', true);
+    expect(JSON.parse(storage._dump()['omnilab:v1:state']).lessons['a/b/c'].done).toBe(true);
   });
 });
 

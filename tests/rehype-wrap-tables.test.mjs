@@ -28,8 +28,7 @@ describe('rehypeWrapTables', () => {
     // Regression test: a page with >1 table previously got the identical
     // aria-label "Bảng (cuộn ngang)" on every wrapper, which axe-core's
     // landmark-unique rule flags (found via a real axe-core run against
-    // /hoc/kien-truc/chu-de/database, which has 3 tables — see phase-07 QA
-    // follow-up report).
+    // /hoc/kien-truc/chu-de/database, which has 3 tables).
     const tree = root([table(), el('p'), table(), table()]);
     rehypeWrapTables()(tree);
     const labels = tree.children.filter((c) => c.tagName === 'div').map((c) => c.properties.ariaLabel);

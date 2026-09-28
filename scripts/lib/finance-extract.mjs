@@ -77,9 +77,8 @@ function findHeadingIndex(children, tag, text) {
 
 /**
  * Resolves one finance-split-map.json lesson entry to a hast root fragment.
- * Content-only: section eyebrow labels stay (they carry meaning, see
- * phase-03 report "Finance body-text boundary"); nav/masthead/footer are
- * never passed in here at all.
+ * Content-only: section eyebrow labels stay (they carry meaning); nav/
+ * masthead/footer are never passed in here at all.
  */
 export function resolveLessonHast(entry, { heroEl, sectionsById }) {
   const section = sectionsById.get(entry.sourceSection);

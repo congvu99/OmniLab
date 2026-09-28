@@ -27,9 +27,27 @@ export function emptyState(): ProgressState {
 }
 
 /**
+ * True when `raw` looks like a real payload from a NEWER schema version
+ * (`v` is a number greater than 1) — as opposed to genuinely missing or
+ * corrupt data. The store (progress-store.ts) uses this to decide whether
+ * it's safe to write back to storage: a v1 build must never overwrite a v2+
+ * payload with today's v1 shape (e.g. after a deploy rollback to v1 code,
+ * with a browser that already wrote v2 data) — see `migrate()` below.
+ */
+export function isUnknownFutureVersion(raw: unknown): boolean {
+  if (!raw || typeof raw !== 'object') return false;
+  const v = (raw as Record<string, unknown>).v;
+  return typeof v === 'number' && v > 1;
+}
+
+/**
  * Normalize arbitrary parsed JSON into a valid ProgressState. `v:1` is the
  * only version that has ever shipped, so anything else (missing/mismatched
- * `v`, malformed shape) starts fresh rather than crashing.
+ * `v`, malformed shape) starts fresh rather than crashing. Callers reading
+ * from persistent storage should check `isUnknownFutureVersion(raw)` FIRST
+ * and, if true, treat the resulting emptyState() as in-memory-only for this
+ * tab (never persist it) — this function itself has no access to storage
+ * and cannot enforce that on its own.
  */
 export function migrate(raw: unknown): ProgressState {
   if (!raw || typeof raw !== 'object') return emptyState();

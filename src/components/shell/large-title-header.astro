@@ -82,10 +82,17 @@ const { title } = Astro.props;
 <script>
   // One large-title-header instance per page (iOS large-title pattern is a
   // single per-screen header) — plain querySelector is enough, no scoping.
-  const navbar = document.querySelector<HTMLElement>('[data-lth-navbar]');
-  const sentinel = document.querySelector<HTMLElement>('[data-lth-sentinel]');
+  // Re-bound on every soft navigation (onPageLoad): navbar/sentinel are
+  // fresh DOM nodes after each swap, and the previous page's observer must
+  // be disconnected before its nodes are discarded (see page-lifecycle.ts).
+  import { onPageLoad } from '../../lib/page-lifecycle';
 
-  if (navbar && sentinel && 'IntersectionObserver' in window) {
+  onPageLoad(() => {
+    const navbar = document.querySelector<HTMLElement>('[data-lth-navbar]');
+    const sentinel = document.querySelector<HTMLElement>('[data-lth-sentinel]');
+
+    if (!navbar || !sentinel || !('IntersectionObserver' in window)) return;
+
     const navbarHeight = 44; // keep in sync with --shell-navbar-h in tokens.css
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -94,5 +101,7 @@ const { title } = Astro.props;
       { rootMargin: `-${navbarHeight}px 0px 0px 0px`, threshold: 0 },
     );
     observer.observe(sentinel);
-  }
+
+    return () => observer.disconnect();
+  });
 </script>

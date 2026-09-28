@@ -44,7 +44,7 @@ OmniLab là app học tập tĩnh (Astro 7) chạy hoàn toàn trong trình duy�
 
 **Output** (`dist/`):
 - 58+ trang HTML (v1: 50 bài), mỗi bài → `/hoc/{domain}/{module}/{slug}/index.html`
-- `search-index.json` (45KB gzip, MiniSearch)
+- `search-index.json` (~84KB gzip, MiniSearch)
 - `lessons-index.json` (2.2KB gzip, metadata API)
 - Tất cả script ngoài file (`/_astro/*.js`, không inline)
 
@@ -79,7 +79,7 @@ OmniLab là app học tập tĩnh (Astro 7) chạy hoàn toàn trong trình duy�
 
 **Build-time**: Parse MDX → plain text (loại bỏ Figure/Disclaimer, unwrap RealLife). Tạo index MiniSearch, serialize → `search-index.json`.
 
-**Runtime**: Lazy-load trên `/tim-kiem` (first keystroke). Search real-time, highlight term, prefix + fuzzy 0.2 match. Payload 45KB gzip (0.9KB per bài).
+**Runtime**: Lazy-load trên `/tim-kiem` (first keystroke). Truy vấn AND trước, không có kết quả thì OR; prefix chỉ cho từ cuối, fuzzy 0.2 chỉ cho từ ≥ 4 ký tự; highlight theo ranh giới từ sau NFC. Payload ~84KB gzip (text cap 6000 ký tự/bài).
 
 ## Styling & Dark mode
 
@@ -102,7 +102,7 @@ default-src 'self', img-src 'self' data:, object-src 'none', frame-ancestors 'no
 
 - **JS**: 6–13KB gzip/trang (budget 30KB). Home/domain/lesson: 6–7KB. Search: 13KB.
 - **HTML**: 58 trang, ~150KB raw / ~40KB gzip.
-- **Search index**: 170KB raw / 45KB gzip (lazy-load).
+- **Search index**: ~84KB gzip (lazy-load).
 - **Fonts**: Self-hosted (@fontsource, không CDN).
 - **Cache**: /_astro/* immutable, mọi đường dẫn khác no-cache (revalidate).
 

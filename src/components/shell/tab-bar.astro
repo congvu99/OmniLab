@@ -109,17 +109,30 @@ const pathname = Astro.url.pathname;
 <script>
   // Hide the fixed tab bar while any text input/textarea elsewhere on the
   // page has focus, so the iOS on-screen keyboard doesn't shove it into the
-  // middle of the viewport (see phase-02 risk: "Fixed tab bar + bàn phím iOS").
-  const bar = document.querySelector<HTMLElement>('[data-tab-bar]');
-  if (bar) {
-    const isTextInput = (el: EventTarget | null) =>
-      el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement;
+  // middle of the viewport. Re-bound on every soft navigation (onPageLoad)
+  // because the tab bar itself is a fresh DOM node after each swap.
+  import { onPageLoad } from '../../lib/page-lifecycle';
 
-    document.addEventListener('focusin', (ev) => {
+  const isTextInput = (el: EventTarget | null) =>
+    el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement;
+
+  onPageLoad(() => {
+    const bar = document.querySelector<HTMLElement>('[data-tab-bar]');
+    if (!bar) return;
+
+    const onFocusIn = (ev: FocusEvent) => {
       if (isTextInput(ev.target)) bar.dataset.hidden = 'true';
-    });
-    document.addEventListener('focusout', (ev) => {
+    };
+    const onFocusOut = (ev: FocusEvent) => {
       if (isTextInput(ev.target)) bar.dataset.hidden = 'false';
-    });
-  }
+    };
+
+    document.addEventListener('focusin', onFocusIn);
+    document.addEventListener('focusout', onFocusOut);
+
+    return () => {
+      document.removeEventListener('focusin', onFocusIn);
+      document.removeEventListener('focusout', onFocusOut);
+    };
+  });
 </script>

@@ -1,9 +1,9 @@
 ---
 // Full-bleed reading shell: back button + collapsing title + progress bar
-// (reader-top-bar.astro), no tab bar/sidebar (maximizes reading space per
-// phase-02 spec). Default slot content is wrapped in <main id="reader-content"
-// class="prose"> — consumers just drop MDX/HTML output in directly, no need
-// to remember the "prose" class themselves.
+// (reader-top-bar.astro), no tab bar/sidebar (maximizes reading space).
+// Default slot content is wrapped in <main id="reader-content" class="prose">
+// — consumers just drop MDX/HTML output in directly, no need to remember
+// the "prose" class themselves.
 import { ClientRouter } from 'astro:transitions';
 import BaseHead from './base-head.astro';
 import { domainAccentStyle } from './domain-accent';
@@ -46,8 +46,8 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
            since display:none removes a11y-tree nodes too — whenever
            `.lesson-article` already supplies its own <h1>, so those lessons
            are untouched and no title is ever announced twice. -->
-      <h1 class="reader-fallback-heading" data-reader-fallback-h1>{title}</h1>
-      <h2 class="reader-fallback-heading" data-reader-fallback-h2>Nội dung bài</h2>
+      <h1 class="sr-only reader-fallback-heading" data-reader-fallback-h1>{title}</h1>
+      <h2 class="sr-only reader-fallback-heading" data-reader-fallback-h2>Nội dung bài</h2>
       <slot />
     </main>
     <script>
@@ -69,22 +69,10 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
     padding: var(--space-5) var(--space-4) var(--space-8);
   }
 
-  /* sr-only: present for the accessibility tree/heading outline, invisible
-     on screen. Hidden entirely (removed from the a11y tree too) when the
-     lesson body already provides its own <h1> — see the comment above the
-     elements in the markup. */
-  .reader-fallback-heading {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
-
+  /* .sr-only (base.css) keeps these in the a11y tree/heading outline while
+     invisible on screen. Hidden entirely (removed from the a11y tree too)
+     when the lesson body already provides its own <h1> — see the comment
+     above the elements in the markup. */
   .reader-content:has(.lesson-article h1) .reader-fallback-heading {
     display: none;
   }

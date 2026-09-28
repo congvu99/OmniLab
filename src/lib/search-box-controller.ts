@@ -22,6 +22,8 @@ export interface SearchBoxElements {
   empty: HTMLElement;
   resultsList: HTMLUListElement;
   template: HTMLTemplateElement;
+  /** sr-only status region announcing "N kết quả" once per search — see search-box.astro's header comment for why the results `<ul>` itself no longer carries aria-live. */
+  resultCount: HTMLElement;
 }
 
 /** Reads and validates the DOM contract from a `.search-shell` root; `null` if anything's missing. */
@@ -33,8 +35,9 @@ export function readSearchBoxElements(root: HTMLElement): SearchBoxElements | nu
   const empty = root.querySelector<HTMLElement>('[data-search-empty]');
   const resultsList = root.querySelector<HTMLUListElement>('[data-search-results]');
   const template = root.querySelector<HTMLTemplateElement>('[data-search-result-template]');
-  if (!input || !hint || !loading || !error || !empty || !resultsList || !template) return null;
-  return { root, input, hint, loading, error, empty, resultsList, template };
+  const resultCount = root.querySelector<HTMLElement>('[data-search-result-count]');
+  if (!input || !hint || !loading || !error || !empty || !resultsList || !template || !resultCount) return null;
+  return { root, input, hint, loading, error, empty, resultsList, template, resultCount };
 }
 
 function renderResultRow(template: HTMLTemplateElement, result: SearchResult): DocumentFragment {
@@ -48,6 +51,12 @@ function renderResultRow(template: HTMLTemplateElement, result: SearchResult): D
   title.textContent = result.title;
   domain.textContent = result.domainTitle;
   domain.dataset.domain = result.domain;
+  // Per-domain accent, set as CSS custom properties (same pattern as
+  // domain-card.astro's `--card-accent`) instead of a hardcoded
+  // `[data-domain='...']` color map in search-box.astro's CSS — a new
+  // domain gets a correctly-colored result row with zero UI code changes.
+  if (result.domainAccent) link.style.setProperty('--card-accent', result.domainAccent);
+  if (result.domainAccentDark) link.style.setProperty('--card-accent-dark', result.domainAccentDark);
 
   for (const segment of buildHighlightSegments(result.summary, result.terms)) {
     if (segment.match) {
@@ -64,7 +73,7 @@ function renderResultRow(template: HTMLTemplateElement, result: SearchResult): D
 
 /** Wires up one search-box instance. Returns a cleanup function to call before re-init. */
 export function attachSearchBox(els: SearchBoxElements): () => void {
-  const { input, hint, loading, error, empty, resultsList, template } = els;
+  const { input, hint, loading, error, empty, resultsList, template, resultCount } = els;
 
   function showOnly(el: HTMLElement | null) {
     for (const candidate of [hint, loading, error, empty]) {
@@ -94,11 +103,13 @@ export function attachSearchBox(els: SearchBoxElements): () => void {
     if (results.length === 0) {
       resultsList.hidden = true;
       showOnly(empty);
+      resultCount.textContent = '0 kết quả';
       return;
     }
     for (const result of results) resultsList.append(renderResultRow(template, result));
     resultsList.hidden = false;
     showOnly(null);
+    resultCount.textContent = `${results.length} kết quả`;
   }
 
   let debounceTimer: ReturnType<typeof setTimeout> | undefined;
@@ -109,6 +120,7 @@ export function attachSearchBox(els: SearchBoxElements): () => void {
     if (!trimmed) {
       resultsList.hidden = true;
       showOnly(hint);
+      resultCount.textContent = '';
       return;
     }
 

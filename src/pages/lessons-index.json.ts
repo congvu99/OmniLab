@@ -1,19 +1,10 @@
 // Static JSON endpoint: every lesson's id/title/url/domain/readingMinutes.
 // Islands that need lesson titles without a full page's worth of content
-// (continue-reading-card, saved-list) fetch this once instead of it being
-// inlined into every page — see phase-05 spec "Architecture".
+// (continue-reading-card, saved-list, progress-ring) fetch this once
+// instead of it being inlined into every page.
 import type { APIRoute } from 'astro';
 import { getAllLessonsOrdered, getDomains } from '../lib/content-queries';
-
-export interface LessonIndexEntry {
-  id: string;
-  title: string;
-  url: string;
-  domain: string;
-  domainTitle: string;
-  module: string;
-  readingMinutes: number;
-}
+import type { LessonIndexEntry } from '../lib/lessons-index-client';
 
 export const GET: APIRoute = async () => {
   const [lessons, domains] = await Promise.all([getAllLessonsOrdered(), getDomains()]);

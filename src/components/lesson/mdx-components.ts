@@ -1,7 +1,6 @@
-// Shared MDX -> Astro component map. Imported by the temporary render route
-// (src/pages/hoc/[domain]/[module]/[slug].astro) in Phase 3 and reused as-is
-// by Phase 4's real reader layout — keep this the single source of truth so
-// the two never drift apart.
+// Shared MDX -> Astro component map, passed to <Content components={...}/>
+// by the reader page (src/pages/hoc/[domain]/[module]/[slug].astro) — the
+// single source of truth for which JSX tags lesson MDX bodies may use.
 import RealLife from './real-life.astro';
 import Figure from './figure.astro';
 import Note from './note.astro';
