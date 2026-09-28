@@ -4,7 +4,7 @@ description: >-
   App đọc/học Astro tĩnh, UI kiểu iOS, 2 lĩnh vực (Kiến trúc hệ thống, Tài
   chính), 100% nội dung gốc + 6 bài thí điểm có ví dụ đời sống & SVG; deploy
   Railpack/Nhân Hòa.
-status: in-progress
+status: pending
 priority: P2
 branch: main
 tags:
@@ -34,7 +34,7 @@ Nguyên tắc cốt lõi: **nội dung gốc bất biến** (chứng minh bằng
 
 | Phase | Name | Status |
 |-------|------|--------|
-| 1 | [Scaffold and deploy pipeline](./phase-01-scaffold-and-deploy-pipeline.md) | In Progress |
+| 1 | [Scaffold and deploy pipeline](./phase-01-scaffold-and-deploy-pipeline.md) | Completed |
 | 2 | [Design system and app shell](./phase-02-design-system-and-app-shell.md) | Pending |
 | 3 | [Content model and migration](./phase-03-content-model-and-migration.md) | Pending |
 | 4 | [Domain and reader screens](./phase-04-domain-and-reader-screens.md) | Pending |
