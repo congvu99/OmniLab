@@ -11,7 +11,7 @@ source:
   license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
   translatedAt: "2026-09-28"
   snapshot: "system-design/02-chu-de/09-communication.md"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 18
 ---
 
@@ -48,7 +48,7 @@ Một yêu cầu HTTP cơ bản gồm một động từ (verb, hay method) và 
 
 <RealLife title="Quầy một cửa ở UBND phường">
 
-Ở quầy một cửa phường, bạn nộp đúng loại đơn cho đúng việc: xin cấp mới, xin sửa thông tin, xin hủy — không viết chung một tờ đơn mơ hồ. Cán bộ nhận đơn (request), xử lý rồi trả kết quả kèm trạng thái rõ ràng: đã cấp, đã từ chối, đang chờ bổ sung. HTTP y hệt: mỗi request có một động từ rõ nghĩa (GET để xem, POST để tạo, DELETE để xóa) và server luôn trả về trạng thái cụ thể. → Đây là lý do gọi HTTP là giao thức yêu cầu/phản hồi.
+Ở quầy một cửa phường, mỗi việc một loại đơn: xin cấp mới, xin sửa, xin hủy. Cán bộ nhận đơn (request) rồi trả kết quả kèm trạng thái: đã cấp, bị từ chối, cần bổ sung (response). HTTP cũng vậy: request mang động từ (GET xem, POST tạo, DELETE xóa), phản hồi mang mã trạng thái. → Nộp lại đơn xin hủy thì hồ sơ vẫn chỉ là đã hủy (DELETE lũy đẳng); nộp hai đơn xin cấp mới có thể ra hai hồ sơ (POST không lũy đẳng).
 
 </RealLife>
 
@@ -73,7 +73,7 @@ Nếu bên gửi không nhận được phản hồi đúng, nó sẽ gửi lạ
 
 <RealLife title="Thư bảo đảm qua bưu điện">
 
-Gửi thư bảo đảm, bưu điện đánh số từng thư, người nhận phải ký xác nhận đã nhận đúng thư đó; thư nào thất lạc, bưu điện gửi lại tới khi có xác nhận. Nhờ vậy thư luôn tới đúng thứ tự và không bị mất, đổi lại chậm hơn thư thường vì phải chờ xác nhận từng bước. TCP tương tự: mỗi gói tin có số thứ tự, bên nhận gửi xác nhận (ACK), gói nào mất thì gửi lại. → Đảm bảo chắc chắn nhưng đổi lấy độ trễ, khác hẳn UDP.
+Gửi hồ sơ nhiều trang bằng thư bảo đảm: mỗi phong bì ghi số thứ tự, người nhận ký xác nhận, phong bì thất lạc được gửi lại. Phong bì có thể tới lộn xộn, nhưng người nhận xếp theo số rồi mới đọc. Khác thư thật: TCP không đợi từng phong bì được ký mới gửi tiếp, mà gửi nhiều gói cùng lúc trong giới hạn điều khiển luồng và tắc nghẽn. → Số thứ tự, ACK và gửi lại mua được độ tin cậy, đổi lại độ trễ cao hơn UDP.
 
 </RealLife>
 
@@ -103,7 +103,7 @@ UDP có thể phát quảng bá (broadcast), gửi datagram tới mọi thiết 
 
 <RealLife title="Loa phát thanh phường">
 
-Loa phường phát thông báo giờ tiêm chủng cho cả khu phố cùng lúc — không ai ký nhận, nhà nào đóng cửa kỹ có thể không nghe thấy. Bù lại thông báo tới ngay lập tức, không phải chờ từng nhà phản hồi trước khi phát tiếp. UDP gửi datagram theo cách này: không bắt tay trước, không đảm bảo tới nơi hay đúng thứ tự, nhưng nhanh, phù hợp khi thà mất một phần còn hơn chờ đợi. → Đó là lý do UDP hợp với voice call hay livestream hơn TCP.
+Loa phường phát thông báo cho cả khu phố: không ai ký nhận, nhà đóng cửa kín có thể không nghe, nhưng thông báo tới ngay, không chờ ai trả lời. UDP gửi datagram theo tinh thần đó: không bắt tay, không xác nhận, có thể mất hoặc sai thứ tự, đổi lại độ trễ thấp. Giới hạn: loa là phát quảng bá, còn phần lớn datagram UDP chỉ gửi tới một địa chỉ. → Vì vậy UDP hợp với gọi video, game thời gian thực, nơi dữ liệu tới muộn còn tệ hơn mất.
 
 </RealLife>
 
@@ -148,7 +148,7 @@ RPC là một giao thức yêu cầu - phản hồi:
 
 <RealLife title="Nhờ đồng nghiệp chi nhánh khác xử lý hộ">
 
-Bạn gọi điện nhờ đồng nghiệp chi nhánh khác kiểm tra tồn kho giúp, rồi báo lại kết quả — cảm giác y như tự mình đi kiểm tra, dù thực ra người khác ở nơi khác đã làm. Bạn không cần biết họ tra bằng cách nào, chỉ cần nhận đúng kết quả. RPC cho code chạy y hệt: gọi một hàm như gọi hàm cục bộ, nhưng hàm đó thực thi trên một server ở xa, mọi chi tiết giao tiếp được giấu đi. → Cuộc gọi "xa" luôn chậm và kém tin cậy hơn "tự làm".
+Bạn gọi điện nhờ đồng nghiệp chi nhánh khác kiểm tra tồn kho rồi báo lại — với bạn, giống như tự tra, không cần biết họ tra cách nào. RPC cũng vậy: code gọi một hàm như hàm cục bộ, nhưng hàm chạy trên server ở xa, chi tiết giao tiếp bị giấu đi. Có điều cuộc gọi có thể rớt máy hoặc phải chờ lâu. → Lời gọi từ xa thường chậm và kém tin cậy hơn lời gọi cục bộ, nên cần phân biệt rõ hai loại.
 
 </RealLife>
 
@@ -188,7 +188,7 @@ REST là một phong cách kiến trúc áp đặt mô hình client/server, tron
 
 <RealLife title="Một địa chỉ, đúng loại yêu cầu chuẩn">
 
-Một căn hộ có đúng một địa chỉ cố định. Người giao hàng, người tới lấy đồ trả lại, người tới kiểm tra định kỳ — ai cũng đến đúng địa chỉ đó, chỉ khác loại yêu cầu. REST thiết kế API theo cách đó: mỗi tài nguyên có một URI cố định (ví dụ /don-hang/123), muốn xem, sửa hay xóa thì đổi động từ HTTP chứ không đổi địa chỉ. → Đây là khác biệt lớn nhất so với RPC, nơi mỗi việc thường có một endpoint riêng.
+Một căn hộ có đúng một địa chỉ cố định. Người giao hàng, người tới lấy đồ, người tới kiểm tra định kỳ — ai cũng đến đúng địa chỉ đó, chỉ khác loại yêu cầu. REST thiết kế API theo cách đó: mỗi tài nguyên có một URI cố định (ví dụ /don-hang/123), muốn xem, sửa hay xóa thì đổi động từ HTTP chứ không đổi địa chỉ. → Đây là khác biệt dễ thấy nhất so với RPC, nơi mỗi thao tác thường có một endpoint riêng.
 
 </RealLife>
 

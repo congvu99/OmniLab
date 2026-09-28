@@ -11,7 +11,7 @@ source:
   license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
   translatedAt: "2026-09-28"
   snapshot: "system-design/02-chu-de/10-security.md"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 11
 ---
 
@@ -41,13 +41,13 @@ Bảo mật là một chủ đề rộng. Trừ khi bạn có nhiều kinh nghi�
 
 <RealLife title="Két sắt trong nhà">
 
-Đồ quý bạn không để hớ hênh trên bàn mà cất trong két sắt có khóa riêng. Trộm bê nguyên cái két đi, vẫn không mở ra dùng được nếu không có chìa — chỉ có được cái vỏ, không có được thứ bên trong. Mã hóa dữ liệu khi lưu (at rest) y hệt: dù ai đó lấy được ổ đĩa chứa dữ liệu, không có khóa giải mã thì dữ liệu vẫn chỉ là một đống ký tự vô nghĩa. → Đây là lớp bảo vệ cuối cùng khi mọi lớp phòng thủ khác đã bị vượt qua.
+Đồ quý cất trong két sắt: trộm bê cả két đi mà không có chìa cũng không lấy được thứ bên trong — miễn là chìa không để cạnh két. Mã hóa khi lưu (at rest) cũng vậy: ai lấy được ổ đĩa hay bản sao lưu mà thiếu khóa giải mã chỉ thấy dữ liệu vô nghĩa. Giới hạn: ai đọc được qua ứng dụng hay database, như người mở két hợp lệ, vẫn thấy dữ liệu rõ. → Mã hóa khi lưu chống mất ổ đĩa, không thay được phân quyền.
 
 </RealLife>
 
 <RealLife title="Danh sách khách mời ở cổng sự kiện">
 
-Sự kiện chỉ cho vào những ai có tên trong danh sách khách mời đã duyệt trước — bảo vệ không cố "sửa" tên sai chính tả cho khớp, mà từ chối thẳng nếu tên không có trong danh sách. Kiểm tra dữ liệu người dùng nhập vào cũng nên vậy: định nghĩa trước những gì hợp lệ (đúng kiểu, đúng định dạng) và từ chối mọi thứ không khớp, thay vì cố "dọn dẹp" dữ liệu lạ. → Từ chối cái sai luôn chắc chắn hơn là đoán cách sửa nó.
+Cổng sự kiện chỉ cho vào người có tên trong danh sách khách mời duyệt trước; bảo vệ không cố "sửa" tên sai cho khớp mà từ chối thẳng. Kiểm tra đầu vào theo allowlist cũng vậy: định nghĩa trước thế nào là hợp lệ (kiểu, độ dài, định dạng) và từ chối mọi thứ không khớp. Giới hạn: chuỗi hợp lệ vẫn có thể nguy hiểm khi hiển thị, nên chống XSS vẫn cần mã hóa đầu ra theo ngữ cảnh. → Từ chối cái sai chắc chắn hơn đoán cách sửa nó.
 
 </RealLife>
 
@@ -60,13 +60,13 @@ Sự kiện chỉ cho vào những ai có tên trong danh sách khách mời đ�
 
 <RealLife title="Ô trống điền sẵn trên biểu mẫu">
 
-Biểu mẫu ngân hàng in sẵn khung: "Số tiền: ___", "Người nhận: ___". Dù bạn viết gì vào ô trống, nó vẫn chỉ được hiểu là nội dung của đúng ô đó — không thể viết đè thành một dòng lệnh mới. Truy vấn tham số hóa hoạt động theo nguyên tắc này: câu lệnh SQL được viết cố định trước, dữ liệu người dùng chỉ được đặt vào đúng "ô trống" dành cho dữ liệu, không bao giờ ghép vào phần cấu trúc. → Đó là lý do nó ngăn SQL injection hiệu quả hơn việc "làm sạch" chuỗi nhập vào.
+Biểu mẫu chuyển tiền in sẵn khung "Số tiền: ___", "Người nhận: ___". Viết gì vào ô thì cũng chỉ là nội dung của ô đó, không thành chỉ thị mới cho giao dịch viên. Truy vấn tham số hóa cũng vậy: câu lệnh SQL viết cố định trước, dữ liệu người dùng truyền riêng, chỉ lấp vào chỗ dành cho giá trị. Giới hạn: tên bảng, tên cột không đặt vào ô được, phải chọn từ allowlist. → Vì vậy tham số hóa chặn SQL injection chắc hơn "làm sạch" chuỗi.
 
 </RealLife>
 
 <RealLife title="Chìa khóa riêng từng phòng">
 
-Một tòa nhà văn phòng không phát cho mỗi nhân viên một chìa khóa vạn năng mở được mọi phòng, mà chỉ phát chìa phòng ban của họ — kế toán không cầm được chìa phòng server. Mất một chìa khóa chỉ lộ một phòng, không lộ cả tòa nhà. Đặc quyền tối thiểu áp dụng y hệt cho hệ thống: tài khoản ứng dụng chỉ nên có đúng quyền nó cần, để nếu bị chiếm, thiệt hại cũng chỉ giới hạn trong phạm vi quyền đó. → Càng ít quyền dư thừa, "bán kính ảnh hưởng" khi có sự cố càng nhỏ.
+Tòa nhà văn phòng không phát chìa vạn năng, mà mỗi người chỉ có chìa phòng ban mình — kế toán không cầm chìa phòng server. Mất một chìa chỉ lộ một phòng. Đặc quyền tối thiểu áp dụng cho mọi chủ thể: tài khoản database của ứng dụng, dịch vụ, container chỉ có đúng quyền cần dùng, nên nếu bị chiếm thì thiệt hại chỉ gói trong phạm vi đó. → Càng ít quyền dư thừa, bán kính ảnh hưởng khi có sự cố càng nhỏ.
 
 </RealLife>
 

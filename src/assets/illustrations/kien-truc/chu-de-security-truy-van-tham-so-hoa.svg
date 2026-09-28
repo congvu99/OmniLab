@@ -6,20 +6,18 @@
     </marker>
   </defs>
 
-  <text x="8" y="16" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink-2)">Dữ liệu người dùng</text>
-  <rect x="8" y="26" width="140" height="36" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
-  <text x="78" y="49" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">"user_id = 1234"</text>
+  <text x="8" y="16" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink-2)">Câu lệnh cố định (viết trước)</text>
+  <rect x="8" y="26" width="344" height="46" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="20" y="54" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">SELECT * FROM users WHERE id =</text>
+  <rect x="236" y="38" width="56" height="22" rx="6" fill="var(--surface-2)" stroke="var(--accent)" stroke-width="2" stroke-dasharray="3 3" />
+  <text x="264" y="54" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--accent)">?</text>
 
-  <path d="M148 44 H200" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-sec-tvth-arrow)" />
+  <rect x="214" y="122" width="100" height="34" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="264" y="144" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">1234</text>
+  <text x="202" y="144" text-anchor="end" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink-2)">Dữ liệu người dùng</text>
 
-  <text x="208" y="16" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink-2)">Câu lệnh cố định</text>
-  <rect x="208" y="26" width="144" height="72" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
-  <text x="220" y="52" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink)">SELECT * FROM users</text>
-  <text x="220" y="68" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink)">WHERE id =</text>
-  <rect x="296" y="58" width="40" height="18" rx="4" fill="var(--surface-2)" stroke="var(--accent)" stroke-width="2" stroke-dasharray="3 3" />
-  <text x="316" y="71" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="10" fill="var(--accent)">?</text>
-  <text x="220" y="88" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">— chỉ nhận giá trị, không nhận lệnh</text>
+  <path d="M264 122 V62" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-sec-tvth-arrow)" />
 
-  <text x="180" y="130" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">dữ liệu luôn đi vào đúng "ô trống" dành cho giá trị,</text>
-  <text x="180" y="146" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">không bao giờ được ghép vào phần cấu trúc câu lệnh</text>
+  <text x="180" y="186" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">dữ liệu được truyền riêng, chỉ lấp vào ô giá trị,</text>
+  <text x="180" y="202" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="11" fill="var(--ink-2)">không bao giờ ghép vào cấu trúc câu lệnh</text>
 </svg>

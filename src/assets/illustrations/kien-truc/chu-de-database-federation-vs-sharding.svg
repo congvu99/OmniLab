@@ -12,10 +12,10 @@
   <text x="46" y="74" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">App</text>
 
   <rect x="230" y="14" width="122" height="28" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
-  <text x="291" y="33" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Users</text>
+  <text x="291" y="33" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Forums</text>
 
   <rect x="230" y="55" width="122" height="28" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
-  <text x="291" y="74" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Orders</text>
+  <text x="291" y="74" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Users</text>
 
   <rect x="230" y="96" width="122" height="28" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
   <text x="291" y="115" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Products</text>
@@ -26,16 +26,16 @@
 
   <line x1="0" y1="146" x2="360" y2="146" stroke="var(--line)" stroke-width="1" />
 
-  <text x="8" y="172" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink-2)">Sharding (cùng bảng, chia dữ liệu)</text>
+  <text x="8" y="172" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink-2)">Sharding (cùng bảng, chia theo khóa)</text>
 
   <rect x="8" y="208" width="76" height="34" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
   <text x="46" y="230" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">App</text>
 
   <rect x="230" y="182" width="122" height="30" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
-  <text x="291" y="202" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Shard 1 (users A–M)</text>
+  <text x="291" y="202" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Shard 1 (họ A–M)</text>
 
   <rect x="230" y="222" width="122" height="30" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
-  <text x="291" y="242" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Shard 2 (users N–Z)</text>
+  <text x="291" y="242" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="12" fill="var(--ink)">Shard 2 (họ N–Z)</text>
 
   <path d="M84 218 C 160 218, 160 197, 230 197" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-db-fs-arrow)" />
   <path d="M84 232 C 160 232, 160 237, 230 237" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-db-fs-arrow)" />

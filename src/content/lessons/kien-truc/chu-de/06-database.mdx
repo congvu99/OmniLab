@@ -11,7 +11,7 @@ source:
   license: "CC BY 4.0 (nguyên bản: Donne Martin, The System Design Primer)"
   translatedAt: "2026-09-28"
   snapshot: "system-design/02-chu-de/06-database.md"
-examplesReviewed: false
+examplesReviewed: true
 readingMinutes: 23
 ---
 
@@ -53,7 +53,7 @@ Master phục vụ cả đọc lẫn ghi, đồng thời nhân bản các thao t
 
 <RealLife title="Nhà xuất bản và các hiệu sách">
 
-Một nhà xuất bản in sách mới (ghi) rồi phát hành bản sao tới nhiều hiệu sách (đọc). Khách mua sách ra hiệu sách gần nhà, không cần tới tận nhà xuất bản. Nhưng muốn sửa nội dung, chỉ nhà xuất bản làm được — hiệu sách không tự thêm chữ. Nhân bản master-slave y hệt: master nhận mọi thao tác ghi, slave chỉ phục vụ đọc, giảm tải cho master. → Nhà xuất bản ngừng hoạt động, hiệu sách vẫn bán được sách cũ, chỉ là không có sách mới.
+Nhà xuất bản in sách (ghi) rồi gửi bản sao tới nhiều hiệu sách (đọc); muốn sửa nội dung thì chỉ nhà xuất bản làm được. Sách mới cần thời gian mới về tới hiệu sách, nên có lúc hiệu sách còn bán bản cũ — đó là độ trễ nhân bản. → Nhà xuất bản đóng cửa thì hiệu sách vẫn bán sách đã có (chế độ chỉ đọc), cho tới khi một hiệu sách được giao quyền xuất bản (slave nâng lên master).
 
 </RealLife>
 
@@ -70,7 +70,7 @@ Cả hai master đều phục vụ đọc và ghi, và phối hợp với nhau k
 
 <RealLife title="Sổ chung chỉnh sửa từ hai nơi">
 
-Hai kế toán ở hai chi nhánh cùng có quyền sửa một bảng chi phí chung. Cả hai đọc và ghi bình thường, nhưng nếu cùng lúc sửa một ô, phải có quy tắc rõ ràng, không thì số liệu lệch nhau. Nhân bản master-master cho phép cả hai node cùng ghi để không ai chờ ai, đổi lại phải giải quyết xung đột khi hai bên ghi trùng thời điểm. → Càng nhiều "kế toán" cùng ghi, xung đột càng dễ xảy ra.
+Hai kế toán ở hai chi nhánh cùng được sửa một bảng chi phí chung, mỗi lần sửa đều báo cho bên kia để hai bản khớp nhau. Một chi nhánh mất điện, bên còn lại vẫn đọc và ghi bình thường. Nhưng nếu cả hai cùng sửa một ô trước khi kịp báo nhau, phải có quy tắc chọn số đúng, không thì số liệu lệch hoặc mất. → Đó là xung đột ghi: càng nhiều node ghi, độ trễ càng lớn, giải quyết xung đột càng quan trọng.
 
 </RealLife>
 
@@ -87,7 +87,7 @@ Hai kế toán ở hai chi nhánh cùng có quyền sửa một bảng chi phí 
   added
   svg={svgDbMasterSlaveVsMaster}
   alt="So sánh nhân bản master-slave và master-master"
-  caption="Master-slave: một node ghi, các slave chỉ đọc. Master-master: cả hai node cùng đọc và ghi, tự phối hợp khi trùng thời điểm."
+  caption="Master-slave: master nhận mọi thao tác ghi và nhân bản sang các slave chỉ phục vụ đọc. Master-master: cả hai node cùng đọc và ghi, đồng bộ ghi với nhau và phải giải quyết xung đột khi hai bên cùng sửa một bản ghi."
 />
 
 ##### Nhược điểm: nhân bản
@@ -111,7 +111,7 @@ Federation (hay phân vùng theo chức năng - functional partitioning) tách c
 
 <RealLife title="Phòng khám tách quầy theo chuyên khoa">
 
-Một phòng khám đông bệnh nhân tách riêng quầy tiếp nhận cho khoa Mắt, khoa Răng và khoa Da liễu, thay vì dồn hết vào một quầy chung. Mỗi quầy chỉ xử lý hồ sơ của khoa mình nên ai cũng khám nhanh hơn, một khoa quá tải không kéo chậm khoa khác. Federation tách cơ sở dữ liệu theo chức năng tương tự: users, orders, products mỗi thứ một cơ sở dữ liệu riêng. → Đánh đổi là ghép thông tin từ hai khoa (join hai DB) giờ phức tạp hơn trước.
+Phòng khám đông bệnh nhân tách quầy tiếp nhận riêng cho khoa Mắt, khoa Răng, khoa Da liễu thay vì dồn vào một quầy chung. Mỗi quầy chỉ giữ hồ sơ của khoa mình nên xử lý nhanh hơn, một khoa quá tải không kéo chậm khoa khác. Federation tách cơ sở dữ liệu theo chức năng giống vậy: forums, users, products mỗi thứ một cơ sở dữ liệu. → Đánh đổi: ghép hồ sơ của một người khám cả hai khoa (join hai DB) giờ phức tạp hơn.
 
 </RealLife>
 
@@ -138,7 +138,7 @@ Cách phổ biến để shard một bảng người dùng là theo chữ cái �
 
 <RealLife title="Bưu cục phân loại theo khu vực">
 
-Một thành phố lớn không dồn hết thư về một bưu cục trung tâm, mà chia thành nhiều bưu cục nhỏ, mỗi bưu cục phụ trách một cụm quận. Thư gửi tới quận nào, bưu cục quận đó xử lý, không phải cả thành phố chờ một bưu cục làm hết. Sharding chia dữ liệu thành nhiều cơ sở dữ liệu con theo cùng nguyên tắc, mỗi shard chỉ quản một phần dữ liệu. → Nếu chọn tiêu chí chia lệch, một bưu cục vẫn có thể quá tải.
+Thành phố lớn không dồn mọi thư về một bưu cục trung tâm mà chia nhiều bưu cục, mỗi nơi phụ trách một cụm quận. Bưu cục nào cũng làm cùng một việc, chỉ khác khu vực: thư gửi quận nào thì bưu cục quận đó xử lý. Sharding chia cùng một bảng theo một khóa (như vị trí địa lý), mỗi shard giữ một tập con dữ liệu. → Nếu chọn tiêu chí chia lệch, như một quận quá đông, một shard vẫn quá tải.
 
 </RealLife>
 
@@ -146,7 +146,7 @@ Một thành phố lớn không dồn hết thư về một bưu cục trung tâ
   added
   svg={svgDbFederationVsSharding}
   alt="So sánh federation và sharding"
-  caption="Federation tách theo chức năng (users/orders/products mỗi thứ một DB). Sharding chia cùng một bảng thành nhiều phần theo tập con dữ liệu."
+  caption="Federation tách theo chức năng (forums/users/products mỗi thứ một DB). Sharding chia cùng một bảng thành nhiều phần theo một khóa, ví dụ chữ cái đầu của họ."
 />
 
 ##### Nhược điểm: sharding
@@ -173,7 +173,7 @@ Trong hầu hết hệ thống, số lượt đọc có thể áp đảo số l�
 
 <RealLife title="Bảng thông báo dán nhiều nơi trong trường">
 
-Trường học dán cùng một thông báo nghỉ học ở cổng, ở lớp và ở căn-tin, thay vì chỉ dán một bản ở văn phòng — học sinh đọc ở đâu cũng thấy ngay. Nhưng khi thông báo cần sửa, phải gỡ và dán lại ở đủ mọi nơi, quên một chỗ là thông tin lệch nhau. Phi chuẩn hóa lưu trùng lặp dữ liệu vào nhiều bảng để đọc nhanh, tương tự vậy. → Đổi lại là mỗi lần ghi phải cập nhật đồng bộ ở mọi bản sao.
+Trường dán cùng một thông báo ở cổng, ở lớp và ở căn-tin — học sinh đứng đâu cũng đọc được ngay. Nhưng khi cần sửa, phải gỡ và dán lại đủ mọi nơi, quên một chỗ là thông tin lệch nhau. Phi chuẩn hóa cũng lưu bản sao dư thừa vào nhiều bảng để đọc nhanh, tránh join. → Đổi lại, mỗi lần ghi phải cập nhật mọi bản sao, nên hệ ghi nhiều có thể chậm hơn bản chuẩn hóa.
 
 </RealLife>
 
@@ -220,7 +220,7 @@ Benchmark và profile có thể dẫn bạn tới các tối ưu sau.
 
 <RealLife title="Mục lục sách giáo khoa">
 
-Muốn tìm một bài học, bạn tra mục lục đầu sách để biết ngay số trang, thay vì lật từng trang. Mục lục choán thêm vài trang và phải cập nhật khi in thêm bài mới, đổi lại tra cứu nhanh hơn nhiều. Chỉ mục trong cơ sở dữ liệu y hệt: giúp SELECT tìm đúng hàng nhanh hơn, nhưng tốn thêm không gian và làm chậm thao tác ghi vì phải cập nhật cả mục lục. → Chỉ mục đáng giá khi đọc nhiều hơn ghi rất nhiều, như hầu hết ứng dụng web.
+Muốn tìm một bài, bạn tra mục lục đầu sách để biết ngay số trang thay vì lật từng trang. Mục lục chiếm thêm vài trang và phải sửa lại mỗi khi thêm bài mới. Chỉ mục trong cơ sở dữ liệu cũng vậy: giúp SELECT, JOIN, ORDER BY tìm đúng hàng nhanh, nhưng tốn thêm không gian và làm ghi chậm hơn vì mỗi lần ghi phải cập nhật cả chỉ mục. → Chỉ mục đáng giá khi đọc nhiều hơn ghi rất nhiều, như hầu hết ứng dụng web.
 
 </RealLife>
 
@@ -267,7 +267,7 @@ Kho khóa - giá trị là nền tảng cho các hệ thống phức tạp hơn 
 
 <RealLife title="Tủ khóa đánh số ở phòng gym">
 
-Phòng gym có dãy tủ khóa đánh số, bạn cất đồ vào tủ số 42 và chỉ cần nhớ đúng con số để lấy lại — nhân viên không cần biết bên trong tủ có gì, chỉ cần đúng số là mở nhanh. Kho khóa - giá trị hoạt động giống vậy: dữ liệu được cất theo một khóa, tra đúng khóa thì lấy ra gần như tức thì, không cần hiểu cấu trúc bên trong giá trị. → Không biết đúng "số tủ", bạn không tìm được gì cả.
+Phòng gym có dãy tủ khóa đánh số: cất đồ vào tủ số 42, chỉ cần nhớ đúng số là mở lấy ngay. Kho khóa - giá trị cũng vậy: cất dữ liệu theo khóa, tra đúng khóa là lấy ra gần như tức thì. Nhưng hỏi "tủ nào đang chứa giày đỏ?" thì phải mở từng tủ. → Truy vấn theo nội dung giá trị không phải thế mạnh của kho khóa - giá trị; phần đó bị đẩy sang tầng ứng dụng.
 
 </RealLife>
 
@@ -375,7 +375,7 @@ Dữ liệu mẫu rất phù hợp với NoSQL:
 
 <RealLife title="Biểu mẫu in sẵn và sổ tay ghi tự do">
 
-Một biểu mẫu hành chính có ô in sẵn: họ tên, ngày sinh, địa chỉ — ai điền cũng theo đúng khuôn, dễ đối chiếu chéo. Ngược lại, sổ tay của một người bán hàng rong thì tự do: hôm nay ghi số tiền nợ, mai ghi thêm số điện thoại khách — linh hoạt nhưng khó tổng hợp thống nhất. SQL giống biểu mẫu (lược đồ chặt), NoSQL giống sổ tay (lược đồ linh hoạt). → Chọn cái nào tùy dữ liệu của bạn có "khuôn" rõ ràng hay không.
+Biểu mẫu hành chính có ô in sẵn: họ tên, ngày sinh, địa chỉ — ai điền cũng đúng khuôn, dễ tổng hợp. Sổ tay người bán hàng rong thì tự do: hôm nay ghi tiền nợ, mai ghi thêm số điện thoại khách — linh hoạt nhưng khó tổng hợp, và người đọc sổ phải hiểu mọi kiểu ghi cũ. SQL giống biểu mẫu (lược đồ chặt), NoSQL giống sổ tay (lược đồ linh hoạt). → Chọn cái nào tùy dữ liệu có "khuôn" rõ ràng hay không.
 
 </RealLife>
 
@@ -383,7 +383,7 @@ Một biểu mẫu hành chính có ô in sẵn: họ tên, ngày sinh, địa c
   added
   svg={svgDbSqlVsNosqlSchema}
   alt="Lược đồ cố định của SQL và tài liệu linh hoạt của NoSQL"
-  caption="Bảng SQL buộc mọi hàng theo đúng cột đã định sẵn; tài liệu NoSQL mỗi bản ghi có thể có số trường khác nhau."
+  caption="Bảng SQL buộc mọi hàng theo đúng cột đã định sẵn; trong kho tài liệu NoSQL, mỗi tài liệu có thể có số trường khác nhau."
 />
 
 ##### Nguồn và đọc thêm: SQL hay NoSQL
