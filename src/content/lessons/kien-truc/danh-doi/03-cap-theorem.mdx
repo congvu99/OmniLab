@@ -183,3 +183,11 @@ Nghĩa là: **CP/AP không phải thuộc tính cố định của một cơ s�
 - [Consistency patterns](https://github.com/donnemartin/system-design-primer#consistency-patterns) - mục kế tiếp
 
 </TranslatorNote>
+
+<ReviewNote>
+
+- **[Sai]** Mục "Ghi chú của người dịch", ý 2 (bảng, dòng C: "Khả tuần tự hóa nguyên tử (linearizability)") — trong tiếng Việt, "khả tuần tự (hóa)" là thuật ngữ đã quen cho serializability, một khái niệm khác, nói về thứ tự các giao dịch. Linearizability nói về thứ tự thao tác trên từng đối tượng theo thời gian thực. Gộp hai tên vào nhau dễ gây nhầm đúng kiểu mà bảng này đang muốn tránh. — Đề xuất: "Tính khả tuyến tính (linearizability), còn gọi là nhất quán nguyên tử (atomic consistency)". Nguồn: Gilbert & Lynch (2002) định nghĩa C trong CAP là atomic/linearizable consistency.
+- **[Diễn đạt]** Mục "Nội dung gốc" ("Khả năng chịu phân mảnh (Partition Tolerance)") và các tiêu đề "CP/AP - ... chịu phân mảnh" — các bài khác trong khóa học dùng "phân mảnh" cho sharding (ví dụ bài Database, bài Twitter, bài Cache), nên người đọc dễ hiểu "chịu phân mảnh" là chịu sharding. Partition ở đây là mạng bị chia cắt. — Đề xuất: "Khả năng chịu chia cắt mạng (Partition Tolerance)" hoặc "chịu phân vùng mạng", và dùng thống nhất cho tiêu đề CP/AP lẫn phần ghi chú.
+- **[Diễn đạt]** Mục "Ghi chú của người dịch", ý 3 (bảng PACELC, dòng "MongoDB | PC | EC") — Abadi (2012) và bảng PACELC trên Wikipedia xếp MongoDB là **PA/EC**: khi mạng bị chia cắt, primary cũ ở phía thiểu số vẫn có thể nhận ghi rồi bị rollback. Chỉ khi dùng write concern `majority` (mặc định hiện nay) cùng read concern majority/linearizable thì hành vi mới gần PC. — Đề xuất: ghi "PA/EC theo phân loại gốc; gần PC khi dùng write/read concern majority", hoặc thêm chú thích về điều kiện. Nguồn: [PACELC design principle](https://en.wikipedia.org/wiki/PACELC_design_principle).
+
+</ReviewNote>

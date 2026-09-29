@@ -113,3 +113,9 @@ Câu hỏi thứ ba chính là định nghĩa của Vogels, phát biểu dưới
 - [Latency vs throughput](https://github.com/donnemartin/system-design-primer#latency-vs-throughput) - mục kế tiếp
 
 </TranslatorNote>
+
+<ReviewNote>
+
+- **[Sai]** Mục "Ghi chú của người dịch", ý 2 ("Vogels cũng nói thêm một ý ... chi phí vận hành và độ phức tạp quản trị") — bài "A word on scalability" không hề nói tới chi phí vận hành hay độ phức tạp quản trị. Hai ý Vogels thật sự bổ sung là: (1) thêm tài nguyên để có dư thừa (redundancy) thì không được làm giảm hiệu năng; (2) khi scale-out, hệ thống phải xử lý được phần cứng không đồng nhất (heterogeneity), vì thuật toán giả định các node giống hệt nhau sẽ hỏng hoặc dùng phí tài nguyên mới. — Đề xuất: thay đoạn này bằng hai ý trên, bỏ ví dụ "thêm 1 máy lại cần thêm 1 người trực" (hoặc ghi rõ đó là nhận xét của người dịch). Nguồn: [A word on scalability](https://www.allthingsdistributed.com/2006/03/a_word_on_scalability.html).
+
+</ReviewNote>

@@ -238,3 +238,12 @@ Bản gốc chỉ nói về dư thừa phần cứng. Trong thực tế, phần 
 - [Domain name system](https://github.com/donnemartin/system-design-primer#domain-name-system) - mục kế tiếp, mở đầu phần Chủ đề
 
 </TranslatorNote>
+
+<ReviewNote>
+
+- **[Sai]** Mục "Sẵn sàng 99,99% - bốn số 9" ("Mỗi tuần | 1m 5s") — 604.800 s × 0,01% = 60,48 s, nên đúng phải là "1m 0,5s". Lỗi này có sẵn trong README tiếng Anh. Các dòng còn lại đã tính lại và đều đúng (năm 365,2425 ngày; tháng bằng 1/12 năm). 99,9%: 8h 45min 57s / 43m 49,7s / 10m 4,8s / 1m 26,4s. 99,99%: 52min 35,7s / 4m 23s / 8,6s mỗi ngày.
+- **[Diễn đạt]** Mục "Ghi chú của người dịch", ý 2 ("Con số này vượt quá thời gian một người trực kịp nhận cảnh báo") — nghĩa bị ngược: 5 phút 15 giây mỗi năm **ngắn hơn** thời gian người trực kịp phản ứng, chính vì thế mới cần chuyển đổi dự phòng tự động. — Đề xuất: "Con số này còn ngắn hơn thời gian một người trực kịp nhận cảnh báo, mở máy tính và đăng nhập".
+- **[Diễn đạt]** Mục "Ghi chú của người dịch", ý 3 (bảng: "Thời gian chuyển đổi | Vài giây tới vài phút (hot/cold standby)") — con số này vênh với ý 4, nơi ghi "cold standby vài chục phút". — Đề xuất: thống nhất hai chỗ, ví dụ "Vài giây (hot standby) tới vài chục phút (cold standby)".
+- **[Diễn đạt]** Mục "Ghi chú của người dịch", ý 3 (bảng "Rủi ro đặc thù" và câu "Split-brain ở active-active: ... cả hai đều tưởng mình là master duy nhất") — dạng split-brain kinh điển là của active-passive dùng heartbeat, đúng cơ chế bài gốc mô tả: đường heartbeat đứt nhưng máy chủ động vẫn sống, máy bị động tưởng nó đã chết nên tiếp quản IP, thành ra có hai master. Ở active-active thì cả hai vốn đã cùng nhận ghi; khi đứt mạng, rủi ro là dữ liệu hai bên phân kỳ và xung đột ghi. — Đề xuất: đưa split-brain vào cột chủ động - bị động (hoặc cả hai cột), và sửa câu mô tả cho khớp; cách phòng bằng quorum/fencing vẫn giữ nguyên. Nguồn: [Split-brain (computing)](https://en.wikipedia.org/wiki/Split-brain_(computing)).
+
+</ReviewNote>

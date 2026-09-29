@@ -110,3 +110,10 @@ Trình tự đó vẫn chính xác tuyệt đối và là thứ đáng nhớ nh�
 - [SQL or NoSQL](https://github.com/donnemartin/system-design-primer#sql-or-nosql)
 
 </TranslatorNote>
+
+<ReviewNote>
+
+- **[Lỗi thời]** Mục "Ghi chú của người dịch (2026)" (bảng, dòng "MongoDB/CouchDB dễ mở rộng hơn": "mất transaction và mất tính nhất quán mạnh") — MongoDB có transaction ACID trên nhiều document từ bản 4.0 (2018), chạy được xuyên shard từ 4.2. Write concern mặc định hiện là `w: "majority"`, đọc mặc định từ primary, nên mặc định đã cho nhất quán mạnh ở mức một document. Nhận xét "mất transaction" giờ chỉ còn đúng với CouchDB. — Đề xuất: "Đúng về mặt ghi phân tán, nhưng transaction phân tán đắt hơn và có giới hạn; mức nhất quán phụ thuộc cấu hình read/write concern (MongoDB). CouchDB vẫn không có transaction nhiều document". Nguồn: [MongoDB - Transactions](https://www.mongodb.com/docs/manual/core/transactions/), [MongoDB - Write concern](https://www.mongodb.com/docs/manual/reference/write-concern/).
+- **[Diễn đạt]** Cùng bảng, dòng "MySQL là con quái vật khó mở rộng" ("distributed SQL (CockroachDB, TiDB, Vitess, Aurora)") — Vitess là lớp sharding/proxy đặt trước MySQL, còn Aurora bản thường chỉ có một node ghi (tầng lưu trữ phân tán). Cả hai đều không thuộc loại distributed SQL như CockroachDB hay TiDB. — Đề xuất: tách thành "distributed SQL (CockroachDB, TiDB, YugabyteDB, Spanner, Aurora DSQL)" và "sharding cho MySQL (Vitess)"; nếu muốn nhắc Aurora thì ghi là "DB đám mây có storage phân tán (Aurora)".
+
+</ReviewNote>

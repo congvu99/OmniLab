@@ -176,3 +176,9 @@ Ngày nay nhiều hệ thống dùng token không trạng thái (JWT) nên khôn
 - [Disadvantage(s): cache](https://github.com/donnemartin/system-design-primer#disadvantages-cache)
 
 </TranslatorNote>
+
+<ReviewNote>
+
+- **[Lỗi thời]** Mục "Ghi chú của người dịch (2026)" ("Redis và Memcached vẫn là hai lựa chọn mặc định sau 15 năm") — từ Redis 7.4 (2024), Redis bỏ giấy phép BSD và chuyển sang RSALv2/SSPLv1. Cộng đồng tách ra nhánh Valkey (thuộc Linux Foundation, tương thích giao thức Redis), và nhiều dịch vụ cloud managed đã chuyển sang Valkey. Redis 8 (2025) có thêm lựa chọn AGPLv3. — Đề xuất: bổ sung "Redis (hoặc bản fork tương thích Valkey) và Memcached", kèm một dòng về giấy phép. Nguồn: [Redis - dual source-available licensing](https://redis.io/blog/redis-adopts-dual-source-available-licensing/), [valkey.io](https://valkey.io/).
+
+</ReviewNote>
