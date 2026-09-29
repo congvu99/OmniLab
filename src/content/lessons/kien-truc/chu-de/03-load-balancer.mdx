@@ -210,3 +210,12 @@ Nhược điểm cuối của bản gốc có các lời giải chuẩn:
 - [Reverse proxy (web server)](https://github.com/donnemartin/system-design-primer#reverse-proxy-web-server) - mục kế tiếp
 
 </TranslatorNote>
+
+<ReviewNote>
+
+- **[Lỗi thời]** Mục "Bộ cân bằng tải" phần lợi ích bổ sung ("Kết thúc SSL (SSL termination)") — SSL đã bị loại bỏ (SSL 3.0 bị cấm dùng theo RFC 7568, 2015; TLS 1.0/1.1 cũng bị loại theo RFC 8996, 2021); thứ bộ cân bằng tải kết thúc ngày nay là TLS. Bài này cũng không nhắc rằng nhiều hệ thống hiện mã hóa lại đoạn từ bộ cân bằng tải tới backend. — Đề xuất: "Kết thúc TLS (TLS termination, trước đây gọi là SSL termination)", kèm dẫn tới ghi chú người dịch mục 3 của bài [Reverse proxy](/hoc/kien-truc/chu-de/reverse-proxy). Nguồn: [RFC 7568](https://www.rfc-editor.org/rfc/rfc7568), [RFC 8996](https://www.rfc-editor.org/rfc/rfc8996).
+- **[Sai]** Mục "Nhược điểm: mở rộng theo chiều ngang" ("một cache bền vững (Redis, Memcached)") — Memcached lưu hoàn toàn trong RAM và không có cơ chế lưu bền xuống đĩa, dữ liệu mất khi tiến trình sập hoặc máy khởi động lại; chỉ Redis có lưu bền (RDB/AOF). Bản gốc tiếng Anh cũng sai ở đây. — Đề xuất: "một [cache](/hoc/kien-truc/chu-de/cache) (Redis, có thể bật lưu bền RDB/AOF; hoặc Memcached, chỉ lưu trong bộ nhớ)". Nguồn: [Redis persistence](https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/), [Memcached overview](https://github.com/memcached/memcached/wiki/Overview).
+- **[Lỗi thời]** Mục "Nguồn và đọc thêm" ("NGINX architecture", "Layer 4 load balancing", "Layer 7 load balancing") — cả ba liên kết nginx.com nay chuyển hướng về trang sản phẩm chung f5.com/products/nginx, bài gốc không còn ở địa chỉ cũ (kiểm tra 2026-09-29). — Đề xuất: thay bằng [Inside NGINX](https://blog.nginx.org/blog/inside-nginx-how-we-designed-for-performance-scale), [What Is Layer 4 Load Balancing? (F5)](https://www.f5.com/glossary/layer-4-load-balancing), [Layer 7 Load Balancing (F5)](https://www.f5.com/glossary/layer-7-load-balancing).
+- **[Lỗi thời]** Mục "Nguồn và đọc thêm" ("ELB listener config") — liên kết trỏ tới tài liệu Classic Load Balancer, loại AWS nay ghi là "previous generation". — Đề xuất: giữ liên kết cũ, thêm tài liệu listener của Application Load Balancer: [Listeners for your Application Load Balancers](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html).
+
+</ReviewNote>

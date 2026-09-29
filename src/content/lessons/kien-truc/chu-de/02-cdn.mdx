@@ -167,3 +167,10 @@ Các công cụ build frontend hiện nay (Vite, webpack, Next.js...) làm việ
 - [Load balancer](https://github.com/donnemartin/system-design-primer#load-balancer) - mục kế tiếp
 
 </TranslatorNote>
+
+<ReviewNote>
+
+- **[Lỗi thời]** Hình đầu bài (nguồn ảnh "Why use a CDN") — tên miền creative-artworks.eu trả HTTP 500 cho cả trang bài lẫn trang chủ (kiểm tra 2026-09-29). — Đề xuất: trỏ liên kết nguồn tới bản lưu [web.archive.org, 2024-04-08](http://web.archive.org/web/20240408195647/https://www.creative-artworks.eu/why-use-a-content-delivery-network-cdn/).
+- **[Lỗi thời]** Mục "Nhược điểm: CDN" ("CDN đòi hỏi phải đổi URL của nội dung tĩnh để trỏ tới CDN") — chỉ đúng khi CDN phục vụ file tĩnh trên một tên miền riêng. Nay cách phổ biến là để CDN đứng trước cả tên miền chính (bản ghi DNS của tên miền trỏ vào CDN, ví dụ bản ghi proxied của Cloudflare hoặc tên miền thay thế của CloudFront), URL giữ nguyên, không cần viết lại. — Đề xuất: thêm vế "(khi CDN chỉ phục vụ file tĩnh trên tên miền riêng; nếu đặt CDN trước toàn bộ tên miền thì không cần đổi URL)". Nguồn: [Cloudflare - Proxy status](https://developers.cloudflare.com/dns/proxy-status/); ghi chú của người dịch mục 1.
+
+</ReviewNote>

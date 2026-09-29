@@ -150,3 +150,10 @@ Một lợi ích lớn của NGINX trước ứng dụng: nó **đệm toàn b�
 - [Application layer](https://github.com/donnemartin/system-design-primer#application-layer) - mục kế tiếp
 
 </TranslatorNote>
+
+<ReviewNote>
+
+- **[Lỗi thời]** Mục "Nguồn và đọc thêm" ("NGINX architecture") — liên kết nginx.com/blog/inside-nginx-... nay chuyển hướng về trang sản phẩm chung f5.com/products/nginx, bài gốc không còn ở địa chỉ cũ (kiểm tra 2026-09-29). — Đề xuất: thay bằng [Inside NGINX: How We Designed for Performance & Scale](https://blog.nginx.org/blog/inside-nginx-how-we-designed-for-performance-scale).
+- **[Lỗi thời]** Ghi chú của người dịch mục 2 (bảng "Công cụ tiêu biểu 2026" có "ingress-nginx"; "đã thông báo ngừng phát triển") — dự án ingress-nginx của cộng đồng Kubernetes đã chính thức nghỉ hưu tháng 3/2026: repo lưu trữ chỉ đọc, không còn bản phát hành, sửa lỗi hay bản vá bảo mật. Liệt kê nó là công cụ tiêu biểu 2026 dễ gây hiểu nhầm. — Đề xuất: bỏ "ingress-nginx" khỏi cột công cụ (hoặc ghi "ingress-nginx (đã ngừng từ 3/2026)"), sửa câu thành "đã ngừng hẳn từ tháng 3/2026; hướng mới là Gateway API"; nên phân biệt với NGINX Ingress Controller của F5, dự án riêng vẫn được duy trì. Nguồn: [Kubernetes blog - Ingress NGINX Retirement](https://kubernetes.io/blog/2025/11/11/ingress-nginx-retirement/), [Kubernetes blog - Statement 2026-01-29](https://www.kubernetes.io/blog/2026/01/29/ingress-nginx-statement/).
+
+</ReviewNote>
