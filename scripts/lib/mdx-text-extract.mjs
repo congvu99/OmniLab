@@ -11,7 +11,7 @@ import { textFromHtmlFragment } from './html-text-extract.mjs';
 // JSX elements that are ADDED content, never part of the original source:
 // stripped entirely (their text — children AND attributes — must NOT be
 // compared).
-const REMOVED_JSX_NAMES = new Set(['RealLife', 'Disclaimer']);
+const REMOVED_JSX_NAMES = new Set(['RealLife', 'Disclaimer', 'ReviewNote']);
 
 /**
  * Per-component allowlist of JSX attribute names whose string value is

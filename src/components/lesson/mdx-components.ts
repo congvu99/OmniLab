@@ -6,6 +6,7 @@ import Figure from './figure.astro';
 import Note from './note.astro';
 import TranslatorNote from './translator-note.astro';
 import Disclaimer from './disclaimer.astro';
+import ReviewNote from './review-note.astro';
 
 export const lessonMdxComponents = {
   RealLife,
@@ -13,4 +14,5 @@ export const lessonMdxComponents = {
   Note,
   TranslatorNote,
   Disclaimer,
+  ReviewNote,
 };

@@ -16,7 +16,7 @@
  */
 
 /** Components whose entire content (attrs + children) should be dropped — not useful search text. */
-const DROP_WHOLE_TAGS = ['Figure', 'Disclaimer'];
+const DROP_WHOLE_TAGS = ['Figure', 'Disclaimer', 'ReviewNote'];
 /** Components whose tags should be removed but whose inner text is kept (real prose). */
 const UNWRAP_TAGS = ['RealLife', 'Note', 'TranslatorNote'];
 

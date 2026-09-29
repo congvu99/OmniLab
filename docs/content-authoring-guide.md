@@ -186,3 +186,20 @@ không phải giả định sai từ đầu.
        sửa và ghi rõ trong báo cáo lý do không chạy được full build.
 9. [ ] Không có file `.astro`/`.ts`/`.ts` ngoài danh sách file được giao sửa
        (file ownership) bị động tới.
+
+## Ghi chú hiệu đính (`<ReviewNote>`)
+
+Dùng khi phát hiện lỗi trong **nội dung gốc** (dịch sai nghĩa, sai số liệu, thông tin lỗi thời, lỗi định dạng do migration) mà không được sửa trực tiếp vì fidelity gate khoá văn bản gốc.
+
+- Đặt **một** khối `<ReviewNote>` ở **cuối file** (sau `<TranslatorNote>` nếu có). Không có vấn đề thì không thêm.
+- Mỗi mục một gạch đầu dòng: **[Mức độ]** vị trí (tên mục + trích ngắn trong ngoặc kép) — vấn đề — đề xuất sửa — nguồn (nếu có).
+- Mức độ: `Sai` (sai nghĩa/sai sự thật), `Lỗi thời` (đúng lúc viết, nay đã khác), `Định dạng` (lỗi hiển thị do chuyển đổi), `Diễn đạt` (đúng nhưng dễ hiểu sai).
+- `verify-fidelity` và search index bỏ qua khối này.
+
+```mdx
+<ReviewNote>
+
+- **[Sai]** Mục "Availability in numbers" ("1m 5s" ở dòng 99,99%/tuần) — 604.800 s × 0,01% = 60,5 s — nên là "1m 0.5s".
+
+</ReviewNote>
+```

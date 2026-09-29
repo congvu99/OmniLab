@@ -83,6 +83,14 @@ describe('verify-fidelity text extraction + normalization', () => {
     expect(result.ok).toBe(true);
   });
 
+  it('passes when only a <ReviewNote> is appended', () => {
+    const mdx = toMdx(
+      `${BASELINE_MDX_BODY}\n<ReviewNote>\n\n- Đoạn "cải thiện thời gian tải" nên dịch lại cho rõ.\n\n</ReviewNote>\n`,
+    );
+    const result = compareNormalized(sourceText(), normalizeText(textFromLessonMdx(mdx)));
+    expect(result.ok).toBe(true);
+  });
+
   it('fails when one original word is changed', () => {
     const mdx = toMdx(BASELINE_MDX_BODY.replace('cải thiện', 'phá hủy'));
     const result = compareNormalized(sourceText(), normalizeText(textFromLessonMdx(mdx)));
