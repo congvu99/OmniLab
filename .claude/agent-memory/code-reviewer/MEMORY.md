@@ -1,0 +1,4 @@
+- [Finance original-content review hotspots](project_finance_original_content_review_hotspots.md) — laws effective-but-not-collected, merged-province links, "no VN edition" claims, flattened HTML
+- [RealLife/SVG fact-check recurring defects](project_reallife_factcheck_recurring_defects.md) — number-chain errors, label overlap, bad viewBox, wrong-mechanism analogies, cross-lesson duplicates
+- [Split-lesson cross-ref defects](project_split_lesson_crossref_defects.md) — dead #anchors, orphan H/S codes, raw-markdown summaries after splitting single-page sources
+- [Editorial review of original content](project_editorial_review_original_content.md) — defects live in EN original/TN facts/dead links; 403s are bot blocks
