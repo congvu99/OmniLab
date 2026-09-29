@@ -470,3 +470,10 @@ Dịch vụ rút gọn thương mại thường chọn 302 vì analytics là s�
 - Bài kế tiếp: [Thiết kế hệ thống mở rộng tới hàng triệu người dùng trên AWS](/hoc/kien-truc/bai-tap/scaling-aws)
 
 </TranslatorNote>
+
+<ReviewNote>
+
+- **[Sai]** Mục "Trường hợp sử dụng: Người dùng nhập url của một đoạn paste và xem nội dung" (`"paste_contents": "Hello World"`) — ví dụ phản hồi thiếu dấu phẩy sau `"Hello World"` và sau `"YYYY-MM-DD HH:MM:SS"` nên không phải JSON hợp lệ (lỗi có từ bản gốc); nội dung cũng lệch với `"Hello World!"` đã gửi ở ví dụ tạo paste — Đề xuất: thêm hai dấu phẩy và thống nhất thành `"Hello World!"`. Nguồn: README gốc, mục "Use case: User enters a paste's url and views the contents".
+- **[Định dạng]** Mục "Ghi chú của người dịch", ý 7 (`[pastebin.py](../../solutions/system_design/pastebin/pastebin.py)`) — link tương đối kế thừa từ repo gốc, trên site được xuất nguyên văn và không trỏ tới trang nào (404) — Đề xuất: đổi thành https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/pastebin/pastebin.py (đã kiểm tra, HTTP 200).
+
+</ReviewNote>

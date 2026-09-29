@@ -487,3 +487,14 @@ Chu trình trong đồ thị không phải vấn đề chính (đã có tập UR
 - Kết quả tìm kiếm chấp nhận nhất quán cuối cùng (index cập nhật trễ vài giờ vẫn ổn): [Các mẫu nhất quán](/hoc/kien-truc/danh-doi/consistency-patterns).
 
 </TranslatorNote>
+
+<ReviewNote>
+
+- **[Định dạng]** Toàn bài, cấp heading ("## Bước 1: Phác thảo các trường hợp sử dụng và ràng buộc") — phần nội dung gốc giữ nguyên cấp heading của README (Bước 1-4 và "Các điểm thảo luận bổ sung" ở h2, ngang hàng với "## Nội dung gốc"), trong khi 6/8 bài tập còn lại đã hạ một cấp (`### Bước 1`); mục lục (chỉ lấy h2) vì vậy khác các bài cùng module — Đề xuất: hạ toàn bộ heading trong phần nội dung gốc xuống một cấp cho đồng nhất.
+- **[Định dạng]** Mục "Trường hợp sử dụng: Dịch vụ crawl một danh sách url" ("Mã nguồn đầy đủ của các đoạn trên: web_crawler_snippets.py"), mục "Xử lý trùng lặp" ("Mã nguồn đầy đủ: web_crawler_mapreduce.py") và ý 1 "Ghi chú của người dịch" — 3 link tương đối `../../solutions/...` kế thừa từ repo gốc, trên site không trỏ tới trang nào (404) — Đề xuất: đổi thành https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/web_crawler/web_crawler_snippets.py và https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/web_crawler/web_crawler_mapreduce.py (đã kiểm tra, HTTP 200).
+- **[Sai]** Mục "Xử lý trùng lặp" ("`sort | unique`") — Unix không có lệnh `unique` chuẩn (lỗi có từ bản gốc) — Đề xuất: `sort | uniq` hoặc `sort -u`.
+- **[Sai]** Mục "Xác định khi nào cập nhật kết quả crawl" ("file `Robots.txt`, cho phép quản trị viên trang web (webmaster) kiểm soát tần suất crawl") — tên file bắt buộc là `/robots.txt` viết thường, và chuẩn này quy định đường dẫn nào được crawl chứ không quy định tần suất (`Crawl-delay` nằm ngoài chuẩn, như ghi chú ý 2 đã nêu) — Đề xuất: "file `robots.txt`, cho phép quản trị viên chỉ định phần nào của trang được phép crawl". Nguồn: RFC 9309 mục 2.3, https://www.rfc-editor.org/rfc/rfc9309.html
+- **[Diễn đạt]** Mục "Bước 4: Mở rộng thiết kế" ("giảm sử dụng bộ nhớ bằng cách giữ nhiều kết nối mở cùng lúc, gọi là connection pooling") — connection pooling là tái sử dụng kết nối đã mở để khỏi bắt tay TCP/TLS lặp lại; giữ nhiều kết nối mở tốn thêm bộ nhớ chứ không giảm (diễn đạt có từ bản gốc) — Đề xuất: "cải thiện hiệu năng bằng cách tái sử dụng các kết nối đã mở (connection pooling), tránh chi phí mở kết nối mới cho mỗi yêu cầu".
+- **[Diễn đạt]** Mục "Trường hợp sử dụng: Người dùng nhập một từ khóa tìm kiếm..." (ví dụ "Phản hồi") — các object rời nhau, dấu phẩy thừa sau `"link"` và sau mỗi object, không phải JSON hợp lệ (lỗi có từ bản gốc) — Đề xuất: bọc trong `[ ... ]` và bỏ các dấu phẩy thừa.
+
+</ReviewNote>

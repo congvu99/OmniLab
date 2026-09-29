@@ -453,3 +453,11 @@ Batch (MapReduce, nay là Spark) vẫn có chỗ đứng: chạy lại hằng ng
 - Chấp nhận bảng xếp hạng cũ tối đa một giờ là một dạng [nhất quán cuối cùng](/hoc/kien-truc/danh-doi/consistency-patterns); đổi lại hệ thống đọc có thể ưu tiên [sẵn sàng](/hoc/kien-truc/danh-doi/availability-patterns) tuyệt đối - trả bản xếp hạng cũ vẫn tốt hơn trả lỗi.
 
 </TranslatorNote>
+
+<ReviewNote>
+
+- **[Định dạng]** Mục "Tính toán mức sử dụng", "Bước 4" và ý 2 "Ghi chú của người dịch" ("1.44 TB", "40,000 yêu cầu đọc mỗi giây", "2.5 triệu giây mỗi tháng", "100,000 dòng") — dùng dấu phân cách kiểu Anh, trái quy ước tiếng Việt và các bài khác trong module; theo quy ước Việt "1.44 TB" đọc thành 144 TB — Đề xuất: 1,44 TB; 40.000; 2,5 triệu; 100.000.
+- **[Diễn đạt]** Mục "Use case: Người dùng xem các sản phẩm phổ biến nhất trong tuần qua theo từng danh mục" (ví dụ "Phản hồi") — các object rời nhau, dấu phẩy thừa sau `"product_id"` và sau mỗi object, không phải JSON hợp lệ (lỗi có từ bản gốc) — Đề xuất: bọc trong `[ ... ]` và bỏ các dấu phẩy thừa.
+- **[Định dạng]** Mục "Ghi chú của người dịch", ý 1 (`[sales_rank_mapreduce.py](../../solutions/system_design/sales_rank/sales_rank_mapreduce.py)`) — link tương đối kế thừa từ repo gốc, trên site không trỏ tới trang nào (404) — Đề xuất: đổi thành https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/sales_rank/sales_rank_mapreduce.py (đã kiểm tra, HTTP 200).
+
+</ReviewNote>

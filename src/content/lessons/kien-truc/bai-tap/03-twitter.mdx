@@ -466,3 +466,10 @@ Một tài khoản có hàng chục triệu follower đăng tweet thì fan-out o
 - Đọc nhiều hơn ghi nên tối ưu đường đọc - liên hệ [Độ trễ và thông lượng](/hoc/kien-truc/danh-doi/latency-vs-throughput).
 
 </TranslatorNote>
+
+<ReviewNote>
+
+- **[Định dạng]** Toàn bài, cấp heading ("## Bước 1: Phác thảo các trường hợp sử dụng và ràng buộc") — phần nội dung gốc giữ nguyên cấp heading của README (Bước 1-4 và "Các điểm thảo luận bổ sung" ở h2, ngang hàng với "## Nội dung gốc"), trong khi 6/8 bài tập còn lại đã hạ một cấp (`### Bước 1`). Hệ quả: mục lục (chỉ lấy h2) của bài này khác các bài cùng module, và "#### NoSQL" nằm ngay dưới h2 (nhảy cấp) — Đề xuất: hạ toàn bộ heading trong phần nội dung gốc xuống một cấp (## → ###, ### → ####, #### → #####) cho đồng nhất.
+- **[Diễn đạt]** Mục "Trường hợp sử dụng: Người dùng xem home timeline" (ví dụ "Phản hồi" gồm ba object rời nhau) — không phải JSON hợp lệ (thiếu mảng bao ngoài, dấu phẩy thừa sau object cuối; lỗi có từ bản gốc) — Đề xuất: bọc các object trong `[ ... ]` và bỏ dấu phẩy sau object cuối.
+
+</ReviewNote>

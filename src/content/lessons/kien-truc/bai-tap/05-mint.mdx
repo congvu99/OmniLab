@@ -562,3 +562,12 @@ Với con số của bài (5 tỷ giao dịch/tháng, mỗi người dùng có k
 - Bài kế tiếp dùng lại gần như cùng khung MapReduce: [Sales rank](/hoc/kien-truc/bai-tap/sales-rank).
 
 </TranslatorNote>
+
+<ReviewNote>
+
+- **[Định dạng]** Mục "Các giả định", "Tính toán mức sử dụng", "Category service", "Bước 4" và ý 3 "Ghi chú của người dịch" ("50,000 người bán", "2,000 giao dịch mỗi giây", "2.5 triệu giây mỗi tháng") — dùng dấu phân cách kiểu Anh, trái quy ước tiếng Việt và các bài khác trong module (40.000; 2,5 triệu); "2,000" dễ bị đọc là 2 — Đề xuất: 50.000; 2.000; 2,5 triệu.
+- **[Sai]** Mục "Use case: Dịch vụ đề xuất ngân sách", code `SpendingByCategory` ("`self.current_year_month = calc_current_year_month()`") — thiếu `self.` nên sẽ lỗi `NameError`; ghi chú của người dịch chưa nêu lỗi này — Đề xuất: `self.current_year_month = self.calc_current_year_month()`.
+- **[Diễn đạt]** Mục "Use case: Dịch vụ đề xuất ngân sách" ("lưu giá trị ghi đè đó trong bảng `TABLE budget_overrides`") — "bảng TABLE" lặp nghĩa (chép nguyên cụm `TABLE budget_overrides` của bản gốc) — Đề xuất: "trong bảng `budget_overrides`".
+- **[Định dạng]** Mục "Ghi chú của người dịch", ý 1 (`[mint_mapreduce.py](../../solutions/system_design/mint/mint_mapreduce.py)`) — link tương đối kế thừa từ repo gốc, trên site không trỏ tới trang nào (404) — Đề xuất: đổi thành https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/mint/mint_mapreduce.py (đã kiểm tra, HTTP 200).
+
+</ReviewNote>
