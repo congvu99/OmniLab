@@ -199,3 +199,12 @@ Nguyên tắc chung: **giả định mỗi lớp đều có thể bị xuyên th
 - [Appendix](https://github.com/donnemartin/system-design-primer#appendix) - mục kế tiếp
 
 </TranslatorNote>
+
+<ReviewNote>
+
+- **[Định dạng]** Mục "Nguồn và đọc thêm" ("[OWASP top ten](https://www.owasp.org/index.php/OWASP_Top_Ten_Cheat_Sheet)") — link wiki cũ của OWASP trả HTTP 404 (kiểm 2026-09-29), Wayback không có bản lưu. — Đề xuất: đổi sang [OWASP Top 10:2025](https://top10.owasp.org/2025/) hoặc [OWASP Cheat Sheet Series - Top 10](https://cheatsheetseries.owasp.org/IndexTopTen.html).
+- **[Định dạng]** Frontmatter `summary` ("Mục này cần được cập nhật thêm. Hãy cân nhắc đóng góp!") — câu mở đầu của bản gốc bị lấy làm mô tả bài (meta description). Đây là lời kêu gọi đóng góp cho repo GitHub gốc, không mô tả nội dung bài, và dễ bị hiểu thành kêu gọi đóng góp cho OmniLab. — Đề xuất: viết `summary` mô tả nội dung, ví dụ "Những điều cơ bản về bảo mật cần nắm trong system design: mã hóa khi truyền và khi lưu, kiểm tra đầu vào, truy vấn tham số hóa và đặc quyền tối thiểu."
+- **[Lỗi thời]** Ghi chú người dịch mục 2 ("Bản OWASP Top 10 năm 2021") — OWASP Top 10:2025 nay là bản hiện hành trên trang chính thức: A01 Broken Access Control (đã gộp SSRF), A02 Security Misconfiguration, A03 Software Supply Chain Failures (mới), A04 Cryptographic Failures, A05 Injection, A06 Insecure Design, A07 Authentication Failures, A08 Software or Data Integrity Failures, A09 Security Logging and Alerting Failures, A10 Mishandling of Exceptional Conditions (mới). Bảng hiện tại vẫn đúng với bản 2021 nhưng không còn là "danh sách nên thuộc". — Đề xuất: đổi bảng sang bản 2025 và chuyển ví dụ SSRF vào dòng A01; kết luận "hạng mục đứng đầu là lỗi phân quyền" vẫn giữ được. Nguồn: [OWASP Top 10:2025](https://top10.owasp.org/2025/)
+- **[Lỗi thời]** Ghi chú người dịch mục 6 ("ở Việt Nam có Nghị định 13/2023/NĐ-CP về bảo vệ dữ liệu cá nhân") — từ 01/01/2026, Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15 có hiệu lực, cùng Nghị định 356/2025/NĐ-CP thay thế Nghị định 13/2023/NĐ-CP. — Đề xuất: "ở Việt Nam có Luật Bảo vệ dữ liệu cá nhân 2025 (số 91/2025/QH15, hiệu lực từ 01/01/2026) và Nghị định 356/2025/NĐ-CP hướng dẫn". Nguồn: [Bộ Công an - Luật Bảo vệ dữ liệu cá nhân có hiệu lực từ 01/01/2026](https://bocongan.gov.vn/chinh-sach-phap-luat/bai-viet/luat-bao-ve-du-lieu-ca-nhan-chinh-thuc-co-hieu-luc-thi-hanh-tu-ngay-01-01-2026-1767186124)
+
+</ReviewNote>

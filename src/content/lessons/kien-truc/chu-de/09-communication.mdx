@@ -349,3 +349,12 @@ Nên chủ động nhắc: timeout, retry, idempotency, phân trang, phiên bả
 - [Security](https://github.com/donnemartin/system-design-primer#security) - mục kế tiếp
 
 </TranslatorNote>
+
+<ReviewNote>
+
+- **[Sai]** Mục "Gọi thủ tục từ xa (Remote procedure call - RPC)" ("**Thủ tục stub phía server (server stub procedure)** - Giải gói (unmarshal) kết quả") — ở bước này stub phía server giải gói **thông điệp yêu cầu** (mã định danh thủ tục và các đối số) rồi mới gọi thủ tục; lúc đó chưa có "kết quả". Bản dịch đúng với câu gốc ("Unmarshalls the results"), nhưng câu gốc sai. — Đề xuất: "Giải gói (unmarshal) mã định danh thủ tục và các đối số, gọi thủ tục phía server tương ứng và truyền vào các đối số đó."
+- **[Sai]** Mục "Chuyển giao trạng thái biểu diễn (Representational state transfer - REST)" ("Mọi giao tiếp đều phải phi trạng thái (stateless) và có thể cache.") — ràng buộc cache của REST chỉ đòi hỏi phản hồi phải được đánh dấu rõ là **có hay không** được cache, không bắt mọi phản hồi phải cache được (phản hồi của POST, DELETE thường không cache được, như chính bảng động từ HTTP ở đầu bài). — Đề xuất: "Mọi giao tiếp đều phải phi trạng thái, và mỗi phản hồi phải cho biết nó có được cache hay không." Nguồn: [Fielding (2000), mục 5.1.4 Cache](https://ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm)
+- **[Định dạng]** Hình đầu bài, credit "[OSI 7 layer model](http://www.escotal.com/osilayer.html)" — trang trả HTTP 404, tên miền nay là một website khác (kiểm 2026-09-29). — Đề xuất: đổi sang bản lưu [Wayback 2025-09-11](http://web.archive.org/web/20250911225253/http://www.escotal.com/osilayer.html).
+- **[Định dạng]** Mục "Chuyển giao trạng thái biểu diễn (Representational state transfer - REST)" ("[HATEOAS](http://restcookbook.com/Basics/hateoas/)") — qua HTTP trang trả 404, qua HTTPS lỗi TLS (kiểm 2026-09-29). — Đề xuất: đổi sang bản lưu [Wayback](http://web.archive.org/web/20260820115227/https://www.restcookbook.com/Basics/hateoas/) hoặc [Wikipedia: HATEOAS](https://en.wikipedia.org/wiki/HATEOAS).
+
+</ReviewNote>
