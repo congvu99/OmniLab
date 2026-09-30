@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deploy OmniLab VPS</title>
+<meta name="description" content="Deploy site tĩnh OmniLab (Astro) lên VPS dùng chung Caddy bằng Docker Compose.">
+<style>
+:root{
+  --bg:#f7f6f2;--surface:#ffffff;--surface-2:#f0eee8;--text:#1d1c1a;--muted:#5d5a53;--border:#dedad0;
+  --accent:#1f6f5c;--accent-soft:#e1f0eb;--warn:#8a5a00;--warn-soft:#fbf0d9;--danger:#9b2c2c;--danger-soft:#fbe4e4;
+  --code-bg:#1e1f22;--code-text:#e8e6e1;--code-var:#ffd479;--code-comment:#8f98a3;
+  --radius:10px;--mono:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141412;--surface:#1c1c1a;--surface-2:#252522;--text:#ebe9e4;--muted:#a8a49b;--border:#34332f;
+  --accent:#5cc3a6;--accent-soft:#17312a;--warn:#e8b64c;--warn-soft:#342a14;--danger:#f08a8a;--danger-soft:#3a1d1d;
+  --code-bg:#0f0f0e;--code-text:#e8e6e1;
+}}
+:root[data-theme="dark"]{
+  --bg:#141412;--surface:#1c1c1a;--surface-2:#252522;--text:#ebe9e4;--muted:#a8a49b;--border:#34332f;
+  --accent:#5cc3a6;--accent-soft:#17312a;--warn:#e8b64c;--warn-soft:#342a14;--danger:#f08a8a;--danger-soft:#3a1d1d;
+  --code-bg:#0f0f0e;--code-text:#e8e6e1;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:16px}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.layout{display:grid;grid-template-columns:260px minmax(0,1fr);max-width:1180px;margin:0 auto;gap:32px;padding:24px 16px 80px}
+nav.toc{position:sticky;top:16px;align-self:start;max-height:calc(100vh - 32px);overflow:auto;font-size:14px}
+nav.toc ol{list-style:none;padding:0;margin:0}
+nav.toc a{display:block;padding:5px 10px;border-radius:6px;color:var(--muted);text-decoration:none}
+nav.toc a:hover,nav.toc a.active{background:var(--surface-2);color:var(--text)}
+main{min-width:0}
+header.hero h1{font-size:clamp(28px,4vw,40px);line-height:1.15;margin:0 0 8px}
+header.hero p{color:var(--muted);margin:0 0 20px;max-width:70ch}
+h2{font-size:24px;margin:56px 0 12px;padding-top:8px;border-top:1px solid var(--border)}
+h2 .n{color:var(--accent);font-variant-numeric:tabular-nums;margin-right:8px}
+h3{font-size:18px;margin:28px 0 8px}
+p,li{max-width:78ch}
+a{color:var(--accent)}
+code{font-family:var(--mono);font-size:.9em;background:var(--surface-2);padding:1px 5px;border-radius:4px}
+.cmd{position:relative;margin:12px 0 6px}
+.cmd pre{margin:0;background:var(--code-bg);color:var(--code-text);padding:14px 16px;border-radius:var(--radius);overflow-x:auto;font:13.5px/1.55 var(--mono)}
+.cmd pre code{background:none;padding:0;font-size:inherit;color:inherit}
+.cmd .where{position:absolute;top:0;left:12px;transform:translateY(-50%);font:600 11px/1 system-ui;letter-spacing:.04em;text-transform:uppercase;background:var(--accent);color:#fff;padding:4px 7px;border-radius:5px}
+.cmd .where.win{background:#3b5bab}
+.cmd .where.file{background:#7a4fa3}
+.cmd button.copy{position:absolute;top:8px;right:8px;background:#ffffff1a;color:#fff;border:1px solid #ffffff33;border-radius:6px;font:12px system-ui;padding:4px 9px;cursor:pointer}
+.cmd button.copy:hover{background:#ffffff33}
+.v{color:var(--code-var)}
+.c{color:var(--code-comment)}
+.explain{margin:4px 0 18px;padding:0 0 0 14px;border-left:3px solid var(--border)}
+.explain li{margin:3px 0}
+.explain li b{font-family:var(--mono);font-weight:600;font-size:.88em}
+.box{border-radius:var(--radius);padding:12px 16px;margin:16px 0;border:1px solid var(--border);background:var(--surface)}
+.box.ok{background:var(--accent-soft);border-color:transparent}
+.box.warn{background:var(--warn-soft);border-color:transparent}
+.box.danger{background:var(--danger-soft);border-color:transparent}
+.box strong:first-child{display:block;margin-bottom:2px}
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:14.5px;display:block;overflow-x:auto}
+th,td{border:1px solid var(--border);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--surface-2)}
+.vars{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin:0 0 12px}
+.vars label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+.vars input{font:14px var(--mono);padding:8px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text)}
+.diagram{display:flex;flex-wrap:wrap;align-items:stretch;gap:10px;margin:16px 0}
+.node{flex:1 1 150px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;font-size:14px}
+.node b{display:block;font-size:15px}
+.node small{color:var(--muted)}
+.arrow{align-self:center;color:var(--muted);font-size:20px}
+.check{list-style:none;padding-left:0}
+.check li::before{content:"☐ ";color:var(--accent)}
+.theme-toggle{float:right;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px}
+@media (max-width:860px){
+  .layout{grid-template-columns:1fr;gap:8px}
+  nav.toc{position:static;max-height:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:8px}
+  .arrow{transform:rotate(90deg);flex-basis:100%;text-align:center}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="Mục lục">
+  <ol>
+    <li><a href="#vars">Thông số của bạn</a></li>
+    <li><a href="#c0">0. Tổng thể</a></li>
+    <li><a href="#c1">1. Repo đã sẵn sàng</a></li>
+    <li><a href="#c2">2. Clone + .env</a></li>
+    <li><a href="#c3">3. Build &amp; chạy</a></li>
+    <li><a href="#c4">4. Tên miền + kiểm tra</a></li>
+    <li><a href="#c5">5. Chuyển từ Nhân Hòa</a></li>
+    <li><a href="#c6">6. Cập nhật &amp; vận hành</a></li>
+    <li><a href="#c7">7. Xử lý sự cố</a></li>
+    <li><a href="#q">Câu hỏi còn mở</a></li>
+  </ol>
+</nav>
+
+<main>
+<header class="hero">
+  <button class="theme-toggle" type="button" id="themeToggle">Sáng / Tối</button>
+  <h1>Deploy OmniLab lên VPS</h1>
+  <p>Site tĩnh Astro chạy trên VPS đang có BookSnap + LingoBrain, dùng chung Caddy. Bắt đầu khi code đã push lên GitHub. Không có DB: toàn bộ nội dung bài học nằm trong git, build thẳng vào image. Làm lần lượt chương 2 → 4, mất khoảng 10–15 phút.</p>
+</header>
+
+<section id="vars">
+  <h3>Thông số của bạn</h3>
+  <p>Điền vào đây, các lệnh bên dưới tự cập nhật (tô vàng). Chỉ lưu trong trình duyệt này.</p>
+  <div class="vars">
+    <label>IP server <input data-key="IP" value="62.171.135.240" autocomplete="off"></label>
+    <label>Domain gốc (DuckDNS) <input data-key="DOMAIN" value="congvu.duckdns.org" autocomplete="off"></label>
+    <label>Tên con của site <input data-key="APP" value="omnilab" autocomplete="off"></label>
+    <label>Repo OmniLab <input data-key="REPO" value="https://github.com/congvu99/OmniLab.git" autocomplete="off"></label>
+  </div>
+  <div class="box">
+    <strong>Nhãn trên mỗi khối lệnh</strong>
+    <span style="background:#3b5bab;color:#fff;padding:1px 6px;border-radius:4px;font-size:12px">WINDOWS</span> máy tính của bạn ·
+    <span style="background:var(--accent);color:#fff;padding:1px 6px;border-radius:4px;font-size:12px">SERVER</span> phiên <code>ssh vps</code>, user <code>deploy</code> ·
+    <span style="background:#7a4fa3;color:#fff;padding:1px 6px;border-radius:4px;font-size:12px">FILE</span> nội dung một file.
+    Mỗi khối lệnh: bấm <b>Copy</b>, dán <b>nguyên khối</b>.
+  </div>
+  <div class="box warn">
+    <strong>Điều kiện trước</strong>
+    Đã làm xong chương 1–5 của <a href="../../BookSnap/docs/deployment-vps-guide.html">hướng dẫn VPS BookSnap</a>: <code>ssh vps</code>, Docker, DuckDNS, Caddy dùng chung + mạng <code>web</code>, <code>/srv/apps</code> thuộc user <code>deploy</code>.
+  </div>
+</section>
+
+<h2 id="c0"><span class="n">0</span>Tổng thể</h2>
+<div class="diagram">
+  <div class="node"><b>Người dùng</b><small>https://<span data-v="APP"></span>.<span data-v="DOMAIN"></span></small></div>
+  <div class="arrow">→</div>
+  <div class="node"><b>Caddy chung</b><small>đã có sẵn, 80/443, HTTPS tự động, thêm HSTS</small></div>
+  <div class="arrow">→</div>
+  <div class="node"><b>omnilab:8080</b><small>Caddy nhỏ trong image + <code>dist/</code>. Dùng đúng <code>Caddyfile</code> của repo (CSP, cache, 404 thật). Không mở cổng</small></div>
+</div>
+<table>
+  <tr><th>Dữ liệu</th><th>Trên VPS</th></tr>
+  <tr><td>Nội dung bài học (<code>src/</code>, <code>content-sources/</code>), ảnh, icon</td><td>Đi theo <code>git clone</code> → build vào image. Không phải chuyển tay</td></tr>
+  <tr><td>Tiến độ đọc, bài đã lưu của người dùng</td><td>Nằm trong <b>localStorage trình duyệt</b> (<code>omnilab:v1:state</code>), gắn theo tên miền. Site không có nút xuất/nhập → xem <a href="#c5">chương 5</a></td></tr>
+  <tr><td>DB, file người dùng tải lên</td><td>Không có → không cần backup trên server</td></tr>
+</table>
+
+<h2 id="c1"><span class="n">1</span>Repo đã sẵn sàng</h2>
+<table>
+  <tr><th>File</th><th>Vai trò</th></tr>
+  <tr><td><code>Dockerfile</code></td><td>Tầng 1: Node 24 + pnpm 9.15.4 chạy <code>pnpm build</code> (có <code>verify-fidelity</code>). Tầng 2: <code>caddy:2-alpine</code> + <code>Caddyfile</code> + <code>dist/</code>, cổng 8080. Thiếu <code>SITE_URL</code> → build dừng</td></tr>
+  <tr><td><code>compose.yml</code></td><td>1 service <code>app</code>, mạng <code>web</code> alias <code>omnilab</code>, không <code>ports:</code>, filesystem chỉ đọc, RAM 128 MB</td></tr>
+  <tr><td><code>.dockerignore</code></td><td>Bỏ <code>node_modules</code>, <code>dist</code>, <code>docs</code>, <code>plans</code>, <code>tests</code>, <code>.git</code> khỏi build</td></tr>
+  <tr><td><code>deploy/deploy.sh</code></td><td>pull → build (tag = commit) → thay container → đợi trang chủ 200 → lỗi thì quay về bản cũ</td></tr>
+</table>
+<div class="box warn"><strong>Kiểm tra</strong>Trang GitHub của repo phải thấy <code>Dockerfile</code>, <code>compose.yml</code> và thư mục <code>deploy/</code>. Chưa thấy = chưa push.</div>
+
+<h2 id="c2"><span class="n">2</span>Clone code + <code>.env</code></h2>
+<div class="box danger"><strong>Chạy bằng user deploy</strong>Dấu nhắc phải là <code>deploy@…$</code>. Đang <code>root@…#</code> thì gõ <code>su - deploy</code> trước.</div>
+<div class="cmd"><span class="where">Server</span><pre><code>cd /srv/apps
+git clone --depth 1 <span data-v="REPO"></span> omnilab
+cd /srv/apps/omnilab
+git log --oneline -1
+ls Dockerfile compose.yml Caddyfile deploy/
+printf 'SITE_URL=https://%s\n' "<span data-v="APP"></span>.<span data-v="DOMAIN"></span>" &gt; .env
+cat .env</code></pre></div>
+<ul class="explain">
+  <li><b>ls</b> in đủ <code>Caddyfile compose.yml Dockerfile</code> + <code>deploy.sh</code>. Báo <code>No such file</code> = chưa push hoặc dán thiếu dòng <code>git clone</code>.</li>
+  <li><b>SITE_URL</b>: tên miền thật của site, dùng lúc build để <code>sitemap.xml</code> đúng domain. Không phải bí mật, chỉ cần đúng. Đổi tên miền sau này → sửa file này rồi build lại (<a href="#c6">chương 6</a>).</li>
+</ul>
+<h3>Làm lại từ đầu (clone lỗi / lỡ chạy bằng root)</h3>
+<div class="cmd"><span class="where">Server</span><pre><code>cd /srv/apps
+sudo rm -rf /srv/apps/omnilab</code></pre></div>
+<p>Phải <code>cd /srv/apps</code> trước khi xoá (đứng trong thư mục bị xoá thì mọi lệnh sau báo <code>No such file</code>). Xong chạy lại khối lệnh đầu chương 2. Không mất gì vì site không có dữ liệu trên server.</p>
+
+<h2 id="c3"><span class="n">3</span>Build &amp; chạy</h2>
+<div class="cmd"><span class="where">Server</span><pre><code>cd /srv/apps/omnilab
+bash deploy/deploy.sh
+docker compose ps
+docker compose logs --tail 20 app</code></pre></div>
+<ul class="explain">
+  <li>Lần đầu 2–4 phút: tải Node + cài thư viện + <code>sharp</code> xử lý ảnh + build 58 trang. Các lần sau nhanh hơn nhờ cache. Log build có <code>58 page(s) built</code> và <code>sitemap-index.xml created</code>.</li>
+  <li>Kết thúc bằng <code>deploy ok: &lt;commit&gt;</code>. <code>ps</code>: <code>Up … (healthy)</code>.</li>
+  <li>Log app là JSON của Caddy (<code>"msg":"serving initial configuration"</code>). Không thấy lỗi <code>error</code> là được.</li>
+  <li>Build dừng ở <code>FIDELITY VIOLATION</code>: nội dung bài học lệch với <code>content-sources/</code> → sửa trên Windows (<code>pnpm build</code> báo cùng lỗi), push, chạy lại.</li>
+</ul>
+
+<h2 id="c4"><span class="n">4</span>Gắn tên miền + kiểm tra</h2>
+<div class="cmd"><span class="where">Server</span><pre><code>cat &gt; /srv/caddy/conf/sites/omnilab.caddy &lt;&lt;'EOF'
+<span data-v="APP"></span>.<span data-v="DOMAIN"></span> {
+	header Strict-Transport-Security "max-age=15552000"
+	reverse_proxy omnilab:8080
+}
+EOF
+cd /srv/caddy
+docker compose exec caddy caddy validate --config /etc/caddy/Caddyfile
+docker compose exec -w /etc/caddy caddy caddy reload</code></pre></div>
+<ul class="explain">
+  <li>Không cần <code>encode</code>: Caddy trong image đã nén gzip/zstd, và tự gắn CSP + cache header.</li>
+  <li><b>HSTS</b> thêm ở Caddy chung vì Caddy trong image chạy HTTP thuần (<code>auto_https off</code>), không biết người dùng đang dùng HTTPS.</li>
+  <li><code>validate</code> phải in <code>Valid configuration</code>.</li>
+</ul>
+
+<div class="cmd"><span class="where win">Windows</span><pre><code>curl.exe -sI https://<span data-v="APP"></span>.<span data-v="DOMAIN"></span>/
+curl.exe -s -o NUL -w "%{http_code}\n" https://<span data-v="APP"></span>.<span data-v="DOMAIN"></span>/khong-ton-tai
+curl.exe -s -o NUL -w "%{http_code}\n" https://<span data-v="APP"></span>.<span data-v="DOMAIN"></span>/search-index.json
+curl.exe -s -o NUL -w "%{http_code}\n" https://<span data-v="APP"></span>.<span data-v="DOMAIN"></span>/sitemap-index.xml
+curl.exe -s -o NUL -w "%{http_code} -&gt; %{redirect_url}\n" http://<span data-v="APP"></span>.<span data-v="DOMAIN"></span>/</code></pre></div>
+<ul class="explain">
+  <li>Lệnh 1: <code>200</code>, có <code>Content-Security-Policy</code>, <code>Strict-Transport-Security</code>, <code>Cache-Control: no-cache</code>.</li>
+  <li>Lệnh 2: <code>404</code> thật (không trả trang chủ). Lệnh 3, 4: <code>200</code>. Lệnh 5: <code>308 -&gt; https://…</code>.</li>
+</ul>
+<div class="cmd"><span class="where">Server</span><pre><code>H=https://<span data-v="APP"></span>.<span data-v="DOMAIN"></span>
+curl -s $H/sitemap-0.xml | grep -o '&lt;loc&gt;[^&lt;]*' | head -2
+A=$(curl -s $H/ | grep -o '/_astro/[^"]*\.css' | head -1); curl -sI "$H$A" | grep -i cache-control
+sudo ss -tlnp | grep -v 127.0.0.</code></pre></div>
+<ul class="explain">
+  <li>Sitemap phải chứa <code>https://<span data-v="APP"></span>.<span data-v="DOMAIN"></span>/…</code>, không phải <code>omnilab.example</code>.</li>
+  <li>Asset <code>/_astro/*</code>: <code>public, max-age=31536000, immutable</code>.</li>
+  <li>Cổng mở ra ngoài chỉ 22, 80, 443. Thấy <code>8080</code> = có cổng lọt.</li>
+</ul>
+<ul class="check">
+  <li>Mở trang trên trình duyệt, vào 1 bài, đánh dấu đọc/lưu → tải lại trang vẫn còn.</li>
+  <li>Trang Tìm kiếm gõ 1 từ → có kết quả (đọc <code>search-index.json</code>).</li>
+  <li>iPhone Safari: Thêm vào màn hình chính → mở được như app.</li>
+</ul>
+
+<h2 id="c5"><span class="n">5</span>Chuyển từ Nhân Hòa (Vibe Deploy)</h2>
+<p>Không có dữ liệu server để chuyển. Chỉ tiến độ đọc trong trình duyệt người dùng bị ảnh hưởng, vì nó gắn theo tên miền.</p>
+<table>
+  <tr><th></th><th>Giữ tên miền cũ (trỏ DNS về VPS)</th><th>Tên miền mới (DuckDNS)</th></tr>
+  <tr><td>Tiến độ đọc, bài đã lưu</td><td>Giữ nguyên</td><td><b>Mất</b> (site không có xuất/nhập), người dùng bắt đầu lại</td></tr>
+  <tr><td>Cần làm</td><td>Chương 4 dùng tên miền cũ thay cho <code><span data-v="APP"></span>.<span data-v="DOMAIN"></span></code>; <code>.env</code> đặt <code>SITE_URL</code> = tên miền cũ; hạ TTL 300 giây trước 1 ngày → đổi bản ghi A sang <code><span data-v="IP"></span></code></td><td>Không cần gì thêm</td></tr>
+</table>
+<p>Chuyển xong và chạy ổn vài ngày thì xoá app trên Vibe Deploy Nhân Hòa để không phải chạy 2 bản.</p>
+
+<h2 id="c6"><span class="n">6</span>Cập nhật &amp; vận hành</h2>
+<h3>Phát hành bản mới (sau khi đã push)</h3>
+<div class="cmd"><span class="where win">Windows</span><pre><code>ssh vps "cd /srv/apps/omnilab &amp;&amp; bash deploy/deploy.sh"</code></pre></div>
+<ul class="explain">
+  <li>Trước khi push: trên Windows chạy <code>pnpm test</code> và <code>pnpm build</code> (bắt lỗi fidelity sớm, khỏi đợi server build hỏng).</li>
+  <li>Chỉ đổi <code>docs/</code>, <code>plans/</code>: không cần deploy.</li>
+  <li>Không sửa file trực tiếp trên server (trừ <code>.env</code>).</li>
+</ul>
+<table>
+  <tr><th>Script in ra</th><th>Ý nghĩa</th><th>Làm gì</th></tr>
+  <tr><td><code>deploy ok: …</code></td><td>Đang chạy commit mới</td><td>—</td></tr>
+  <tr><td><code>already at …</code></td><td>Đã chạy commit mới nhất</td><td>Quên push? Hoặc build lại: <code>FORCE=1 bash deploy/deploy.sh</code></td></tr>
+  <tr><td><code>deploy FAILED … rolled back</code></td><td>Bản mới không lên, site vẫn chạy bản cũ</td><td>Đọc log, sửa, push, chạy lại</td></tr>
+  <tr><td>Build lỗi (script dừng trước bước thay container)</td><td>Lỗi <code>pnpm build</code></td><td>Site vẫn chạy bản cũ. Tái hiện bằng <code>pnpm build</code> trên Windows</td></tr>
+</table>
+<h3>Lệnh hay dùng (trong <code>/srv/apps/omnilab</code>)</h3>
+<table>
+  <tr><th>Việc</th><th>Lệnh</th></tr>
+  <tr><td>Trạng thái / log</td><td><code>docker compose ps</code> · <code>docker compose logs -f app</code></td></tr>
+  <tr><td>Đổi <code>SITE_URL</code></td><td><code>nano .env</code> → <code>FORCE=1 bash deploy/deploy.sh</code> (giá trị nằm trong file build ra nên phải build lại)</td></tr>
+  <tr><td>Quay về bản cũ</td><td><code>docker images omnilab</code> → <code>IMAGE_TAG=<span class="v">ma-commit</span> docker compose up -d --no-build app</code></td></tr>
+  <tr><td>Build lại từ đầu (nghi cache)</td><td><code>docker compose build --no-cache app</code> → <code>FORCE=1 bash deploy/deploy.sh</code></td></tr>
+</table>
+<div class="box"><strong>Giám sát</strong>Monitor miễn phí (UptimeRobot) gọi <code>https://<span data-v="APP"></span>.<span data-v="DOMAIN"></span>/</code> 5 phút/lần. Không cần backup server: mất VPS thì clone + deploy lại là đủ (chương 2–4).</div>
+
+<h2 id="c7"><span class="n">7</span>Xử lý sự cố</h2>
+<table>
+  <tr><th>Hiện tượng</th><th>Nguyên nhân</th><th>Xử lý</th></tr>
+  <tr><td><code>SITE_URL chưa đặt trong .env</code></td><td>Thiếu <code>.env</code> hoặc thiếu dòng</td><td>Chạy lại dòng <code>printf</code> ở chương 2</td></tr>
+  <tr><td><code>ERR_PNPM_OUTDATED_LOCKFILE</code></td><td>Sửa <code>package.json</code> mà chưa cập nhật lock</td><td>Windows: <code>pnpm install</code> → commit <code>pnpm-lock.yaml</code> → push</td></tr>
+  <tr><td><code>FIDELITY VIOLATION</code></td><td>Bài học lệch nguồn</td><td>Tái hiện bằng <code>pnpm build</code> trên Windows, sửa, push</td></tr>
+  <tr><td>502 Bad Gateway</td><td>Container chưa chạy / sai alias hoặc cổng</td><td><code>docker compose ps</code>; <code>omnilab.caddy</code> phải là <code>omnilab:8080</code></td></tr>
+  <tr><td>URL sai ra trang chủ thay vì 404</td><td>Không dùng <code>Caddyfile</code> của repo</td><td>Kiểm tra <code>docker compose exec app cat /etc/caddy/Caddyfile</code> có <code>handle_errors</code></td></tr>
+  <tr><td>Sitemap chứa <code>omnilab.example</code></td><td>Build khi chưa có <code>SITE_URL</code></td><td>Sửa <code>.env</code> → <code>FORCE=1 bash deploy/deploy.sh</code></td></tr>
+  <tr><td>Trình duyệt vẫn thấy bài cũ</td><td>Cache HTML</td><td>HTML là <code>no-cache</code> nên tải lại là hết; PWA: đóng hẳn rồi mở lại</td></tr>
+  <tr><td><code>fatal: destination path 'omnilab' already exists</code></td><td>Đã clone trước đó</td><td>Có <code>.git</code> → bỏ dòng clone. Không → <a href="#c2">làm lại từ đầu</a></td></tr>
+  <tr><td><code>permission denied … docker.sock</code></td><td><code>deploy</code> chưa thuộc nhóm docker</td><td><code>sudo usermod -aG docker deploy</code> → <code>exit</code> → <code>ssh vps</code> lại</td></tr>
+  <tr><td>Đầy ổ đĩa</td><td>Cache build Node</td><td><code>docker builder prune -f</code>, <code>docker image prune -f</code></td></tr>
+</table>
+
+<h2 id="q"><span class="n">?</span>Câu hỏi còn mở</h2>
+<ol>
+  <li>Tên miền lâu dài: giữ tên miền đang dùng ở Nhân Hòa (giữ tiến độ đọc của người dùng) hay chuyển DuckDNS?</li>
+  <li>Có muốn thêm nút xuất/nhập tiến độ đọc trước khi đổi tên miền không? Hiện không có cách chuyển.</li>
+</ol>
+</main>
+</div>
+<script>
+(function () {
+  var STORAGE_KEY = "omnilab-vps-vars";
+  var inputs = Array.prototype.slice.call(document.querySelectorAll(".vars input"));
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}") || {}; } catch (e) { saved = {}; }
+
+  inputs.forEach(function (input) {
+    if (saved[input.dataset.key]) input.value = saved[input.dataset.key];
+  });
+
+  function render() {
+    var values = {};
+    inputs.forEach(function (input) { values[input.dataset.key] = input.value.trim() || input.defaultValue; });
+    document.querySelectorAll("[data-v]").forEach(function (el) {
+      el.textContent = values[el.dataset.v] || "";
+      if (el.closest("pre")) el.classList.add("v");
+    });
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(values)); } catch (e) { /* storage unavailable */ }
+  }
+  inputs.forEach(function (input) { input.addEventListener("input", render); });
+  render();
+
+  document.querySelectorAll(".cmd pre").forEach(function (pre) {
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "copy";
+    btn.textContent = "Copy";
+    btn.addEventListener("click", function () {
+      var text = pre.innerText.replace(/\n$/, "");
+      var done = function () { btn.textContent = "Đã copy"; setTimeout(function () { btn.textContent = "Copy"; }, 1400); };
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(done, function () { fallback(text); done(); });
+      } else { fallback(text); done(); }
+    });
+    pre.parentNode.appendChild(btn);
+  });
+  function fallback(text) {
+    var ta = document.createElement("textarea");
+    ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); } catch (e) { /* ignore */ }
+    ta.remove();
+  }
+
+  var root = document.documentElement;
+  try { var t = localStorage.getItem("vps-guide-theme"); if (t) root.dataset.theme = t; } catch (e) { /* ignore */ }
+  document.getElementById("themeToggle").addEventListener("click", function () {
+    var dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    root.dataset.theme = dark ? "light" : "dark";
+    try { localStorage.setItem("vps-guide-theme", root.dataset.theme); } catch (e) { /* ignore */ }
+  });
+
+  var links = Array.prototype.slice.call(document.querySelectorAll("nav.toc a"));
+  var targets = links.map(function (a) { return document.querySelector(a.getAttribute("href")); });
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        links.forEach(function (a) { a.classList.toggle("active", a.getAttribute("href") === "#" + entry.target.id); });
+      });
+    }, { rootMargin: "0px 0px -75% 0px" });
+    targets.forEach(function (t) { if (t) io.observe(t); });
+  }
+})();
+</script>
+</body>
+</html>

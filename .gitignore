@@ -22,3 +22,6 @@ pnpm-debug.log*
 plans/**/reports/qa/lighthouse-*.json
 !plans/**/reports/qa/lighthouse-summary.json
 repomix-output.xml
+
+# deploy (VPS)
+.deployed-tag

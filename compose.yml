@@ -1,0 +1,19 @@
+name: omnilab
+services:
+  app:
+    build:
+      context: .
+      args:
+        SITE_URL: ${SITE_URL:?SITE_URL chưa đặt trong .env}
+    image: omnilab:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    read_only: true
+    tmpfs: [/tmp, /data, /config]
+    networks:
+      web:
+        aliases: [omnilab]
+    mem_limit: 128m
+
+networks:
+  web:
+    external: true

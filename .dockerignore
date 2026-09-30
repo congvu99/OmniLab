@@ -1,0 +1,14 @@
+.git
+.claude
+.vscode
+.astro
+node_modules
+dist
+.env
+.env.*
+docs
+plans
+tests
+deploy
+repomix-output.xml
+*.log
