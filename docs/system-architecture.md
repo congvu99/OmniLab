@@ -81,6 +81,8 @@ OmniLab là app học tập tĩnh (Astro 7) chạy hoàn toàn trong trình duy�
 
 **Runtime**: Lazy-load trên `/tim-kiem` (first keystroke). Truy vấn AND trước, không có kết quả thì OR; prefix chỉ cho từ cuối, fuzzy 0.2 chỉ cho từ ≥ 4 ký tự; highlight theo ranh giới từ sau NFC. Payload ~84KB gzip (text cap 6000 ký tự/bài).
 
+**Error handling**: Nếu load index thất bại → hiển thị error state với nút "Thử lại". Lỗi được announced qua persistent status region (live region) để screen reader phát hiện. Xem `src/lib/search-box-controller.ts`.
+
 ## Styling & Dark mode
 
 **CSS tokens** (`src/styles/tokens.css`): Biến custom (`--color-*`, `--spacing-*`, `--font-*`).

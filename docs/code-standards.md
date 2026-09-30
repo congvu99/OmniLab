@@ -67,11 +67,21 @@ const { title, items } = Astro.props;
   --color-text: #111;
   --spacing-md: 1rem;
   --font-sans: "Be Vietnam Pro", sans-serif;
+  --line-strong: /* control/input boundaries, ≥3:1 vs bg/surface/surface-2 */
+  --gutter-l: max(var(--space-4), env(safe-area-inset-left));  /* landscape notch */
+  --gutter-r: max(var(--space-4), env(safe-area-inset-right)); /* landscape notch */
 }
 @media (prefers-color-scheme: dark) {
   :root { --color-text: #f0f0f0; }
 }
 ```
+
+**Sử dụng tokens**: 
+- `--line-strong` cho control borders (input, textarea). `--line` là cho decorative dividers chỉ.
+- `--gutter-l/r` áp dụng trên shell bar và page containers ở landscape (notch safety).
+- Hover states: **bắt buộc bọc trong `@media (hover: hover)`** (desktop/trackpad chỉ, không touch).
+- Contrast: Mọi text color + domain accent phải ≥4.5:1 (AA) trên `--bg`, `--surface` AND `--surface-2`, cả hai theme. Xác thực qua `tests/token-contrast.test.mjs`.
+- Text size ≥ 12px; inline code dùng `overflow-wrap: anywhere` để wrap.
 
 **Shiki dual-theme**: Light inline (`style="color: ..."`), dark via `--shiki-dark-*` vars (apply trong `prose.css`).
 

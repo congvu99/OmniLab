@@ -46,6 +46,13 @@
     box-shadow: var(--shadow-card);
     text-decoration: none;
     color: inherit;
+    transition: box-shadow var(--dur-fast) var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .crc-card:hover {
+      box-shadow: var(--shadow-card), 0 0 0 1px var(--line-strong);
+    }
   }
 
   .crc-eyebrow {

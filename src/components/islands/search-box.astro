@@ -15,6 +15,7 @@ import WifiOff from '@lucide/astro/icons/wifi-off';
 <div class="search-shell" data-search>
   <label class="search-field" for="search-input">
     <Search size={20} stroke-width={2} aria-hidden="true" />
+    <span class="sr-only">Tìm kiếm bài học</span>
     <input
       id="search-input"
       type="search"
@@ -27,11 +28,14 @@ import WifiOff from '@lucide/astro/icons/wifi-off';
   </label>
 
   <p class="search-status" data-search-hint>Gõ để tìm — hỗ trợ gõ không dấu, ví dụ "bo nho dem".</p>
-  <p class="search-status" data-search-loading hidden aria-live="polite">
+  <!-- Announced via the result-count status region below (a region that
+       toggles [hidden] and text in one tick is not reliably announced). -->
+  <p class="search-status" data-search-loading hidden>
     <LoaderCircle size={16} stroke-width={2} class="search-spin" aria-hidden="true" /> Đang tìm...
   </p>
   <p class="search-status" data-search-error hidden>
-    <WifiOff size={18} stroke-width={2} aria-hidden="true" /> Không tải được dữ liệu tìm kiếm. Thử lại sau.
+    <WifiOff size={18} stroke-width={2} aria-hidden="true" /> Không tải được dữ liệu tìm kiếm.
+    <button type="button" class="search-retry tap-scale" data-search-retry>Thử lại</button>
   </p>
   <p class="search-status" data-search-empty hidden>
     <Inbox size={18} stroke-width={2} aria-hidden="true" /> Không tìm thấy kết quả phù hợp.
@@ -67,7 +71,7 @@ import WifiOff from '@lucide/astro/icons/wifi-off';
     min-height: 44px;
     padding: 0 var(--space-3);
     background: var(--surface);
-    border: 1px solid var(--line);
+    border: 1px solid var(--line-strong);
     border-radius: var(--radius-row);
     color: var(--ink-2);
   }
@@ -113,6 +117,14 @@ import WifiOff from '@lucide/astro/icons/wifi-off';
     color: var(--ink-2);
     text-align: center;
     justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .search-retry {
+    min-height: 44px;
+    padding-inline: var(--space-2);
+    font-weight: 700;
+    color: var(--accent);
   }
 
   .search-spin {
@@ -145,6 +157,13 @@ import WifiOff from '@lucide/astro/icons/wifi-off';
     text-decoration: none;
     color: inherit;
     min-height: 44px;
+    transition: background-color var(--dur-fast) var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .search-result__link:hover {
+      background: var(--surface-2);
+    }
   }
 
   .search-result__title {

@@ -21,8 +21,12 @@
 // `var(--accent)` inside it would never resolve — confirmed against MDN/CSS
 // WG guidance, see docs/illustration-style-guide.md "Inline via ?raw, not
 // <img>". Each illustration SVG carries its own <title>/role="img"/
-// aria-labelledby, so the wrapper below adds no redundant aria-label.
+// aria-labelledby and stays a plain image in the a11y tree; zooming is a
+// separate labelled overlay button (plus tap-anywhere on the diagram for
+// pointer users), so the diagram never gets flattened into a button name.
 import { Image } from 'astro:assets';
+import Maximize2 from '@lucide/astro/icons/maximize-2';
+import X from '@lucide/astro/icons/x';
 import type { ImageMetadata } from 'astro';
 
 interface Props {
@@ -41,7 +45,23 @@ const isImageMetadata = typeof src === 'object' && src !== null;
 <figure class="figure" data-added={added ? 'true' : undefined}>
   {
     svg ? (
-      <div class="figure__svg" set:html={svg} />
+      <div class="figure__svg" data-figure-zoom-root>
+        {/* Diagram labels render ~10px on a 375px phone, so a tap opens the
+            same SVG node full-screen (moved, not cloned — cloning would
+            duplicate its <title>/marker ids). See figure-zoom-controller.ts. */}
+        <div class="figure__svg-host" data-figure-svg-host set:html={svg} />
+        <button type="button" class="figure__zoom tap-scale" data-figure-zoom aria-label="Phóng to hình">
+          <Maximize2 size={16} stroke-width={2} aria-hidden="true" />
+        </button>
+        <dialog class="figure__dialog" data-figure-dialog aria-label={alt}>
+          <div class="figure__dialog-bar">
+            <button type="button" class="figure__dialog-close tap-scale" data-figure-close aria-label="Đóng hình phóng to">
+              <X size={22} stroke-width={2.25} aria-hidden="true" />
+            </button>
+          </div>
+          <div class="figure__dialog-body" data-figure-dialog-body></div>
+        </dialog>
+      </div>
     ) : isImageMetadata ? (
       <Image src={src as ImageMetadata} alt={alt} />
     ) : typeof src === 'string' ? (
@@ -62,8 +82,11 @@ const isImageMetadata = typeof src === 'object' && src !== null;
   .figure {
     margin: var(--space-5) 0;
   }
+  /* Content images/diagrams only — a bare `.figure svg` would also hit the
+     lucide icons inside the zoom/close buttons. */
   .figure :global(img),
-  .figure :global(svg) {
+  .figure > :global(svg),
+  .figure__svg-host :global(svg) {
     display: block;
     width: 100%;
     height: auto;
@@ -82,6 +105,86 @@ const isImageMetadata = typeof src === 'object' && src !== null;
     border: none;
     border-radius: 0;
   }
+  @media (max-width: 479px) {
+    /* Every px of panel padding shrinks the diagram's text further. */
+    .figure__svg {
+      padding: var(--space-2);
+    }
+  }
+  .figure__svg {
+    position: relative;
+  }
+  .figure__svg-host {
+    display: block;
+    cursor: zoom-in;
+  }
+  /* Sits in the panel's bottom-right corner, overlapping the padding more
+     than the drawing; 44px hit area via ::after around a 28px chip. */
+  .figure__zoom {
+    position: absolute;
+    right: var(--space-1);
+    bottom: var(--space-1);
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full);
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    color: var(--ink-2);
+  }
+  .figure__zoom::after {
+    content: '';
+    position: absolute;
+    inset: -8px;
+  }
+  .figure__dialog {
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: var(--bg);
+    color: var(--ink);
+  }
+  .figure__dialog[open] {
+    display: flex;
+    flex-direction: column;
+  }
+  .figure__dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+  }
+  .figure__dialog-bar {
+    display: flex;
+    justify-content: flex-end;
+    padding: env(safe-area-inset-top) max(var(--space-2), env(safe-area-inset-right)) 0 var(--space-2);
+  }
+  .figure__dialog-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    color: var(--ink);
+  }
+  .figure__dialog-body {
+    flex: 1;
+    overflow: auto;
+    overscroll-behavior: contain;
+    padding: var(--space-4) var(--gutter-r) calc(var(--space-4) + env(safe-area-inset-bottom)) var(--gutter-l);
+  }
+  /* ~2x the phone-width rendering, so 11px labels read at ~20px; the body
+     scrolls/pans on both axes when wider than the screen. */
+  .figure__dialog-body :global(svg) {
+    display: block;
+    height: auto;
+    width: max(100%, 720px);
+    max-width: none;
+    margin-inline: auto;
+  }
   figcaption {
     margin-top: var(--space-2);
     font-size: var(--text-footnote);
@@ -94,3 +197,13 @@ const isImageMetadata = typeof src === 'object' && src !== null;
     color: inherit;
   }
 </style>
+
+<script>
+  import { attachFigureZoom } from '../../lib/figure-zoom-controller';
+  import { onPageLoad } from '../../lib/page-lifecycle';
+
+  onPageLoad(() => {
+    const cleanups = Array.from(document.querySelectorAll<HTMLElement>('[data-figure-zoom-root]')).map(attachFigureZoom);
+    return () => cleanups.forEach((fn) => fn());
+  });
+</script>

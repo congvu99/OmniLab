@@ -80,6 +80,11 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
   }
 
   .app-main {
+    /* Landscape notch clearance. Children already carry 16px side margins,
+       so only the part of the inset beyond 16px is added — content lines up
+       with the header's max(16px, inset) gutter. 0 in portrait. */
+    padding-left: max(0px, calc(env(safe-area-inset-left) - var(--space-4)));
+    padding-right: max(0px, calc(env(safe-area-inset-right) - var(--space-4)));
     /* Room for the fixed bottom tab bar + its safe-area inset, plus a little
        breathing room so the last row of content isn't flush against it. */
     padding-bottom: calc(var(--shell-tabbar-h) + env(safe-area-inset-bottom) + var(--space-4));
@@ -101,7 +106,7 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
     display: flex;
     align-items: center;
     gap: var(--space-3);
-    padding: var(--space-2) var(--space-4);
+    padding: var(--space-2) var(--gutter-r) var(--space-2) var(--gutter-l);
     background: color-mix(in srgb, var(--accent) 12%, var(--surface));
     border-bottom: 1px solid var(--line);
   }
@@ -138,7 +143,7 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
      showing it every page load is at least consistent, not naggier. */
   .storage-warning {
     margin: 0;
-    padding: var(--space-2) var(--space-4);
+    padding: var(--space-2) var(--gutter-r) var(--space-2) var(--gutter-l);
     background: var(--surface-2);
     border-bottom: 1px solid var(--line);
     font-size: var(--text-caption);

@@ -56,7 +56,7 @@ const backAriaLabel = backLabel === 'Quay lại' ? backLabel : `Quay lại ${bac
     grid-template-columns: minmax(44px, auto) 1fr minmax(44px, auto);
     align-items: center;
     gap: var(--space-2);
-    padding-inline: var(--space-2);
+    padding-inline: max(var(--space-2), env(safe-area-inset-left)) max(var(--space-2), env(safe-area-inset-right));
   }
 
   .rtb-back {
@@ -140,7 +140,9 @@ const backAriaLabel = backLabel === 'Quay lại' ? backLabel : `Quay lại ${bac
     let onScroll: (() => void) | undefined;
 
     if (bar && articleHeading && 'IntersectionObserver' in window) {
-      const navbarHeight = 44; // keep in sync with --shell-navbar-h
+      // Read the token rather than duplicating it here (44 = fallback only).
+      const navbarHeight =
+        parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--shell-navbar-h')) || 44;
       observer = new IntersectionObserver(
         ([entry]) => {
           bar.dataset.collapsed = entry.isIntersecting ? 'false' : 'true';

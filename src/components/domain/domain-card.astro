@@ -80,6 +80,13 @@ const Icon = icons[toPascalCase(icon) as keyof typeof icons] ?? icons.Layers;
     text-decoration: none;
     color: inherit;
     min-height: 44px;
+    transition: box-shadow var(--dur-fast) var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .domain-card:hover {
+      box-shadow: var(--shadow-card), 0 0 0 1px var(--line-strong);
+    }
   }
 
   .domain-card__icon {
@@ -106,6 +113,8 @@ const Icon = icons[toPascalCase(icon) as keyof typeof icons] ?? icons.Layers;
     flex-direction: column;
     gap: 2px;
     min-width: 0;
+    /* Clear the absolutely-positioned progress ring (32px) at the top-right. */
+    padding-right: calc(32px + var(--space-2));
   }
 
   .domain-card__title {

@@ -21,11 +21,10 @@ const { lessonId } = Astro.props;
     class="mcb-button tap-scale"
     data-mcb-button
     aria-pressed="false"
-    aria-label="Đánh dấu hoàn thành bài học"
   >
     <Circle size={20} stroke-width={2} aria-hidden="true" class="mcb-icon mcb-icon--todo" />
     <CircleCheck size={20} stroke-width={2} aria-hidden="true" class="mcb-icon mcb-icon--done" />
-    <span data-mcb-label aria-hidden="true">Đánh dấu hoàn thành</span>
+    <span>Hoàn thành bài học</span>
   </button>
   <div class="mcb-toast" data-mcb-toast hidden>
     <span data-mcb-toast-text></span>
@@ -120,25 +119,21 @@ const { lessonId } = Astro.props;
     if (!root || !lessonId) return;
 
     const button = root.querySelector<HTMLButtonElement>('[data-mcb-button]');
-    const label = root.querySelector<HTMLElement>('[data-mcb-label]');
     const toast = root.querySelector<HTMLElement>('[data-mcb-toast]');
     const toastText = root.querySelector<HTMLElement>('[data-mcb-toast-text]');
     const undoButton = root.querySelector<HTMLButtonElement>('[data-mcb-undo]');
     const announce = root.querySelector<HTMLElement>('[data-mcb-announce]');
-    if (!button || !label || !toast || !toastText || !undoButton || !announce) return;
+    if (!button || !toast || !toastText || !undoButton || !announce) return;
 
     const store = getProgressStore();
     let toastTimer: ReturnType<typeof setTimeout> | undefined;
 
     function render(done: boolean) {
       root!.dataset.done = String(done);
-      // The button's accessible name is the constant aria-label in markup
-      // (never touched here) — only aria-pressed conveys state, so a screen
-      // reader announces one clear "pressed"/"not pressed" toggle instead
-      // of aria-pressed AND a changing visible label both trying to say the
-      // same thing. `label` (aria-hidden) still gets the sighted-only text.
+      // The visible label is constant and IS the accessible name (WCAG 2.5.3
+      // label-in-name: voice-control users can say what they see). State is
+      // carried by aria-pressed for AT and by the icon + fill for sighted users.
       button!.setAttribute('aria-pressed', String(done));
-      label!.textContent = done ? 'Đã hoàn thành' : 'Đánh dấu hoàn thành';
     }
 
     function showToast(message: string) {
@@ -150,11 +145,40 @@ const { lessonId } = Astro.props;
       // element in one tick is unreliable for triggering the announcement,
       // confirmed via real-browser testing, not just spec reasoning.
       announce!.textContent = message;
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => {
-        toast!.hidden = true;
-      }, TOAST_DURATION_MS);
+      scheduleHide();
     }
+
+    // Hiding the toast while focus is inside it would drop focus to <body>;
+    // hand it back to the toggle instead.
+    function hideToast() {
+      clearTimeout(toastTimer);
+      const hadFocus = toast!.contains(document.activeElement);
+      toast!.hidden = true;
+      if (hadFocus) button!.focus();
+    }
+
+    function scheduleHide() {
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(hideToast, TOAST_DURATION_MS);
+    }
+
+    // Auto-dismiss pauses while the user is on the toast (keyboard focus or
+    // pointer), so the undo action can't vanish mid-reach (WCAG 2.2.1).
+    const pause = () => clearTimeout(toastTimer);
+    const resume = (ev: Event) => {
+      const next = (ev as FocusEvent).relatedTarget;
+      if (next instanceof Node && toast.contains(next)) return;
+      // Pointer left but keyboard focus is still on the undo button: stay paused.
+      if (ev.type === 'pointerleave' && toast.contains(document.activeElement)) return;
+      if (!toast.hidden) scheduleHide();
+    };
+    // Mouse only: a tap fires a synthetic enter with no reliable leave on
+    // touch screens, which would pin the toast open forever.
+    const isMouse = (ev: PointerEvent) => ev.pointerType === 'mouse';
+    toast.addEventListener('focusin', pause);
+    toast.addEventListener('focusout', resume);
+    toast.addEventListener('pointerenter', (ev) => isMouse(ev) && pause());
+    toast.addEventListener('pointerleave', (ev) => isMouse(ev) && resume(ev));
 
     button.addEventListener('click', () => {
       const willBeDone = !(store.get().lessons[lessonId]?.done ?? false);
@@ -165,8 +189,7 @@ const { lessonId } = Astro.props;
     undoButton.addEventListener('click', () => {
       const current = store.get().lessons[lessonId]?.done ?? false;
       store.markDone(lessonId, !current);
-      clearTimeout(toastTimer);
-      toast!.hidden = true;
+      hideToast();
     });
 
     unsubscribe = store.subscribe((state) => render(state.lessons[lessonId]?.done ?? false));

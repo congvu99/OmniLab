@@ -23,6 +23,9 @@
   --ink: #1C1F24;
   --ink-2: #5A606B;
   --line: #E3E0D8;
+  /* Boundary of interactive controls (inputs): >=3:1 vs --surface/--bg per
+     WCAG 1.4.11. --line stays for decorative dividers only. */
+  --line-strong: #80858F;
 
   --domain-accent: #4F46E5;
   --domain-accent-dark: #A5B4FC;
@@ -30,7 +33,7 @@
   --accent-on: #FFFFFF; /* text/icon color placed on top of a solid --accent fill */
 
   --danger: #B3261E;
-  --success: #1F7A5A;
+  --success: #1C7455;
 
   /* Translucent veil for fixed bars (tab bar, reader top bar): mostly-opaque
      so contrast stays effectively identical to --surface, with backdrop-filter
@@ -90,6 +93,11 @@
   --shell-navbar-h: 44px; /* iOS standard nav-bar height, excl. safe-area */
   --shell-tabbar-h: 56px; /* excl. safe-area-inset-bottom */
   --shell-sidebar-w: 240px; /* >=1024px only */
+
+  /* Horizontal page gutters honoring the landscape notch / Dynamic Island
+     (viewport-fit=cover is on, so content would otherwise sit under it). */
+  --gutter-l: max(var(--space-4), env(safe-area-inset-left));
+  --gutter-r: max(var(--space-4), env(safe-area-inset-right));
 }
 
 @media (prefers-color-scheme: dark) {
@@ -100,6 +108,7 @@
     --ink: #F2F1ED;
     --ink-2: #A7ACB6;
     --line: #2C3036;
+    --line-strong: #6E747E;
 
     --accent: var(--domain-accent-dark, #A5B4FC);
     --accent-on: #111315; /* light accent tints need dark text/icon on top */

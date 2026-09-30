@@ -94,14 +94,24 @@ import X from '@lucide/astro/icons/x';
     padding: var(--space-3) var(--space-4);
     text-decoration: none;
     color: inherit;
+    transition: background-color var(--dur-fast) var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .saved-row__link:hover,
+    .saved-row__remove:hover {
+      background: var(--surface-2);
+    }
   }
 
   .saved-row__title {
     font-size: var(--text-body);
     color: var(--ink);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   .saved-row__domain {
@@ -118,6 +128,7 @@ import X from '@lucide/astro/icons/x';
     justify-content: center;
     color: var(--ink-2);
     margin-right: var(--space-2);
+    border-radius: var(--radius-row);
   }
 </style>
 

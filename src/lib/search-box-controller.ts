@@ -24,6 +24,8 @@ export interface SearchBoxElements {
   template: HTMLTemplateElement;
   /** sr-only status region announcing "N kết quả" once per search — see search-box.astro's header comment for why the results `<ul>` itself no longer carries aria-live. */
   resultCount: HTMLElement;
+  /** "Thử lại" button inside the error state; optional so older markup keeps working. */
+  retry?: HTMLButtonElement | null;
 }
 
 /** Reads and validates the DOM contract from a `.search-shell` root; `null` if anything's missing. */
@@ -36,8 +38,9 @@ export function readSearchBoxElements(root: HTMLElement): SearchBoxElements | nu
   const resultsList = root.querySelector<HTMLUListElement>('[data-search-results]');
   const template = root.querySelector<HTMLTemplateElement>('[data-search-result-template]');
   const resultCount = root.querySelector<HTMLElement>('[data-search-result-count]');
+  const retry = root.querySelector<HTMLButtonElement>('[data-search-retry]');
   if (!input || !hint || !loading || !error || !empty || !resultsList || !template || !resultCount) return null;
-  return { root, input, hint, loading, error, empty, resultsList, template, resultCount };
+  return { root, input, hint, loading, error, empty, resultsList, template, resultCount, retry };
 }
 
 function renderResultRow(template: HTMLTemplateElement, result: SearchResult): DocumentFragment {
@@ -73,7 +76,7 @@ function renderResultRow(template: HTMLTemplateElement, result: SearchResult): D
 
 /** Wires up one search-box instance. Returns a cleanup function to call before re-init. */
 export function attachSearchBox(els: SearchBoxElements): () => void {
-  const { input, hint, loading, error, empty, resultsList, template, resultCount } = els;
+  const { input, hint, loading, error, empty, resultsList, template, resultCount, retry } = els;
 
   function showOnly(el: HTMLElement | null) {
     for (const candidate of [hint, loading, error, empty]) {
@@ -126,6 +129,9 @@ export function attachSearchBox(els: SearchBoxElements): () => void {
 
     const thisRequest = ++requestId;
     showOnly(loading);
+    // Only the first query waits on the network (index fetch); later ones are
+    // synchronous, so announcing "loading" there would just be noise.
+    if (!index) resultCount.textContent = 'Đang tìm...';
 
     try {
       await ensureIndex();
@@ -137,6 +143,7 @@ export function attachSearchBox(els: SearchBoxElements): () => void {
       if (thisRequest !== requestId) return;
       resultsList.hidden = true;
       showOnly(error);
+      resultCount.textContent = 'Không tải được dữ liệu tìm kiếm.';
     }
   }
 
@@ -145,9 +152,16 @@ export function attachSearchBox(els: SearchBoxElements): () => void {
     debounceTimer = setTimeout(() => void runSearch(input.value), DEBOUNCE_MS);
   }
 
+  const onRetry = () => {
+    input.focus();
+    void runSearch(input.value);
+  };
+
   input.addEventListener('input', onInput);
+  retry?.addEventListener('click', onRetry);
   return () => {
     input.removeEventListener('input', onInput);
+    retry?.removeEventListener('click', onRetry);
     clearTimeout(debounceTimer);
   };
 }

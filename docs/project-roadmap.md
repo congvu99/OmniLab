@@ -2,7 +2,7 @@
 
 ## v1 (2026-09-28): code xong, chờ deploy
 
-Trạng thái: toàn bộ 7 phase trong [plan v1](../plans/260928-1725-omnilab-v1-learning-app/plan.md) đã hoàn thành trên `main`. Deploy lên Vibe Deploy Nhân Hòa và kiểm tra trên iPhone thật do chủ dự án thực hiện (xem [deployment-guide.md](deployment-guide.md)).
+Trạng thái: toàn bộ 7 phase trong [plan v1](../plans/260928-1725-omnilab-v1-learning-app/plan.md) đã hoàn thành trên `main`. Sửa audit UX 2026-09-30 (a11y/contrast/safe-area/tap-to-zoom sơ đồ). Deploy lên Vibe Deploy Nhân Hòa và kiểm tra trên iPhone thật do chủ dự án thực hiện (xem [deployment-guide.md](deployment-guide.md)).
 
 | Hạng mục | Kết quả |
 |---|---|
@@ -28,6 +28,7 @@ Chưa kiểm được trong môi trường dev (chủ dự án làm sau deploy):
 | 5 | Thêm lĩnh vực | Mở rộng | Theo nội dung | Chỉ cần YAML + thư mục bài ([content-authoring-guide.md](content-authoring-guide.md)) |
 | 6 | Giảm kích thước search index | Tải nhanh hơn | Thấp | Cắt text dài, giữ tiêu đề + heading |
 | 7 | Analytics tôn trọng riêng tư | Biết bài nào được đọc | Thấp | Cần cập nhật CSP `connect-src` |
+| 8 | Nâng cỡ chữ SVG cũ (11–12px) lên ≥13 | Mobile readability | Thấp | Follow-up từ audit UX 2026-09-30 |
 
 ## Việc còn mở
 

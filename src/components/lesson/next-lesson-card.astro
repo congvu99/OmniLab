@@ -42,6 +42,13 @@ const { next, domainHref } = Astro.props;
     border-radius: var(--radius-card);
     text-decoration: none;
     color: var(--ink);
+    transition: box-shadow var(--dur-fast) var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .next-lesson-card:hover {
+      box-shadow: var(--shadow-card), 0 0 0 1px var(--line-strong);
+    }
   }
 
   .next-lesson-card__eyebrow {

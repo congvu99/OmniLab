@@ -40,6 +40,13 @@ const { href, order, title, readingMinutes, lessonId, domainId } = Astro.props;
     text-decoration: none;
     color: inherit;
     border-bottom: 1px solid var(--line);
+    transition: background-color var(--dur-fast) var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .lesson-row:hover {
+      background: var(--surface-2);
+    }
   }
 
   li:last-child > .lesson-row {
@@ -67,9 +74,13 @@ const { href, order, title, readingMinutes, lessonId, domainId } = Astro.props;
   .lesson-row__title {
     font-size: var(--text-body);
     color: var(--ink);
+    /* Two lines, not one: long Vietnamese titles lose their meaning when cut
+       at ~30 chars on a 375px phone. */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   .lesson-row__meta {

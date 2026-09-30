@@ -47,7 +47,7 @@ const { title } = Astro.props;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding-inline: var(--space-4);
+    padding-inline: var(--gutter-l) var(--gutter-r);
   }
 
   .lth-navbar-title {
@@ -63,7 +63,7 @@ const { title } = Astro.props;
   }
 
   .lth-block {
-    padding: 0 var(--space-4) var(--space-3);
+    padding: 0 var(--gutter-r) var(--space-3) var(--gutter-l);
   }
 
   .lth-title {
@@ -93,7 +93,9 @@ const { title } = Astro.props;
 
     if (!navbar || !sentinel || !('IntersectionObserver' in window)) return;
 
-    const navbarHeight = 44; // keep in sync with --shell-navbar-h in tokens.css
+    // Read the token rather than duplicating it here (44 = fallback only).
+    const navbarHeight =
+      parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--shell-navbar-h')) || 44;
     const observer = new IntersectionObserver(
       ([entry]) => {
         navbar.dataset.collapsed = entry.isIntersecting ? 'false' : 'true';

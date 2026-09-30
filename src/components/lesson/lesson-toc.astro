@@ -42,7 +42,7 @@ const { headings } = Astro.props;
     font-weight: 600;
     font-size: var(--text-footnote);
     color: var(--ink);
-    min-height: 24px;
+    min-height: 44px;
     display: flex;
     align-items: center;
   }
@@ -53,7 +53,7 @@ const { headings } = Astro.props;
   }
 
   .lesson-toc li {
-    margin-bottom: var(--space-2);
+    margin-bottom: 0;
     font-size: var(--text-footnote);
   }
 
@@ -65,5 +65,9 @@ const { headings } = Astro.props;
     color: var(--accent);
     text-decoration: underline;
     text-underline-offset: 2px;
+    /* Block + vertical padding: each entry is a standalone target (not
+       running text), so it gets a >=44px-tall hit area. */
+    display: block;
+    padding-block: 10px;
   }
 </style>

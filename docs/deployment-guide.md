@@ -129,6 +129,7 @@ Trên iPhone/iPad với iOS 16+:
     - Nếu phone có notch → tab bar không bị che bởi notch
     - Nếu phone có Dynamic Island → không bị cover
     - Home bar area: padding đủ (tab bar không bị home bar che)
+    - Landscape mode: xoay ngang → content + back button không bị đè bởi notch/Dynamic Island (ở cạnh trái hoặc phải)
 ```
 
 **Lưu ý**:

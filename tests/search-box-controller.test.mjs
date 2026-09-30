@@ -188,6 +188,29 @@ describe('attachSearchBox', () => {
     expect(rows[0].link.style._props['--card-accent-dark']).toBe('#A5B4FC');
   });
 
+  it('announces a failed index load and recovers via the retry button', async () => {
+    const { fetchSearchIndexDocs } = await import('../src/lib/search-index-client.ts');
+    fetchSearchIndexDocs.mockImplementationOnce(() => Promise.reject(new Error('offline')));
+    const retry = createFakeEl('button');
+    input.focus = vi.fn();
+    attachSearchBox({ ...els, retry });
+    const onInput = input.addEventListener.mock.calls.find((c) => c[0] === 'input')[1];
+
+    input.value = 'cache';
+    onInput();
+    await vi.advanceTimersByTimeAsync(200);
+    expect(error.hidden).toBe(false);
+    expect(resultCount.textContent).toBe('Không tải được dữ liệu tìm kiếm.');
+
+    retry._fire('click');
+    await vi.advanceTimersByTimeAsync(0);
+    expect(input.focus).toHaveBeenCalled();
+    expect(fetchSearchIndexDocs).toHaveBeenCalledTimes(2); // cached rejection was dropped
+    expect(error.hidden).toBe(true);
+    expect(resultsList.hidden).toBe(false);
+    expect(resultCount.textContent).toBe('1 kết quả');
+  });
+
   it('shows the empty state for a query with no results', async () => {
     attachSearchBox(els);
     const onInput = input.addEventListener.mock.calls.find((c) => c[0] === 'input')[1];

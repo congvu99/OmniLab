@@ -94,6 +94,9 @@
   background: var(--surface-2);
   border-radius: 4px;
   padding: 0.15em 0.4em;
+  /* Inline code can be one long unbreakable token (paths, API routes) that
+     pushed the whole page into horizontal scroll at 375px. */
+  overflow-wrap: anywhere;
 }
 
 .prose pre {
@@ -112,6 +115,7 @@
   background: none;
   padding: 0;
   font-size: inherit;
+  overflow-wrap: normal; /* <pre> scrolls instead of wrapping */
 }
 
 /* Shiki dual theme: light colors are inline; dark colors come from the

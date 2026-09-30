@@ -90,9 +90,18 @@ const pathname = Astro.url.pathname;
     color: var(--ink-2);
     text-decoration: none;
     font-weight: 500;
+    transition: background-color var(--dur-fast) var(--ease-out);
   }
 
-  .sidebar-link[data-active='true'] {
+  @media (hover: hover) {
+    .sidebar-link:hover {
+      background: var(--surface-2);
+      color: var(--ink);
+    }
+  }
+
+  .sidebar-link[data-active='true'],
+  .sidebar-link[data-active='true']:hover {
     color: var(--accent);
     background: var(--surface-2);
     font-weight: 700;

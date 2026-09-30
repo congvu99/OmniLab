@@ -16,8 +16,12 @@ trang trí. 6 bài thí điểm (Phase 6 batch 0,
 - `width="100%"` trên thẻ `<svg>`, không set `height` cố định (tỉ lệ giữ qua
   `viewBox`, container `.figure__svg` trong `figure.astro` lo phần còn lại).
 - Mobile-first: thiết kế sao cho đọc được ở 360px width thật (không chỉ ở màn
-  hình lớn rồi thu nhỏ) — chữ nhỏ nhất 11-12px, không đặt 2 nhãn chồng nhau
+  hình lớn rồi thu nhỏ) — chữ nhỏ nhất **13–15px** (`font-size="13"` trở lên), không đặt 2 nhãn chồng nhau
   theo chiều ngang trong khoảng < 60px.
+  
+  **Lưu ý scale**: Trên 375px phone, diagram render ~0.86–0.9 scale, nên chữ
+  11–12px trên desktop sẽ ~10px trên phone. **SVG mới phải dùng ≥13px** để
+  đảm bảo đọc được trên mobile (follow-up: nâng cỡ SVG cũ, xem roadmap).
 
 ## Nét vẽ
 
@@ -125,6 +129,15 @@ unique theo file — prefix giống quy ước id ở trên):
   file `.js` nội bộ.
 - Không bắt buộc — phần lớn SVG trong 6 bài thí điểm KHÔNG có animation; chỉ
   thêm khi nó thực sự làm rõ hướng luồng dữ liệu (vd cache hit path).
+
+## Tap-to-zoom trên mobile
+
+Figure với prop `svg` hỗ trợ tap-to-zoom trên mobile (đã được áp dụng từ 2026-09-30):
+- Tap vào diagram hoặc nút "Phóng to hình" (góc dưới phải panel) → mở native `<dialog>` toàn màn hình; diagram vẫn là ảnh (`role="img"`) trong cây a11y
+- SVG node được di chuyển (không clone) vào dialog, nên `id` trong SVG giữ nguyên unique
+- Esc hoặc nút X → đóng dialog, SVG trả về chỗ cũ, focus quay lại nút phóng to
+
+Không cần sửa gì trong SVG file — Figure component xử lý tự động. Xem `src/lib/figure-zoom-controller.ts`.
 
 ## Inline via `?raw`, not `<img>`
 
