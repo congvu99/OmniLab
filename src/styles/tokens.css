@@ -39,7 +39,7 @@
      so contrast stays effectively identical to --surface, with backdrop-filter
      blur as a purely decorative layer-separation cue (spec: "blur nền nhẹ
      chỉ để tách lớp"). Raw rgba lives here only — components read the token. */
-  --surface-veil: rgba(255, 255, 255, 0.86);
+  --surface-veil: rgba(255, 255, 255, 0.94);
 
   /* --- Radius --- */
   --radius-card: 16px;
@@ -86,6 +86,7 @@
 
   /* --- Elevation (flat design, used sparingly: card separation only) --- */
   --shadow-card: 0 1px 2px rgba(28, 31, 36, 0.06), 0 1px 1px rgba(28, 31, 36, 0.04);
+  --shadow-bar: 0 -1px 8px rgba(28, 31, 36, 0.06); /* bottom tab bar, casts upward */
 
   /* --- Shell layout constants (shared by tab-bar / sidebar-nav / headers so
      app-layout's content insets never drift out of sync with the nav's own
@@ -116,8 +117,9 @@
     --danger: #F2A29C;
     --success: #6EE7B7;
 
-    --surface-veil: rgba(26, 29, 33, 0.82);
+    --surface-veil: rgba(26, 29, 33, 0.94);
 
     --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 1px rgba(0, 0, 0, 0.3);
+    --shadow-bar: 0 -1px 8px rgba(0, 0, 0, 0.45);
   }
 }

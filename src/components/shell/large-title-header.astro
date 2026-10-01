@@ -9,16 +9,17 @@ interface Props {
 const { title } = Astro.props;
 ---
 
-<!-- Outer <header> is the page banner landmark: it must contain the page's
-     <h1> for axe-core's "region" rule (all content in a landmark). The sticky
-     collapsing bar below is a plain <div> (not a nested <header> — HTML
-     forbids header-in-header), position: sticky works on any element. -->
-<header class="lth-wrapper">
-  <div class="lth-navbar" data-lth-navbar>
-    <div class="lth-navbar-inner">
-      <span class="lth-navbar-title" data-lth-navbar-title>{title}</span>
-    </div>
+<!-- The sticky bar is a SIBLING of <header>, not a child: a sticky element
+     only sticks within its parent's box, so inside the (short) <header> it
+     scrolled away with the large title. As a direct child of .app-shell it
+     stays pinned for the whole page. Its small title duplicates the <h1>, so
+     it is aria-hidden (also keeps it out of axe's "region" landmark rule). -->
+<div class="lth-navbar" data-lth-navbar data-collapsed="false">
+  <div class="lth-navbar-inner">
+    <span class="lth-navbar-title" data-lth-navbar-title aria-hidden="true">{title}</span>
   </div>
+</div>
+<header class="lth-wrapper">
   <div class="lth-block">
     <h1 class="lth-title">{title}</h1>
     <span class="lth-sentinel" data-lth-sentinel aria-hidden="true"></span>
@@ -31,14 +32,19 @@ const { title } = Astro.props;
     top: 0;
     z-index: var(--z-nav);
     padding-top: env(safe-area-inset-top);
-    background: var(--surface-veil);
-    backdrop-filter: blur(20px) saturate(1.4);
-    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    /* Expanded (top of page): invisible, blends into --bg so it reads as the
+       space above the large title rather than an empty white band.
+       Collapsed: solid surface + hairline (a translucent veil let the list
+       text ghost through behind the small title). */
+    background: transparent;
     border-bottom: 1px solid transparent;
-    transition: border-color var(--dur) var(--ease-out);
+    transition:
+      background-color var(--dur) var(--ease-out),
+      border-color var(--dur) var(--ease-out);
   }
 
   .lth-navbar[data-collapsed='true'] {
+    background: var(--surface);
     border-bottom-color: var(--line);
   }
 
@@ -70,7 +76,7 @@ const { title } = Astro.props;
     font-size: var(--text-large);
     font-weight: 700;
     line-height: 1.15;
-    padding-top: var(--space-3);
+    padding-top: var(--space-1);
   }
 
   .lth-sentinel {

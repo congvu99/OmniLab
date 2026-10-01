@@ -48,10 +48,11 @@ const pathname = Astro.url.pathname;
     right: 0;
     bottom: 0;
     z-index: var(--z-nav);
-    background: var(--surface-veil);
-    backdrop-filter: blur(20px) saturate(1.4);
-    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    /* Solid, not translucent: scrolling text showing through the bar read as
+       content "floating" under the tab labels. */
+    background: var(--surface);
     border-top: 1px solid var(--line);
+    box-shadow: var(--shadow-bar);
     padding-bottom: env(safe-area-inset-bottom);
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
