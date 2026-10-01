@@ -203,3 +203,15 @@ Dùng khi phát hiện lỗi trong **nội dung gốc** (dịch sai nghĩa, sai 
 
 </ReviewNote>
 ```
+
+## Lĩnh vực tự biên soạn (`nghe-tai-chinh`)
+
+Khác với hai lĩnh vực dịch/chuyển đổi, nội dung `nghe-tai-chinh` do OmniLab tự viết. Quy ước:
+
+- **Nguồn "gốc" là snapshot markdown** trong `content-sources/nghe-tai-chinh/<NN-module>/<NN-slug>.md`. MDX = snapshot + `<Disclaimer />` + `<RealLife>`. Sửa nội dung chính thì sửa **cả hai** file, nếu không `verify:fidelity` báo lệch.
+- **Không đặt `isFinance`** trong YAML: cờ đó bật chiến lược so khớp với `content-sources/finance/index.html`. Thay vào đó mỗi bài tự chèn `<Disclaimer />` ngay dưới frontmatter (extractor bỏ qua component này).
+- **Giọng văn như một chương sách:** có nhân vật dẫn chuyện xuyên suốt (Lan, chuyên viên phân tích trẻ, và anh Quân, trưởng phòng; nhân vật hư cấu, đã ghi rõ ở bài đầu), số liệu nghiên cứu có nguồn, khối `> **Mẹo:**`, và mục **Đọc thêm** nói rõ *vì sao nên đọc* và *giúp được gì*.
+- **Sách giới thiệu phải tìm được ở Việt Nam:** ưu tiên bản tiếng Việt đã kiểm tra trên nhà sách (Fahasa, Tiki, trang nhà xuất bản) và ghi link ở mục Nguồn; sách tiếng Anh chỉ dùng khi đọc online miễn phí.
+- **Số khối `<RealLife>`:** 1–3 mỗi bài (thay cho 3–5), vì câu chuyện dẫn của Lan đã đóng vai ví dụ chính; mỗi bài có 1–2 `<Figure added>` trong `src/assets/illustrations/nghe-tai-chinh/`.
+- **Văn bản pháp luật:** ghi kèm văn bản sửa đổi còn hiệu lực (ví dụ Luật 56/2024/QH15 sửa Luật Chứng khoán) và khuyên đọc văn bản hợp nhất.
+- **Số liệu thời sự** (lãi suất, thuế suất, mức phạt cụ thể) chỉ ghi khi kèm văn bản/nguồn và ngày; ví dụ tính toán ghi "số giả định".

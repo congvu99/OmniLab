@@ -11,20 +11,20 @@
 | **Nội dung** | Domain YAML + lesson MDX, ID = `domain/module/slug` |
 | **Lưu trữ** | localStorage (`omnilab:v1:state`) + fallback in-memory |
 | **Tìm kiếm** | MiniSearch v7.2.0, xử lý dấu Tiếng Việt |
-| **SVG** | 78 tệp minh họa (kien-truc/)
+| **SVG** | 97 tệp minh họa (kien-truc/, tai-chinh/, nghe-tai-chinh/)
 | **Lưu ý v1** | Offline không hỗ trợ; progress = localStorage (private mode = in-memory, không persist) |
 
 ## Cấu trúc thư mục
 
 ```
 src/
-├── assets/illustrations/           # 78 SVG
+├── assets/illustrations/           # 97 SVG
 ├── components/
 │   ├── islands/: BookmarkButton, ProgressRing (client JS)
 │   ├── lesson/: RealLife, Figure, Disclaimer
 │   └── shell/, domain/
 ├── content/
-│   ├── domains/: kien-truc.yaml, tai-chinh.yaml
+│   ├── domains/: kien-truc.yaml, tai-chinh.yaml, nghe-tai-chinh.yaml
 │   └── lessons/: MDX by domain/module/slug
 ├── lib/: progress-store.ts, search-index.ts, lesson-id.ts
 ├── pages/: routes (home, domains, hoc/*, search, saved, 404)
@@ -36,13 +36,14 @@ src/
 **Domains** (YAML):
 - `kien-truc`: 27 bài, 4 modules, CC BY 4.0
 - `tai-chinh`: 23 bài, 1 module (12 tuần), license pending
+- `nghe-tai-chinh`: 14 bài, 7 modules (tổng quan + 6 nhóm kỹ năng), OmniLab tự biên soạn; snapshot ở `content-sources/nghe-tai-chinh/`, mỗi bài tự chèn `<Disclaimer />` (domain không đặt `isFinance`)
 
 **Lessons** (MDX):
 - Path: `src/content/lessons/{domain}/{module}/{NN-slug}.mdx`
 - Lesson ID (bất biến): `{domain}/{module}/{slug}`
 - URL: `/hoc/{domain}/{module}/{slug}`
 - Frontmatter: domain, module, order, title, summary, source (snapshot), examplesReviewed (false→true by fact-check agent)
-- 167 khối RealLife (≤ 90 tiếng = âm tiết, bài ngắn 1-2 khối)
+- 196 khối RealLife (≤ 90 tiếng = âm tiết, bài ngắn 1-2 khối; `nghe-tai-chinh` 1–3 khối/bài vì câu chuyện dẫn đã mang ví dụ)
 
 **Verify-fidelity**: Gate trong `pnpm build`, loại bỏ `<RealLife>`, `<Figure added>`, `<Disclaimer>` → so sánh snapshot giữ nguyên nội dung gốc.
 

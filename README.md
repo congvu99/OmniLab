@@ -2,14 +2,15 @@
 
 App học tập đa lĩnh vực, giao diện kiểu ứng dụng iPhone (ưu tiên mobile, có bản desktop). Nội dung gốc được giữ nguyên, bổ sung ví dụ đời sống và minh hoạ SVG để dễ hiểu hơn.
 
-v1 có 2 lĩnh vực:
+Có 3 lĩnh vực:
 
 | Lĩnh vực | Số bài | Nguồn |
 |---|---|---|
 | Kiến trúc hệ thống | 27 | Bản dịch tiếng Việt của [The System Design Primer](https://github.com/donnemartin/system-design-primer) |
 | Tài chính cá nhân | 23 | Lộ trình nền tảng tài chính 12 tuần (sổ tay thực hành) |
+| Nghề tài chính | 14 | OmniLab tự biên soạn: 6 nhóm kỹ năng ngoài kiến thức tài chính (dữ liệu, vĩ mô, pháp lý, hành vi, giao tiếp, phân tích ngành), mỗi nhóm một bài "hiểu nhanh" và một bài quy trình học, nguồn và sách tiếng Việt nên đọc |
 
-Tổng cộng 167 khối "Ví dụ đời sống", 78 minh hoạ SVG mới, 44 ảnh gốc.
+Tổng cộng 196 khối "Ví dụ đời sống", 97 minh hoạ SVG mới, 44 ảnh gốc.
 
 ## Tính năng
 
@@ -56,4 +57,5 @@ Site tĩnh (`dist/`), Railpack tự nhận Astro và phục vụ bằng Caddy th
 
 - Nội dung Kiến trúc hệ thống: The System Design Primer — Donne Martin và cộng đồng, giấy phép [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Ảnh gốc giữ nguyên chú thích nguồn.
 - Nội dung Tài chính cá nhân: giấy phép chưa xác định (chờ chủ sở hữu xác nhận).
+- Nội dung Nghề tài chính: OmniLab tự biên soạn từ nguồn công khai (CFA Institute, WEF, ACCA, IMF, văn bản pháp luật Việt Nam), mỗi bài ghi nguồn ở cuối; đã qua fact-check độc lập 2026-10-01 (3 báo cáo trong `plans/261001-finance-expert-skills-domain/reports/`).
 - Nội dung chỉ nhằm mục đích học tập, không phải tư vấn tài chính hay đầu tư.

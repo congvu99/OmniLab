@@ -50,7 +50,7 @@ OmniLab là app học tập tĩnh (Astro 7) chạy hoàn toàn trong trình duy�
 
 ## Mô hình dữ liệu nội dung
 
-**Domain** (YAML): `kien-truc` (27 bài), `tai-chinh` (23 bài). Mỗi domain có modules + metadata màu accent.
+**Domain** (YAML): `kien-truc` (27 bài), `tai-chinh` (23 bài), `nghe-tai-chinh` (14 bài, tự biên soạn, fidelity so 1:1 với `content-sources/nghe-tai-chinh/`). Mỗi domain có modules + metadata màu accent.
 
 **Lesson ID** (bất biến): `{domain}/{module}/{slug}` — dùng làm khóa localStorage + lịch sử.
 

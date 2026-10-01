@@ -7,8 +7,8 @@ Trạng thái: toàn bộ 7 phase trong [plan v1](../plans/260928-1725-omnilab-v
 | Hạng mục | Kết quả |
 |---|---|
 | Lĩnh vực / module / bài | 2 / 10 (Kiến trúc 4, Tài chính 6) / 50 (27 + 23) |
-| Ví dụ đời sống (`<RealLife>`) | 167 khối, cả 50 bài `examplesReviewed: true` sau fact-check agent |
-| Minh hoạ | 78 SVG mới (inline, theo theme) + 44 ảnh gốc có ghi nguồn |
+| Ví dụ đời sống (`<RealLife>`) | 196 khối, cả 64 bài `examplesReviewed: true` sau fact-check agent |
+| Minh hoạ | 97 SVG mới (inline, theo theme; 19 cho `nghe-tai-chinh`) + 44 ảnh gốc có ghi nguồn |
 | Tiến độ, bookmark, Học tiếp | `localStorage` (`omnilab:v1:state`), fallback in-memory ở private mode |
 | Tìm kiếm | MiniSearch, gập dấu tiếng Việt; index ~84KB gzip, chỉ tải ở `/tim-kiem` |
 | JS mỗi trang | 6,6–13KB gzip (ngân sách 30KB) |
@@ -25,7 +25,7 @@ Chưa kiểm được trong môi trường dev (chủ dự án làm sau deploy):
 | 2 | Đọc offline (service worker) | Cao với người đọc di động | Trung bình–cao | Cần chiến lược version cache cẩn thận |
 | 3 | Ảnh bìa cho 50 bài | Cảm giác app | Thấp (tự tạo ảnh) | Theo [cover-image-prompt.md](cover-image-prompt.md) |
 | 4 | Quiz / flashcard cuối bài | Học chủ động | Trung bình | Là nội dung mới, cần fact-check như ví dụ |
-| 5 | Thêm lĩnh vực | Mở rộng | Theo nội dung | Chỉ cần YAML + thư mục bài ([content-authoring-guide.md](content-authoring-guide.md)) |
+| 5 | Thêm lĩnh vực | Mở rộng | Theo nội dung | Chỉ cần YAML + thư mục bài ([content-authoring-guide.md](content-authoring-guide.md)). Đã thêm `nghe-tai-chinh` (14 bài, 19 SVG, 2026-10-01), đã fact-check |
 | 6 | Giảm kích thước search index | Tải nhanh hơn | Thấp | Cắt text dài, giữ tiêu đề + heading |
 | 7 | Analytics tôn trọng riêng tư | Biết bài nào được đọc | Thấp | Cần cập nhật CSP `connect-src` |
 | 8 | Nâng cỡ chữ SVG cũ (11–12px) lên ≥13 | Mobile readability | Thấp | Follow-up từ audit UX 2026-09-30 |
