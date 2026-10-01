@@ -87,19 +87,20 @@ function createTrackedTemplate() {
   };
 }
 
-function setup({ bookmarks = [], lessons = [] } = {}) {
+function setup({ bookmarks = [], lessons = [], withLoading = false, fetchError = false } = {}) {
   const store = createProgressStore({ storage: createFakeStorage() });
   for (const id of bookmarks) store.toggleBookmark(id);
 
   const emptyState = createFakeEmptyState();
   const rowsList = createFakeRowsList();
   const { template, built } = createTrackedTemplate();
-  const els = { root: {}, emptyState, rowsList, template };
+  const loadingState = withLoading ? { hidden: false } : undefined;
+  const els = { root: {}, emptyState, rowsList, template, loadingState };
 
-  const fetchLessonsIndex = () => Promise.resolve(lessons);
+  const fetchLessonsIndex = () => (fetchError ? Promise.reject(new Error('offline')) : Promise.resolve(lessons));
   const cleanup = attachSavedList(els, store, fetchLessonsIndex);
 
-  return { store, emptyState, rowsList, built, cleanup };
+  return { store, emptyState, rowsList, built, cleanup, loadingState };
 }
 
 async function flush() {
@@ -233,5 +234,46 @@ describe('attachSavedList: cleanup', () => {
     store.toggleBookmark('b'); // would normally trigger a re-render
     await flush();
     expect(rowsList.children).toHaveLength(0); // render() never ran again
+  });
+});
+
+describe('attachSavedList: loading skeleton', () => {
+  const lessons = [{ id: 'a', url: '/a', title: 'A', domainTitle: 'D' }];
+
+  it('hides the skeleton synchronously when there are no bookmarks (no fetch wait)', () => {
+    const { loadingState, emptyState } = setup({ bookmarks: [], withLoading: true });
+    expect(loadingState.hidden).toBe(true);
+    expect(emptyState.hidden).toBe(false);
+  });
+
+  it('keeps the skeleton (and not the empty state) while the lessons index is pending', () => {
+    const { loadingState, emptyState } = setup({ bookmarks: ['a'], lessons, withLoading: true });
+    expect(loadingState.hidden).toBe(false);
+    expect(emptyState.hidden).toBe(true);
+  });
+
+  it('swaps the skeleton for rows once the index resolves', async () => {
+    const { loadingState, rowsList } = setup({ bookmarks: ['a'], lessons, withLoading: true });
+    await flush();
+    expect(loadingState.hidden).toBe(true);
+    expect(rowsList.hidden).toBe(false);
+  });
+
+  it('swaps the skeleton for the empty state when the fetch fails', async () => {
+    const { loadingState, emptyState } = setup({ bookmarks: ['a'], withLoading: true, fetchError: true });
+    await flush();
+    expect(loadingState.hidden).toBe(true);
+    expect(emptyState.hidden).toBe(false);
+  });
+
+  it('reads the optional loading element from the DOM contract', () => {
+    const loading = {};
+    const root = {
+      querySelector(sel) {
+        if (sel === '[data-saved-loading]') return loading;
+        return {};
+      },
+    };
+    expect(readSavedListElements(root)?.loadingState).toBe(loading);
   });
 });

@@ -1,0 +1,132 @@
+---
+// Thin top progress bar for ClientRouter soft navigations: tapping a link
+// otherwise gives no feedback until the next page has been fetched and
+// swapped in, which on a slow connection reads as "the tap didn't register".
+// Purely decorative (aria-hidden) — screen readers already get the page
+// title/focus change on swap. `transition:persist` carries the same node
+// across swaps (both layouts mount it under the same persist id), so the
+// "finish" animation started in `astro:after-swap` plays out on the new page
+// instead of being cut off by the swap.
+---
+
+<div class="nav-progress" data-nav-progress aria-hidden="true" transition:persist="nav-progress"></div>
+
+<style>
+  .nav-progress {
+    position: fixed;
+    top: env(safe-area-inset-top, 0px);
+    left: 0;
+    right: 0;
+    z-index: var(--z-toast);
+    height: 3px;
+    background: var(--accent);
+    transform-origin: left center;
+    transform: scaleX(0);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--dur-fast) var(--ease-out);
+  }
+
+  .nav-progress.is-visible {
+    opacity: 1;
+    transition:
+      transform 300ms var(--ease-out),
+      opacity var(--dur-fast) var(--ease-out);
+  }
+
+  /* Run to 100% first, then fade (opacity delayed until the fill lands). */
+  .nav-progress.is-done {
+    opacity: 0;
+    transition:
+      transform var(--dur-fast) var(--ease-out),
+      opacity var(--dur) var(--ease-out) var(--dur-fast);
+  }
+
+  /* No creeping/width animation: a static full-width bar that just appears
+     and fades is enough to say "loading". */
+  @media (prefers-reduced-motion: reduce) {
+    .nav-progress,
+    .nav-progress.is-visible,
+    .nav-progress.is-done {
+      transform: none !important;
+      transition: opacity var(--dur-fast) linear;
+    }
+  }
+</style>
+
+<script>
+  // Module script: runs once per browser session (ClientRouter skips
+  // re-executing it on swaps), so the document-level listeners below are
+  // registered exactly once. The bar node is looked up on every event
+  // because it may be a fresh node if persistence ever fails.
+
+  /** Fast navigations (cached/prefetched pages) finish before this and never show the bar — avoids a flash on every tap. */
+  const SHOW_DELAY_MS = 150;
+  const TRICKLE_INTERVAL_MS = 300;
+  /** Creep towards but never reach this until the swap actually happens. */
+  const TRICKLE_CEILING = 0.9;
+  const HIDE_AFTER_DONE_MS = 450;
+
+  let showTimer: ReturnType<typeof setTimeout> | undefined;
+  let trickleTimer: ReturnType<typeof setInterval> | undefined;
+  let hideTimer: ReturnType<typeof setTimeout> | undefined;
+  let shown = false;
+  let progress = 0;
+
+  function getBar(): HTMLElement | null {
+    return document.querySelector<HTMLElement>('[data-nav-progress]');
+  }
+
+  function setProgress(bar: HTMLElement, value: number) {
+    progress = value;
+    bar.style.transform = `scaleX(${value})`;
+  }
+
+  function clearTimers() {
+    clearTimeout(showTimer);
+    clearInterval(trickleTimer);
+    clearTimeout(hideTimer);
+  }
+
+  function reset(bar: HTMLElement) {
+    shown = false;
+    bar.classList.remove('is-visible', 'is-done');
+    setProgress(bar, 0);
+  }
+
+  function start() {
+    clearTimers();
+    const bar = getBar();
+    if (!bar) return;
+    // A new navigation can start while the previous one is still finishing
+    // (or was superseded mid-fetch) — always restart from a clean state.
+    reset(bar);
+
+    showTimer = setTimeout(() => {
+      shown = true;
+      bar.classList.add('is-visible');
+      setProgress(bar, 0.2);
+      trickleTimer = setInterval(() => {
+        setProgress(bar, progress + (TRICKLE_CEILING - progress) * 0.15);
+      }, TRICKLE_INTERVAL_MS);
+    }, SHOW_DELAY_MS);
+  }
+
+  function finish() {
+    clearTimers();
+    const bar = getBar();
+    if (!bar) return;
+    if (!shown) {
+      reset(bar);
+      return;
+    }
+    setProgress(bar, 1);
+    bar.classList.add('is-done');
+    hideTimer = setTimeout(() => reset(bar), HIDE_AFTER_DONE_MS);
+  }
+
+  // Failed fetches make Astro fall back to a full page load, which tears
+  // this page (and the bar) down anyway — no extra error path needed.
+  document.addEventListener('astro:before-preparation', start);
+  document.addEventListener('astro:after-swap', finish);
+</script>

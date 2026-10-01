@@ -9,7 +9,18 @@ import X from '@lucide/astro/icons/x';
 ---
 
 <div data-saved-list>
-  <div class="empty-state" data-saved-empty tabindex="-1">
+  <!-- Loading state (default): with bookmarks present, the lessons index
+       must load before rows can render — without this the empty state
+       would flash first. No bookmarks → controller swaps to the empty state
+       synchronously, so the skeleton never shows for that case. -->
+  <div class="saved-skeleton" data-saved-loading>
+    <span class="skeleton saved-skeleton__row"></span>
+    <span class="skeleton saved-skeleton__row"></span>
+    <span class="skeleton saved-skeleton__row"></span>
+    <span class="sr-only">Đang tải bài đã lưu…</span>
+  </div>
+
+  <div class="empty-state" data-saved-empty tabindex="-1" hidden>
     <Bookmark size={40} stroke-width={1.75} aria-hidden="true" />
     <p class="empty-title">Chưa có bài đã lưu</p>
     <p class="empty-body">
@@ -60,6 +71,26 @@ import X from '@lucide/astro/icons/x';
 
   .empty-body {
     max-width: 32ch;
+  }
+
+  .saved-skeleton[hidden] {
+    display: none;
+  }
+
+  .saved-skeleton {
+    margin: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    background: var(--surface);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  /* Matches a real row's 44px min tap height minus its vertical padding. */
+  .saved-skeleton__row {
+    height: 40px;
   }
 
   .saved-rows {

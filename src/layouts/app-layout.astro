@@ -9,6 +9,7 @@ import { domainAccentStyle } from './domain-accent';
 import TabBar from '../components/shell/tab-bar.astro';
 import SidebarNav from '../components/shell/sidebar-nav.astro';
 import LargeTitleHeader from '../components/shell/large-title-header.astro';
+import NavigationProgressBar from '../components/shell/navigation-progress-bar.astro';
 
 interface Props {
   title: string;
@@ -29,6 +30,7 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
     <ClientRouter />
   </head>
   <body>
+    <NavigationProgressBar />
     <a href="#main-content" class="skip-link">Bỏ qua, đến nội dung chính</a>
     <SidebarNav />
     <div class="app-shell">

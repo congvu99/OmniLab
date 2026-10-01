@@ -162,3 +162,28 @@ p {
 
 /* View Transitions (forward/back slide, reduced-motion handling): see
    view-transitions.css — split out to keep this file under ~150 lines. */
+
+/* --- Skeleton placeholder: shown by data islands while /lessons-index.json
+   is in flight, so they never flash a wrong "empty" state first. Callers
+   size the block to match the real content (no layout shift on swap). --- */
+.skeleton {
+  display: block;
+  background: var(--surface-2);
+  border-radius: var(--radius-row);
+}
+
+.skeleton[hidden] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .skeleton {
+    animation: ol-skeleton-pulse 1.2s ease-in-out infinite;
+  }
+}
+
+@keyframes ol-skeleton-pulse {
+  50% {
+    opacity: 0.55;
+  }
+}

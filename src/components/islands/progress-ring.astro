@@ -32,8 +32,9 @@ const fontSize = Math.max(10, Math.round(size * 0.26));
   data-domain={domainId}
   data-progress-ring
   data-show-fraction={showFraction ? 'true' : 'false'}
+  data-loading
   role="img"
-  aria-label="Chưa bắt đầu"
+  aria-label="Đang tải tiến độ"
 >
   <span class="progress-ring-circle" style={`--size:${size}px`}>
     <svg class="progress-ring-svg" viewBox={`0 0 ${size} ${size}`} width={size} height={size} aria-hidden="true">
@@ -75,6 +76,19 @@ const fontSize = Math.max(10, Math.round(size * 0.26));
 
   .progress-ring-svg circle {
     transition: stroke-dashoffset var(--dur) var(--ease-out);
+  }
+
+  /* Until the script applies the real ratio the fill circle has no
+     stroke-dasharray yet, i.e. it would render as a full (100%) ring — hide
+     it and pulse the empty track instead. */
+  .progress-ring-slot[data-loading] [data-progress-ring-fill] {
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .progress-ring-slot[data-loading] .progress-ring-svg {
+      animation: ol-skeleton-pulse 1.2s ease-in-out infinite;
+    }
   }
 
   .progress-ring-text {
@@ -119,7 +133,12 @@ const fontSize = Math.max(10, Math.round(size * 0.26));
       try {
         lessons = await fetchLessonsIndex();
       } catch {
-        return; // stays at the static server-rendered 0% ring — acceptable degradation
+        // Degrade to the empty 0% ring (track only) — acceptable.
+        for (const ring of rings) {
+          ring.removeAttribute('data-loading');
+          ring.setAttribute('aria-label', 'Chưa bắt đầu');
+        }
+        return;
       }
       if (cancelled) return;
 
@@ -127,6 +146,9 @@ const fontSize = Math.max(10, Math.round(size * 0.26));
       unsubscribe = store.subscribe((state) => {
         for (const ring of rings) applyProgressRing(ring, state, lessons);
       });
+      // subscribe() invokes the callback synchronously, so every ring
+      // already holds its real ratio here.
+      for (const ring of rings) ring.removeAttribute('data-loading');
     })();
 
     return () => {

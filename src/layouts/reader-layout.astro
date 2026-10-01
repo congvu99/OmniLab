@@ -8,6 +8,7 @@ import { ClientRouter } from 'astro:transitions';
 import BaseHead from './base-head.astro';
 import { domainAccentStyle } from './domain-accent';
 import ReaderTopBar from '../components/shell/reader-top-bar.astro';
+import NavigationProgressBar from '../components/shell/navigation-progress-bar.astro';
 import '../styles/prose.css';
 
 interface Props {
@@ -29,6 +30,7 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
     <ClientRouter />
   </head>
   <body>
+    <NavigationProgressBar />
     <a href="#reader-content" class="skip-link">Bỏ qua, đến nội dung chính</a>
     <ReaderTopBar title={title} backHref={backHref} backLabel={backLabel}>
       <slot name="top-actions" slot="top-actions" />

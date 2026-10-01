@@ -15,6 +15,8 @@ export interface SavedListElements {
   emptyState: HTMLElement;
   rowsList: HTMLUListElement;
   template: HTMLTemplateElement;
+  /** Skeleton shown until the first render settles; optional so markup without it keeps working. */
+  loadingState?: HTMLElement;
 }
 
 /** Reads and validates the DOM contract from a `[data-saved-list]` root; `null` if anything's missing. */
@@ -23,7 +25,8 @@ export function readSavedListElements(root: HTMLElement): SavedListElements | nu
   const rowsList = root.querySelector<HTMLUListElement>('[data-saved-rows]');
   const template = root.querySelector<HTMLTemplateElement>('[data-saved-row-template]');
   if (!emptyState || !rowsList || !template) return null;
-  return { root, emptyState, rowsList, template };
+  const loadingState = root.querySelector<HTMLElement>('[data-saved-loading]') ?? undefined;
+  return { root, emptyState, rowsList, template, loadingState };
 }
 
 /** Wires up one saved-list instance. Returns a cleanup function to call before re-init. */
@@ -32,7 +35,7 @@ export function attachSavedList(
   store: ProgressStore,
   fetchLessonsIndex: () => Promise<Pick<LessonIndexEntry, 'id' | 'url' | 'title' | 'domainTitle'>[]>,
 ): () => void {
-  const { emptyState, rowsList, template } = els;
+  const { emptyState, rowsList, template, loadingState } = els;
 
   // Set by a remove button's click handler right before it mutates the
   // store (which synchronously re-triggers the subscribe -> render() below);
@@ -43,7 +46,13 @@ export function attachSavedList(
   // re-render.
   let pendingFocusIndex: number | null = null;
 
+  /** Hides the loading skeleton; every render() outcome (rows, empty, fetch error) calls this. */
+  function settle() {
+    if (loadingState) loadingState.hidden = true;
+  }
+
   function showEmpty() {
+    settle();
     emptyState.hidden = false;
     rowsList.hidden = true;
     rowsList.replaceChildren();
@@ -113,6 +122,7 @@ export function attachSavedList(
     if (appended === 0) {
       showEmpty();
     } else {
+      settle();
       emptyState.hidden = true;
       rowsList.hidden = false;
     }
