@@ -1,0 +1,90 @@
+---
+nguon: OmniLab — Nghiên cứu kỹ năng bổ trợ nghề tài chính
+tac-gia: OmniLab (tổng hợp từ nguồn công khai)
+ngay-viet: 2026-10-01
+trang-thai: hoan-thanh
+---
+
+# Bản đồ hành trình: học sáu nhóm trong 12 tháng mà không bỏ cuộc
+
+## Ly cà phê sáng thứ Hai
+
+Sáng thứ Hai sau buổi trình bày, Lan gõ cửa phòng anh Quân với một danh sách dài: học Python, học SQL, đọc sách vĩ mô, ôn CFA cấp II, học tiếng Anh, học thuyết trình. "Em muốn học hết trong ba tháng."
+
+Anh Quân đọc xong, đẩy tờ giấy lại. "Ba tháng nữa em sẽ bỏ cả danh sách. Anh thấy chuyện này mỗi năm. Người ta không bỏ cuộc vì lười, mà vì đặt kế hoạch không ai làm nổi."
+
+Anh lấy bút, gạch bớt một nửa. "Mỗi tuần 6–8 tiếng thôi. Mỗi quý tập trung một, hai nhóm. Và mỗi nhóm phải ra một sản phẩm cụ thể, thứ em đưa cho người khác xem được. Không có sản phẩm thì coi như chưa học."
+
+Bài này là tờ giấy sau khi anh Quân gạch bớt.
+
+## Bước 1: Chọn lộ trình chứng chỉ
+
+Chứng chỉ không thay được năng lực, nhưng cho bạn một khung học có kỷ luật và một tấm vé vào nghề. Ở Việt Nam có ba hướng phổ biến:
+
+| Lộ trình | Phù hợp với | Thời gian thường gặp | Ghi chú |
+|---|---|---|---|
+| **Chứng chỉ hành nghề chứng khoán** do Ủy ban Chứng khoán Nhà nước cấp | Môi giới, phân tích, quản lý quỹ tại Việt Nam | Vài tháng đến 1 năm | Bắt buộc để hành nghề; gồm chứng chỉ môi giới, phân tích tài chính, quản lý quỹ |
+| **CFA** (CFA Institute) | Phân tích đầu tư, quản lý danh mục | Thường 3–4 năm cho 3 cấp; nhận charter cần thêm kinh nghiệm làm việc | Tiếng Anh; nhiều nhà tuyển dụng trong ngành đầu tư coi trọng |
+| **ACCA hoặc CPA** | Tài chính doanh nghiệp, kế toán, kiểm toán, giám đốc tài chính | ACCA thường 3–4 năm, kèm 3 năm kinh nghiệm làm việc; CPA tùy chương trình | Thiên về kế toán, kiểm toán, quản trị tài chính |
+
+Một điểm mới đáng chú ý: Thông tư 135/2025/TT-BTC về hành nghề chứng khoán có hiệu lực từ 09/02/2026, thay thế Thông tư 197/2015. Thông tư mở rộng việc quy đổi chứng chỉ quốc tế, trong đó CFA từ cấp II trở lên được quy đổi tương đương một số chứng chỉ chuyên môn về chứng khoán. Người theo CFA vì thế có thêm lợi thế khi xin chứng chỉ hành nghề trong nước. Chi tiết xem ở nhóm Pháp lý, đạo đức và thuế.
+
+> **Mẹo:** Nếu chưa chắc mình hợp hướng nào, hãy làm việc thật 6–12 tháng ở một vị trí tài chính trước khi đóng phí cho một chứng chỉ nhiều năm. Công việc thật sẽ trả lời rõ hơn mọi bài trắc nghiệm hướng nghiệp.
+
+## Bước 2: Sắp thứ tự sáu nhóm
+
+Không có thứ tự đúng cho mọi người. Thứ tự dưới đây hợp với phần lớn người mới đi làm:
+
+1. **Quý 1: Dữ liệu (Excel) và tài chính hành vi.** Excel dùng mỗi ngày nên học trước thì có lợi ngay. Tài chính hành vi nhẹ, đọc sách là chính, và giúp bạn bắt đầu nhật ký quyết định sớm.
+2. **Quý 2: Dữ liệu (Python, SQL) và kinh tế vĩ mô.** Học Python bằng chính số liệu vĩ mô thì một công hai việc.
+3. **Quý 3: Pháp lý, đạo đức và giao tiếp.** Đây cũng là lúc hợp để ôn thi chứng chỉ hành nghề.
+4. **Quý 4: Chọn ngành chuyên sâu.** Dùng mọi kỹ năng ở ba quý trước để viết một báo cáo ngành hoàn chỉnh.
+
+## Bước 3: Chia thời gian theo tuần
+
+Với 6–8 giờ mỗi tuần:
+
+- **3–4 giờ học có cấu trúc:** khóa học, sách, bài tập.
+- **2–3 giờ làm sản phẩm:** mô hình, bài phân tích, memo.
+- **1 giờ đọc tin và ghi nhật ký:** tin kinh tế, nhật ký quyết định, nhật ký dự báo.
+
+Một năm như vậy là khoảng 300–400 giờ: không nhiều, nhưng đủ để tạo khác biệt rõ nếu đều đặn. Thời gian gợi ý ở bài quy trình học của sáu nhóm cộng lại từ khoảng 380 đến hơn 500 giờ, nên vào những quý nặng như quý học Python, hãy tăng lên 8–10 giờ mỗi tuần, hoặc chấp nhận kéo dài hành trình thêm vài tháng.
+
+## Bước 4: Học sao cho không quên
+
+Các nhà tâm lý học nhận thức đã kiểm chứng qua rất nhiều thí nghiệm rằng hai kỹ thuật sau hiệu quả hơn đọc đi đọc lại: **tự kiểm tra** (cố nhớ lại thay vì đọc lại) và **giãn cách** (ôn lại sau vài ngày, vài tuần thay vì ôn dồn). Áp vào đây:
+
+- Sau mỗi buổi học, viết ra giấy ba ý chính mà không nhìn tài liệu.
+- Cuối mỗi tháng, đọc lại sản phẩm của tháng trước và tự hỏi: giờ mình sẽ làm khác chỗ nào?
+- Dạy lại cho người khác. Giải thích cho một người bạn không làm tài chính là cách nhanh để biết mình đã hiểu thật chưa.
+
+## Bước 5: Đo tiến bộ bằng sản phẩm
+
+Cuối năm, bạn nên có trong tay:
+
+- Một mô hình tài chính ba báo cáo tự dựng.
+- Một notebook Python phân tích dữ liệu thật.
+- Nhật ký quyết định và nhật ký dự báo ít nhất 6 tháng.
+- Một bảng tra quy định pháp lý chính của nghề mình.
+- Một memo một trang và một bài thuyết trình có ghi hình.
+- Một báo cáo ngành hoàn chỉnh.
+
+Sáu sản phẩm đó là hồ sơ năng lực của bạn. Khi đi phỏng vấn, chúng thuyết phục hơn mọi dòng "thành thạo Excel, có khả năng làm việc nhóm" trong CV.
+
+## Đọc thêm
+
+- ***Học siêu tốc – Ultralearning* (Scott Young)**, bản tiếng Việt của 1980 Books (NXB Công Thương); có trên Fahasa nhưng hay tạm hết hàng, nên nếu chưa mua được thì tìm ở thư viện. *Vì sao nên đọc:* tác giả tự học hết chương trình Khoa học máy tính của MIT trong khoảng một năm, rồi tổng hợp chín nguyên tắc tự học từ kinh nghiệm đó và từ nghiên cứu về cách học. *Giúp được gì:* bạn biết cách tự thiết kế một dự án học có đầu ra rõ, đúng tinh thần "mỗi chặng một sản phẩm" của bài này.
+- ***Cách chinh phục toán và khoa học – A Mind for Numbers* (Barbara Oakley)**, bản tiếng Việt của Alpha Books. *Vì sao nên đọc:* tác giả từng "dốt toán" rồi thành giáo sư kỹ thuật; sách giải thích cách não học những môn khó như thống kê, lập trình. *Giúp được gì:* các kỹ thuật như tự kiểm tra, chia nhỏ kiến thức, học giãn cách giúp bạn nhớ lâu hơn với cùng số giờ học.
+- **Trang chương trình CFA và trang của Ủy ban Chứng khoán Nhà nước.** *Vì sao nên đọc:* điều kiện, lệ phí và lịch thi thay đổi theo năm. *Giúp được gì:* lên kế hoạch dựa trên thông tin hiện hành, không dựa vào bài viết cũ trên mạng.
+
+## Nguồn
+
+- [Thư viện Pháp luật — Thông tư 135/2025/TT-BTC quy định về hành nghề chứng khoán](https://thuvienphapluat.vn/phap-luat-nha-dat/da-co-thong-tu-1352025ttbtc-quy-dinh-ve-hanh-nghe-chung-khoan-13857.html)
+- [Luật sư Việt Nam — Bộ Tài chính mở rộng quy đổi nhiều chứng chỉ chuyên môn về chứng khoán](https://lsvn.vn/bo-tai-chinh-mo-rong-quy-doi-nhieu-chung-chi-chuyen-mon-ve-chung-khoan-a168104.html)
+- [CFA Institute — CFA Program](https://www.cfainstitute.org/programs/cfa-program)
+- [ACCA — Why the ACCA Qualification? (thi, đạo đức nghề và 3 năm kinh nghiệm)](https://www.accaglobal.com/gb/en/qualifications/glance/acca/overview.html)
+- [ACCA Careers — Everything you need to know about ACCA (thời gian hoàn thành 3–4 năm)](https://jobs.accaglobal.com/article/everything-you-need-to-know-about-acca/)
+- [Ủy ban Chứng khoán Nhà nước](https://ssc.gov.vn/)
+- [Washington University in St. Louis — tổng hợp nghiên cứu về tự kiểm tra và học giãn cách](https://source.washu.edu/2014/04/science-of-learning-book-offers-tips-to-make-it-stick/)
+- [Fahasa — Cách chinh phục toán và khoa học](https://www.fahasa.com/cach-chinh-phuc-toan-va-khoa-hoc-a-mind-for-numbers-tai-ban-2022.html)
+- [Fahasa — Học siêu tốc (Scott Young, 1980 Books)](https://www.fahasa.com/hoc-sieu-toc.html)

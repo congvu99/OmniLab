@@ -1,0 +1,38 @@
+<svg viewBox="0 0 360 300" width="100%" role="img" aria-labelledby="svg-ntc-bon-quy-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-ntc-bon-quy-title">Lộ trình bốn quý: quý 1 Excel và tài chính hành vi, quý 2 Python và vĩ mô, quý 3 pháp lý và giao tiếp, quý 4 viết báo cáo ngành là đích</title>
+  <defs>
+    <marker id="svg-ntc-bq-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
+    </marker>
+  </defs>
+
+  <path d="M30 26 V284" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-ntc-bq-arrow)" />
+
+  <g stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="30" y1="50" x2="60" y2="50" stroke="var(--ink-2)" />
+    <line x1="30" y1="116" x2="60" y2="116" stroke="var(--ink-2)" />
+    <line x1="30" y1="182" x2="60" y2="182" stroke="var(--ink-2)" />
+    <line x1="30" y1="248" x2="60" y2="248" stroke="var(--accent)" />
+    <circle cx="30" cy="50" r="6" fill="var(--accent)" />
+    <circle cx="30" cy="116" r="6" fill="var(--accent)" />
+    <circle cx="30" cy="182" r="6" fill="var(--accent)" />
+    <circle cx="30" cy="248" r="9" fill="var(--accent)" stroke="var(--surface-2)" />
+    <rect x="60" y="27" width="290" height="46" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" />
+    <rect x="60" y="93" width="290" height="46" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" />
+    <rect x="60" y="159" width="290" height="46" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" />
+    <rect x="60" y="225" width="290" height="46" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  </g>
+
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">
+    <text x="76" y="55">Q1</text>
+    <text x="76" y="121">Q2</text>
+    <text x="76" y="187">Q3</text>
+    <text x="76" y="253" fill="var(--accent)">Q4</text>
+  </g>
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" fill="var(--ink)">
+    <text x="112" y="55">Excel + hành vi</text>
+    <text x="112" y="121">Python + vĩ mô</text>
+    <text x="112" y="187">Pháp lý + giao tiếp</text>
+    <text x="112" y="253" font-weight="700">Báo cáo ngành</text>
+  </g>
+</svg>

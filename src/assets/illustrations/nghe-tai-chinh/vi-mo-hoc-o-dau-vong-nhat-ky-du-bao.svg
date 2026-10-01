@@ -1,0 +1,37 @@
+<svg viewBox="0 0 360 300" width="100%" role="img" aria-labelledby="svg-vi-mo-nhat-ky-du-bao-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-vi-mo-nhat-ky-du-bao-title">Vòng lặp nhật ký dự báo: ghi dự báo kèm mức tự tin, chờ kết quả, chấm đúng sai, điều chỉnh cách nghĩ rồi dự báo lại</title>
+  <defs>
+    <marker id="svg-nkdb-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
+    </marker>
+  </defs>
+
+  <rect x="12" y="30" width="150" height="64" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="87" y="57" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">
+    <tspan x="87" dy="0">① Ghi dự báo</tspan>
+    <tspan x="87" dy="18">+ mức tự tin</tspan>
+  </text>
+
+  <path d="M164 62 H194" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-nkdb-arrow)" />
+
+  <rect x="198" y="30" width="150" height="64" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="273" y="67" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">② Có kết quả</text>
+
+  <path d="M273 96 V202" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-nkdb-arrow)" />
+
+  <rect x="198" y="206" width="150" height="64" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="273" y="243" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">③ Chấm đúng/sai</text>
+
+  <path d="M196 238 H166" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-nkdb-arrow)" />
+
+  <rect x="12" y="206" width="150" height="64" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="87" y="233" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">
+    <tspan x="87" dy="0">④ Điều chỉnh</tspan>
+    <tspan x="87" dy="18">cách nghĩ</tspan>
+  </text>
+
+  <path d="M87 204 V98" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-nkdb-arrow)" />
+
+  <rect x="110" y="128" width="140" height="44" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <text x="180" y="155" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">Nhật ký dự báo</text>
+</svg>

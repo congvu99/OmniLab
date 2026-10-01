@@ -1,0 +1,25 @@
+<svg viewBox="0 0 360 300" width="100%" role="img" aria-labelledby="svg-ptn-bang-can-doi-ngan-hang-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-ptn-bang-can-doi-ngan-hang-title">Bảng cân đối ngân hàng: tài sản chủ yếu là cho vay khách hàng, nguồn vốn chủ yếu là tiền gửi khách hàng (một khoản nợ), vốn chủ sở hữu chỉ là phần mỏng; vốn có đủ chịu rủi ro hay không được đo bằng CAR</title>
+
+  <text x="94" y="28" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">Tài sản</text>
+  <text x="266" y="28" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">Nguồn vốn</text>
+
+  <!-- assets column -->
+  <rect x="16" y="40" width="156" height="158" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="94" y="124" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Cho vay khách hàng</text>
+  <rect x="16" y="202" width="156" height="34" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="94" y="224" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink-2)">Tài sản khác</text>
+
+  <!-- funding column: same total height as assets -->
+  <rect x="188" y="40" width="156" height="166" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="266" y="118" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)"><tspan x="266" dy="0">Tiền gửi khách hàng</tspan><tspan x="266" dy="18" fill="var(--ink-2)">(nợ)</tspan></text>
+  <rect x="188" y="210" width="156" height="26" rx="6" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <text x="266" y="228" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">Vốn chủ sở hữu</text>
+
+  <!-- both columns balance -->
+  <line x1="16" y1="250" x2="344" y2="250" stroke="var(--ink-2)" stroke-width="2" stroke-dasharray="3 6" stroke-linecap="round" />
+
+  <!-- capital adequacy note -->
+  <line x1="266" y1="240" x2="266" y2="260" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" />
+  <text x="344" y="280" text-anchor="end" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Vốn đủ chịu rủi ro? → CAR</text>
+</svg>

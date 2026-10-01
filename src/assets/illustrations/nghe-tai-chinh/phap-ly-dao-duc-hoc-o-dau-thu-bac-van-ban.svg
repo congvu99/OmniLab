@@ -1,0 +1,28 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-pldd-thu-bac-van-ban-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-pldd-thu-bac-van-ban-title">Thứ bậc văn bản pháp luật: Luật ở trên, rồi Nghị định, rồi Thông tư; khi tra cứu luôn kiểm tra hiệu lực và văn bản sửa đổi</title>
+  <defs>
+    <marker id="svg-tbvb-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)" />
+    </marker>
+  </defs>
+
+  <path d="M109 16 L139 64 L79 64 Z" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" stroke-linejoin="round" />
+  <text x="109" y="58" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">Luật</text>
+
+  <path d="M74 72 L144 72 L174 120 L44 120 Z" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" stroke-linejoin="round" />
+  <text x="109" y="101" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" fill="var(--ink)">Nghị định</text>
+
+  <path d="M39 128 L179 128 L206 172 L12 172 Z" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" stroke-linejoin="round" />
+  <text x="109" y="155" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" fill="var(--ink)">Thông tư</text>
+
+  <path d="M178 96 H220" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 5" marker-end="url(#svg-tbvb-arrow)" />
+
+  <rect x="224" y="56" width="128" height="80" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <text x="288" y="82" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">Kiểm tra</text>
+  <text x="288" y="102" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">
+    <tspan x="288" dy="0">hiệu lực +</tspan>
+    <tspan x="288" dy="18">văn bản sửa đổi</tspan>
+  </text>
+
+  <text x="180" y="204" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink-2)">Văn bản dưới không được trái văn bản trên</text>
+</svg>

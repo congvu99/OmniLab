@@ -1,0 +1,20 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-ntc-dlcn-bon-chang-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-ntc-dlcn-bon-chang-title">Bốn chặng học dữ liệu đi lên như bậc thang: Excel, SQL, Python, rồi mô hình và AI; tổng khoảng 170 đến 210 giờ</title>
+
+  <g stroke-width="2" stroke-linejoin="round">
+    <rect x="16" y="166" width="80" height="40" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" />
+    <rect x="98" y="132" width="80" height="74" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" />
+    <rect x="180" y="98" width="80" height="108" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" />
+    <rect x="262" y="64" width="80" height="142" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  </g>
+
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)" text-anchor="middle">
+    <text x="56" y="191">1 Excel</text>
+    <text x="138" y="157">2 SQL</text>
+    <text x="220" y="123">3 Python</text>
+    <text x="302" y="89" fill="var(--accent)"><tspan x="302" dy="0">4 Mô hình</tspan><tspan x="302" dy="18">+ AI</tspan></text>
+  </g>
+
+  <path d="M40 150 L120 116 L200 82 L250 61" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="4 5" />
+  <text x="302" y="50" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink-2)">≈170–210 giờ</text>
+</svg>

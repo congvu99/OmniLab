@@ -1,0 +1,24 @@
+<svg viewBox="0 0 360 300" width="100%" role="img" aria-labelledby="svg-tchv-ham-gia-tri-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-tchv-ham-gia-tri-title">Hàm giá trị của lý thuyết triển vọng: tính từ điểm tham chiếu, đường cong gãy tại điểm này; phía lãi cong lõm và thoải dần, phía lỗ dốc hơn khoảng gấp đôi rồi cũng thoải dần, nên cùng một khoản lỗ gây đau hơn niềm vui của khoản lãi tương ứng</title>
+  <defs>
+    <marker id="svg-hgt-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
+    </marker>
+  </defs>
+
+  <path d="M14 150 H346" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-start="url(#svg-hgt-arrow)" marker-end="url(#svg-hgt-arrow)" />
+  <path d="M180 288 V16" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-hgt-arrow)" />
+
+  <!-- Same distance (118) from reference point: dashes end on the curve; gain height 58, loss depth 116, about 2x -->
+  <path d="M298 150 V92" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 5" />
+  <path d="M62 150 V266" fill="none" stroke="var(--danger)" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 5" />
+
+  <path d="M30 278 C 105 258, 155 200, 180 150 C 205 125, 255 96, 330 86" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+  <circle cx="180" cy="150" r="5" fill="var(--accent)" />
+
+  <text x="188" y="30" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink-2)">Cảm nhận</text>
+  <text x="346" y="138" text-anchor="end" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">Lãi →</text>
+  <text x="14" y="138" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">← Lỗ</text>
+  <text x="188" y="172" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink-2)">Điểm tham chiếu</text>
+  <text x="70" y="184" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--danger)">Lỗ đau hơn</text>
+</svg>

@@ -1,0 +1,24 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-pldd-luat-va-dao-duc-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-pldd-luat-va-dao-duc-title">Pháp luật là mức tối thiểu; chuẩn mực đạo đức nghề đặt mức cao hơn: đặt lợi ích khách hàng trước và công bố xung đột lợi ích</title>
+  <defs>
+    <marker id="svg-ldd-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)" />
+    </marker>
+  </defs>
+
+  <rect x="8" y="10" width="344" height="124" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <text x="180" y="36" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">Chuẩn mực đạo đức nghề</text>
+
+  <rect x="78" y="50" width="204" height="30" rx="8" fill="var(--surface-2)" stroke="var(--accent)" stroke-width="2" />
+  <text x="180" y="70" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Lợi ích khách hàng trước</text>
+
+  <rect x="78" y="92" width="204" height="30" rx="8" fill="var(--surface-2)" stroke="var(--accent)" stroke-width="2" />
+  <text x="180" y="112" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Công bố xung đột lợi ích</text>
+
+  <path d="M40 164 V140" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-ldd-arrow)" />
+  <path d="M320 164 V140" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-ldd-arrow)" />
+  <text x="180" y="157" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink-2)">đặt mức cao hơn</text>
+
+  <rect x="8" y="168" width="344" height="44" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="180" y="195" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" fill="var(--ink)">Pháp luật: mức tối thiểu</text>
+</svg>

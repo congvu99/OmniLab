@@ -1,0 +1,35 @@
+# Lĩnh vực "Nghề tài chính" — sáu nhóm kỹ năng bổ trợ ngoài kiến thức tài
+# chính, OmniLab tự biên soạn từ nguồn công khai (CFA Institute, WEF, ACCA,
+# cơ quan quản lý Việt Nam...). Không đặt `isFinance`: cờ đó bật chiến lược
+# fidelity so với content-sources/finance/index.html; bài ở đây so 1:1 với
+# snapshot markdown trong content-sources/nghe-tai-chinh/ và tự chèn
+# <Disclaimer /> trong MDX.
+id: nghe-tai-chinh
+title: Nghề tài chính
+tagline: Sáu nhóm kỹ năng ngoài kiến thức tài chính — hiểu nhanh, quy trình học và nguồn uy tín.
+accent: "#9A3412"
+accentDark: "#FDBA74"
+icon: briefcase-business
+order: 3
+modules:
+  - id: tong-quan
+    title: Tổng quan
+    order: 1
+  - id: du-lieu-cong-nghe
+    title: Dữ liệu và công nghệ
+    order: 2
+  - id: vi-mo
+    title: Kinh tế vĩ mô và địa chính trị
+    order: 3
+  - id: phap-ly-dao-duc
+    title: Pháp lý, đạo đức và thuế
+    order: 4
+  - id: tai-chinh-hanh-vi
+    title: Tài chính hành vi
+    order: 5
+  - id: giao-tiep-lanh-dao
+    title: Giao tiếp và lãnh đạo
+    order: 6
+  - id: phan-tich-nganh
+    title: Hiểu sâu một ngành
+    order: 7

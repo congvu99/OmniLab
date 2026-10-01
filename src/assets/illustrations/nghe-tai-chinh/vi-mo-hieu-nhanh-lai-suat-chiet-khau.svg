@@ -1,0 +1,21 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-ntc-chiet-khau-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-ntc-chiet-khau-title">Giá trị hôm nay của 100 triệu nhận sau 5 năm: khoảng 68,1 triệu nếu chiết khấu 8%, chỉ khoảng 62,1 triệu nếu chiết khấu 10%; lãi suất chiết khấu cao hơn làm giá trị hiện tại thấp hơn</title>
+
+  <text x="180" y="20" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink-2)">100 triệu nhận sau 5 năm, quy về hôm nay</text>
+
+  <line x1="122" y1="53.4" x2="214" y2="53.4" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" />
+
+  <rect x="50" y="53.4" width="70" height="122.6" rx="6" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="180" y="64.2" width="70" height="111.8" rx="6" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <line x1="24" y1="176" x2="276" y2="176" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="15" font-weight="700" text-anchor="middle">
+    <text x="85" y="45" fill="var(--ink)">68,1 triệu</text>
+    <text x="215" y="45" fill="var(--accent)">62,1 triệu</text>
+  </g>
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)" text-anchor="middle">
+    <text x="85" y="198">Chiết khấu 8%</text>
+    <text x="215" y="198">Chiết khấu 10%</text>
+  </g>
+  <text x="352" y="176" text-anchor="end" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-style="italic" fill="var(--ink-2)">Số giả định</text>
+</svg>

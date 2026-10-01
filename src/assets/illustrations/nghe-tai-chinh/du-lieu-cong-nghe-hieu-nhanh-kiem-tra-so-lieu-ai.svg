@@ -1,0 +1,33 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-ntc-kiem-tra-ai-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-ntc-kiem-tra-ai-title">Dùng AI an toàn: AI viết nháp, người đối chiếu từng số với báo cáo gốc, rồi người làm nghề ký; số không khớp thì sửa hoặc bỏ</title>
+  <defs>
+    <marker id="svg-ntc-kta-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
+    </marker>
+    <marker id="svg-ntc-kta-arrow-danger" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--danger)" />
+    </marker>
+  </defs>
+
+  <rect x="8" y="30" width="100" height="70" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="130" y="30" width="100" height="70" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <rect x="252" y="30" width="100" height="70" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+
+  <g fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round">
+    <path d="M110 65 H126" marker-end="url(#svg-ntc-kta-arrow)" />
+    <path d="M232 65 H248" marker-end="url(#svg-ntc-kta-arrow)" />
+  </g>
+
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" text-anchor="middle">
+    <text x="58" y="61" fill="var(--ink)"><tspan x="58" dy="0">AI viết</tspan><tspan x="58" dy="18">nháp</tspan></text>
+    <text x="180" y="61" font-weight="700" fill="var(--accent)"><tspan x="180" dy="0">Đối chiếu</tspan><tspan x="180" dy="18">báo cáo gốc</tspan></text>
+    <text x="302" y="61" fill="var(--ink)"><tspan x="302" dy="0">Người làm</tspan><tspan x="302" dy="18">nghề ký</tspan></text>
+  </g>
+
+  <g fill="none" stroke="var(--danger)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M180 102 V140" marker-end="url(#svg-ntc-kta-arrow-danger)" />
+    <path d="M78 166 H58 V106" stroke-dasharray="4 4" marker-end="url(#svg-ntc-kta-arrow-danger)" />
+  </g>
+  <rect x="80" y="144" width="200" height="44" rx="8" fill="color-mix(in srgb, var(--danger) 12%, transparent)" stroke="var(--danger)" stroke-width="2" />
+  <text x="180" y="171" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--danger)">Số không khớp → sửa / bỏ</text>
+</svg>

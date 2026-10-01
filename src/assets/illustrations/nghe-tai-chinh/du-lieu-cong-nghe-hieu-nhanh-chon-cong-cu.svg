@@ -1,0 +1,28 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-ntc-chon-cong-cu-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-ntc-chon-cong-cu-title">Chọn công cụ theo việc: Excel cho mô hình nhỏ chỉnh tay, SQL để lấy dữ liệu từ kho, Python cho việc lặp lại và dữ liệu lớn</title>
+  <defs>
+    <marker id="svg-ntc-ccc-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)" />
+    </marker>
+  </defs>
+
+  <g fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" stroke-linejoin="round">
+    <rect x="8" y="72" width="104" height="90" rx="10" />
+    <rect x="128" y="50" width="104" height="112" rx="10" />
+    <rect x="248" y="28" width="104" height="134" rx="10" />
+  </g>
+
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="15" font-weight="700" fill="var(--ink)" text-anchor="middle">
+    <text x="60" y="98">Excel</text>
+    <text x="180" y="76">SQL</text>
+    <text x="300" y="54">Python</text>
+  </g>
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink-2)" text-anchor="middle">
+    <text x="60" y="122"><tspan x="60" dy="0">mô hình nhỏ,</tspan><tspan x="60" dy="17">chỉnh tay</tspan></text>
+    <text x="180" y="100"><tspan x="180" dy="0">lấy dữ liệu</tspan><tspan x="180" dy="17">từ kho</tspan></text>
+    <text x="300" y="78"><tspan x="300" dy="0">việc lặp lại,</tspan><tspan x="300" dy="17">dữ liệu lớn</tspan></text>
+  </g>
+
+  <path d="M16 180 H344" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-ntc-ccc-arrow)" />
+  <text x="180" y="204" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Dữ liệu càng lớn, càng lặp lại →</text>
+</svg>

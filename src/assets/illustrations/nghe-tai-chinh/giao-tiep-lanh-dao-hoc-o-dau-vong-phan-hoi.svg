@@ -1,0 +1,37 @@
+<svg viewBox="0 0 360 300" width="100%" role="img" aria-labelledby="svg-gtl-vong-phan-hoi-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-gtl-vong-phan-hoi-title">Vòng phản hồi khi luyện viết: viết bản nháp, nhờ người không chuyên đọc, họ nói lại kết luận; đúng thì xong, sai thì viết lại, lặp đến khi người đọc nói đúng</title>
+  <defs>
+    <marker id="svg-gtvp-arrow-ink2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
+    </marker>
+    <marker id="svg-gtvp-arrow-danger" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--danger)" />
+    </marker>
+  </defs>
+
+  <!-- step 1: draft -->
+  <rect x="14" y="28" width="136" height="48" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="82" y="57" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Viết bản nháp</text>
+  <line x1="154" y1="52" x2="170" y2="52" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-gtvp-arrow-ink2)" />
+
+  <!-- step 2: non-expert reads -->
+  <rect x="176" y="28" width="176" height="48" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="264" y="57" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Người không chuyên đọc</text>
+  <line x1="264" y1="80" x2="264" y2="198" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-gtvp-arrow-ink2)" />
+
+  <!-- step 3: they restate the conclusion -->
+  <rect x="176" y="204" width="176" height="48" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="264" y="233" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Họ nói lại kết luận</text>
+  <line x1="172" y1="228" x2="158" y2="228" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-gtvp-arrow-ink2)" />
+
+  <!-- step 4: check -->
+  <rect x="12" y="196" width="140" height="64" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <text x="82" y="223" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13"><tspan x="82" dy="0" font-weight="700" fill="var(--accent)">Đúng? Xong</tspan><tspan x="82" dy="20" fill="var(--danger)">Sai? Viết lại</tspan></text>
+
+  <!-- wrong branch loops back to the draft -->
+  <line x1="82" y1="192" x2="82" y2="82" stroke="var(--danger)" stroke-width="2" stroke-dasharray="5 5" stroke-linecap="round" marker-end="url(#svg-gtvp-arrow-danger)" />
+
+  <!-- loop rule in the centre -->
+  <rect x="104" y="114" width="152" height="58" rx="10" fill="var(--surface-2)" stroke="var(--accent)" stroke-width="2.5" />
+  <text x="180" y="138" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)"><tspan x="180" dy="0">Lặp đến khi</tspan><tspan x="180" dy="18">người đọc nói đúng</tspan></text>
+</svg>

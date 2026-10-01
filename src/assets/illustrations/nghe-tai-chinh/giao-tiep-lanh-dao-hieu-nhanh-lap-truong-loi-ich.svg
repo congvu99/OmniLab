@@ -1,0 +1,45 @@
+<svg viewBox="0 0 360 300" width="100%" role="img" aria-labelledby="svg-gtl-lap-truong-loi-ich-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-gtl-lap-truong-loi-ich-title">Lập trường và lợi ích: hai bên cùng đòi quả cam nên xung đột; hỏi để làm gì thì một bên cần vỏ, một bên cần ruột, nên cả hai được trọn phần</title>
+  <defs>
+    <marker id="svg-gtlt-arrow-ink2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
+    </marker>
+    <marker id="svg-gtlt-arrow-danger" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--danger)" />
+    </marker>
+    <marker id="svg-gtlt-arrow-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--accent)" />
+    </marker>
+  </defs>
+
+  <!-- row 1: positions clash over one orange -->
+  <text x="180" y="24" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">Lập trường: tôi muốn quả cam</text>
+  <rect x="24" y="40" width="112" height="44" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="80" y="67" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" fill="var(--ink)">Bên A</text>
+  <rect x="224" y="40" width="112" height="44" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="280" y="67" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" fill="var(--ink)">Bên B</text>
+  <circle cx="180" cy="62" r="13" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <path d="M180 49Q183 43 189 43" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+  <line x1="140" y1="62" x2="162" y2="62" stroke="var(--danger)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-gtlt-arrow-danger)" />
+  <line x1="220" y1="62" x2="198" y2="62" stroke="var(--danger)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-gtlt-arrow-danger)" />
+
+  <!-- ask why -->
+  <line x1="80" y1="88" x2="80" y2="120" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-gtlt-arrow-ink2)" />
+  <line x1="280" y1="88" x2="280" y2="120" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-gtlt-arrow-ink2)" />
+  <text x="180" y="109" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink-2)">Hỏi: “để làm gì?”</text>
+
+  <!-- row 2: underlying interests -->
+  <rect x="14" y="126" width="158" height="44" rx="10" fill="var(--surface-2)" stroke="var(--accent)" stroke-width="2" />
+  <text x="93" y="153" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Lợi ích: cần vỏ</text>
+  <rect x="188" y="126" width="158" height="44" rx="10" fill="var(--surface-2)" stroke="var(--accent)" stroke-width="2" />
+  <text x="267" y="153" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Lợi ích: cần ruột</text>
+
+  <!-- interests converge -->
+  <line x1="93" y1="174" x2="150" y2="213" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-gtlt-arrow-accent)" />
+  <line x1="267" y1="174" x2="210" y2="213" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-gtlt-arrow-accent)" />
+
+  <!-- row 3: outcome -->
+  <rect x="60" y="220" width="240" height="44" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <text x="180" y="247" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">Cả hai được trọn phần</text>
+  <text x="180" y="286" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink-2)">Vỏ cho A, ruột cho B</text>
+</svg>

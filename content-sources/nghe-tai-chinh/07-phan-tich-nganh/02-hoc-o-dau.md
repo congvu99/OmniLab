@@ -1,0 +1,94 @@
+---
+nguon: OmniLab — Nghiên cứu kỹ năng bổ trợ nghề tài chính
+tac-gia: OmniLab (tổng hợp từ nguồn công khai)
+ngay-viet: 2026-10-01
+trang-thai: hoan-thanh
+---
+
+# Nghiên cứu một ngành từ con số không: sáu chặng và nguồn dữ liệu Việt Nam
+
+## Báo cáo ngành đầu tiên
+
+Quý cuối năm, Lan tự đặt cho mình một thử thách: viết một báo cáo ngành ngân hàng hoàn chỉnh, dùng mọi thứ đã học trong năm.
+
+Excel và Python để lấy số liệu của các ngân hàng niêm yết trong năm năm. Kiến thức vĩ mô để giải thích vì sao biên lãi ròng cả ngành thay đổi theo chu kỳ lãi suất. Pháp lý để hiểu các quy định về an toàn vốn. Tài chính hành vi để tự hỏi mình có đang thiên vị ngân hàng mà mẹ đang gửi tiết kiệm không. Và kim tự tháp Minto để viết kết luận ngay đoạn đầu.
+
+Báo cáo dài 12 trang. Anh Quân đọc trong 20 phút, chỉ ghi ba nhận xét bên lề, rồi gửi cho cả phòng với một dòng: "Mọi người tham khảo cách trình bày."
+
+Lan đọc dòng đó ba lần. Một năm trước, Lan còn chưa trả lời được câu "Em so với ai?"
+
+Bạn không cần một năm như Lan để nắm một ngành. Lần đầu, sáu chặng dưới đây mất tổng cộng khoảng 18–27 giờ. Lần thứ hai với ngành khác sẽ nhanh hơn nhiều, vì bạn đã có khung.
+
+## Sáu chặng
+
+### Chặng 1: Chọn ngành và vẽ ranh giới (2–3 giờ)
+
+- **Chọn ngành theo:** ngành bạn đang làm hoặc muốn làm; ngành có đủ doanh nghiệp niêm yết để so sánh (ít nhất 5); ngành có dữ liệu công khai ít nhất 3–5 năm.
+- **Sản phẩm:** danh sách 8–15 doanh nghiệp trong ngành, mô tả sản phẩm chính của 3 doanh nghiệp lớn nhất. Ghi chú doanh nghiệp đa ngành, sau này cần tách riêng từng mảng.
+
+### Chặng 2: Phân tích năm lực (3–4 giờ)
+
+- **Sản phẩm:** bảng một trang, mỗi lực đánh giá mạnh, trung bình hay yếu, kèm 1–2 bằng chứng cụ thể; kết luận ngành này dễ hay khó giữ lợi nhuận cao.
+
+### Chặng 3: Bảng chỉ số đặc thù (3–5 giờ)
+
+- **Sản phẩm:** 8–10 chỉ số quan trọng nhất của ngành, mỗi chỉ số có định nghĩa, cách tính, vì sao quan trọng. Dùng bảng chỉ số ở bài trước làm điểm xuất phát.
+
+### Chặng 4: Chuỗi giá trị (2–3 giờ)
+
+- **Sản phẩm:** sơ đồ một trang từ đầu vào đến khách hàng cuối, đánh dấu khâu tạo nhiều giá trị nhất và khâu có quyền định giá.
+
+### Chặng 5: Chu kỳ ngành và quy định (3–4 giờ)
+
+- **Sản phẩm:** so tăng trưởng doanh thu 5 năm của ngành với tăng trưởng GDP danh nghĩa; nhận định ngành đang ở giai đoạn nào; liệt kê 3 quy định có tác động lớn nhất.
+
+### Chặng 6: So sánh doanh nghiệp cùng ngành (5–8 giờ)
+
+- **Sản phẩm:** bảng 3–5 doanh nghiệp, 8 chỉ số, ít nhất 3 năm, lấy từ báo cáo tài chính đã kiểm toán; một đoạn kết luận "doanh nghiệp A khác B ở điểm nào, vì sao", có số liệu đỡ.
+
+> **Mẹo:** Đọc phần thuyết minh báo cáo tài chính, không chỉ ba bảng chính. Những điều quan trọng nhất về một ngân hàng, chẳng hạn cơ cấu dư nợ theo năm nhóm nợ, thường nằm trong thuyết minh, ở những trang ít ai đọc tới.
+
+## Nguồn dữ liệu và học liệu
+
+| Nguồn | Phí | Ghi chú |
+|---|---|---|
+| Website của doanh nghiệp (mục quan hệ nhà đầu tư) | Miễn phí | Báo cáo tài chính, báo cáo thường niên, tài liệu đại hội cổ đông |
+| [Sở Giao dịch Chứng khoán TP.HCM (HOSE)](https://www.hsx.vn/) | Miễn phí | Danh sách doanh nghiệp niêm yết, công bố thông tin |
+| [Sở Giao dịch Chứng khoán Hà Nội (HNX)](https://www.hnx.vn/) | Miễn phí | Tương tự cho doanh nghiệp niêm yết tại HNX |
+| [Ủy ban Chứng khoán Nhà nước](https://ssc.gov.vn/) | Miễn phí | Thông tin công ty đại chúng, văn bản quản lý |
+| [Ngân hàng Nhà nước](https://www.sbv.gov.vn/) | Miễn phí | Thống kê và quy định ngành ngân hàng |
+| [Cục Thống kê](https://www.nso.gov.vn/) | Miễn phí | Số liệu theo ngành kinh tế, sản xuất công nghiệp, bán lẻ |
+| [Aswath Damodaran — NYU Stern](https://pages.stern.nyu.edu/~adamodar/) | Miễn phí | Dữ liệu chỉ số theo ngành toàn cầu, bài giảng định giá; tiếng Anh |
+| *Chiến lược cạnh tranh*, *Lợi thế cạnh tranh* (Michael E. Porter) | Trả phí | Bản tiếng Việt của DTBooks, đang tạm hết hàng trên Fahasa; tìm ở thư viện hoặc nhà sách cũ |
+| *Phân tích chứng khoán* (Benjamin Graham, David Dodd) | Trả phí | Bản tiếng Việt của Alpha Books; sách kinh điển, dày, dành cho người đã có nền |
+
+## Lỗi thường gặp
+
+| Lỗi | Cách tránh |
+|---|---|
+| So chỉ số giữa hai ngành khác nhau | Chỉ so trong cùng ngành, như câu chuyện ngân hàng của Lan |
+| Chỉ nhìn một năm | Lấy ít nhất 3–5 năm để thấy xu hướng và chu kỳ |
+| Nghe tin đồn thay vì xem dữ liệu | Mọi nhận định phải truy được về báo cáo đã kiểm toán hoặc văn bản chính thức |
+| Bỏ qua quy định | Đọc văn bản quản lý chính của ngành trước khi kết luận |
+| Kết luận quá nhanh | Đi đủ sáu chặng; mỗi chặng có sản phẩm mới chuyển chặng |
+
+## Tự kiểm tra
+
+- Kể tên được các doanh nghiệp chính trong ngành và điểm khác nhau giữa họ.
+- Giải thích được năm lực của ngành bằng ví dụ cụ thể.
+- Nói được 8 chỉ số quan trọng nhất và vì sao chúng quan trọng.
+- Có bảng so sánh 3–5 doanh nghiệp trong ít nhất 3 năm, kèm kết luận có số liệu.
+- Người làm trong ngành đọc phân tích của bạn và không thấy điểm nào sai cơ bản.
+
+## Đọc thêm
+
+- **Trang dữ liệu và bài giảng của Aswath Damodaran (NYU Stern)**, miễn phí, tiếng Anh. *Vì sao nên đọc:* Damodaran, giáo sư định giá ở NYU Stern, công khai bộ dữ liệu chỉ số theo ngành (cập nhật mỗi năm vào tháng 1) cùng các khóa học định giá miễn phí. *Giúp được gì:* bạn có điểm tham chiếu quốc tế để so ngành của mình, và học định giá từ một người được giới tài chính trích dẫn rộng rãi.
+- ***Phân tích chứng khoán* (Benjamin Graham, David Dodd)**, bản tiếng Việt của Alpha Books. *Vì sao nên đọc:* sách gốc của phân tích cơ bản, nơi Graham, người thầy của Warren Buffett, đặt nền cho việc đọc báo cáo tài chính một cách hoài nghi. *Giúp được gì:* đây là sách để đọc dần, từng chương, khi bạn đã quen với một ngành; nó dạy cách nhìn qua những con số đẹp để thấy chất lượng thật của lợi nhuận.
+
+## Nguồn
+
+- [Aswath Damodaran — NYU Stern](https://pages.stern.nyu.edu/~adamodar/)
+- [Alpha Books — Phân tích chứng khoán](https://alphabooks.vn/phan-tich-chung-khoan-security-analysis)
+- [Fahasa — Chiến lược cạnh tranh](https://www.fahasa.com/chien-luoc-canh-tranh.html)
+- [HOSE](https://www.hsx.vn/)
+- [HNX](https://www.hnx.vn/)

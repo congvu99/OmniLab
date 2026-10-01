@@ -1,0 +1,33 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-ntc-truyen-dan-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-ntc-truyen-dan-title">Chuỗi truyền dẫn chính sách tiền tệ: lãi suất điều hành lan sang lãi suất thị trường; giá tài sản phản ứng nhanh qua tỷ lệ chiết khấu, chậm hơn qua tín dụng và chi tiêu</title>
+  <defs>
+    <marker id="svg-ntc-td-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
+    </marker>
+  </defs>
+
+  <rect x="8" y="30" width="150" height="56" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <g fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2">
+    <rect x="202" y="30" width="150" height="56" rx="10" />
+    <rect x="202" y="136" width="150" height="56" rx="10" />
+    <rect x="8" y="136" width="150" height="56" rx="10" />
+  </g>
+
+  <g fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M161 58 H197" marker-end="url(#svg-ntc-td-arrow)" />
+    <path d="M277 89 V131" marker-end="url(#svg-ntc-td-arrow)" />
+    <path d="M199 164 H163" marker-end="url(#svg-ntc-td-arrow)" />
+    <path d="M212 90 L156 132" stroke-dasharray="5 5" marker-end="url(#svg-ntc-td-arrow)" />
+  </g>
+
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" text-anchor="middle" fill="var(--ink)">
+    <text x="83" y="63" fill="var(--accent)" font-weight="700" font-size="13">Lãi suất điều hành</text>
+    <text x="277" y="63">Lãi suất thị trường</text>
+    <text x="277" y="169">Tín dụng, chi tiêu</text>
+    <text x="83" y="169">Giá tài sản</text>
+  </g>
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink-2)">
+    <text x="164" y="117" text-anchor="end">chiết khấu: nhanh</text>
+    <text x="181" y="212" text-anchor="middle">chậm hơn</text>
+  </g>
+</svg>

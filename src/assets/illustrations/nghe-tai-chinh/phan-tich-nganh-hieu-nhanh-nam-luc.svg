@@ -1,0 +1,32 @@
+<svg viewBox="0 0 360 300" width="100%" role="img" aria-labelledby="svg-ptn-nam-luc-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-ptn-nam-luc-title">Năm lực Porter: người mới gia nhập, sản phẩm thay thế, nhà cung cấp và khách hàng cùng tác động lên mức cạnh tranh trong ngành</title>
+  <defs>
+    <marker id="svg-ptnl-arrow-ink2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
+    </marker>
+  </defs>
+
+  <!-- top: new entrants -->
+  <rect x="105" y="20" width="150" height="44" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="180" y="47" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Người mới gia nhập</text>
+  <line x1="180" y1="68" x2="180" y2="110" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-ptnl-arrow-ink2)" />
+
+  <!-- bottom: substitutes -->
+  <rect x="105" y="236" width="150" height="44" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="180" y="263" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Sản phẩm thay thế</text>
+  <line x1="180" y1="232" x2="180" y2="190" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-ptnl-arrow-ink2)" />
+
+  <!-- left: suppliers -->
+  <rect x="10" y="128" width="98" height="44" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="59" y="155" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Nhà cung cấp</text>
+  <line x1="111" y1="150" x2="122" y2="150" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-ptnl-arrow-ink2)" />
+
+  <!-- right: buyers -->
+  <rect x="252" y="128" width="98" height="44" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="301" y="155" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Khách hàng</text>
+  <line x1="249" y1="150" x2="238" y2="150" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-ptnl-arrow-ink2)" />
+
+  <!-- centre: industry rivalry -->
+  <rect x="128" y="116" width="104" height="68" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <text x="180" y="146" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)"><tspan x="180" dy="0">Cạnh tranh</tspan><tspan x="180" dy="18">trong ngành</tspan></text>
+</svg>
