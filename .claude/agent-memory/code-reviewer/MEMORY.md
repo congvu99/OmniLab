@@ -2,3 +2,5 @@
 - [RealLife/SVG fact-check recurring defects](project_reallife_factcheck_recurring_defects.md) — number-chain errors, label overlap, bad viewBox, wrong-mechanism analogies, cross-lesson duplicates
 - [Split-lesson cross-ref defects](project_split_lesson_crossref_defects.md) — dead #anchors, orphan H/S codes, raw-markdown summaries after splitting single-page sources
 - [Editorial review of original content](project_editorial_review_original_content.md) — defects live in EN original/TN facts/dead links; 403s are bot blocks
+- [Sync sidecar review hotspots](project_sync_sidecar_review_hotspots.md) — throttle race, NFC pw, id-regex silent drop, typecheck gap, Caddy/Dockerfile/deploy.sh traps
+- [UI review browser techniques](project_ui_review_browser_techniques.md) — seeded-state overflow/axe sweeps, CDP reduced-transparency, keyframe/grid/heading defect classes
