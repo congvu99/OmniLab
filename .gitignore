@@ -37,3 +37,5 @@ plans/261012-full-restyle-concepts/concept-c-soft-bento/
 # sync sidecar local data
 /.data/
 /data/
+*.db
+*.db-*

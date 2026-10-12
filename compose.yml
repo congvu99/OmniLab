@@ -3,6 +3,7 @@ services:
   app:
     build:
       context: .
+      target: app
       args:
         SITE_URL: ${SITE_URL:?SITE_URL chưa đặt trong .env}
     image: omnilab:${IMAGE_TAG:-latest}
@@ -12,8 +13,42 @@ services:
     networks:
       web:
         aliases: [omnilab]
+      internal: {}
+    # service_started: the static site never waits for (or depends on) sync health.
+    depends_on:
+      sync:
+        condition: service_started
     mem_limit: 128m
+
+  sync:
+    build:
+      context: .
+      target: sync
+    image: omnilab-sync:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs: [/tmp]
+    # Private network only: never on `web`, never published (no ports:).
+    networks:
+      internal:
+        aliases: [omnilab-sync]
+    volumes:
+      # Data lives outside the repo; the host dir must be owned by uid 1000.
+      - ${OMNILAB_DATA_DIR:-/srv/data/omnilab}:/data
+    environment:
+      SESSION_SECRET: ${SESSION_SECRET:?SESSION_SECRET chưa đặt trong .env}
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+    mem_limit: 192m
 
 networks:
   web:
     external: true
+  internal:
+    internal: true

@@ -2,18 +2,16 @@
  * Progress sync sidecar: plain node:http + node:sqlite, zero dependencies.
  * Routes, JSON body handling, error codes, config and graceful shutdown.
  * Run: `node server/sync/sync-server-entry.ts` (env: SESSION_SECRET, DATA_DIR,
- * PORT, HOST, COOKIE_SECURE) or `pnpm sync:dev`.
+ * PORT, HOST, COOKIE_SECURE) or `pnpm sync:dev`. `--backup`: see sync-backup.ts.
  */
 import { createServer } from 'node:http';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { HttpError, configFromEnv, parseJson, readBody } from './sync-http-helpers.ts';
-import type { SyncConfig } from './sync-http-helpers.ts';
-import { MAX_STATE_BYTES } from '../../src/lib/progress-sync-types.ts';
-import type { ErrorCode } from '../../src/lib/progress-sync-types.ts';
-import { openStore, sanitizeIncoming } from './sync-sqlite-store.ts';
-import type { UserRow } from './sync-sqlite-store.ts';
+import { HttpError, configFromEnv, parseJson, readBody, type SyncConfig } from './sync-http-helpers.ts';
+import { MAX_STATE_BYTES, type ErrorCode } from '../../src/lib/progress-sync-types.ts';
+import { backupMain } from './sync-backup.ts';
+import { openStore, sanitizeIncoming, type UserRow } from './sync-sqlite-store.ts';
 import {
   BusyError, createCap, createLimiter, createLoginThrottle,
   hashPassword, signSession, verifyPassword, verifySession,
@@ -184,6 +182,7 @@ export async function startServer(config: SyncConfig) {
 }
 
 if (import.meta.main) {
+  if (process.argv.includes('--backup')) process.exit(backupMain(process.env));
   try {
     // --dev: local defaults (./.data, http cookies, throwaway secret) for `pnpm sync:dev`.
     const config = configFromEnv(process.env, process.argv.includes('--dev'));

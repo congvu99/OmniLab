@@ -33,6 +33,21 @@
 		zstd
 	}
 
+	# --- Progress sync API ---
+	# /api/* goes to the sync sidecar (private network, alias omnilab-sync). Its
+	# own responses (including its 503 "busy") pass through untouched, with
+	# their own no-store. Where the sidecar does not exist (Railpack hosting,
+	# sidecar stopped) the dial fails and handle_errors below answers 503 JSON,
+	# so the static site keeps working and the client shows "unavailable".
+	handle /api/* {
+		reverse_proxy omnilab-sync:3000 {
+			# Fail fast: a dead sidecar must not hold requests open.
+			transport http {
+				dial_timeout 2s
+			}
+		}
+	}
+
 	# --- Cache headers ---
 	# Astro fingerprints /_astro/* assets by content hash, so they are safe to
 	# cache forever. Everything else (clean-URL HTML, JSON indexes, manifest,
@@ -42,7 +57,7 @@
 	@astroAssets path /_astro/*
 	header @astroAssets Cache-Control "public, max-age=31536000, immutable"
 
-	@notHashed not path /_astro/*
+	@notHashed not path /_astro/* /api/*
 	header @notHashed Cache-Control "no-cache"
 
 	# --- Security headers (all responses) ---
@@ -60,10 +75,16 @@
 		# app renders: Shiki syntax highlighting in code blocks, the
 		# domain-accent CSS custom properties set on <html> and on progress-ring/
 		# search-result elements, and the handful of inline SVG illustrations
-		# with their own <style> blocks. Threat model: static content site, no
-		# user-generated input, no auth/cookies, so inline-style injection has no
-		# realistic attack path. Fonts are self-hosted.
+		# with their own <style> blocks. Threat model: the site now carries a
+		# session cookie (HttpOnly, Path=/api) and shows the user's username, so
+		# script injection must stay impossible: script-src stays 'self' (no
+		# inline, no eval). 'unsafe-inline' for styles is kept because no HTML is
+		# ever rendered from user input (the account island writes the username
+		# with textContent), so inline-style injection has no attack path.
+		# Fonts are self-hosted.
 		Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none';"
+		# reverse_proxy adds Via on /api responses; deferred here so it runs last.
+		-Via
 		-Server
 	}
 
@@ -78,7 +99,18 @@
 	try_files {path} {path}.html {path}/index.html
 
 	handle_errors {
-		rewrite * /{err.status_code}.html
-		file_server
+		# Sidecar unreachable: JSON, never the HTML 404/502 page, never cached.
+		@api path /api/*
+		handle @api {
+			header Cache-Control "no-store"
+			header Content-Type "application/json"
+			# \{ escapes the placeholder opener so the JSON survives the replacer.
+			respond `\{"code":"unavailable"}` 503
+		}
+
+		handle {
+			rewrite * /{err.status_code}.html
+			file_server
+		}
 	}
 }

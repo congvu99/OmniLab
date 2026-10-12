@@ -12,3 +12,7 @@ tests
 deploy
 repomix-output.xml
 *.log
+data
+.data
+*.db
+*.db-*
