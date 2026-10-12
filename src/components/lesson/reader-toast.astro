@@ -1,5 +1,6 @@
 ---
-// Shared reader toast (concept "toast"): always-dark card (ink dock tokens), volt icon tile,
+// Shared reader toast (concept "toast"): card on the dock tokens (ink in dark, light glass
+// in light), volt icon tile,
 // title + mono sub line, optional "Hoàn tác". Driven by src/lib/reader-toast.ts
 // (mark-complete + bookmark islands call showReaderToast). Icon variants are
 // server-rendered and switched via [data-icon] so the script only mutates
@@ -31,6 +32,8 @@ import Icon from '../icon/icon.astro';
     display: inline-flex;
     align-items: center;
     gap: 12px;
+    /* left:50% would otherwise shrink-to-fit into half the viewport. */
+    width: max-content;
     max-width: min(420px, calc(100vw - 32px));
     padding: 10px 6px 10px 10px;
     border-radius: 14px;
@@ -41,6 +44,16 @@ import Icon from '../icon/icon.astro';
     font-size: 14px;
     font-weight: 500;
     line-height: 1.3;
+  }
+
+  /* <1024px with the dock showing: sit above it instead of under it. The dock
+     is shown unless the reader auto-hide (or a focused text field) hid it. */
+  @media (max-width: 1023.98px) {
+    :global(body:has([data-tab-bar]:not([data-scroll-hidden='true'], [data-hidden='true']))) .rt {
+      bottom: calc(
+        var(--shell-tabbar-h) + var(--shell-tabbar-gap) + env(safe-area-inset-bottom) + var(--space-3)
+      );
+    }
   }
 
   /* An unconditional `display` would otherwise beat the UA's [hidden] rule. */
@@ -98,11 +111,11 @@ import Icon from '../icon/icon.astro';
     padding: 0 12px;
     border-radius: 10px;
     font: 500 12px var(--font-mono);
-    color: var(--volt);
+    color: var(--dock-accent);
   }
 
   .rt__undo:focus-visible {
-    outline: 2px solid var(--volt);
+    outline: 2px solid var(--dock-accent);
     outline-offset: -2px;
   }
 </style>

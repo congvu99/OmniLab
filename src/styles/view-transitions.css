@@ -10,8 +10,8 @@
  *
  * Shell chrome (ink dock, sidebar, nav progress) carries its own
  * view-transition-name (set in the shell components) so it stays put instead of
- * being pushed with the page; when a chrome piece exists on only one side (the
- * dock disappears on reader pages = focus mode) it fades in/out.
+ * being pushed with the page; when a chrome piece exists on only one side it
+ * fades in/out.
  *
  * Reduced motion: no movement at all, the whole swap is a 120ms crossfade.
  * Progressive enhancement: browsers without the View Transitions API (and

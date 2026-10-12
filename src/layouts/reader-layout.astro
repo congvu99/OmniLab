@@ -1,7 +1,8 @@
 ---
-// Reading shell (focus mode): glass top bar (back button + collapsing title +
-// progress bar, reader-top-bar.astro). <1024px: single full-bleed column, NO
-// dock (concept: the dock is hidden while reading); >=1024px keeps the
+// Reading shell: glass top bar (back button + collapsing title +
+// progress bar, reader-top-bar.astro). <1024px: single full-bleed column plus
+// the bottom dock, which auto-hides while scrolling down and returns on
+// scroll up / near the end (dock-autohide-binding.ts); >=1024px keeps the
 // sidebar. <body data-shell="reader"> marks this shell for page-level CSS.
 // >=1024px: sidebar | main (700px column) | optional aside. The "aside" slot
 // (progress ring, TOC, actions) is a sticky column shown only at >=1280px;
@@ -16,6 +17,7 @@ import BaseHead from './base-head.astro';
 import IconSprite from '../components/icon/icon-sprite.astro';
 import { domainAccentStyle } from './domain-accent';
 import SidebarNav from '../components/shell/sidebar-nav.astro';
+import TabBar from '../components/shell/tab-bar.astro';
 import ReaderTopBar from '../components/shell/reader-top-bar.astro';
 import NavigationProgressBar from '../components/shell/navigation-progress-bar.astro';
 import CommandPalette from '../components/command-palette/command-palette.astro';
@@ -77,6 +79,7 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
       </aside>
     )}
     </div>
+    <TabBar />
     <script>
       document.addEventListener('touchstart', () => {}, { passive: true });
     </script>
@@ -93,7 +96,11 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
 
 <style>
   .reader-content {
-    padding: var(--space-2) var(--gutter-r) calc(var(--space-7) + env(safe-area-inset-bottom)) var(--gutter-l);
+    /* Room for the dock (it returns near the end of the lesson), so the last
+       row / complete button / next card is never covered. */
+    padding: var(--space-2) var(--gutter-r)
+      calc(var(--shell-tabbar-h) + var(--shell-tabbar-gap) + var(--space-7) + env(safe-area-inset-bottom))
+      var(--gutter-l);
   }
 
   /* .sr-only (base.css) keeps these in the a11y tree/heading outline while

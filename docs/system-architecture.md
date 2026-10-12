@@ -11,7 +11,7 @@ OmniLab là app học tập tĩnh (Astro 7) chạy hoàn toàn trong trình duy�
 │ • Trang HTML tĩnh (Astro build) + island tương tác       │
 │ • Giao diện: Studio dark-first (graphite), Volt, hairline│
 │ • Layout:                                                  │
-│   - Mobile <1024px: Dock bottom 4 tab, full-bleed content│
+│   - Mobile <1024px: Dock 4 tab (reader: tự ẩn khi cuộn)  │
 │   - Desktop ≥1024px: Sidebar 256px left (nav + domains)  │
 │   - Wide ≥1280px: + reader aside 300px sticky scrollable │
 │ • Command palette: ⌘K (macOS) / Ctrl+K (Windows/Linux)   │

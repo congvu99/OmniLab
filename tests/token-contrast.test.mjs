@@ -92,14 +92,19 @@ describe('token contrast (WCAG AA)', () => {
       expect(contrast(t['accent-on'], t['volt-ink'])).toBeGreaterThanOrEqual(4.5);
     });
 
-    it(`${theme}: --dock-text on --dock >= 4.5`, () => {
+    // Dock + toast surface (light glass in light, ink in dark): labels/icons,
+    // toast title and the accent used for the "Hoàn tác" label / focus ring.
+    // Volt itself is a fill only (active pill, toast icon tile): its text is
+    // --on-volt, checked against --volt above.
+    it(`${theme}: --dock-text, --dock-text-strong and --dock-accent on --dock >= 4.5`, () => {
       expect(contrast(t['dock-text'], t.dock)).toBeGreaterThanOrEqual(4.5);
+      expect(contrast(t['dock-text-strong'], t.dock)).toBeGreaterThanOrEqual(4.5);
+      expect(contrast(t['dock-accent'], t.dock)).toBeGreaterThanOrEqual(4.5);
     });
 
-    // Toast (always-dark ink card): title text and the volt "Hoàn tác" label.
-    it(`${theme}: --dock-text-strong and --volt on --dock >= 4.5`, () => {
-      expect(contrast(t['dock-text-strong'], t.dock)).toBeGreaterThanOrEqual(4.5);
-      expect(contrast(t.volt, t.dock)).toBeGreaterThanOrEqual(4.5);
+    // Saved-count badge: --dock fill-colored text on a --dock-text fill.
+    it(`${theme}: saved badge (--dock on --dock-text) >= 4.5`, () => {
+      expect(contrast(t.dock, t['dock-text'])).toBeGreaterThanOrEqual(4.5);
     });
   }
 });

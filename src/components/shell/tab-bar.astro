@@ -1,9 +1,9 @@
 ---
-// Mobile "ink dock" (<1024px): floating, ink-colored in BOTH themes, with a
-// volt indicator under the active tab. Data comes from nav-items.ts (single
-// source shared with sidebar-nav.astro). Rendered only by app-layout.astro:
-// reader pages (reader-layout.astro) have no dock = focus mode. It fades out /
-// in across that boundary (view-transition-name, see view-transitions.css).
+// Mobile dock (<1024px): floating, with a volt pill under the active tab. Dark
+// theme = ink surface; light theme = light glass (--dock* tokens). Data comes
+// from nav-items.ts (single source shared with sidebar-nav.astro). Rendered by
+// app-layout.astro (always visible) and reader-layout.astro (auto-hides while
+// scrolling down, see dock-autohide-binding.ts; only when body[data-shell=reader]).
 // Hides while a text field elsewhere on the page has focus so the iOS keyboard
 // doesn't shove it into the middle of the viewport (Tìm kiếm page).
 import Icon from '../icon/icon.astro';
@@ -57,16 +57,34 @@ const activeIndex = states.indexOf(true);
     z-index: var(--z-nav);
     padding: 6px;
     border-radius: var(--radius-dock);
-    background: var(--dock);
+    background: var(--dock-glass);
+    -webkit-backdrop-filter: var(--material-blur);
+    backdrop-filter: var(--material-blur);
     border: 1px solid var(--dock-line);
     box-shadow: var(--dock-shadow);
     transform: translateY(0);
-    transition: transform var(--dur-3) var(--ease);
+    opacity: 1;
+    transition:
+      transform var(--dur-3) var(--ease),
+      opacity var(--dur-3) var(--ease);
     view-transition-name: ol-dock;
   }
 
-  .tab-bar[data-hidden='true'] {
+  /* data-hidden: a text field has focus (keyboard); data-scroll-hidden: reader
+     auto-hide. Hidden dock is also inert (script), so it never takes focus. */
+  .tab-bar[data-hidden='true'],
+  .tab-bar[data-scroll-hidden='true'] {
     transform: translateY(calc(100% + env(safe-area-inset-bottom) + var(--shell-tabbar-gap) + var(--space-4)));
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Reduced motion: fade only, no slide. */
+  @media (prefers-reduced-motion: reduce) {
+    .tab-bar[data-hidden='true'],
+    .tab-bar[data-scroll-hidden='true'] {
+      transform: none;
+    }
   }
 
   /* Volt pill under the active tab; --i is the server-rendered tab index. */
@@ -78,7 +96,7 @@ const activeIndex = states.indexOf(true);
     width: calc((100% - 12px) / 4);
     border-radius: 18px;
     background: var(--volt);
-    box-shadow: 0 0 20px -4px var(--volt), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    box-shadow: var(--dock-pill-shadow);
     transform: translateX(calc(var(--i) * 100%));
     transition: transform var(--dur-3) var(--ease);
   }
@@ -138,8 +156,8 @@ const activeIndex = states.indexOf(true);
     line-height: 1;
   }
 
-  /* Saved-count badge (count from the progress store, see script). Grey on ink
-     in both themes: --dock-text fill with --dock text. */
+  /* Saved-count badge (count from the progress store, see script): --dock-text
+     fill with --dock text, so it contrasts on either dock material. */
   .tab-badge {
     position: absolute;
     top: 6px;
@@ -158,9 +176,9 @@ const activeIndex = states.indexOf(true);
     display: none;
   }
 
-  /* The dock sits on an ink surface in both themes: keep a light focus ring. */
+  /* --dock-accent: volt on the ink dock, volt-ink on the light dock. */
   .tab-link:focus-visible {
-    outline: 2px solid var(--volt);
+    outline: 2px solid var(--dock-accent);
     outline-offset: -2px;
     box-shadow: none;
   }
@@ -181,6 +199,7 @@ const activeIndex = states.indexOf(true);
   // has focus. Re-bound on every soft navigation (onPageLoad) because the dock
   // itself is a fresh DOM node after each swap.
   import { onPageLoad } from '../../lib/page-lifecycle';
+  import { bindDockAutohide } from '../../lib/dock-autohide-binding';
   import { getProgressStore } from '../../lib/progress-store';
 
   const isTextInput = (el: EventTarget | null) =>
@@ -200,6 +219,11 @@ const activeIndex = states.indexOf(true);
     document.addEventListener('focusin', onFocusIn);
     document.addEventListener('focusout', onFocusOut);
 
+    // Reader pages: auto-hide on scroll down (re-bound per page; the cleanup
+    // below runs on astro:before-swap so listeners never stack up).
+    const stopAutohide =
+      document.body.dataset.shell === 'reader' ? bindDockAutohide(bar) : undefined;
+
     // Saved-count badge on the "Đã lưu" tab (bookmarks.length; the lessons
     // index is not needed for a badge).
     const badge = bar.querySelector<HTMLElement>('[data-saved-badge]');
@@ -218,6 +242,7 @@ const activeIndex = states.indexOf(true);
     return () => {
       document.removeEventListener('focusin', onFocusIn);
       document.removeEventListener('focusout', onFocusOut);
+      stopAutohide?.();
       unsubscribe?.();
     };
   });

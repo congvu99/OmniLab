@@ -80,15 +80,22 @@ Tất cả ≥4.5:1 trên nền tương ứng.
 | `--glow` | inset 0 1px 0 rgba(255,255,255,0.06) | inset 0 1px 0 rgba(255,255,255,0.95) | Top inner highlight |
 | `--shadow` | 0 1px 2px rgba(12,14,18,0.06), 0 12px 32px -14px rgba(12,14,18,0.22) | (same) | Card shadow |
 
-### Dock (always ink-colored both themes)
+### Dock (ink in dark, light glass in light)
+
+Mobile dock (<1024px) + reader toast. Light: nền kính sáng, chữ/icon tối, hairline, bóng mềm; mục đang chọn = pill volt (FILL) + chữ `--on-volt`. Dark: giữ nền mực.
 
 | Token | Dark | Light | Ghi chú |
 |---|---|---|---|
-| `--dock` | #0E1014 | #0E1014 | Dock background |
-| `--dock-text` | #A3A8B3 | #A3A8B3 | Dock icon/text |
-| `--dock-text-strong` | #EDEEF0 | #EDEEF0 | Chữ chính trên nền mực (dock, toast) |
-| `--dock-line` | rgba(255,255,255,0.08) | rgba(255,255,255,0.08) | Dock separator |
-| `--dock-shadow` | 0 18px 40px -14px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06) | (same) | Dock elevation |
+| `--dock` | #16181C | #FFFFFF | Màu đặc của bề mặt dock/toast (nền để kiểm tra contrast) |
+| `--dock-glass` | #16181C | rgba(255,255,255,0.86) | Vật liệu thanh (+ `--material-blur`); fallback đặc = `--dock` khi không có backdrop-filter / reduced-transparency |
+| `--dock-text` | #A3A8B3 | #4A505C | Icon/label (8.10:1 light, 7.46:1 dark) |
+| `--dock-text-strong` | #EDEEF0 | #0C0E12 | Chữ chính (dock, toast) |
+| `--dock-accent` | #D4FF3A | #4A6B00 | Volt dạng text/outline (focus ring, "Hoàn tác"); 6.19:1 trên light |
+| `--dock-line` | rgba(255,255,255,0.09) | rgba(12,14,18,0.13) | Viền hairline |
+| `--dock-shadow` | 0 18px 40px -14px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06) | 0 1px 2px rgba(12,14,18,0.06), 0 18px 40px -14px rgba(12,14,18,0.3), inset 0 1px 0 rgba(255,255,255,0.95) | Độ nổi |
+| `--dock-pill-shadow` | 0 0 20px -4px var(--volt), inset … | 0 6px 16px -8px rgba(74,107,0,0.55), inset … | Pill volt đang chọn |
+
+**Dock trong reader (<1024px)**: hiện khi mở bài; cuộn xuống quá ~80px thì ẩn (translateY + fade, `inert` nên không bắt focus); cuộn lên ≥24px, hoặc còn <400px tới cuối bài, hoặc ở đầu trang thì hiện. Phím Tab / focus vào dock cũng hiện lại. Reduced motion: chỉ đổi opacity. Nội dung reader chừa chỗ dưới cho dock; toast nằm trên dock khi dock hiện. Logic: `src/lib/dock-autohide.ts`, binding: `src/lib/dock-autohide-binding.ts`. Desktop ≥1024px dùng sidebar, không có dock.
 
 ### Grain & Grid
 
@@ -295,7 +302,7 @@ Sử dụng class này thay vì CSS tùy chỉnh — **single source of truth** 
 ## 9. Layout & Breakpoints
 
 ### Responsive widths
-- **<1024px** (mobile/tablet): Single column, full-bleed reading, floating dock bottom
+- **<1024px** (mobile/tablet): Single column, full-bleed reading, floating dock bottom (reader: dock tự ẩn khi cuộn xuống)
 - **≥1024px** (desktop): Sidebar 256px + main (68ch content-max, centered)
 - **≥1280px** (wide desktop): + reader aside 300px (sticky, scroll independent)
 

@@ -68,12 +68,17 @@
   --glow: inset 0 1px 0 rgba(255, 255, 255, 0.95); /* top inner highlight */
   --shadow: 0 1px 2px rgba(12, 14, 18, 0.06), 0 12px 32px -14px rgba(12, 14, 18, 0.22);
 
-  /* Dock stays ink-colored in BOTH themes. */
-  --dock: #0E1014;
-  --dock-text: #A3A8B3;
-  --dock-text-strong: #EDEEF0; /* primary text on ink surfaces (dock, toast) */
-  --dock-line: rgba(255, 255, 255, 0.08);
-  --dock-shadow: 0 18px 40px -14px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  /* Dock + toast. Light theme: light glass (dark text, hairline, soft shadow).
+     Dark theme: ink surface (see the dark block). --dock is the solid color text
+     is checked against; --dock-glass is the translucent bar material. */
+  --dock: #FFFFFF;
+  --dock-glass: rgba(255, 255, 255, 0.86);
+  --dock-text: #4A505C;
+  --dock-text-strong: #0C0E12; /* primary text on the dock surface (dock, toast) */
+  --dock-accent: #4A6B00; /* volt as text/outline on the dock: volt-ink here */
+  --dock-line: rgba(12, 14, 18, 0.13);
+  --dock-shadow: 0 1px 2px rgba(12, 14, 18, 0.06), 0 18px 40px -14px rgba(12, 14, 18, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  --dock-pill-shadow: 0 6px 16px -8px rgba(74, 107, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.5);
 
   --grain: 0.04; /* grain overlay opacity (desktop only, see base.css) */
   --grid-line: rgba(12, 14, 18, 0.045); /* technical-drawing grid */
@@ -216,7 +221,13 @@
     --shadow: 0 1px 0 rgba(0, 0, 0, 0.5), 0 16px 40px -16px rgba(0, 0, 0, 0.7);
 
     --dock: #16181C;
+    --dock-glass: #16181C;
+    --dock-text: #A3A8B3;
+    --dock-text-strong: #EDEEF0;
+    --dock-accent: #D4FF3A;
     --dock-line: rgba(255, 255, 255, 0.09);
+    --dock-shadow: 0 18px 40px -14px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    --dock-pill-shadow: 0 0 20px -4px var(--volt), inset 0 1px 0 rgba(255, 255, 255, 0.5);
 
     --grain: 0.06;
     --grid-line: rgba(255, 255, 255, 0.035);
@@ -238,6 +249,7 @@
   :root {
     --material-bar: var(--bg);
     --material-blur: none;
+    --dock-glass: var(--dock);
   }
 }
 
@@ -246,6 +258,7 @@
   :root {
     --material-bar: var(--bg);
     --material-blur: none;
+    --dock-glass: var(--dock);
     --material-overlay: rgba(5, 6, 8, 0.8);
   }
 }
