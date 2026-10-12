@@ -474,7 +474,7 @@ function createServer(initialUser) {
     'PUT /api/progress': (call) => guard(call, () => (server.puts.push({ user: server.user, call }), json(200, call.body))),
     'POST /api/auth/login': (call) => ((server.user = call.body.username), json(200, { username: server.user })),
     'POST /api/auth/logout': () => ((server.user = null), json(204)),
-    'POST /api/auth/logout-all': () => ((server.user = null), json(204)),
+    'POST /api/auth/logout-all': (call) => guard(call, () => ((server.user = null), json(204))),
   };
   return server;
 }
@@ -694,5 +694,71 @@ describe('push edge cases', () => {
     t.sync.subscribe((s) => seen.push(s.kind));
     await settle();
     expect(seen.at(-1)).toBe('signed-out');
+  });
+});
+
+describe('review follow-ups', () => {
+  it('logout({clearLocal}) waits for the in-flight push and pushes the newer change before clearing', async () => {
+    const server = createServer('an');
+    const device = createDevice();
+    device.map.set('omnilab:v1:state', ownedBy('an'));
+    const releases = [];
+    const held = (call) => new Promise((res) => releases.push(() => res(server.routes['PUT /api/progress'](call))));
+    const t = make({ device, routes: { ...server.routes, 'PUT /api/progress': held } });
+    await settle();
+    t.store.toggleBookmark(B);
+    await vi.advanceTimersByTimeAsync(3100); // PUT #1 in flight (body without A)
+    t.store.markDone(A, true);
+    const out = t.sync.logout({ clearLocal: true });
+    await settle();
+    releases[0]();
+    await settle();
+    releases[1]?.();
+    await out;
+    const puts = t.fetch.calls.filter((c) => c.key === 'PUT /api/progress');
+    expect(puts).toHaveLength(2);
+    expect(puts[1].body.lessons[A].done).toBe(true);
+    const keys = t.fetch.calls.map((c) => c.key);
+    expect(keys.lastIndexOf('PUT /api/progress')).toBeLessThan(keys.indexOf('POST /api/auth/logout'));
+    expect(server.user).toBe(null);
+    expect(t.store.get().lessons[A]).toBeUndefined();
+  });
+
+  it('logoutAll sends X-Sync-User; a mismatching claim is a 401 handled as signed-out without touching others', async () => {
+    const server = createServer('an');
+    const device = createDevice();
+    device.map.set('omnilab:v1:state', ownedBy('an'));
+    const t = make({ device, routes: server.routes });
+    await settle();
+    await t.sync.logoutAll();
+    expect(t.fetch.calls.find((c) => c.key === 'POST /api/auth/logout-all').init.headers['X-Sync-User']).toBe('an');
+    expect(server.user).toBe(null);
+  });
+
+  it('plain logout stays header-less', async () => {
+    const server = createServer('an');
+    const device = createDevice();
+    device.map.set('omnilab:v1:state', ownedBy('an'));
+    const t = make({ device, routes: server.routes });
+    await settle();
+    await t.sync.logout();
+    expect(t.fetch.calls.find((c) => c.key === 'POST /api/auth/logout').init.headers['X-Sync-User']).toBeUndefined();
+  });
+
+  it('repeated 401 on progress while /api/me succeeds stops after a bounded number of re-checks', async () => {
+    const device = createDevice();
+    device.map.set('omnilab:v1:state', ownedBy('an'));
+    const routes = {
+      'GET /api/me': json(200, { username: 'an' }),
+      'GET /api/progress': json(401, { code: 'unauthorized' }),
+      'PUT /api/progress': json(401, { code: 'unauthorized' }),
+    };
+    const t = make({ device, routes });
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(t.last()).toEqual({ kind: 'error', username: 'an', code: 'unauthorized' });
+    const calls = t.fetch.calls.length;
+    expect(t.fetch.count('GET /api/me')).toBeLessThanOrEqual(3);
+    await vi.advanceTimersByTimeAsync(60_000);
+    expect(t.fetch.calls.length).toBe(calls);
   });
 });

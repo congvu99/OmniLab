@@ -368,15 +368,14 @@ import { DatabaseSync } from 'node:sqlite';
 import { hashPassword } from './server/sync/sync-auth.ts';
 const db = new DatabaseSync('/data/omnilab.db');
 db.exec('PRAGMA busy_timeout=3000');
-const hash = await hashPassword(process.env.P);
-const r = db.prepare('UPDATE users SET pass_hash = ?, session_version = session_version + 1 WHERE username = ?').run(hash, process.env.U);
+const hash = await hashPassword(process.env.P.normalize('NFC'));
+const r = db.prepare('UPDATE users SET pass_hash = ?, session_version = session_version + 1 WHERE username = ?').run(hash, process.env.U.trim().toLowerCase());
 console.log(Number(r.changes) === 1 ? 'reset ok' : 'không có tài khoản này');
 db.close();"</code></pre></div>
 <ul class="explain">
   <li>Tên tài khoản viết thường, đúng như lúc đăng ký. Kết quả: <code>reset ok</code> hoặc <code>không có tài khoản này</code>.</li>
-  <li>Lệnh không kiểm tra độ dài. Mật khẩu mới nên dài 8–128 ký tự, đúng quy tắc khi đăng ký. Nên dùng ký tự ASCII: nhập Unicode khác dạng chuẩn hoá có thể khiến người dùng không đăng nhập được.</li>
+  <li>Lệnh không kiểm tra độ dài. Mật khẩu mới nên dài 8–128 ký tự, đúng quy tắc khi đăng ký. Lệnh tự chuẩn hoá mật khẩu về NFC và tên tài khoản về chữ thường, bỏ khoảng trắng hai đầu, đúng như máy chủ khi đăng ký/đăng nhập.</li>
   <li>Lệnh nằm trong lịch sử shell, và có thể thấy trong danh sách tiến trình trên host lúc đang chạy. Sau khi chạy, xoá dòng lệnh khỏi lịch sử (<code>history -d &lt;số dòng&gt;</code>).</li>
-  <li>Muốn chỉ đăng xuất mọi thiết bị mà không đổi mật khẩu: chạy lại lệnh với mật khẩu hiện tại.</li>
   <li>Lệnh ghi thẳng vào DB đang chạy (WAL, <code>busy_timeout</code>), không cần dừng sync.</li>
 </ul>
 

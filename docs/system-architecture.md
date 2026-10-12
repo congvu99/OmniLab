@@ -167,7 +167,7 @@ Base `/api`. Response JSON, `Cache-Control: no-store`, `Vary: Cookie`. Lỗi có
 | POST | `/api/auth/register` | Không | 201 `{"username"}` + cookie | 400, 409 `username_taken`, 429 |
 | POST | `/api/auth/login` | Không | 200 `{"username"}` + cookie | 400, 401 `bad_credentials`, 429 |
 | POST | `/api/auth/logout` | Không | 204, xoá cookie | 415 |
-| POST | `/api/auth/logout-all` | Cookie | 204, tăng `session_version` | 401 |
+| POST | `/api/auth/logout-all` | Cookie + `X-Sync-User` | 204, tăng `session_version` | 401 |
 | GET | `/api/me` | Cookie | 200 `{"username"}` | 401 `unauthorized` |
 | GET | `/api/progress` | Cookie + `X-Sync-User` | 200 state v2 | 401 |
 | PUT | `/api/progress` | Cookie + `X-Sync-User` | 200 state đã gộp | 400, 401, 413, 503 `busy` |

@@ -117,7 +117,7 @@ export async function startServer(config: SyncConfig) {
         return send(204, undefined, { 'Set-Cookie': clearCookie });
       case 'POST /api/auth/logout-all': {
         await readBody(req);
-        store.bumpSessionVersion(authenticate(req).username);
+        store.bumpSessionVersion(authenticate(req, true).username);
         return send(204, undefined, { 'Set-Cookie': clearCookie });
       }
       case 'GET /api/me':

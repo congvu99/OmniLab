@@ -39,7 +39,7 @@ async function call(method, path, { body, cookie, type = 'application/json', raw
   const headers = {};
   if (cookie) headers.cookie = cookie;
   const claim = user === undefined ? cookieUsers.get(cookie) : user;
-  if (claim && path === '/api/progress') headers['x-sync-user'] = claim;
+  if (claim && (path === '/api/progress' || path === '/api/auth/logout-all')) headers['x-sync-user'] = claim;
   if (body !== undefined || raw !== undefined) headers['content-type'] = type;
   const res = await fetch(base + path, {
     method,
@@ -359,5 +359,16 @@ describe('X-Sync-User claim', () => {
     expect((await call('GET', '/api/progress', { cookie: b.cookie })).status).toBe(200);
     // /api/me is the identity probe and needs no claim.
     expect((await call('GET', '/api/me', { cookie: b.cookie })).json).toEqual({ username: b.name });
+  });
+});
+
+describe('logout-all claim', () => {
+  it('requires X-Sync-User to match the cookie user; plain logout needs no claim', async () => {
+    const b = await register();
+    expect((await call('POST', '/api/auth/logout-all', { cookie: b.cookie, user: 'someone-else', body: {} })).status).toBe(401);
+    expect((await call('POST', '/api/auth/logout-all', { cookie: b.cookie, user: '', body: {} })).status).toBe(401);
+    expect((await call('GET', '/api/me', { cookie: b.cookie })).status).toBe(200); // session untouched
+    expect((await call('POST', '/api/auth/logout', { cookie: b.cookie, body: {} })).status).toBe(204);
+    expect((await call('POST', '/api/auth/logout-all', { cookie: b.cookie, body: {} })).status).toBe(204);
   });
 });

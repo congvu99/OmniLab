@@ -400,10 +400,20 @@ describe('rework behaviours', () => {
     expect(nodes.notice.textContent).toBe('Đã xoá tiến độ trên máy này.');
   });
 
-  it('wipe is unavailable while checking or deciding a merge', () => {
+  it('wipe shows only when signed out (a signed-in wipe would be re-pulled from the account)', () => {
     const { nodes, push } = setup();
     expect(nodes['wipe-block'].hidden).toBe(true);
-    push({ kind: 'needs-merge-decision', username: 'b' });
-    expect(nodes['wipe-block'].hidden).toBe(true);
+    for (const st of [
+      { kind: 'needs-merge-decision', username: 'b' },
+      { kind: 'unavailable' },
+      { kind: 'syncing', username: 'an' },
+      { kind: 'synced', username: 'an', at: 0 },
+      { kind: 'error', username: 'an', code: 'busy' },
+    ]) {
+      push(st);
+      expect(nodes['wipe-block'].hidden).toBe(true);
+    }
+    push({ kind: 'signed-out' });
+    expect(nodes['wipe-block'].hidden).toBe(false);
   });
 });

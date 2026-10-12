@@ -76,7 +76,7 @@
         </div>
       </div>
       <label class="ap-switch">
-        <span>Xoá dữ liệu trên máy này khi đăng xuất</span>
+        <span>Xoá dữ liệu trên máy này khi đăng xuất<small class="ap-hint">Dùng khi đây không phải máy của bạn.</small></span>
         <input type="checkbox" role="switch" data-ap="clear-local" />
       </label>
       <div class="ap-actions">
@@ -367,6 +367,10 @@
     font-size: var(--text-small);
     color: var(--text-2);
     cursor: pointer;
+  }
+
+  .ap-switch small {
+    display: block;
   }
 
   .ap-switch input {

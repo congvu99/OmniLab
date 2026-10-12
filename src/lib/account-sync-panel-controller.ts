@@ -89,7 +89,8 @@ export function attachAccountPanel(els: AccountPanelElements, sync: ProgressSync
     status = next;
     const view = viewOf(next);
     for (const s of SECTIONS) els[s].hidden = s !== view.section;
-    els['wipe-block'].hidden = view.section === 'checking' || view.section === 'merge';
+    // Signed-out only: while signed in, local data is re-pulled from the account within seconds.
+    els['wipe-block'].hidden = view.section !== 'form';
     els.unavailable.textContent = view.section === 'unavailable' ? view.headline : '';
     if (view.section === 'merge') els['merge-text'].textContent = view.headline;
     if (view.section === 'account') {

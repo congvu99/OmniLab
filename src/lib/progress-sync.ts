@@ -20,6 +20,7 @@ export type { CreateProgressSyncOptions, ProgressSync };
 const ME_TIMEOUT_MS = 4000;
 const API_TIMEOUT_MS = 8000;
 const MIN_PULL_GAP_MS = 5000;
+const MAX_RECHECKS = 2;
 
 export function createProgressSync(options: CreateProgressSyncOptions): ProgressSync {
   const { store } = options;
@@ -29,7 +30,12 @@ export function createProgressSync(options: CreateProgressSyncOptions): Progress
   const win: NonNullable<CreateProgressSyncOptions['win']> = options.win ?? window;
   const dirty = createDirtyTracker(options.storage);
   const statusChannel = createStatusChannel({ kind: 'checking' });
-  const set = statusChannel.set;
+  // Consecutive progress 401s while /api/me still succeeds (e.g. a proxy stripping X-Sync-User): stop re-checking.
+  let unauthorizedRun = 0;
+  const set: typeof statusChannel.set = (status) => {
+    if (status.kind === 'synced') unauthorizedRun = 0;
+    statusChannel.set(status);
+  };
   const session: SyncSession = { epoch: 0, pendingMerge: false, halted: false, lastPullAt: -Infinity };
   let booting = 0;
   let broadcasts = 0;
@@ -43,7 +49,10 @@ export function createProgressSync(options: CreateProgressSyncOptions): Progress
     dirty,
     set,
     loadKnownIds: () => (knownLoaded ??= loadKnownIds(options.getKnownIds).then(dirty.setKnownIds)),
-    onUnauthorized: () => recheck(),
+    onUnauthorized: () => {
+      if (++unauthorizedRun <= MAX_RECHECKS) return recheck();
+      if (session.username) set({ kind: 'error', username: session.username, code: 'unauthorized' });
+    },
   });
   const { push, pull, canPush, canPull, isDirty } = transfer;
 
@@ -107,15 +116,17 @@ export function createProgressSync(options: CreateProgressSyncOptions): Progress
     return { ok: true, username: name, needsMergeDecision: await reconcile(name, true) };
   }
 
-  async function endSession(path: string, clearLocal: boolean) {
+  async function endSession(path: string, clearLocal: boolean, claimUser = false) {
     store.flushScroll();
-    // Send unsynced decisions while the cookie is still valid; never wipe data that did not make it (too_large excepted).
-    const pushed = canPush() && isDirty() ? await push({}) : true;
-    if (!pushed && clearLocal && !session.halted) {
+    // Send unsynced decisions while the cookie is still valid; never wipe data that did not make it (a halted too_large state cannot push, so it is excepted).
+    // An in-flight push carries an older body: keep pushing until nothing is left (or it fails).
+    for (let tries = 0; tries < 3 && canPush() && isDirty(); tries++) await push({});
+    if (clearLocal && canPush() && isDirty()) {
       if (session.username) set({ kind: 'error', username: session.username, code: 'unavailable' });
       return;
     }
-    const res = await http(path, { method: 'POST', body: {}, timeoutMs: API_TIMEOUT_MS });
+    // logout-all affects the account, so it must name the account this tab believes in.
+    const res = await http(path, { method: 'POST', body: {}, user: claimUser ? session.username : undefined, timeoutMs: API_TIMEOUT_MS });
     if (res.status !== 204 && res.status !== 401) {
       if (session.username) set({ kind: 'error', username: session.username, code: errorCodeOf(res.json, 'unavailable') });
       return;
@@ -159,7 +170,7 @@ export function createProgressSync(options: CreateProgressSyncOptions): Progress
     login: (u, p) => auth('/api/auth/login', { username: u, password: p }),
     resolveMerge,
     logout: (opts) => endSession('/api/auth/logout', opts?.clearLocal === true),
-    logoutAll: (opts) => endSession('/api/auth/logout-all', opts?.clearLocal === true),
+    logoutAll: (opts) => endSession('/api/auth/logout-all', opts?.clearLocal === true, true),
     subscribe: statusChannel.subscribe,
   };
 }
