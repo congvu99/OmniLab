@@ -1,4 +1,4 @@
-# Tiêu chuẩn code — OmniLab v1
+# Tiêu chuẩn code — OmniLab v1 + Studio
 
 ## Tệp & Đặt tên
 
@@ -12,13 +12,24 @@
 **Cấu trúc**:
 ```
 src/
-  components/islands/        # Interactive (ship client JS)
-  lib/                       # TypeScript utils
-  layouts/                   # Layout templates
-  pages/                     # Routes (file-based)
-  content/domains/           # YAML metadata
-  content/lessons/           # MDX (domain/module/slug)
-  styles/                    # tokens.css, prose.css
+  components/
+    icon/                  # Icon component + names + paths (Studio sprite)
+    command-palette/       # ⌘K palette (new)
+    islands/               # Interactive islands (client JS)
+    lesson/                # Lesson body (RealLife, Figure, etc.)
+    shell/                 # Layout shells (dock, sidebar, headers)
+    domain/                # Domain cards, art, nav
+  lib/                     # TypeScript utils (stores, helpers, controllers)
+  layouts/                 # Astro layouts
+  pages/                   # Routes (file-based)
+  content/
+    domains/               # YAML: domain metadata + accent
+    lessons/               # MDX: lessons by domain/module/slug
+  styles/
+    tokens.css             # Studio design tokens
+    base.css               # Utilities (.btn, .card, .row, etc.)
+    prose.css              # Lesson body + syntax highlight
+    view-transitions.css   # Depth push motion
 ```
 
 ## TypeScript / JavaScript
@@ -46,10 +57,12 @@ export function foldDiacritics(input: string): string {
 **Cấu trúc**:
 ```astro
 ---
+import { Icon } from '../icon/icon.astro';
 interface Props { title: string; items: any[] }
 const { title, items } = Astro.props;
 ---
 <div>{title}</div>
+<Icon name="search" size={20} />
 <style>
   /* auto-scoped */
 </style>
@@ -57,35 +70,77 @@ const { title, items } = Astro.props;
 
 **Island** (tương tác): Ở `src/components/islands/`. Re-init trên `astro:page-load` (soft nav).
 
-**Data attribute**: `data-lesson-id={id}` (JS target), không dùng class.
-
-## CSS
-
-**Tokens** (`src/styles/tokens.css`):
-```css
-:root {
-  --color-text: #111;
-  --spacing-md: 1rem;
-  --font-sans: "Be Vietnam Pro", sans-serif;
-  --line-strong: /* control/input boundaries, ≥3:1 vs bg/surface/surface-2 */
-  --gutter-l: max(var(--space-4), env(safe-area-inset-left));  /* landscape notch */
-  --gutter-r: max(var(--space-4), env(safe-area-inset-right)); /* landscape notch */
-}
-@media (prefers-color-scheme: dark) {
-  :root { --color-text: #f0f0f0; }
-}
+**Icon usage**: 
+```astro
+import Icon from '../icon/icon.astro';
+<Icon name="bookmark" size={20} stroke-width={1.5} label="..." />
 ```
+- Size trong px; no scaling, không relative
+- `label` → `aria-label` nếu icon-only button
+- Names: 25 core + aliases; unknown → `domains` fallback
+
+**Command palette**: 
+```astro
+import CommandPalette from '../command-palette/command-palette.astro';
+<CommandPalette />
+```
+Mount một lần trong body. Event: `document.dispatchEvent(new CustomEvent('omnilab:open-palette'))`; shortcut: Cmd/Ctrl+K.
+
+**State-bearing islands** (mark-complete, bookmark): Bind **all** instances via `querySelectorAll([data-mcb] / [data-bb])`, subscribe progress store → click one flips all instances across pages + vice versa. **No duplicate ids/landmarks/links** — aside uses `aside-*-` prefix.
+
+**Reader aside slot** (reader-layout.astro):
+```astro
+<Fragment slot="aside">
+  <!-- Shown >=1280px, sticky, scroll independent -->
+</Fragment>
+```
+Inline copies + `.hide-at-aside-width` (visible <1280px) → exactly one version visible always.
+
+**Data attributes**: 
+- `data-lesson-id={id}` (JS target)
+- `data-aside-*` (aside-specific selector)
+- `data-open-palette` (palette trigger button)
+- `data-kbd-mod` (platform, for ⌘/Ctrl display)
+- `data-rotate`, `data-theme` (icon, component-specific)
+
+## CSS & Tokens
+
+**Tokens** (`src/styles/tokens.css`): Studio palette (dark #0B0C0E / light #F3F4F6), Volt + domain hues, typography scale, spacing 4pt, motion 120–200ms, radius xs–xl, materials (glass + fallback solid), shell layout dimensions.
+
+**VOLT RULE**: 
+- `--volt` = **FILL ONLY** (buttons, indicators, disc badges) + `--on-volt` text (nearblack)
+- `--volt-ink` = **TEXT variant** (links, eyebrows, active icons) — lime dark, olive light — dùng độc lập ở mọi surface
+- Never `--volt` as text on light background
+
+**Shared utilities** (`src/styles/base.css`) — **use these, don't custom CSS**:
+- `.btn` / `.btn-primary` / `.btn-secondary` / `.btn-ghost` / `.btn-sm` / `.btn-icon`: Buttons (44px min hit area)
+- `.chip`: Filter pill (32px, `[aria-pressed=true]` = filled)
+- `.card`: Surface + hairline + glow + shadow (radius 16)
+- `.row`: 56px list row with `.idx` (mono index), `.tt` (b + small), `.chev` (chevron)
+- `.bar`, `.seg`: Progress bar + segmented bar (`--p` width, `--c` color, `--n` columns)
+- `.st`: Status dot (22px; `.done` disc, `.prog` arc %)
+- `.field`: 46px input shell (icon + input + `.kbd` hint); border ≥3:1
+- `.kbd` / `kbd`: Keycap hint (chỉ show nếu key thật hoạt động)
+- `.eyebrow`: 11.5px mono uppercase label; `.b` = volt-ink accent
+- `.mono` / `.tnum`: JetBrains Mono + tabular numerals
+- `.dom-ic`: 40px domain icon tile, color `--c` (hue)
+- `.tap-scale`: Press 0.985 scale feedback
+- `.hide-at-aside-width`: Hidden ≥1280px (reader aside pattern)
+- `.rise` / `ol-stagger-in`: Entrance stagger 30ms (page push dùng `ol-push-in` trong view-transitions.css — không trùng tên keyframe)
+- `.sr-only`: Screen reader only
 
 **Sử dụng tokens**: 
-- `--line-strong` cho control borders (input, textarea). `--line` là cho decorative dividers chỉ.
-- `--gutter-l/r` áp dụng trên shell bar và page containers ở landscape (notch safety).
-- Hover states: **bắt buộc bọc trong `@media (hover: hover)`** (desktop/trackpad chỉ, không touch).
-- Contrast: Mọi text color + domain accent phải ≥4.5:1 (AA) trên `--bg`, `--surface` AND `--surface-2`, cả hai theme. Xác thực qua `tests/token-contrast.test.mjs`.
-- Text size ≥ 12px; inline code dùng `overflow-wrap: anywhere` để wrap.
+- Token cho mọi color, radius, space, duration, shadow (không hex/px magic)
+- `--line-strong` cho control boundary ≥3:1. `--line-2`/`--line-3` = decorative chỉ
+- `--gutter-l/r` cho safe area + notch (landscape)
+- Motion: `--dur-1/2/3/4` (120–280ms), `--ease` (ease-out), `--stagger` (30ms per item)
+- Hover states: bắt buộc `@media (hover: hover)` (desktop chỉ)
+- Reduced motion: `@media (prefers-reduced-motion: reduce)` → duration 0.01ms (instant) or 120ms crossfade
+- Contrast: Text ≥4.5:1 AA, control border ≥3:1; test via `token-contrast.test.mjs`
 
-**Shiki dual-theme**: Light inline (`style="color: ..."`), dark via `--shiki-dark-*` vars (apply trong `prose.css`).
+**Shiki dual-theme**: Light inline style, dark via `--shiki-dark-*` vars trong prose.css
 
-**Specificity**: Use class, tránh `!important`. Astro auto-scope.
+**Specificity**: Class only, no `!important`. Astro auto-scopes.
 
 ## MDX (Bài học)
 
@@ -131,10 +186,10 @@ it('fold diacritics', () => {
 
 **Quality gate**: 
 ```bash
-pnpm verify:fidelity  # Nội dung gốc bất biến
-pnpm test             # 174/174 pass
-pnpm check            # 0 errors (astro check)
-pnpm build            # Full build → verify:fidelity + astro build
+pnpm verify:fidelity  # Nội dung gốc bất biến (snapshot check)
+pnpm test             # 432 tests in 24 files pass
+pnpm check            # 0 errors (astro check + schema)
+pnpm build            # Full build → verify:fidelity + astro build → dist/ (73 pages)
 ```
 
 ## Git & Commit
@@ -170,12 +225,16 @@ Added explicit .foo[hidden] { display: none; }.
 
 ## A11y
 
-- Semantic HTML (`<button>`, `<nav>`)
-- `aria-label` cho icon-only button
-- Focus/keyboard: tab + enter/space hoạt động
+- Semantic HTML (`<button>`, `<nav>`, `<main>`, `<aside>`)
+- `aria-label` cho icon-only button; `aria-labelledby` cho nav + aside (TOC)
+- Focus/keyboard: tab + enter/space hoạt động; `:focus-visible` outline 2px accent
 - SVG: `role="img"` + `aria-labelledby="title-id"`
+- **Tap target**: ≥44px (min-height 44px + padding)
+- **Contrast**: ≥4.5:1 AA (light + dark, all surfaces). Test: `token-contrast.test.mjs`
+- **Reduced motion**: Respect `prefers-reduced-motion:reduce` (animation 0.01ms, no smooth-scroll)
+- **TOC scrollspy**: `aria-current="location"` on active TOC link; scrollIntoView `instant` (no animation)
 
-**Lighthouse**: Target ≥95 (xem QA report).
+**Lighthouse**: Target ≥95 (xem QA report). Contrast tested 55 token pairs.
 
 ## Performance
 

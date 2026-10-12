@@ -1,6 +1,6 @@
 # Kiến trúc hệ thống — OmniLab v1
 
-OmniLab là app học tập tĩnh (Astro 7) chạy hoàn toàn trong trình duyệt. Không server, không database—toàn bộ dữ liệu người dùng lưu trong localStorage.
+OmniLab là app học tập tĩnh (Astro 7) chạy hoàn toàn trong trình duyệt. Không server, không database — dữ liệu người dùng (tiến độ, bookmark) lưu trong localStorage. Giao diện Studio: dark-first, Volt signature color, motion 120–200ms, custom icon sprite, command palette ⌘K/Ctrl+K.
 
 ## Kiến trúc tổng quan
 
@@ -9,9 +9,18 @@ OmniLab là app học tập tĩnh (Astro 7) chạy hoàn toàn trong trình duy�
 │ Trình duyệt người dùng (iOS Safari, Chrome, Firefox)      │
 ├───────────────────────────────────────────────────────────┤
 │ • Trang HTML tĩnh (Astro build) + island tương tác       │
-│ • Storage: localStorage (omnilab:v1:state) + fallback     │
-│ • Tìm kiếm: MiniSearch lazy-load trên /tim-kiem          │
-│ • Giao diện: CSS token + prefers-color-scheme             │
+│ • Giao diện: Studio dark-first (graphite), Volt, hairline│
+│ • Layout:                                                  │
+│   - Mobile <1024px: Dock bottom 4 tab, full-bleed content│
+│   - Desktop ≥1024px: Sidebar 256px left (nav + domains)  │
+│   - Wide ≥1280px: + reader aside 300px sticky scrollable │
+│ • Command palette: ⌘K (macOS) / Ctrl+K (Windows/Linux)   │
+│ • Storage: localStorage (omnilab:v1:state) + in-memory   │
+│ • Tìm kiếm: MiniSearch + diacritic folding, lazy-load    │
+│ • Motion: 120–200ms, depth push page transition, stagger  │
+│ • Icons: 32-icon custom sprite (no Lucide)               │
+│ • Fonts: Be Vietnam Pro (UI) + JetBrains Mono (data)     │
+│ • Tap targets: ≥44px; contrast ≥4.5:1                    │
 └───────────────────────────────────────────────────────────┘
          ↓ HTTPS (Railpack TLS) ↓
 ┌───────────────────────────────────────────────────────────┐
@@ -83,9 +92,28 @@ OmniLab là app học tập tĩnh (Astro 7) chạy hoàn toàn trong trình duy�
 
 **Error handling**: Nếu load index thất bại → hiển thị error state với nút "Thử lại". Lỗi được announced qua persistent status region (live region) để screen reader phát hiện. Xem `src/lib/search-box-controller.ts`.
 
+## Layout Desktop (3 cột, >=1280px)
+
+Reader layout (`src/layouts/reader-layout.astro`) cung cấp aside slot dành cho TOC + tiến độ + action (bookmark, complete, next lesson):
+
+- **Sidebar** (264px): Điều hướng + danh sách lĩnh vực
+- **Main** (68ch, centered): Nội dung bài học
+- **Aside** (296px, >=1280px only): Sticky column scrolls independently
+
+**TOC Scrollspy** (`src/lib/toc-scrollspy.ts`): 
+- IntersectionObserver + rAF throttle: Highlights current heading as user scrolls
+- Sets `aria-current="location"` on active TOC link
+- Progress bar: Reading % (0–100) updated per scroll/resize
+- Aside TOC: scrollIntoView instant (no animation), respects reduced-motion
+- Inline TOC (mobile/tablet): Collapsible, hidden at >=1280px via `.hide-at-aside-width`
+
+**Contract**: Inline copy có `.hide-at-aside-width` ở <1280px; aside never renders <1280px. Islands (bookmark, complete) bind every instance + share progress store → click aside button flips all copies.
+
 ## Styling & Dark mode
 
-**CSS tokens** (`src/styles/tokens.css`): Biến custom (`--color-*`, `--spacing-*`, `--font-*`).
+**CSS tokens** (`src/styles/tokens.css`): Biến custom cho màu iOS (light/dark palette), material glass (blur + fallback), radius, type scale, motion, spacing 4pt grid.
+
+**Shared utilities** (`src/styles/base.css`): `.ios-list`, `.ios-row`, `.ios-card`, `.btn`, `.ios-search`, `.ios-glass`, `.hide-at-aside-width` — single source of truth, không dùng CSS tùy chỉnh.
 
 **Dark mode**: Media query `prefers-color-scheme` (không toggle UI). Shiki: light colors inline, dark trong `--shiki-dark-*` vars, apply trong `prose.css`.
 

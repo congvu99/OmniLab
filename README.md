@@ -14,11 +14,15 @@ Tổng cộng 196 khối "Ví dụ đời sống", 97 minh hoạ SVG mới, 44 �
 
 ## Tính năng
 
-- Tab bar 4 mục: Học tiếp · Lĩnh vực · Tìm kiếm · Đã lưu; chuyển trang trượt kiểu iOS (tắt khi bật reduced motion).
-- Cài lên màn hình chính iPhone (manifest standalone). **Không** hỗ trợ đọc offline ở v1.
-- Tiến độ học, đánh dấu hoàn thành, bookmark, "Học tiếp" đúng vị trí cuộn — lưu trong `localStorage` của máy.
-- Tìm kiếm toàn văn tiếng Việt, gõ có dấu hay không dấu đều được ("bo nho dem" = "bộ nhớ đệm").
-- Dark mode theo hệ thống.
+- **Giao diện Studio**: Dark-first (graphite #0B0C0E), Volt signature color, hairline borders, Be Vietnam Pro + JetBrains Mono, 44px tap targets
+- **Dock** (mobile <1024px): 4 tab bar (Học tiếp · Lĩnh vực · Tìm kiếm · Đã lưu); motion depth push thay vì trượt iOS
+- **Sidebar** (desktop ≥1024px): Điều hướng, lĩnh vực, bookmark, tiến độ toàn bộ
+- **Command palette** (⌘K / Ctrl+K): Tìm kiếm bài học, jump tab, với keyboard shortcut + mouse click
+- **Reader** (≥1280px): Table of contents scrollspy, progress ring, mark complete (motion: ring → disc → tick + spark), bookmark, next lesson
+- **Tiến độ & bookmark**: Lưu trong `localStorage` của máy; fallback in-memory ở private mode. "Học tiếp" nhớ vị trí cuộn.
+- **Tìm kiếm** (MiniSearch): Toàn văn tiếng Việt, gõ có dấu hay không dấu ("bo nho dem" = "bộ nhớ đệm"), index lazy-load
+- **Dark/light theme**: Tự động theo hệ thống, không toggle UI
+- **Installable**: PWA (manifest standalone) trên iPhone, nhưng **không** offline ở v1
 
 ## Chạy local
 
@@ -39,15 +43,15 @@ pnpm preview      # xem bản build
 
 | Tài liệu | Nội dung |
 |---|---|
+| [docs/design-guidelines.md](docs/design-guidelines.md) | **Studio design system**: token màu/typography/motion, icon API, command palette, layout, a11y |
 | [docs/project-overview-pdr.md](docs/project-overview-pdr.md) | Mục tiêu, phạm vi, yêu cầu, quyết định |
-| [docs/system-architecture.md](docs/system-architecture.md) | Kiến trúc build, nội dung, client state, tìm kiếm, CSP |
-| [docs/codebase-summary.md](docs/codebase-summary.md) | Bản đồ thư mục và module |
-| [docs/code-standards.md](docs/code-standards.md) | Quy ước code và nội dung |
-| [docs/content-authoring-guide.md](docs/content-authoring-guide.md) | Cách viết ví dụ đời sống, thêm bài, thêm lĩnh vực |
-| [docs/illustration-style-guide.md](docs/illustration-style-guide.md) | Quy chuẩn vẽ SVG |
-| [docs/cover-image-prompt.md](docs/cover-image-prompt.md) | Prompt mẫu để tự tạo ảnh bìa |
-| [docs/deployment-guide.md](docs/deployment-guide.md) | Deploy bằng Railpack, env, smoke test |
-| [docs/project-roadmap.md](docs/project-roadmap.md) | Việc đã xong và hướng v2 |
+| [docs/codebase-summary.md](docs/codebase-summary.md) | Bản đồ thư mục, kiến trúc, nội dung, tìm kiếm |
+| [docs/code-standards.md](docs/code-standards.md) | Quy ước code, TypeScript, Astro, testing, git |
+| [docs/system-architecture.md](docs/system-architecture.md) | Build pipeline, localStorage, progress store, CSP |
+| [docs/content-authoring-guide.md](docs/content-authoring-guide.md) | MDX lesson, RealLife, Figure, thêm lĩnh vực |
+| [docs/illustration-style-guide.md](docs/illustration-style-guide.md) | SVG monoline style, grid, colors |
+| [docs/deployment-guide.md](docs/deployment-guide.md) | Railpack + Caddy, env, smoke test, checklist |
+| [docs/project-roadmap.md](docs/project-roadmap.md) | v1 trạng thái (Studio restyle), ứng viên v2 |
 
 ## Deploy
 

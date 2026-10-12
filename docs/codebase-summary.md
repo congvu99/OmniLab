@@ -1,34 +1,53 @@
-# Tóm tắt Codebase — OmniLab v1
+# Tóm tắt Codebase — OmniLab v1 + Studio redesign
 
-**Dự án**: App học tập Astro 7 (static output) + MDX | **Trạng thái**: v1 hoàn tất | **Cập nhật**: 2026-09-28
+**Dự án**: App học tập Astro 7 (static) + MDX | **Trạng thái**: v1 Studio redesign hoàn tất | **Cập nhật**: 2026-10-12
 
 ## Sự kiện chính
 
 | Khía cạnh | Chi tiết |
 |-----------|---------|
 | **Framework** | Astro 7 (static) + MDX, vanilla TypeScript (islands) |
+| **Design** | Studio (dark-first, Volt signature, depth motion, command palette) |
 | **Deploy** | Railpack + Caddy (Vibe Deploy Nhân Hòa) |
-| **Nội dung** | Domain YAML + lesson MDX, ID = `domain/module/slug` |
+| **Nội dung** | 3 domain (kiến-trúc 27, tài-chính 23, nghề-tài-chính 14 bài), YAML + MDX |
 | **Lưu trữ** | localStorage (`omnilab:v1:state`) + fallback in-memory |
-| **Tìm kiếm** | MiniSearch v7.2.0, xử lý dấu Tiếng Việt |
-| **SVG** | 97 tệp minh họa (kien-truc/, tai-chinh/, nghe-tai-chinh/)
-| **Lưu ý v1** | Offline không hỗ trợ; progress = localStorage (private mode = in-memory, không persist) |
+| **Tìm kiếm** | MiniSearch + diacritic folding, index lazy-load |
+| **Icon** | 32-icon custom sprite (Studio monoline), no Lucide |
+| **Fonts** | Be Vietnam Pro + JetBrains Mono (@fontsource) |
+| **SVG** | 97 minh họa + 44 ảnh gốc |
+| **Lưu ý v1** | Offline không hỗ trợ; progress = localStorage (private mode = in-memory) |
 
 ## Cấu trúc thư mục
 
 ```
 src/
-├── assets/illustrations/           # 97 SVG
+├── assets/illustrations/           # 97 SVG + 44 ảnh gốc
 ├── components/
-│   ├── islands/: BookmarkButton, ProgressRing (client JS)
-│   ├── lesson/: RealLife, Figure, Disclaimer
-│   └── shell/, domain/
+│   ├── icon/                       # Icon component + sprite paths (32 icon, no Lucide)
+│   ├── command-palette/            # ⌘K/Ctrl+K palette (new)
+│   ├── islands/                    # Interactive islands
+│   │   ├── mark-complete-button    # Ring/disc/tick motion, spark, toast
+│   │   ├── bookmark-button         # Bookmark toggle, sync via store
+│   │   ├── learning-stats, domain-progress, up-next-list  # Home
+│   │   ├── domain-page-controls    # Domain filter chips
+│   │   └── search-box, domain-nav, tab-bar, sidebar-nav
+│   ├── lesson/                     # Lesson components (RealLife, Figure, etc.)
+│   ├── shell/                      # Layout shells (app-layout, reader-layout)
+│   └── domain/                     # Domain cards, headers, art
 ├── content/
 │   ├── domains/: kien-truc.yaml, tai-chinh.yaml, nghe-tai-chinh.yaml
 │   └── lessons/: MDX by domain/module/slug
-├── lib/: progress-store.ts, search-index.ts, lesson-id.ts
-├── pages/: routes (home, domains, hoc/*, search, saved, 404)
-└── styles/: tokens.css, prose.css
+├── layouts/                        # Astro layouts (app-layout, reader-layout)
+├── lib/
+│   ├── progress-store.ts, search-index.ts, lesson-id.ts, toc-scrollspy.ts
+│   ├── command-palette-logic.ts, command-palette-controller.ts  # (new)
+│   └── (domain-progress, complete-check-motion, reader-toast, etc.)
+├── pages/: routes (home, hoc/*, linh-vuc, tim-kiem, da-luu, gioi-thieu, 404)
+└── styles/
+    ├── tokens.css      # Studio color/motion/typography tokens
+    ├── base.css        # Utilities (.btn, .card, .row, .kbd, etc.)
+    ├── prose.css       # Lesson body + code syntax
+    └── view-transitions.css  # Depth push transition
 ```
 
 ## Mô hình nội dung
@@ -72,14 +91,17 @@ src/
 
 ## Testing & Quality
 
-- 174 tests (Vitest, no jsdom, injectable deps)
-- TypeScript: astro check (0 errors)
-- build: verify:fidelity + astro build
-- Lighthouse mục tiêu ≥95 (xem phase-07-qa-report)
+- **432 tests** (Vitest, 24 test files; no jsdom, injectable deps)
+  - Icon names + paths, command palette logic/controller, search controller, progress store, toc-scrollspy, lesson reader model, token contrast, etc.
+- TypeScript: astro check (0 errors, schema valid)
+- Contrast: 55 token pairs verified ≥4.5:1 light/dark (Studio tokens: text/text-2/text-3/volt/volt-ink/domain hues/danger/success on all surfaces)
+- Build: verify:fidelity gate (content snapshot check) + astro build → dist/ (73 pages)
+- Lighthouse: Target ≥95 (to be verified post-deploy)
 
 ## Tấm ghi chú
 
 1. Thêm domain: `src/content/domains/{id}.yaml` + folder → không sửa code.
-2. Islands re-init: Lắng nghe `astro:page-load` (soft nav).
+2. Islands re-init: Lắng nghe `astro:page-load` (soft nav); state-bearing islands bind every instance + sync via progress store.
 3. SVG trong Figure: Import `?raw` (inline, CSS vars resolve).
-4. Offline v2 candidate: Service worker + IndexedDB (không v1).
+4. `--ink` / `--ink-2` là hợp đồng màu cho minh hoạ SVG (>1.000 chỗ dùng trong bài học), không phải alias cũ — `tests/illustration-token-contract.test.mjs` chặn việc xoá. Component mới dùng `--text` / `--text-2`.
+5. Offline v2 candidate: Service worker + IndexedDB (không v1).

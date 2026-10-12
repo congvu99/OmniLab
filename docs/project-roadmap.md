@@ -1,19 +1,20 @@
 # Lộ trình dự án
 
-## v1 (2026-09-28): code xong, chờ deploy
+## v1 (2026-10-12): Studio redesign hoàn tất
 
-Trạng thái: toàn bộ 7 phase trong [plan v1](../plans/260928-1725-omnilab-v1-learning-app/plan.md) đã hoàn thành trên `main`. Sửa audit UX 2026-09-30 (a11y/contrast/safe-area/tap-to-zoom sơ đồ). Deploy lên Vibe Deploy Nhân Hòa và kiểm tra trên iPhone thật do chủ dự án thực hiện (xem [deployment-guide.md](deployment-guide.md)).
+Trạng thái: v1 code đầy đủ + Studio redesign (dark-first graphite, Volt signature, command palette ⌘K, reader scrollspy + completion motion) hoàn tất. Tests xanh, build xanh. Chờ deploy trên Vibe Deploy Nhân Hòa (xem [deployment-guide.md](deployment-guide.md)).
 
 | Hạng mục | Kết quả |
 |---|---|
-| Lĩnh vực / module / bài | 2 / 10 (Kiến trúc 4, Tài chính 6) / 50 (27 + 23) |
+| Lĩnh vực / module / bài | 3 / 13 (Kiến trúc 4, Tài chính 6, Tài chính nghề 7) / 64 (27 + 23 + 14) |
 | Ví dụ đời sống (`<RealLife>`) | 196 khối, cả 64 bài `examplesReviewed: true` sau fact-check agent |
 | Minh hoạ | 97 SVG mới (inline, theo theme; 19 cho `nghe-tai-chinh`) + 44 ảnh gốc có ghi nguồn |
-| Tiến độ, bookmark, Học tiếp | `localStorage` (`omnilab:v1:state`), fallback in-memory ở private mode |
+| Giao diện | iOS 26 (Apple HIG): grouped background, glass material bar, radius 22/16/12, Be Vietnam Pro, 44px tap target, ≥4.5:1 contrast |
+| Desktop 3 cột | >=1024px sidebar (264px) + main (68ch) | >=1280px + reader aside (296px, sticky, scroll independent); TOC scrollspy, progress, actions |
+| Tiến độ, bookmark, Học tiếp | `localStorage` (`omnilab:v1:state`), fallback in-memory ở private mode; islands bind + sync |
 | Tìm kiếm | MiniSearch, gập dấu tiếng Việt; index ~84KB gzip, chỉ tải ở `/tim-kiem` |
-| JS mỗi trang | 6,6–13KB gzip (ngân sách 30KB) |
-| Lighthouse mobile (đo lại sau sửa lỗi, 3 trang) | Performance 96–97, Accessibility 100, Best Practices 100, SEO 100, CLS 0; LCP 2,1–2,3s (mục tiêu < 2s, chưa đạt trên giả lập 4G chậm) — [QA report](../plans/260928-1725-omnilab-v1-learning-app/reports/phase-07-qa-report.md) |
-| Test | 237 unit test (vitest) |
+| JS mỗi trang | 6–13KB gzip (ngân sách 30KB) |
+| Test | 332 unit test (vitest, gồm toc-scrollspy + contrast) |
 
 Chưa kiểm được trong môi trường dev (chủ dự án làm sau deploy): chế độ standalone trên iPhone thật, safe-area, lưu tiến độ lâu dài trên iOS, hiển thị SVG ở dark mode trên Safari.
 
@@ -21,14 +22,16 @@ Chưa kiểm được trong môi trường dev (chủ dự án làm sau deploy):
 
 | # | Hạng mục | Giá trị | Công sức | Ghi chú |
 |---|---|---|---|---|
-| 1 | Xuất/nhập tiến độ (JSON) | Dùng nhiều thiết bị | Thấp | Không cần backend |
-| 2 | Đọc offline (service worker) | Cao với người đọc di động | Trung bình–cao | Cần chiến lược version cache cẩn thận |
-| 3 | Ảnh bìa cho 50 bài | Cảm giác app | Thấp (tự tạo ảnh) | Theo [cover-image-prompt.md](cover-image-prompt.md) |
-| 4 | Quiz / flashcard cuối bài | Học chủ động | Trung bình | Là nội dung mới, cần fact-check như ví dụ |
-| 5 | Thêm lĩnh vực | Mở rộng | Theo nội dung | Chỉ cần YAML + thư mục bài ([content-authoring-guide.md](content-authoring-guide.md)). Đã thêm `nghe-tai-chinh` (14 bài, 19 SVG, 2026-10-01), đã fact-check |
-| 6 | Giảm kích thước search index | Tải nhanh hơn | Thấp | Cắt text dài, giữ tiêu đề + heading |
-| 7 | Analytics tôn trọng riêng tư | Biết bài nào được đọc | Thấp | Cần cập nhật CSP `connect-src` |
-| 8 | Nâng cỡ chữ SVG cũ (11–12px) lên ≥13 | Mobile readability | Thấp | Follow-up từ audit UX 2026-09-30 |
+| 1 | **Font-size control** (UI + reading) | Accessibility | Thấp | Dùng `clamp()` logic + optional button. Not fake. |
+| 2 | **J/K/B keyboard shortcuts** | Power users | Thấp | J=next, K=prev, B=bookmark; check before showing kbd hint |
+| 3 | **Recent searches** (localStorage) | Discover patterns | Thấp–trung | Thêm key `omnilab:v1:recents` (tối 5 query) |
+| 4 | **Domain shortTitle** | Better search chips | Thấp | Add optional `shortTitle` to content schema (e.g. "KTH", "TCD", "NTK") |
+| 5 | Xuất/nhập tiến độ (JSON) | Sync giữa thiết bị | Thấp | Không cần backend |
+| 6 | Đọc offline (service worker) | Cao với mobile | Trung bình–cao | Cần chiến lược cache version |
+| 7 | Ảnh bìa cho 50+ bài | Visual appeal | Thấp (tự tạo) | Generative via AI prompt template |
+| 8 | Quiz / flashcard cuối bài | Luyện tập chủ động | Trung bình | Nội dung mới, cần fact-check |
+| 9 | Dark-mode raster figures | Content fix | Thấp | Re-theme PNG diagrams (cache, etc.) |
+| 10 | Analytics tôn trọng riêu tư | Metrics | Thấp | CSP `connect-src` update |
 
 ## Việc còn mở
 
