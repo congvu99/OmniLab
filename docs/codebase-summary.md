@@ -81,7 +81,7 @@ src/
 ## Build & Astro config
 
 - `output: 'static'`, Unified processor (remark-reading-time, smartypants off)
-- Shiki dual theme (light inline, dark `--shiki-dark-*` vars)
+- Shiki dual theme (light inline, dark `--shiki-dark-*` vars) + transformer `shiki-contrast-fixes.mjs` (đưa màu token về >=4.5:1)
 - Vite `assetsInlineLimit: 0` (all scripts external, CSP `script-src 'self'` no hashes)
 
 **Caddyfile** (Railpack):
@@ -91,7 +91,7 @@ src/
 
 ## Testing & Quality
 
-- **432 tests** (Vitest, 24 test files; no jsdom, injectable deps)
+- **436 tests** (Vitest, 25 test files; no jsdom, injectable deps)
   - Icon names + paths, command palette logic/controller, search controller, progress store, toc-scrollspy, lesson reader model, token contrast, etc.
 - TypeScript: astro check (0 errors, schema valid)
 - Contrast: 55 token pairs verified ≥4.5:1 light/dark (Studio tokens: text/text-2/text-3/volt/volt-ink/domain hues/danger/success on all surfaces)

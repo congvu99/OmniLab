@@ -1,6 +1,21 @@
 // Rehype plugin: wrap every <table> in a focusable, labelled scroll region so
 // wide tables scroll horizontally on their own instead of widening the page.
+// Also demotes empty header cells (the blank top-left corner of comparison
+// tables, e.g. `| | Kéo (pull) | Đẩy (push) |`) to <td>: an empty <th> has no
+// accessible name (axe empty-table-header) and the fix must not touch the
+// fidelity-locked lesson text.
 import { visit, SKIP } from 'unist-util-visit';
+
+function textOf(node) {
+  if (node.type === 'text') return node.value;
+  return (node.children ?? []).map(textOf).join('');
+}
+
+function demoteEmptyHeaderCells(table) {
+  visit(table, 'element', (cell) => {
+    if (cell.tagName === 'th' && textOf(cell).trim() === '') cell.tagName = 'td';
+  });
+}
 
 export default function rehypeWrapTables() {
   return (tree) => {
@@ -14,6 +29,7 @@ export default function rehypeWrapTables() {
     visit(tree, 'element', (node, index, parent) => {
       if (node.tagName !== 'table' || !parent || index === undefined) return;
       count += 1;
+      demoteEmptyHeaderCells(node);
       const ariaLabel = count === 1 ? 'Bảng (cuộn ngang)' : `Bảng (cuộn ngang) ${count}`;
       parent.children[index] = {
         type: 'element',

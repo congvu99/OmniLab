@@ -115,7 +115,7 @@ Reader layout (`src/layouts/reader-layout.astro`) cung cấp aside slot dành ch
 
 **Shared utilities** (`src/styles/base.css`): `.ios-list`, `.ios-row`, `.ios-card`, `.btn`, `.ios-search`, `.ios-glass`, `.hide-at-aside-width` — single source of truth, không dùng CSS tùy chỉnh.
 
-**Dark mode**: Media query `prefers-color-scheme` (không toggle UI). Shiki: light colors inline, dark trong `--shiki-dark-*` vars, apply trong `prose.css`.
+**Dark mode**: Media query `prefers-color-scheme` (không toggle UI). Shiki: light colors inline, dark trong `--shiki-dark-*` vars, apply trong `prose.css`; `src/lib/shiki-contrast-fixes.mjs` thay 2 màu github-* dưới AA (cam light, comment dark). `rehype-wrap-tables.mjs` bọc bảng trong vùng cuộn và đổi ô `<th>` rỗng (góc bảng so sánh) thành `<td>` để không sửa nội dung bài.
 
 ## Security (CSP)
 

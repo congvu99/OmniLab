@@ -53,4 +53,13 @@ describe('rehypeWrapTables', () => {
       expect(wrapper.properties.tabIndex).toBe(0);
     }
   });
+
+  it('demotes empty header cells to <td> but keeps headers that have text', () => {
+    const corner = el('th', [{ type: 'text', value: ' ' }]);
+    const named = el('th', [{ type: 'text', value: 'Kéo (pull)' }]);
+    const tree = root([el('table', [el('thead', [el('tr', [corner, named])])])]);
+    rehypeWrapTables()(tree);
+    expect(corner.tagName).toBe('td');
+    expect(named.tagName).toBe('th');
+  });
 });

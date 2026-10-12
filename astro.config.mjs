@@ -6,6 +6,7 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { remarkReadingTime } from './src/lib/remark-reading-time.mjs';
 import rehypeWrapTables from './src/lib/rehype-wrap-tables.mjs';
+import { shikiContrastFixes } from './src/lib/shiki-contrast-fixes.mjs';
 
 // SITE_URL is read at build time so sitemap.xml's URLs match the real
 // deploy domain (no <link rel="canonical"> is emitted in v1 — sitemap.xml
@@ -41,6 +42,8 @@ export default defineConfig({
       themes: { light: 'github-light', dark: 'github-dark' },
       defaultColor: 'light',
       wrap: false,
+      // Nudges the two github-* token colors that fail WCAG AA contrast.
+      transformers: [shikiContrastFixes],
     },
   },
   integrations: [mdx(), sitemap()],

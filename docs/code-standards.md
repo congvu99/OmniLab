@@ -187,7 +187,7 @@ it('fold diacritics', () => {
 **Quality gate**: 
 ```bash
 pnpm verify:fidelity  # Nội dung gốc bất biến (snapshot check)
-pnpm test             # 432 tests in 24 files pass
+pnpm test             # 436 tests in 25 files pass
 pnpm check            # 0 errors (astro check + schema)
 pnpm build            # Full build → verify:fidelity + astro build → dist/ (73 pages)
 ```
