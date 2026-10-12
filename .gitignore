@@ -39,3 +39,6 @@ plans/261012-full-restyle-concepts/concept-c-soft-bento/
 /data/
 *.db
 *.db-*
+
+# per-plan agent scratch memory
+plans/**/.claude/
