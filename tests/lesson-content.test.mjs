@@ -8,6 +8,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { parseLessonFrontmatter } from '../scripts/lib/frontmatter.mjs';
+import { LESSON_ID_PATTERN } from '../src/lib/progress-state.ts';
 import { loadDomains } from '../scripts/lib/parse-domain-yaml.mjs';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
@@ -56,5 +57,13 @@ describe('lesson frontmatter integrity', () => {
     expect(data.summary.length).toBeLessThanOrEqual(200);
     expect(data.source?.snapshot).toBeTruthy();
     expect(data.source?.license).toBeTruthy();
+  });
+
+  // Progress sync drops ids that fail this pattern (src/lib/progress-state.ts),
+  // so every real lesson id must match it or its progress would vanish silently.
+  it.each(files.map((f) => [path.relative(LESSONS_DIR, f), f]))('%s: lesson id matches the progress id pattern', (_label, file) => {
+    const data = parseLessonFrontmatter(readFileSync(file, 'utf8'));
+    const slug = path.basename(file, '.mdx').replace(/^\d+-/, '');
+    expect(`${data.domain}/${data.module}/${slug}`).toMatch(LESSON_ID_PATTERN);
   });
 });

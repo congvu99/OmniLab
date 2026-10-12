@@ -14,10 +14,14 @@ import {
   emptyState,
   isUnknownFutureVersion,
   migrate,
+  toSyncState,
+  withBookmarks,
   type LessonId,
   type LessonProgress,
   type ProgressState,
+  type SyncState,
 } from './progress-state';
+import { mergeStates } from './progress-merge';
 import { createScrollThrottle } from './progress-scroll-throttle';
 
 export type { LessonId, LessonProgress, ProgressState };
@@ -56,6 +60,16 @@ export interface ProgressStore {
    * unfinished lessons existing.
    */
   lastUnfinished(knownIds?: ReadonlySet<LessonId>): LessonId | null;
+  /**
+   * Merge a snapshot from the sync server into local state (never replaces:
+   * a newer local edit made while the request was in flight survives). The
+   * local `owner` is kept as-is.
+   */
+  applyRemote(remote: SyncState): void;
+  /** Tag the local data with the signed-in username (`undefined` = anonymous). */
+  setOwner(owner: string | undefined): void;
+  /** Drop all local progress and the owner (sign-out / account switch). */
+  clear(): void;
   /** Called immediately with the current state, then again on every change (in-page + cross-tab). */
   subscribe(fn: (state: ProgressState) => void): () => void;
   /** `false` when localStorage is unavailable/throws (e.g. Safari private mode) — state is in-memory only for this tab. */
@@ -70,6 +84,11 @@ export interface CreateProgressStoreOptions {
 
 const STORAGE_KEY = 'omnilab:v1:state';
 const SCROLL_THROTTLE_MS = 1000;
+
+/** Next timestamp for a decision on a record: never <= its previous one, so a quick re-toggle still wins on merge. */
+function nextStamp(now: number, previous: number | undefined): number {
+  return previous === undefined ? now : Math.max(now, previous + 1);
+}
 
 function resolveDefaultStorage(): StorageLike | undefined {
   if (typeof window === 'undefined') return undefined;
@@ -134,11 +153,12 @@ export function createProgressStore(options: CreateProgressStoreOptions = {}): P
     for (const fn of listeners) fn(state);
   }
 
-  function writeAndNotify(next: ProgressState) {
-    state = next;
+  function writeAndNotify(next: SyncState) {
+    state = withBookmarks(next);
     if (isPersistent && storage && !skipPersist) {
       try {
-        storage.setItem(STORAGE_KEY, JSON.stringify(next));
+        // `bookmarks` is derived, so only the sync-shaped part is persisted.
+        storage.setItem(STORAGE_KEY, JSON.stringify(toSyncState(next)));
       } catch {
         // Quota exceeded or write blocked after construction (rare) — keep
         // serving the in-memory state for this tab instead of throwing.
@@ -160,7 +180,7 @@ export function createProgressStore(options: CreateProgressStoreOptions = {}): P
    * case disk never reflects this tab's own changes, so re-reading it would
    * instead throw away this tab's own in-memory progress.
    */
-  function mutate(updater: (base: ProgressState) => ProgressState) {
+  function mutate(updater: (base: ProgressState) => SyncState) {
     const base = isPersistent && storage && !skipPersist ? readFromStorage() : state;
     writeAndNotify(updater(base));
   }
@@ -200,7 +220,10 @@ export function createProgressStore(options: CreateProgressStoreOptions = {}): P
     },
 
     markDone(id, done) {
-      patchLesson(id, () => (done ? { done: true, doneAt: now() } : { done: false, doneAt: undefined }));
+      patchLesson(id, (prev) => {
+        const doneUpdatedAt = nextStamp(now(), prev?.doneUpdatedAt);
+        return done ? { done: true, doneAt: now(), doneUpdatedAt } : { done: false, doneAt: undefined, doneUpdatedAt };
+      });
     },
 
     saveScroll(id, ratio) {
@@ -222,16 +245,27 @@ export function createProgressStore(options: CreateProgressStoreOptions = {}): P
       // every subscriber (including this call's own caller) will see.
       let nowSaved = false;
       mutate((base) => {
-        const isSaved = base.bookmarks.includes(id);
-        nowSaved = !isSaved;
-        const bookmarks = isSaved ? base.bookmarks.filter((b) => b !== id) : [...base.bookmarks, id];
-        return { ...base, bookmarks };
+        const prev = Object.hasOwn(base.bookmarkMeta, id) ? base.bookmarkMeta[id] : undefined;
+        nowSaved = !prev?.on;
+        return { ...base, bookmarkMeta: { ...base.bookmarkMeta, [id]: { on: nowSaved, at: nextStamp(now(), prev?.at) } } };
       });
       return nowSaved;
     },
 
     isBookmarked(id) {
-      return state.bookmarks.includes(id);
+      return Object.hasOwn(state.bookmarkMeta, id) && state.bookmarkMeta[id].on;
+    },
+
+    applyRemote(remote) {
+      mutate((base) => ({ ...mergeStates(base, remote), owner: base.owner }));
+    },
+
+    setOwner(owner) {
+      mutate((base) => ({ ...base, owner }));
+    },
+
+    clear() {
+      writeAndNotify(emptyState());
     },
 
     lastUnfinished(knownIds) {

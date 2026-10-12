@@ -33,3 +33,7 @@ plans/261012-*/**/*.html
 plans/261012-*/**/assets/
 plans/261012-full-restyle-concepts/concept-a-aurora-glass/
 plans/261012-full-restyle-concepts/concept-c-soft-bento/
+
+# sync sidecar local data
+/.data/
+/data/

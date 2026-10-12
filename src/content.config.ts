@@ -5,8 +5,12 @@ import { defineCollection, reference } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
+// Ids feed the lesson id `domain/module/slug` that progress sync validates
+// (src/lib/progress-state.ts LESSON_ID_PATTERN); anything else would be dropped.
+const idPart = z.string().regex(/^[a-z0-9-]+$/);
+
 const moduleSchema = z.object({
-  id: z.string(),
+  id: idPart,
   title: z.string(),
   order: z.number(),
 });
@@ -39,7 +43,7 @@ const lessons = defineCollection({
       // Must match one of `domain.modules[].id` — validated in
       // tests/lesson-content.test.mjs (schema itself cannot cross-reference
       // another collection's data at parse time).
-      module: z.string(),
+      module: idPart,
       // Ordering within the module; numeric filename prefix mirrors this.
       order: z.number(),
       title: z.string(),

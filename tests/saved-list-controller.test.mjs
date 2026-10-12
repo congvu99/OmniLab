@@ -153,7 +153,7 @@ describe('attachSavedList: empty/basic rendering', () => {
 
   it('shows the empty state (not a blank card) when every bookmarked id is missing from the lessons index', async () => {
     const { emptyState, rowsList } = setup({
-      bookmarks: ['deleted/a', 'deleted/b'],
+      bookmarks: ['del/m/a', 'del/m/b'],
       lessons: [{ id: 'still/here', url: '/x', title: 'X', domainTitle: 'D' }],
     });
     await flush();
@@ -165,13 +165,13 @@ describe('attachSavedList: empty/basic rendering', () => {
 
 describe('attachSavedList: focus after removal', () => {
   const lessons = [
-    { id: 'a', url: '/a', title: 'A', domainTitle: 'D' },
-    { id: 'b', url: '/b', title: 'B', domainTitle: 'D' },
-    { id: 'c', url: '/c', title: 'C', domainTitle: 'D' },
+    { id: 'a/b/a', url: '/a', title: 'A', domainTitle: 'D' },
+    { id: 'a/b/b', url: '/b', title: 'B', domainTitle: 'D' },
+    { id: 'a/b/c', url: '/c', title: 'C', domainTitle: 'D' },
   ];
 
   it('moves focus to the next row (which shifts into the removed row\'s position)', async () => {
-    const { built } = setup({ bookmarks: ['a', 'b', 'c'], lessons });
+    const { built } = setup({ bookmarks: ['a/b/a', 'a/b/b', 'a/b/c'], lessons });
     await flush();
 
     built[0].removeButton.click(); // remove "a" (index 0)
@@ -186,7 +186,7 @@ describe('attachSavedList: focus after removal', () => {
   });
 
   it('moves focus to the new last row when the last row was removed', async () => {
-    const { built } = setup({ bookmarks: ['a', 'b', 'c'], lessons });
+    const { built } = setup({ bookmarks: ['a/b/a', 'a/b/b', 'a/b/c'], lessons });
     await flush();
 
     built[2].removeButton.click(); // remove "c" (last, index 2)
@@ -199,7 +199,7 @@ describe('attachSavedList: focus after removal', () => {
   });
 
   it('moves focus to the empty state when the only bookmark is removed', async () => {
-    const { built, emptyState } = setup({ bookmarks: ['a'], lessons });
+    const { built, emptyState } = setup({ bookmarks: ['a/b/a'], lessons });
     await flush();
 
     built[0].removeButton.click();
@@ -209,7 +209,7 @@ describe('attachSavedList: focus after removal', () => {
   });
 
   it('does not steal focus on an unrelated store change (not a removal)', async () => {
-    const { store, built } = setup({ bookmarks: ['a', 'b'], lessons });
+    const { store, built } = setup({ bookmarks: ['a/b/a', 'a/b/b'], lessons });
     await flush();
 
     store.markDone('some/other/lesson', true); // unrelated mutation -> re-render
@@ -223,22 +223,22 @@ describe('attachSavedList: focus after removal', () => {
 describe('attachSavedList: cleanup', () => {
   it('the returned cleanup function unsubscribes from the store', async () => {
     const { store, cleanup, rowsList } = setup({
-      bookmarks: ['a'],
-      lessons: [{ id: 'a', url: '/a', title: 'A', domainTitle: 'D' }],
+      bookmarks: ['a/b/a'],
+      lessons: [{ id: 'a/b/a', url: '/a', title: 'A', domainTitle: 'D' }],
     });
     await flush();
     expect(rowsList.children).toHaveLength(1);
 
     cleanup();
     rowsList.children.length = 0; // simulate the row surviving until next mutation
-    store.toggleBookmark('b'); // would normally trigger a re-render
+    store.toggleBookmark('a/b/b'); // would normally trigger a re-render
     await flush();
     expect(rowsList.children).toHaveLength(0); // render() never ran again
   });
 });
 
 describe('attachSavedList: loading skeleton', () => {
-  const lessons = [{ id: 'a', url: '/a', title: 'A', domainTitle: 'D' }];
+  const lessons = [{ id: 'a/b/a', url: '/a', title: 'A', domainTitle: 'D' }];
 
   it('hides the skeleton synchronously when there are no bookmarks (no fetch wait)', () => {
     const { loadingState, emptyState } = setup({ bookmarks: [], withLoading: true });
@@ -247,20 +247,20 @@ describe('attachSavedList: loading skeleton', () => {
   });
 
   it('keeps the skeleton (and not the empty state) while the lessons index is pending', () => {
-    const { loadingState, emptyState } = setup({ bookmarks: ['a'], lessons, withLoading: true });
+    const { loadingState, emptyState } = setup({ bookmarks: ['a/b/a'], lessons, withLoading: true });
     expect(loadingState.hidden).toBe(false);
     expect(emptyState.hidden).toBe(true);
   });
 
   it('swaps the skeleton for rows once the index resolves', async () => {
-    const { loadingState, rowsList } = setup({ bookmarks: ['a'], lessons, withLoading: true });
+    const { loadingState, rowsList } = setup({ bookmarks: ['a/b/a'], lessons, withLoading: true });
     await flush();
     expect(loadingState.hidden).toBe(true);
     expect(rowsList.hidden).toBe(false);
   });
 
   it('swaps the skeleton for the empty state when the fetch fails', async () => {
-    const { loadingState, emptyState } = setup({ bookmarks: ['a'], withLoading: true, fetchError: true });
+    const { loadingState, emptyState } = setup({ bookmarks: ['a/b/a'], withLoading: true, fetchError: true });
     await flush();
     expect(loadingState.hidden).toBe(true);
     expect(emptyState.hidden).toBe(false);

@@ -5,13 +5,15 @@
   "private": true,
   "packageManager": "pnpm@9.15.4",
   "engines": {
-    "node": ">=24"
+    "node": ">=24.2"
   },
   "scripts": {
     "dev": "astro dev",
     "build": "node scripts/verify-fidelity.mjs && astro build",
     "preview": "astro preview",
     "check": "astro check",
+    "check:server": "tsc -p tsconfig.server.json",
+    "sync:dev": "node server/sync/sync-server-entry.ts --dev",
     "test": "vitest run",
     "migrate:system-design": "node scripts/migrate-system-design.mjs",
     "migrate:finance": "node scripts/migrate-finance-html.mjs",
@@ -29,6 +31,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@types/node": "^24",
     "hast-util-from-html": "^2.0.3",
     "hast-util-to-mdast": "^10.1.2",
     "mdast-util-gfm": "^3.1.0",

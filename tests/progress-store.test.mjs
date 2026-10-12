@@ -53,7 +53,7 @@ describe('markDone', () => {
     const store = createProgressStore({ storage: createFakeStorage(), now: clock.now });
 
     store.markDone('kien-truc/chu-de/cache', true);
-    expect(store.get().lessons['kien-truc/chu-de/cache']).toEqual({ done: true, doneAt: 1000 });
+    expect(store.get().lessons['kien-truc/chu-de/cache']).toEqual({ done: true, doneAt: 1000, doneUpdatedAt: 1000 });
 
     store.markDone('kien-truc/chu-de/cache', false);
     expect(store.get().lessons['kien-truc/chu-de/cache'].done).toBe(false);
@@ -93,40 +93,40 @@ describe('lastUnfinished', () => {
     const clock = createClock();
     const store = createProgressStore({ storage: createFakeStorage(), now: clock.now });
 
-    store.visit('older/lesson');
+    store.visit('older/m/lesson');
     clock.advance(100);
-    store.visit('newer/lesson');
+    store.visit('newer/m/lesson');
 
-    expect(store.lastUnfinished()).toBe('newer/lesson');
+    expect(store.lastUnfinished()).toBe('newer/m/lesson');
   });
 
   it('skips lessons marked done, even if most recently visited', () => {
     const clock = createClock();
     const store = createProgressStore({ storage: createFakeStorage(), now: clock.now });
 
-    store.visit('unfinished/lesson');
+    store.visit('unfinished/m/lesson');
     clock.advance(100);
-    store.visit('finished/lesson');
-    store.markDone('finished/lesson', true);
+    store.visit('finished/m/lesson');
+    store.markDone('finished/m/lesson', true);
 
-    expect(store.lastUnfinished()).toBe('unfinished/lesson');
+    expect(store.lastUnfinished()).toBe('unfinished/m/lesson');
   });
 
   it('with knownIds, skips the most recent visit if its lesson no longer exists, falling back to an older valid one', () => {
     const clock = createClock();
     const store = createProgressStore({ storage: createFakeStorage(), now: clock.now });
 
-    store.visit('still/exists');
+    store.visit('still/m/exists');
     clock.advance(100);
-    store.visit('renamed/away'); // most recent, but not in knownIds below
+    store.visit('renamed/m/away'); // most recent, but not in knownIds below
 
-    expect(store.lastUnfinished()).toBe('renamed/away'); // no filter: still picks the most recent
-    expect(store.lastUnfinished(new Set(['still/exists']))).toBe('still/exists');
+    expect(store.lastUnfinished()).toBe('renamed/m/away'); // no filter: still picks the most recent
+    expect(store.lastUnfinished(new Set(['still/m/exists']))).toBe('still/m/exists');
   });
 
   it('with knownIds, returns null (not a stale id) when every visited lesson is unknown', () => {
     const store = createProgressStore({ storage: createFakeStorage() });
-    store.visit('deleted/lesson');
+    store.visit('deleted/m/lesson');
     expect(store.lastUnfinished(new Set(['other/lesson']))).toBeNull();
   });
 });
@@ -219,17 +219,17 @@ describe('cross-tab write race (two store instances sharing one storage)', () =>
     // Tab B bookmarks something and persists it — tab A has NOT received a
     // 'storage' event for this yet (no eventTarget wired in this test), so
     // tab A's own in-memory `state` is still stale.
-    tabB.toggleBookmark('b/lesson');
+    tabB.toggleBookmark('b/m/lesson');
 
     // Tab A now does an unrelated mutation. Before the fix, this would
     // `persist()` off tab A's stale snapshot (bookmarks: []) and silently
     // wipe out tab B's write. The fix re-reads storage fresh before
     // merging, so B's bookmark must survive.
-    tabA.markDone('a/lesson', true);
+    tabA.markDone('a/m/lesson', true);
 
     const onDisk = JSON.parse(storage._dump()['omnilab:v1:state']);
-    expect(onDisk.bookmarks).toEqual(['b/lesson']);
-    expect(onDisk.lessons['a/lesson'].done).toBe(true);
+    expect(onDisk.bookmarkMeta['b/m/lesson'].on).toBe(true);
+    expect(onDisk.lessons['a/m/lesson'].done).toBe(true);
   });
 
   it('does not lose tab B\'s scroll-throttle flush when tab A writes moments later', () => {
@@ -237,12 +237,12 @@ describe('cross-tab write race (two store instances sharing one storage)', () =>
     const tabA = createProgressStore({ storage });
     const tabB = createProgressStore({ storage });
 
-    tabB.saveScroll('shared/lesson', 0.42); // flushes immediately (first call for this id)
-    tabA.markDone('a/lesson', true);
+    tabB.saveScroll('shared/m/lesson', 0.42); // flushes immediately (first call for this id)
+    tabA.markDone('a/m/lesson', true);
 
     const onDisk = JSON.parse(storage._dump()['omnilab:v1:state']);
-    expect(onDisk.lessons['shared/lesson'].scroll).toBe(0.42);
-    expect(onDisk.lessons['a/lesson'].done).toBe(true);
+    expect(onDisk.lessons['shared/m/lesson'].scroll).toBe(0.42);
+    expect(onDisk.lessons['a/m/lesson'].done).toBe(true);
   });
 });
 
@@ -288,16 +288,31 @@ describe('subscribe', () => {
 });
 
 describe('migrate', () => {
-  it('passes through a well-formed v1 state', () => {
+  it('passes through a well-formed v2 state (bookmarks derived)', () => {
+    const raw = {
+      v: 2,
+      lessons: { 'a/b/c': { done: true, doneAt: 5, doneUpdatedAt: 5 } },
+      bookmarkMeta: { 'a/b/c': { on: true, at: 3 } },
+    };
+    expect(migrate(raw)).toEqual({ ...raw, bookmarks: ['a/b/c'] });
+  });
+
+  it('upgrades a v1 state to v2 (details: progress-state-migrate-v2.test.mjs)', () => {
     const raw = { v: 1, lessons: { 'a/b/c': { done: true, doneAt: 5 } }, bookmarks: ['a/b/c'] };
-    expect(migrate(raw)).toEqual(raw);
+    expect(migrate(raw)).toEqual({
+      v: 2,
+      lessons: { 'a/b/c': { done: true, doneAt: 5, doneUpdatedAt: 5 } },
+      bookmarkMeta: { 'a/b/c': { on: true, at: 1 } },
+      bookmarks: ['a/b/c'],
+    });
   });
 
   it('starts fresh for an unknown/missing version', () => {
-    expect(migrate({ v: 2, lessons: {}, bookmarks: [] })).toEqual({ v: 1, lessons: {}, bookmarks: [] });
-    expect(migrate({})).toEqual({ v: 1, lessons: {}, bookmarks: [] });
-    expect(migrate(null)).toEqual({ v: 1, lessons: {}, bookmarks: [] });
-    expect(migrate('not an object')).toEqual({ v: 1, lessons: {}, bookmarks: [] });
+    const empty = { v: 2, lessons: {}, bookmarkMeta: {}, bookmarks: [] };
+    expect(migrate({ v: 3, lessons: {}, bookmarks: [] })).toEqual(empty);
+    expect(migrate({})).toEqual(empty);
+    expect(migrate(null)).toEqual(empty);
+    expect(migrate('not an object')).toEqual(empty);
   });
 
   it('drops malformed lesson entries and non-string bookmarks instead of throwing', () => {
@@ -307,8 +322,9 @@ describe('migrate', () => {
       bookmarks: ['ok', 42, null],
     };
     expect(migrate(raw)).toEqual({
-      v: 1,
-      lessons: { good: { done: true } },
+      v: 2,
+      lessons: { good: { done: true, doneUpdatedAt: 1 } },
+      bookmarkMeta: { ok: { on: true, at: 1 } },
       bookmarks: ['ok'],
     });
   });
@@ -320,13 +336,14 @@ describe('migrate', () => {
 });
 
 describe('isUnknownFutureVersion', () => {
-  it('is true only for a numeric v greater than 1', () => {
-    expect(isUnknownFutureVersion({ v: 2 })).toBe(true);
+  it('is true only for a numeric v greater than 2', () => {
+    expect(isUnknownFutureVersion({ v: 3 })).toBe(true);
     expect(isUnknownFutureVersion({ v: 99 })).toBe(true);
   });
 
   it('is false for v1, missing v, non-numeric v, or non-object input', () => {
     expect(isUnknownFutureVersion({ v: 1 })).toBe(false);
+    expect(isUnknownFutureVersion({ v: 2 })).toBe(false);
     expect(isUnknownFutureVersion({})).toBe(false);
     expect(isUnknownFutureVersion({ v: '2' })).toBe(false);
     expect(isUnknownFutureVersion(null)).toBe(false);
@@ -337,14 +354,14 @@ describe('isUnknownFutureVersion', () => {
 describe('rollback safety: a future-version payload on disk is never overwritten', () => {
   it('does not call storage.setItem after reading a v2+ payload, even after a local mutation', () => {
     const storage = createFakeStorage();
-    const futurePayload = { v: 2, somethingNew: true };
+    const futurePayload = { v: 3, somethingNew: true };
     storage.setItem('omnilab:v1:state', JSON.stringify(futurePayload));
     const setItemSpy = vi.spyOn(storage, 'setItem');
 
     const store = createProgressStore({ storage });
     // Unrecognized shape -> in-memory state starts empty for this tab, but
     // that must never be WRITTEN — the real v2 payload on disk must survive.
-    expect(store.get()).toEqual({ v: 1, lessons: {}, bookmarks: [] });
+    expect(store.get()).toEqual({ v: 2, lessons: {}, bookmarkMeta: {}, bookmarks: [] });
 
     store.markDone('a/b/c', true); // works in-memory...
     expect(store.get().lessons['a/b/c'].done).toBe(true);
@@ -379,7 +396,7 @@ describe('private-mode fallback (localStorage throws)', () => {
   it('isPersistent is false and no crash when localStorage.getItem itself throws', () => {
     const store = createProgressStore({ storage: createFakeStorage({ throwOnRead: true }) });
     expect(store.isPersistent).toBe(false);
-    expect(store.get()).toEqual({ v: 1, lessons: {}, bookmarks: [] });
+    expect(store.get()).toEqual({ v: 2, lessons: {}, bookmarkMeta: {}, bookmarks: [] });
   });
 
   it('no storage injected at all (e.g. SSR) falls back to a working in-memory store', () => {
@@ -387,5 +404,73 @@ describe('private-mode fallback (localStorage throws)', () => {
     expect(store.isPersistent).toBe(false);
     store.markDone('a/b/c', true);
     expect(store.get().lessons['a/b/c'].done).toBe(true);
+  });
+});
+
+describe('applyRemote / setOwner / clear', () => {
+  const id = 'a/b/c';
+
+  it('a newer local markDone survives applyRemote of an older remote snapshot', () => {
+    const clock = createClock(5000);
+    const store = createProgressStore({ storage: createFakeStorage(), now: clock.now });
+    store.markDone(id, true);
+    store.applyRemote({ v: 2, lessons: { [id]: { done: false, doneUpdatedAt: 100 } }, bookmarkMeta: {} });
+    expect(store.get().lessons[id].done).toBe(true);
+  });
+
+  it('merges newer remote data in, notifies subscribers, persists, and keeps the local owner', () => {
+    const storage = createFakeStorage();
+    const store = createProgressStore({ storage, now: createClock().now });
+    store.setOwner('alice');
+    const seen = [];
+    store.subscribe((s) => seen.push(s.bookmarks.length));
+    store.applyRemote({
+      v: 2,
+      owner: 'mallory',
+      lessons: { [id]: { done: true, doneAt: 9, doneUpdatedAt: 9 } },
+      bookmarkMeta: { [id]: { on: true, at: 9 } },
+    });
+    const s = store.get();
+    expect(s.owner).toBe('alice');
+    expect(s.lessons[id].done).toBe(true);
+    expect(s.bookmarks).toEqual([id]);
+    expect(seen.at(-1)).toBe(1);
+    const persisted = JSON.parse(storage._dump()['omnilab:v1:state']);
+    expect(persisted.owner).toBe('alice');
+    expect(persisted.bookmarks).toBeUndefined();
+  });
+
+  it('setOwner(undefined) clears the owner; clear() resets everything', () => {
+    const store = createProgressStore({ storage: createFakeStorage() });
+    store.setOwner('alice');
+    store.markDone(id, true);
+    store.toggleBookmark(id);
+    store.setOwner(undefined);
+    expect(store.get().owner).toBeUndefined();
+    store.clear();
+    expect(store.get()).toEqual({ v: 2, lessons: {}, bookmarkMeta: {}, bookmarks: [] });
+    expect(store.isBookmarked(id)).toBe(false);
+  });
+
+  it('bookmark toggles record increasing timestamps and keep list order', () => {
+    const clock = createClock(10);
+    const store = createProgressStore({ storage: createFakeStorage(), now: clock.now });
+    store.toggleBookmark('a/b/x');
+    clock.advance(5);
+    store.toggleBookmark('a/b/y');
+    expect(store.get().bookmarks).toEqual(['a/b/x', 'a/b/y']);
+    store.toggleBookmark('a/b/x'); // same ms as the previous write: still strictly later than its own add
+    expect(store.get().bookmarkMeta['a/b/x'].on).toBe(false);
+    expect(store.get().bookmarkMeta['a/b/x'].at).toBeGreaterThan(10);
+    expect(store.get().bookmarks).toEqual(['a/b/y']);
+  });
+
+  it('markDone toggled twice in the same ms still yields a strictly newer doneUpdatedAt', () => {
+    const store = createProgressStore({ storage: createFakeStorage(), now: createClock(7).now });
+    store.markDone(id, true);
+    store.markDone(id, false);
+    const l = store.get().lessons[id];
+    expect(l.done).toBe(false);
+    expect(l.doneUpdatedAt).toBeGreaterThan(7);
   });
 });
