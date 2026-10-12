@@ -11,7 +11,7 @@ OmniLab là app học tập tĩnh (Astro 7) chạy hoàn toàn trong trình duy�
 │ • Trang HTML tĩnh (Astro build) + island tương tác       │
 │ • Giao diện: Studio dark-first (graphite), Volt, hairline│
 │ • Layout:                                                  │
-│   - Mobile <1024px: Dock 4 tab (reader: tự ẩn khi cuộn)  │
+│   - Mobile <1024px: Dock 5 tab (reader: tự ẩn khi cuộn)  │
 │   - Desktop ≥1024px: Sidebar 256px left (nav + domains)  │
 │   - Wide ≥1280px: + reader aside 300px sticky scrollable │
 │ • Command palette: ⌘K (macOS) / Ctrl+K (Windows/Linux)   │
@@ -78,6 +78,8 @@ OmniLab là app học tập tĩnh (Astro 7) chạy hoàn toàn trong trình duy�
 }
 ```
 
+**Prefs hiển thị** (`omnilab:prefs`, JSON, tách khỏi state tiến độ): `{ "v": 1, "theme": "system|light|dark", "textSize": "s|m|l", "motion": "system|reduce" }`. `src/lib/user-prefs.ts` parse an toàn (JSON hỏng/giá trị lạ → mặc định từng trường), ghi, `subscribePrefs` (storage event đa tab). `public/prefs-init.js` (plain script, `<script is:inline src>` đầu `<head>` trong `base-head.astro`, trước CSS) đọc cùng key, đặt `<html data-theme data-text-size data-motion>` + `theme-color`; theo dõi `matchMedia` (theme=system), storage event, event `omnilab:prefs-changed` (ghi cục bộ từ trang /toi) và `astro:after-swap` (ClientRouter thay thuộc tính `<html>`).
+
 **Fallback**: Nếu localStorage throw (Safari private mode) → lưu in-memory (không persist). Hiển thị cảnh báo.
 
 **Store** (`progress-store.ts`): Factory injectable (testable), singleton được gọi bởi mọi island. Phương thức: `markDone()`, `visit()`, `saveScroll()`, `toggleBookmark()`, `lastUnfinished()`, `subscribe()`, `isPersistent`.
@@ -115,7 +117,7 @@ Reader layout (`src/layouts/reader-layout.astro`) cung cấp aside slot dành ch
 
 **Shared utilities** (`src/styles/base.css`): `.ios-list`, `.ios-row`, `.ios-card`, `.btn`, `.ios-search`, `.ios-glass`, `.hide-at-aside-width` — single source of truth, không dùng CSS tùy chỉnh.
 
-**Dark mode**: Media query `prefers-color-scheme` (không toggle UI). Shiki: light colors inline, dark trong `--shiki-dark-*` vars, apply trong `prose.css`; `src/lib/shiki-contrast-fixes.mjs` thay 2 màu github-* dưới AA (cam light, comment dark). `rehype-wrap-tables.mjs` bọc bảng trong vùng cuộn và đổi ô `<th>` rỗng (góc bảng so sánh) thành `<td>` để không sửa nội dung bài.
+**Dark mode**: `:root[data-theme="dark"]` do prefs-init đặt từ lựa chọn ở /toi (Sáng/Tối/Theo hệ thống); không còn `@media (prefers-color-scheme)` trong CSS, không JS = sáng. Shiki: light colors inline, dark trong `--shiki-dark-*` vars, apply trong `prose.css`; `src/lib/shiki-contrast-fixes.mjs` thay 2 màu github-* dưới AA (cam light, comment dark). `rehype-wrap-tables.mjs` bọc bảng trong vùng cuộn và đổi ô `<th>` rỗng (góc bảng so sánh) thành `<td>` để không sửa nội dung bài.
 
 ## Security (CSP)
 

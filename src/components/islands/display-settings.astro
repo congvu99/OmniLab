@@ -1,0 +1,200 @@
+---
+// "Giao diện" settings card on /toi: theme, reading text size, reduced motion.
+// Native radio groups (keyboard arrows, form semantics for free) styled as
+// segmented controls. Values persist through src/lib/user-prefs.ts; the change
+// event also makes public/prefs-init.js re-apply <html data-*> immediately, so
+// the choice takes effect without a reload. The preview line follows the
+// reading scale (--read-scale), which only lesson prose otherwise uses.
+interface Group {
+  key: 'theme' | 'textSize' | 'motion';
+  legend: string;
+  hint: string;
+  options: Array<{ value: string; label: string }>;
+}
+
+const groups: Group[] = [
+  {
+    key: 'theme',
+    legend: 'Chủ đề',
+    hint: 'Theo hệ thống tự đổi sáng/tối cùng thiết bị.',
+    options: [
+      { value: 'light', label: 'Sáng' },
+      { value: 'dark', label: 'Tối' },
+      { value: 'system', label: 'Theo hệ thống' },
+    ],
+  },
+  {
+    key: 'textSize',
+    legend: 'Cỡ chữ khi đọc',
+    hint: 'Chỉ áp dụng cho nội dung bài học.',
+    options: [
+      { value: 's', label: 'Nhỏ' },
+      { value: 'm', label: 'Vừa' },
+      { value: 'l', label: 'Lớn' },
+    ],
+  },
+  {
+    key: 'motion',
+    legend: 'Giảm chuyển động',
+    hint: 'Bỏ hiệu ứng trượt, nảy và tia sáng.',
+    options: [
+      { value: 'system', label: 'Theo hệ thống' },
+      { value: 'reduce', label: 'Luôn bật' },
+    ],
+  },
+];
+---
+
+<div class="card ds" data-display-settings>
+  {
+    groups.map((g) => (
+      <fieldset class="ds__group">
+        <legend class="ds__legend">{g.legend}</legend>
+        <div class="ds__ctl" style={`--n:${g.options.length}`}>
+          {g.options.map((o) => (
+            <label class="ds__opt">
+              <input type="radio" name={`pref-${g.key}`} value={o.value} data-pref={g.key} />
+              <span>{o.label}</span>
+            </label>
+          ))}
+        </div>
+        <p class="ds__hint">{g.hint}</p>
+        {g.key === 'textSize' && (
+          <p class="ds__preview" data-text-preview>
+            Bộ nhớ đệm giúp trả lời nhanh hơn vì dữ liệu nóng nằm gần người dùng.
+          </p>
+        )}
+      </fieldset>
+    ))
+  }
+</div>
+
+<style>
+  .ds {
+    padding: 4px var(--space-4);
+  }
+
+  .ds__group {
+    min-width: 0;
+    margin: 0;
+    padding: var(--space-4) 0;
+    border: 0;
+  }
+
+  .ds__group + .ds__group {
+    border-top: 1px solid var(--line);
+  }
+
+  .ds__legend {
+    float: left;
+    width: 100%;
+    margin-bottom: var(--space-3);
+    padding: 0;
+    font-size: var(--text-subhead);
+    font-weight: 600;
+    letter-spacing: var(--track-tight);
+  }
+
+  .ds__ctl {
+    clear: both;
+    display: grid;
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+    gap: 4px;
+    padding: 4px;
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius-row);
+    background: var(--surface-2);
+  }
+
+  .ds__opt {
+    position: relative;
+    display: grid;
+    min-width: 0;
+  }
+
+  .ds__opt input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .ds__opt span {
+    display: grid;
+    place-items: center;
+    min-height: 44px;
+    padding: 0 var(--space-2);
+    border-radius: calc(var(--radius-row) - 4px);
+    color: var(--text-2);
+    font-size: var(--text-small);
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+    transition:
+      background-color var(--dur-1) var(--ease),
+      color var(--dur-1) var(--ease);
+  }
+
+  .ds__opt input:checked + span {
+    background: var(--volt);
+    color: var(--on-volt);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  }
+
+  .ds__opt input:focus-visible + span {
+    outline: 2px solid var(--text);
+    outline-offset: 2px;
+  }
+
+  .ds__hint {
+    margin: var(--space-2) 0 0;
+    font: 400 var(--text-label) / 1.5 var(--font-mono);
+    color: var(--text-3);
+  }
+
+  .ds__preview {
+    margin: var(--space-3) 0 0;
+    padding: var(--space-3);
+    border-radius: var(--radius-row);
+    background: var(--surface-2);
+    font-size: calc(16.5px * var(--read-scale, 1));
+    line-height: var(--leading-relaxed);
+    color: var(--text);
+  }
+</style>
+
+<script>
+  import { onPageLoad } from '../../lib/page-lifecycle';
+  import { readPrefs, subscribePrefs, updatePrefs, type UserPrefs } from '../../lib/user-prefs';
+
+  onPageLoad(() => {
+    const root = document.querySelector<HTMLElement>('[data-display-settings]');
+    if (!root) return;
+    const inputs = Array.from(root.querySelectorAll<HTMLInputElement>('input[data-pref]'));
+
+    const show = (prefs: UserPrefs) => {
+      for (const input of inputs) {
+        const key = input.dataset.pref as 'theme' | 'textSize' | 'motion';
+        input.checked = prefs[key] === input.value;
+      }
+    };
+    show(readPrefs());
+
+    const onChange = (ev: Event) => {
+      const input = ev.target;
+      if (!(input instanceof HTMLInputElement) || !input.dataset.pref || !input.checked) return;
+      updatePrefs({ [input.dataset.pref]: input.value });
+    };
+    root.addEventListener('change', onChange);
+    // Another tab changed a preference: mirror it here.
+    const unsubscribe = subscribePrefs(show);
+
+    return () => {
+      root.removeEventListener('change', onChange);
+      unsubscribe();
+    };
+  });
+</script>

@@ -141,7 +141,7 @@ const backAriaLabel = backLabel === 'Quay lại' ? backLabel : `Quay lại ${bac
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .rtb-progress-bar {
+    :global(:root:not([data-motion='reduce'])) .rtb-progress-bar {
       transition: transform var(--dur-1) linear;
     }
   }

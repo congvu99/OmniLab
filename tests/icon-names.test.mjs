@@ -13,7 +13,7 @@ const DOMAINS_DIR = path.join(ROOT, 'src', 'content', 'domains');
 const CONCEPT_ICONS = [
   'resume', 'domains', 'search', 'bookmark', 'network', 'wallet', 'briefcase', 'check',
   'check-circle', 'clock', 'arrow-right', 'chevron-left', 'chevron-right', 'sun', 'moon',
-  'bulb', 'info', 'command', 'toc', 'type', 'close', 'history', 'doc', 'spark', 'replay', 'omni',
+  'bulb', 'info', 'command', 'toc', 'type', 'close', 'history', 'doc', 'spark', 'replay', 'omni', 'user',
 ];
 
 describe('icon names', () => {

@@ -20,7 +20,9 @@ function hexTokens(block) {
   return out;
 }
 
-const darkStart = TOKENS.indexOf('@media (prefers-color-scheme: dark) {');
+// The dark palette is the first `:root[data-theme="dark"]` rule (set by prefs-init.js).
+const darkStart = TOKENS.indexOf(':root[data-theme="dark"] {');
+if (darkStart < 0) throw new Error('tokens.css: dark palette block not found');
 const light = hexTokens(TOKENS.slice(0, darkStart));
 const dark = { ...light, ...hexTokens(TOKENS.slice(darkStart)) };
 

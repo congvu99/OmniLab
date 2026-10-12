@@ -85,10 +85,11 @@ const labeled = variant === 'labeled';
 <script>
   import { getProgressStore } from '../../lib/progress-store';
   import { showReaderToast } from '../../lib/reader-toast';
+  import { prefersReducedMotion } from '../../lib/reduced-motion';
 
   let unsubscribers: Array<() => void> = [];
 
-  const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reducedMotion = prefersReducedMotion;
 
   function init() {
     unsubscribers.forEach((fn) => fn());

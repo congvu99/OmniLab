@@ -326,6 +326,9 @@ const SUGGESTED_QUERIES = ['cache', 'lãi kép', 'CAP', 'quỹ dự phòng', 'th
       animation: none;
     }
   }
+  :global(:root[data-motion='reduce']) .search-spin {
+    animation: none;
+  }
 
   @keyframes search-spin {
     to {
@@ -340,10 +343,8 @@ const SUGGESTED_QUERIES = ['cache', 'lãi kép', 'CAP', 'quỹ dự phòng', 'th
     --c: var(--card-accent, var(--volt-ink));
   }
 
-  @media (prefers-color-scheme: dark) {
-    .search-result__link {
-      --c: var(--card-accent-dark, var(--card-accent, var(--volt-ink)));
-    }
+  :global(:root[data-theme='dark']) .search-result__link {
+    --c: var(--card-accent-dark, var(--card-accent, var(--volt-ink)));
   }
 
   .search-result__link .chev {

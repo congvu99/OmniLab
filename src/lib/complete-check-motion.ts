@@ -13,6 +13,8 @@ const EASE = 'cubic-bezier(.2,.8,.2,1)';
 const SNAP = 'cubic-bezier(.3,1.35,.5,1)';
 const SPARK_COUNT = 8;
 
+import { prefersReducedMotion } from './reduced-motion';
+
 export interface CompleteMotionTargets {
   /** SVG badge containing .c-fill / .c-disc / .c-tick (optional: aside variant has none). */
   check: Element | null;
@@ -21,9 +23,6 @@ export interface CompleteMotionTargets {
   /** Small tick path inside the button. */
   buttonTick: Element | null;
 }
-
-export const prefersReducedMotion = (): boolean =>
-  typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function cancelAll(...els: Array<Element | null>) {
   for (const el of els) el?.getAnimations().forEach((a) => a.cancel());

@@ -87,7 +87,7 @@ const fontSize = Math.max(10, Math.round(size * 0.26));
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .progress-ring-slot[data-loading] .progress-ring-svg {
+    :global(:root:not([data-motion='reduce'])) .progress-ring-slot[data-loading] .progress-ring-svg {
       animation: ol-skeleton-pulse 1.2s ease-in-out infinite;
     }
   }

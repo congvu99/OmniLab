@@ -12,7 +12,9 @@ OmniLab sử dụng "Studio" design system: giao diện bàn làm việc yên t�
 ### Chọn giao diện
 - **Sáng** (#F3F4F6 bg / #FFFFFF surface): cool-paper, dùng trong ngày
 - **Tối** (#0B0C0E bg / #1C1C1E surface): graphite, là theme chủ đạo
-- Tự động theo `@media (prefers-color-scheme: dark)` (không toggle UI)
+- Người dùng chọn ở tab **Tôi** (`/toi`): Sáng / Tối / Theo hệ thống (mặc định). Giá trị lưu ở `omnilab:prefs`; `public/prefs-init.js` (script ngoài, đồng bộ, chạy trước CSS) đặt `<html data-theme="light|dark">` trước first paint nên không nháy sai màu. "Theo hệ thống" tính từ `matchMedia` và cập nhật trực tiếp khi hệ thống đổi.
+- CSS không còn `@media (prefers-color-scheme)`: palette tối nằm ở `:root[data-theme="dark"]` (tokens.css, khối đầu tiên là nguồn cho test contrast); component dùng cùng selector. Không JS = theme sáng. `<meta name="theme-color">` do prefs-init cập nhật theo theme.
+- Prefs khác trên `<html>`: `data-text-size="s|m|l"` (chỉ đặt `--read-scale` 0.9/1/1.14 cho `.prose` của reader; UI không đổi) và `data-motion="reduce"` (CSS: mọi `@media (prefers-reduced-motion: reduce)` có thêm nhánh `:root[data-motion="reduce"]`; JS: `prefersReducedMotion()` ở `src/lib/reduced-motion.ts`, không gọi `matchMedia` trực tiếp).
 
 ### Màu Volt — Quy tắc duy nhất
 | Token | Dùng cho | Dark | Light | Ghi chú |
@@ -82,7 +84,7 @@ Tất cả ≥4.5:1 trên nền tương ứng.
 
 ### Dock (ink in dark, light glass in light)
 
-Mobile dock (<1024px) + reader toast. Light: nền kính sáng, chữ/icon tối, hairline, bóng mềm; mục đang chọn = pill volt (FILL) + chữ `--on-volt`. Dark: giữ nền mực.
+Mobile dock (<1024px, **5 tab**: Học tiếp · Lĩnh vực · Tìm kiếm · Đã lưu · Tôi; số tab lấy từ `nav-items.ts` qua `--tab-count`, mỗi tab ≥52×56px ở 320px, nhãn không cắt) + reader toast. Light: nền kính sáng, chữ/icon tối, hairline, bóng mềm; mục đang chọn = pill volt (FILL) + chữ `--on-volt`. Dark: giữ nền mực.
 
 | Token | Dark | Light | Ghi chú |
 |---|---|---|---|
@@ -210,6 +212,7 @@ Mobile dock (<1024px) + reader toast. Light: nền kính sáng, chữ/icon tối
 - **Toast**: Slide in từ dưới (bottom safe area), auto-dismiss 4s, pause on hover/focus
 
 ### Reduced motion
+Người dùng có thể bật cưỡng bức ở `/toi` (`<html data-motion="reduce">`); cả hai nguồn (OS + app) đều áp dụng.
 ```css
 @media (prefers-reduced-motion: reduce) {
   /* All animation/transition → 120ms crossfade hoặc instant */

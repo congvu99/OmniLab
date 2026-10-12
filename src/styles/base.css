@@ -32,7 +32,7 @@
 }
 
 html {
-  color-scheme: light dark; /* native form controls / scrollbars follow system theme */
+  color-scheme: light; /* dark flips in tokens.css under [data-theme=dark] */
   /* Prevents iOS/older mobile browsers' automatic text-inflation on rotation.
      Does NOT disable pinch-zoom or OS Dynamic Type - those stay user-controlled. */
   -webkit-text-size-adjust: 100%;
@@ -173,11 +173,9 @@ mark {
   outline-offset: 2px;
 }
 
-@media (prefers-color-scheme: light) {
-  :focus-visible {
-    outline-color: var(--text);
-    box-shadow: 0 0 0 5px var(--volt);
-  }
+:root:not([data-theme="dark"]) :focus-visible {
+  outline-color: var(--text);
+  box-shadow: 0 0 0 5px var(--volt);
 }
 
 /* --- Screen-reader-only content: visually hidden, still in the a11y tree
@@ -243,6 +241,16 @@ mark {
   }
 }
 
+/* Same collapse when the user forces it in /toi (<html data-motion="reduce">). */
+:root[data-motion="reduce"] *,
+:root[data-motion="reduce"] *::before,
+:root[data-motion="reduce"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
 /* View Transitions (depth push, reduced-motion crossfade): see
    view-transitions.css. */
 
@@ -300,7 +308,7 @@ kbd,
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .skeleton {
+  :root:not([data-motion="reduce"]) .skeleton {
     animation: ol-skeleton-pulse 1.2s ease-in-out infinite;
   }
 }
@@ -660,10 +668,8 @@ kbd,
   --c: var(--hue-l, var(--volt-ink));
 }
 
-@media (prefers-color-scheme: dark) {
-  .hue {
-    --c: var(--hue-d, var(--hue-l, var(--volt-ink)));
-  }
+:root[data-theme="dark"] .hue {
+  --c: var(--hue-d, var(--hue-l, var(--volt-ink)));
 }
 
 /* Staggered entrance: give each item `style="--i:N"`. 30ms step, 8px rise. */
@@ -683,6 +689,10 @@ kbd,
   .rise {
     animation: none;
   }
+}
+
+:root[data-motion="reduce"] .rise {
+  animation: none;
 }
 
 /* Section head: mono label left, optional text action right (volt-ink). */

@@ -15,13 +15,14 @@ Tổng cộng 196 khối "Ví dụ đời sống", 97 minh hoạ SVG mới, 44 �
 ## Tính năng
 
 - **Giao diện Studio**: Dark-first (graphite #0B0C0E), Volt signature color, hairline borders, Be Vietnam Pro + JetBrains Mono, 44px tap targets
-- **Dock** (mobile <1024px): 4 tab bar (Học tiếp · Lĩnh vực · Tìm kiếm · Đã lưu); motion depth push thay vì trượt iOS
+- **Dock** (mobile <1024px): 5 tab (Học tiếp · Lĩnh vực · Tìm kiếm · Đã lưu · Tôi); motion depth push thay vì trượt iOS
+- **Tab Tôi** (`/toi`): chọn giao diện sáng/tối/theo hệ thống, cỡ chữ khi đọc, giảm chuyển động (lưu trên máy, áp ngay, không nháy màu khi tải); tiến độ học; trạng thái lưu trữ, hướng dẫn cài lên màn hình chính
 - **Sidebar** (desktop ≥1024px): Điều hướng, lĩnh vực, bookmark, tiến độ toàn bộ
 - **Command palette** (⌘K / Ctrl+K): Tìm kiếm bài học, jump tab, với keyboard shortcut + mouse click
 - **Reader** (≥1280px): Table of contents scrollspy, progress ring, mark complete (motion: ring → disc → tick + spark), bookmark, next lesson
 - **Tiến độ & bookmark**: Lưu trong `localStorage` của máy; fallback in-memory ở private mode. "Học tiếp" nhớ vị trí cuộn.
 - **Tìm kiếm** (MiniSearch): Toàn văn tiếng Việt, gõ có dấu hay không dấu ("bo nho dem" = "bộ nhớ đệm"), index lazy-load
-- **Dark/light theme**: Tự động theo hệ thống, không toggle UI
+- **Dark/light theme**: Mặc định theo hệ thống, đổi thủ công ở tab Tôi
 - **Installable**: PWA (manifest standalone) trên iPhone, nhưng **không** offline ở v1
 
 ## Chạy local

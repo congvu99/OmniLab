@@ -282,10 +282,8 @@ const isDomainActive = (id: string) =>
     border-radius: 50%;
   }
 
-  @media (prefers-color-scheme: dark) {
-    .sidebar-dot {
-      background: var(--dot-dark, var(--dot, var(--c)));
-    }
+  :global(:root[data-theme='dark']) .sidebar-dot {
+    background: var(--dot-dark, var(--dot, var(--c)));
   }
 
   .sidebar-section[hidden] {

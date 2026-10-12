@@ -11,6 +11,8 @@
  * tác" cannot vanish mid-reach (WCAG 2.2.1).
  */
 
+import { prefersReducedMotion } from './reduced-motion';
+
 export type ReaderToastIcon = 'check' | 'bookmark' | 'close';
 
 export interface ReaderToastOptions {
@@ -29,8 +31,7 @@ let timer: ReturnType<typeof setTimeout> | undefined;
 let undoHandler: (() => void) | undefined;
 let bound: HTMLElement | null = null;
 
-const reducedMotion = (): boolean =>
-  typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+const reducedMotion = prefersReducedMotion;
 
 function parts() {
   const root = document.querySelector<HTMLElement>('[data-rt]');

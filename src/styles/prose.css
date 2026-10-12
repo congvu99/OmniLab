@@ -7,8 +7,11 @@
  * their own scoped styles.
  */
 
+/* Reading size (Cỡ chữ khi đọc in /toi): --read-scale (tokens.css, from
+   <html data-text-size>) scales the body text only; headings, code and UI
+   chrome keep their fixed sizes. */
 .prose {
-  font-size: 16.5px;
+  font-size: calc(16.5px * var(--read-scale, 1));
   line-height: 1.72;
   color: var(--text);
   overflow-wrap: break-word;
@@ -19,7 +22,7 @@
 
 @media (min-width: 1024px) {
   .prose {
-    font-size: 18px;
+    font-size: calc(18px * var(--read-scale, 1));
   }
 }
 
@@ -215,15 +218,13 @@
 
 /* Shiki dual theme: light colors are inline; dark colors come from the
    --shiki-dark vars that astro.config.mjs (shikiConfig.themes) emits. */
-@media (prefers-color-scheme: dark) {
-  .prose pre.astro-code,
-  .prose pre.astro-code span {
-    color: var(--shiki-dark) !important;
-    background-color: var(--shiki-dark-bg) !important;
-  }
-  .prose pre.astro-code span {
-    background-color: transparent !important;
-  }
+:root[data-theme="dark"] .prose pre.astro-code,
+:root[data-theme="dark"] .prose pre.astro-code span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+}
+:root[data-theme="dark"] .prose pre.astro-code span {
+  background-color: transparent !important;
 }
 
 /* --- Blockquote: concept pull-quote (2px volt-ink rule, 17px/600) --- */

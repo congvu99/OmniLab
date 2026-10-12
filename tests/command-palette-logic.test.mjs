@@ -16,9 +16,9 @@ const lessons = [
 ];
 
 describe('quick actions', () => {
-  it('lists continue lesson, 4 tabs, then distinct domains with counts', () => {
+  it('lists continue lesson, 5 tabs, then distinct domains with counts', () => {
     const items = buildQuickActions(lessons, 'a/m/y');
-    expect(items.map((i) => i.group)).toEqual(['Tiếp tục', 'Điều hướng', 'Điều hướng', 'Điều hướng', 'Điều hướng', 'Lĩnh vực', 'Lĩnh vực']);
+    expect(items.map((i) => i.group)).toEqual(['Tiếp tục', 'Điều hướng', 'Điều hướng', 'Điều hướng', 'Điều hướng', 'Điều hướng', 'Lĩnh vực', 'Lĩnh vực']);
     expect(items[0]).toMatchObject({ title: 'Cân bằng tải', url: '/hoc/a/m/y', meta: 'Kiến trúc hệ thống · 5′' });
     const domains = items.filter((i) => i.group === 'Lĩnh vực');
     expect(domains[0]).toMatchObject({ url: '/linh-vuc/kien-truc', meta: '2 bài' });
@@ -26,7 +26,7 @@ describe('quick actions', () => {
   it('skips continue when id is null or unknown; tabs still present before lessons load', () => {
     expect(buildQuickActions(lessons, null).some((i) => i.group === 'Tiếp tục')).toBe(false);
     expect(buildQuickActions(lessons, 'zzz').some((i) => i.group === 'Tiếp tục')).toBe(false);
-    expect(buildQuickActions([], null)).toHaveLength(4);
+    expect(buildQuickActions([], null)).toHaveLength(5);
   });
   it('filters accent-insensitively', () => {
     const items = buildQuickActions(lessons, null);

@@ -30,6 +30,7 @@ src/
 │   │   ├── bookmark-button         # Bookmark toggle, sync via store
 │   │   ├── learning-stats, domain-progress, up-next-list  # Home
 │   │   ├── domain-page-controls    # Domain filter chips
+│   │   ├── display-settings, storage-status  # /toi (Giao diện, Dữ liệu & ứng dụng)
 │   │   └── search-box, domain-nav, tab-bar, sidebar-nav
 │   ├── lesson/                     # Lesson components (RealLife, Figure, etc.)
 │   ├── shell/                      # Layout shells (app-layout, reader-layout)
@@ -41,8 +42,10 @@ src/
 ├── lib/
 │   ├── progress-store.ts, search-index.ts, lesson-id.ts, toc-scrollspy.ts
 │   ├── command-palette-logic.ts, command-palette-controller.ts  # (new)
+│   ├── user-prefs.ts, reduced-motion.ts  # prefs hiển thị (theme/cỡ chữ/chuyển động), helper reduced motion
 │   └── (domain-progress, complete-check-motion, reader-toast, etc.)
-├── pages/: routes (home, hoc/*, linh-vuc, tim-kiem, da-luu, gioi-thieu, 404)
+├── pages/: routes (home, hoc/*, linh-vuc, tim-kiem, da-luu, toi, gioi-thieu, 404)
+└── public/prefs-init.js  # pre-paint theme/prefs script (script ngoài, CSP)
 └── styles/
     ├── tokens.css      # Studio color/motion/typography tokens
     ├── base.css        # Utilities (.btn, .card, .row, .kbd, etc.)
@@ -95,7 +98,7 @@ src/
   - Icon names + paths, command palette logic/controller, search controller, progress store, toc-scrollspy, lesson reader model, token contrast, etc.
 - TypeScript: astro check (0 errors, schema valid)
 - Contrast: 55 token pairs verified ≥4.5:1 light/dark (Studio tokens: text/text-2/text-3/volt/volt-ink/domain hues/danger/success on all surfaces)
-- Build: verify:fidelity gate (content snapshot check) + astro build → dist/ (73 pages)
+- Build: verify:fidelity gate (content snapshot check) + astro build → dist/ (74 pages)
 - Lighthouse: Target ≥95 (to be verified post-deploy)
 
 ## Tấm ghi chú

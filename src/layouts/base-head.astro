@@ -42,9 +42,13 @@ const { title, description = 'OmniLab - ứng dụng học tập đa lĩnh vực
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
 <link rel="manifest" href="/manifest.webmanifest" />
 
-<!-- theme-color follows system light/dark, matches --bg in tokens.css -->
-<meta name="theme-color" content="#F3F4F6" media="(prefers-color-scheme: light)" />
-<meta name="theme-color" content="#0B0C0E" media="(prefers-color-scheme: dark)" />
+<!-- theme-color: light default (= --bg); prefs-init.js (next tag) rewrites it
+     to the resolved theme before first paint, and again after soft navigation. -->
+<meta name="theme-color" content="#F3F4F6" />
+<!-- Pre-paint display prefs (theme / reading size / motion) -> <html data-*>.
+     External, synchronous, no module: CSP script-src 'self' forbids inline,
+     and it must run before the stylesheets paint to avoid a wrong-theme flash. -->
+<script is:inline src="/prefs-init.js"></script>
 
 <!-- iOS "Add to Home Screen" standalone behavior.
      status-bar-style: "default" (not "black-translucent") — deliberate:

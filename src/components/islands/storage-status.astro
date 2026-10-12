@@ -1,0 +1,76 @@
+---
+// "Dữ liệu & ứng dụng" status rows on /toi: whether progress survives a reload
+// (progress-store isPersistent) and the home-screen install tip (hidden once
+// the app already runs standalone). Server HTML is the neutral default; the
+// script fills in the real state on the client.
+import Icon from '../icon/icon.astro';
+---
+
+<ul class="rows rows--plain" data-storage-panel>
+  <li>
+    <div class="row">
+      <span class="dom-ic"><Icon name="info" size={21} /></span>
+      <div class="tt">
+        <b data-storage-title>Lưu trữ trên máy này</b>
+        <small class="ss__wrap" data-storage-detail>Đang kiểm tra…</small>
+      </div>
+    </div>
+  </li>
+  <li data-install-hint>
+    <div class="row">
+      <span class="dom-ic"><Icon name="domains" size={21} /></span>
+      <div class="tt">
+        <b>Cài lên màn hình chính</b>
+        <small class="ss__wrap">
+          Trên iPhone/iPad: bấm Chia sẻ, rồi chọn “Thêm vào MH chính”. Tiến độ sẽ được giữ bền hơn.
+        </small>
+      </div>
+    </div>
+  </li>
+</ul>
+
+<style>
+  .rows--plain {
+    margin: 0 -8px;
+  }
+
+  /* Status text wraps (the shared .row small is a single ellipsized line). */
+  .rows--plain .tt small.ss__wrap {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  [data-install-hint][hidden] {
+    display: none;
+  }
+</style>
+
+<script>
+  import { getProgressStore } from '../../lib/progress-store';
+  import { onPageLoad } from '../../lib/page-lifecycle';
+
+  const isStandalone = () =>
+    window.matchMedia('(display-mode: standalone)').matches ||
+    (navigator as Navigator & { standalone?: boolean }).standalone === true;
+
+  onPageLoad(() => {
+    const panel = document.querySelector<HTMLElement>('[data-storage-panel]');
+    if (!panel) return;
+    const title = panel.querySelector<HTMLElement>('[data-storage-title]');
+    const detail = panel.querySelector<HTMLElement>('[data-storage-detail]');
+    const install = panel.querySelector<HTMLElement>('[data-install-hint]');
+
+    if (title && detail) {
+      if (getProgressStore().isPersistent) {
+        title.textContent = 'Lưu trữ bền';
+        detail.textContent = 'Tiến độ và mục đã lưu được giữ trên máy này sau khi đóng trình duyệt.';
+      } else {
+        title.textContent = 'Lưu trữ tạm thời';
+        detail.textContent =
+          'Trình duyệt đang chặn lưu trữ (chế độ riêng tư?). Tiến độ chỉ giữ đến khi đóng thẻ này.';
+      }
+    }
+    if (install) install.hidden = isStandalone();
+  });
+</script>

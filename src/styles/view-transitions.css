@@ -33,31 +33,31 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
+  :root:not([data-motion="reduce"])::view-transition-old(root),
+  :root:not([data-motion="reduce"])::view-transition-new(root) {
     animation-timing-function: var(--ease);
     animation-fill-mode: both;
     mix-blend-mode: normal;
   }
 
-  ::view-transition-old(root) {
+  :root:not([data-motion="reduce"])::view-transition-old(root) {
     animation-name: ol-recede;
     animation-duration: var(--dur-3);
   }
 
-  ::view-transition-new(root) {
+  :root:not([data-motion="reduce"])::view-transition-new(root) {
     z-index: 1;
     animation-name: ol-push-in;
     animation-duration: calc(var(--dur-3) + 20ms);
   }
 
-  [data-astro-transition="back"]::view-transition-old(root) {
+  :root:not([data-motion="reduce"])[data-astro-transition="back"]::view-transition-old(root) {
     z-index: 2;
     animation-name: ol-leave;
     animation-duration: 180ms;
   }
 
-  [data-astro-transition="back"]::view-transition-new(root) {
+  :root:not([data-motion="reduce"])[data-astro-transition="back"]::view-transition-new(root) {
     z-index: 1;
     animation-name: ol-return;
     animation-duration: var(--dur-3);
@@ -80,6 +80,14 @@
   }
 }
 
+@keyframes ol-fade-out {
+  to { opacity: 0; }
+}
+
+@keyframes ol-fade-in {
+  from { opacity: 0; }
+}
+
 /* Reduced motion: movement-free 120ms crossfade. */
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(root),
@@ -95,12 +103,19 @@
   ::view-transition-new(root) {
     animation: ol-fade-in 120ms linear both;
   }
+}
 
-  @keyframes ol-fade-out {
-    to { opacity: 0; }
-  }
+/* Forced via /toi (<html data-motion="reduce">): same crossfade as above. */
+:root[data-motion="reduce"]::view-transition-group(root),
+:root[data-motion="reduce"]::view-transition-group(ol-dock),
+:root[data-motion="reduce"]::view-transition-group(ol-sidebar) {
+  animation-duration: 120ms;
+}
 
-  @keyframes ol-fade-in {
-    from { opacity: 0; }
-  }
+:root[data-motion="reduce"]::view-transition-old(root) {
+  animation: ol-fade-out 120ms linear both;
+}
+
+:root[data-motion="reduce"]::view-transition-new(root) {
+  animation: ol-fade-in 120ms linear both;
 }

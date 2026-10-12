@@ -101,7 +101,7 @@ describe('command palette controller', () => {
 
   it('shows tabs immediately, then continue lesson after lessons load', async () => {
     palette.open();
-    expect(optionTitles()).toEqual(['Học tiếp', 'Lĩnh vực', 'Tìm kiếm', 'Đã lưu']);
+    expect(optionTitles()).toEqual(['Học tiếp', 'Lĩnh vực', 'Tìm kiếm', 'Đã lưu', 'Tôi']);
     await vi.advanceTimersByTimeAsync(0);
     expect(optionTitles()[0]).toBe('Bộ nhớ đệm (Cache)');
     expect(parts.input._attrs['aria-activedescendant']).toBe('cmdk-opt-0');

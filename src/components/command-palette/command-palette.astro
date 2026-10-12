@@ -204,10 +204,8 @@
     cursor: pointer;
     transition: background 120ms var(--cp-ease);
   }
-  @media (prefers-color-scheme: dark) {
-    .cmdk-it {
-      --cmdk-c: var(--cmdk-accent-dark, var(--cmdk-accent, var(--cp-text-3)));
-    }
+  :root[data-theme='dark'] .cmdk-it {
+    --cmdk-c: var(--cmdk-accent-dark, var(--cmdk-accent, var(--cp-text-3)));
   }
   .cmdk-it[aria-selected='true'] {
     background: var(--cp-surface-3);
@@ -305,5 +303,14 @@
       transition-duration: 150ms;
       backdrop-filter: none !important;
     }
+  }
+  :root[data-motion='reduce'] .cmdk,
+  :root[data-motion='reduce'] .cmdk-ov[data-state='open'] .cmdk {
+    transform: none;
+    transition: none;
+  }
+  :root[data-motion='reduce'] .cmdk-ov {
+    transition-duration: 150ms;
+    backdrop-filter: none !important;
   }
 </style>

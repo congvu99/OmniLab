@@ -54,6 +54,12 @@
       transition: opacity var(--dur-1) linear;
     }
   }
+  :global(:root[data-motion='reduce']) .nav-progress,
+  :global(:root[data-motion='reduce']) .nav-progress.is-visible,
+  :global(:root[data-motion='reduce']) .nav-progress.is-done {
+    transform: none !important;
+    transition: opacity var(--dur-1) linear;
+  }
 </style>
 
 <script>

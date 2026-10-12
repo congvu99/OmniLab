@@ -5,12 +5,14 @@
  * plans/261012-full-restyle-concepts/concept-b-studio/index.html.
  * Components MUST only reference these custom properties, never raw hex.
  *
- * Theme: driven entirely by `@media (prefers-color-scheme: dark)` - no manual
- * toggle/class. Dark is the "hero" theme of the design. The contrast test
+ * Theme: `:root` is light; `:root[data-theme="dark"]` is dark. The attribute is
+ * set before first paint by public/prefs-init.js from the user's choice in /toi
+ * (Sáng / Tối / Theo hệ thống, the last following prefers-color-scheme live).
+ * Without JS the page stays light. Dark is the "hero" theme. The contrast test
  * (tests/token-contrast.test.mjs) parses the `--name: #RRGGBB;` hex tokens in
  * this file, so keep that exact form for bg / surface / surface-2 / text /
  * text-2 / text-3 / volt / volt-ink / on-volt / line-strong / danger / success /
- * accent-on in both blocks. The first dark-scheme media query in this file
+ * accent-on in both blocks. The first `:root[data-theme="dark"]` rule in this file
  * must be the dark palette block (the test splits the file there).
  *
  * VOLT RULE: --volt is a FILL (buttons, indicators, check discs) and always
@@ -20,7 +22,7 @@
  *
  * Domain accent: `--domain-accent` / `--domain-accent-dark` are set as inline
  * style on the layout root (see src/layouts/domain-accent.ts) from content
- * YAML. `--accent` resolves to the light or dark variant by system theme and
+ * YAML. `--accent` resolves to the light or dark variant by data-theme and
  * falls back to --volt-ink on pages with no domain context.
  *
  * Illustration contract: --ink / --ink-2 (plus --accent, --surface-2, --line,
@@ -181,59 +183,68 @@
   --ink-2: var(--text-2);
 }
 
+/* Reading size for lesson prose only (prose.css, /toi preview): <html
+   data-text-size> is set by public/prefs-init.js. Default (m) = 1. */
+:root[data-text-size="s"] {
+  --read-scale: 0.9;
+}
+
+:root[data-text-size="l"] {
+  --read-scale: 1.14;
+}
+
 @media (min-width: 1024px) {
   :root {
     --gutter: 56px;
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0B0C0E;
-    --bg-2: #0F1013;
-    --surface: #15171B;
-    --surface-2: #1B1E23;
-    --surface-3: #23262C;
-    --line: rgba(255, 255, 255, 0.07);
-    --line-2: rgba(255, 255, 255, 0.12);
-    --line-3: rgba(255, 255, 255, 0.22);
-    --line-strong: #6B717C;
-    --text: #EDEEF0;
-    --text-2: #A3A8B3;
-    --text-3: #7F8591;
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0B0C0E;
+  --bg-2: #0F1013;
+  --surface: #15171B;
+  --surface-2: #1B1E23;
+  --surface-3: #23262C;
+  --line: rgba(255, 255, 255, 0.07);
+  --line-2: rgba(255, 255, 255, 0.12);
+  --line-3: rgba(255, 255, 255, 0.22);
+  --line-strong: #6B717C;
+  --text: #EDEEF0;
+  --text-2: #A3A8B3;
+  --text-3: #7F8591;
 
-    --volt: #D4FF3A;
-    --volt-ink: #D4FF3A;
-    --on-volt: #0B0C0E;
-    --volt-soft: rgba(212, 255, 58, 0.12);
+  --volt: #D4FF3A;
+  --volt-ink: #D4FF3A;
+  --on-volt: #0B0C0E;
+  --volt-soft: rgba(212, 255, 58, 0.12);
 
-    --arch: #9B9BFF;
-    --fin: #4FD8B4;
-    --pro: #FFA766;
+  --arch: #9B9BFF;
+  --fin: #4FD8B4;
+  --pro: #FFA766;
 
-    --accent: var(--domain-accent-dark, var(--volt-ink));
-    --accent-on: #0B0C0E;
+  --accent: var(--domain-accent-dark, var(--volt-ink));
+  --accent-on: #0B0C0E;
 
-    --danger: #FF9A94;
-    --success: #6EE7B7;
+  --danger: #FF9A94;
+  --success: #6EE7B7;
 
-    --glow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
-    --shadow: 0 1px 0 rgba(0, 0, 0, 0.5), 0 16px 40px -16px rgba(0, 0, 0, 0.7);
+  --glow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --shadow: 0 1px 0 rgba(0, 0, 0, 0.5), 0 16px 40px -16px rgba(0, 0, 0, 0.7);
 
-    --dock: #16181C;
-    --dock-glass: #16181C;
-    --dock-text: #A3A8B3;
-    --dock-text-strong: #EDEEF0;
-    --dock-accent: #D4FF3A;
-    --dock-line: rgba(255, 255, 255, 0.09);
-    --dock-shadow: 0 18px 40px -14px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-    --dock-pill-shadow: 0 0 20px -4px var(--volt), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  --dock: #16181C;
+  --dock-glass: #16181C;
+  --dock-text: #A3A8B3;
+  --dock-text-strong: #EDEEF0;
+  --dock-accent: #D4FF3A;
+  --dock-line: rgba(255, 255, 255, 0.09);
+  --dock-shadow: 0 18px 40px -14px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --dock-pill-shadow: 0 0 20px -4px var(--volt), inset 0 1px 0 rgba(255, 255, 255, 0.5);
 
-    --grain: 0.06;
-    --grid-line: rgba(255, 255, 255, 0.035);
+  --grain: 0.06;
+  --grid-line: rgba(255, 255, 255, 0.035);
 
-    --material-bar: rgba(11, 12, 14, 0.82);
-  }
+  --material-bar: rgba(11, 12, 14, 0.82);
 }
 
 /* color-mix (Safari 16.2+): accent-tinted fill; older engines keep --volt-soft. */
