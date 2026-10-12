@@ -1,0 +1,87 @@
+---
+// Thin-line generative artwork for a domain card header (concept "Studio":
+// no bitmaps, geometry only). Colors come from currentColor (= the card's
+// --c hue) and --surface, so it follows the theme. Known domain ids get a
+// bespoke motif; any other id gets a neutral dotted grid, so adding a domain
+// to content never needs a code change here.
+interface Props {
+  domainId: string;
+  /** "slice" fills a card header; "meet" keeps the motif whole, right-aligned (wide hero band). */
+  fit?: 'slice' | 'meet';
+}
+
+const { domainId, fit = 'slice' } = Astro.props;
+
+function network(): string {
+  // Kiến trúc hệ thống: a graph of services, one hub node filled.
+  const pts: [number, number][] = [
+    [40, 62], [96, 30], [150, 58], [206, 26], [262, 54], [318, 30], [120, 80], [236, 82], [300, 76],
+  ];
+  const edges: [number, number][] = [
+    [0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [1, 6], [2, 6], [4, 7], [3, 7], [5, 8], [4, 8],
+  ];
+  let s = '';
+  for (const [a, b] of edges) {
+    s += `<path d="M${pts[a][0]},${pts[a][1]}L${pts[b][0]},${pts[b][1]}" stroke="currentColor" opacity=".55"/>`;
+  }
+  pts.forEach(([x, y], i) => {
+    s += `<circle cx="${x}" cy="${y}" r="${i === 3 ? 7 : 4.5}" fill="${i === 3 ? 'currentColor' : 'var(--surface)'}" stroke="currentColor"/>`;
+  });
+  return s;
+}
+
+function growth(): string {
+  // Tài chính cá nhân: a compounding line over a baseline of ticks.
+  let x = 20;
+  let y = 78;
+  let d = `M${x},${y}`;
+  for (const v of [6, -4, 10, -3, 12, 8, -6, 14, 9, -2, 16, 10]) {
+    x += 27;
+    y -= v * 0.9;
+    d += `L${x},${y}`;
+  }
+  let s = '';
+  for (let i = 0; i < 13; i++) s += `<path d="M${20 + i * 27},86V82" stroke="currentColor" opacity=".35"/>`;
+  s += `<path d="${d}" fill="none" stroke="currentColor" stroke-width="1.6"/>`;
+  s += `<circle cx="${x}" cy="${y}" r="5" fill="currentColor"/><circle cx="${x}" cy="${y}" r="11" fill="none" stroke="currentColor" opacity=".4"/>`;
+  return s;
+}
+
+function tShape(): string {
+  // Nghề tài chính: a "T" - broad skills across, depth down.
+  let s = '';
+  for (let i = 0; i < 9; i++) {
+    s += `<rect x="${52 + i * 28}" y="18" width="20" height="20" rx="5" fill="${i === 4 ? 'currentColor' : 'none'}" stroke="currentColor" opacity="${i === 4 ? 1 : 0.6}"/>`;
+  }
+  for (let j = 1; j < 3; j++) {
+    s += `<rect x="164" y="${18 + j * 26}" width="20" height="20" rx="5" fill="none" stroke="currentColor" opacity="${0.8 - j * 0.2}"/>`;
+  }
+  return s;
+}
+
+function dots(): string {
+  let s = '';
+  for (let r = 0; r < 3; r++) {
+    for (let c = 0; c < 13; c++) {
+      s += `<circle cx="${26 + c * 25.5}" cy="${22 + r * 24}" r="${(r + c) % 5 === 0 ? 3.5 : 2}" fill="currentColor" opacity="${(r + c) % 5 === 0 ? 0.9 : 0.4}"/>`;
+    }
+  }
+  return s;
+}
+
+const motifs: Record<string, () => string> = { 'kien-truc': network, 'tai-chinh': growth, 'nghe-tai-chinh': tShape };
+const body = (motifs[domainId] ?? dots)();
+---
+
+<svg class="domain-art" viewBox="0 0 358 92" preserveAspectRatio={fit === 'meet' ? 'xMaxYMid meet' : 'xMidYMid slice'} aria-hidden="true" focusable="false" set:html={body} />
+
+<style>
+  .domain-art {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    color: var(--c);
+    stroke-width: 1.25;
+  }
+</style>

@@ -1,0 +1,293 @@
+---
+// Reader aside content (reader-layout `slot="aside"`, visible >=1280px only),
+// concept desktop reader column: reading-progress ring box, "Trong bài này" TOC
+// with a gliding volt marker (scrollspy), then actions (save, complete, next).
+// The inline TOC in the article carries `.hide-at-aside-width`, so exactly one
+// TOC is visible and exposed to assistive tech at any width. State-bearing
+// islands (bookmark, complete) bind every instance via the shared progress
+// store, so the aside and inline copies stay in sync.
+import Icon from '../icon/icon.astro';
+import BookmarkButton from '../islands/bookmark-button.astro';
+import MarkCompleteButton from '../islands/mark-complete-button.astro';
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  headings: Heading[];
+  lessonId: string;
+  next: { href: string; title: string } | null;
+  domainHref: string;
+  domainId: string;
+  domainTitle: string;
+  readingMinutes: number;
+}
+
+const { headings, lessonId, next, domainHref, domainId, domainTitle, readingMinutes } = Astro.props;
+
+// Progress ring geometry (concept: 48px, 3px stroke, r = (size - 4) / 2).
+const SIZE = 48;
+const R = (SIZE - 4) / 2;
+const C = 2 * Math.PI * R;
+---
+
+<div class="pbox" role="group" aria-label="Tiến độ bài" data-aside-progress data-reading-minutes={readingMinutes}>
+  <span class="ring tnum" aria-hidden="true">
+    <svg viewBox={`0 0 ${SIZE} ${SIZE}`}>
+      <circle class="ring__track" cx={SIZE / 2} cy={SIZE / 2} r={R}></circle>
+      <circle
+        class="ring__fill"
+        cx={SIZE / 2}
+        cy={SIZE / 2}
+        r={R}
+        stroke-dasharray={C}
+        stroke-dashoffset={C}
+        data-aside-ring
+        data-circumference={C}></circle>
+    </svg>
+    <span data-aside-ring-text>0%</span>
+  </span>
+  <div class="pbox__text">
+    <b>Tiến độ bài</b>
+    <small class="tnum" data-aside-progress-text>còn {readingMinutes} phút · 0%</small>
+  </div>
+</div>
+
+{
+  headings.length > 0 && (
+    <div class="aside-block">
+      <p class="lbl" id="aside-toc-title">
+        Trong bài này
+      </p>
+      <nav class="atoc" aria-labelledby="aside-toc-title" data-aside-toc>
+        <span class="atoc__mk" data-aside-marker aria-hidden="true" />
+        {headings.map((h) => (
+          <a href={`#${h.slug}`} data-aside-toc-link data-slug={h.slug}>
+            {h.text}
+          </a>
+        ))}
+      </nav>
+    </div>
+  )
+}
+
+<div class="acts">
+  <BookmarkButton lessonId={lessonId} variant="labeled" />
+  <MarkCompleteButton lessonId={lessonId} placement="aside" domainId={domainId} domainTitle={domainTitle} />
+  {
+    next ? (
+      <a href={next.href} class="btn btn-secondary btn-sm acts__next tap-scale" title={next.title}>
+        <Icon name="arrow-right" size={18} stroke-width={1.75} aria-hidden="true" />
+        <span>Bài tiếp</span>
+      </a>
+    ) : (
+      <a href={domainHref} class="btn btn-secondary btn-sm acts__next tap-scale">
+        <Icon name="domains" size={18} stroke-width={1.75} aria-hidden="true" />
+        <span>Về lĩnh vực</span>
+      </a>
+    )
+  }
+</div>
+
+<style>
+  /* The aside is a scrolling flex column: never squash blocks (e.g. when the
+     toc grows) — let the column scroll instead. */
+  :global(.reader-aside) > :global(*) {
+    flex-shrink: 0;
+  }
+
+  .pbox {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    box-shadow: var(--glow);
+  }
+
+  .pbox__text b {
+    display: block;
+    font-size: var(--text-small);
+  }
+
+  .pbox__text small {
+    font: 400 var(--text-label) / 1.4 var(--font-mono);
+    color: var(--text-3);
+  }
+
+  /* Concept ring: 48px, 3px stroke, mono 10.5px label centered. */
+  .ring {
+    --s: 48px;
+    position: relative;
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: var(--s);
+    height: var(--s);
+    font: 500 var(--text-nano) var(--font-mono);
+    color: var(--text);
+  }
+
+  .ring svg {
+    position: absolute;
+    inset: 0;
+    transform: rotate(-90deg);
+  }
+
+  .ring circle {
+    fill: none;
+    stroke-width: 3;
+  }
+
+  .ring__track {
+    stroke: var(--surface-3);
+  }
+
+  .ring__fill {
+    stroke: var(--accent);
+    stroke-linecap: round;
+    transition: stroke-dashoffset var(--dur-3) var(--ease);
+  }
+
+  .lbl {
+    margin: 0 0 10px;
+    font: 500 var(--text-nano) / 1.2 var(--font-mono);
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+
+  /* TOC rail with gliding marker (concept .atoc). */
+  .atoc {
+    position: relative;
+    display: grid;
+    padding-left: 14px;
+    border-left: 1px solid var(--line-2);
+  }
+
+  .atoc__mk {
+    position: absolute;
+    left: -1px;
+    top: 0;
+    width: 2px;
+    height: 44px;
+    border-radius: 2px;
+    background: var(--volt-ink);
+    box-shadow: 0 0 8px var(--volt);
+    transform: translateY(0);
+    transition: transform var(--dur-3) var(--ease), height var(--dur-3) var(--ease);
+  }
+
+  .atoc a {
+    display: flex;
+    align-items: center;
+    /* 44px rows: the aside also shows on touch iPads in landscape. */
+    min-height: 44px;
+    padding: 5px 0;
+    font-size: 13.5px;
+    line-height: 1.35;
+    color: var(--text-3);
+    text-decoration: none;
+    transition: color var(--dur-1) var(--ease);
+  }
+
+  @media (hover: hover) {
+    .atoc a:hover {
+      color: var(--text);
+    }
+  }
+
+  .atoc a[data-on] {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .acts {
+    display: grid;
+    gap: 8px;
+  }
+
+  .acts :global(.btn) {
+    justify-content: flex-start;
+    width: 100%;
+  }
+</style>
+
+<script>
+  import { attachTocScrollspy } from '../../lib/toc-scrollspy';
+  import { onPageLoad } from '../../lib/page-lifecycle';
+  import { readingLeftLabel } from '../../lib/lesson-reader-model';
+
+  onPageLoad(() => {
+    const article = document.querySelector<HTMLElement>('.lesson-article');
+    const box = document.querySelector<HTMLElement>('[data-aside-progress]');
+    const caption = document.querySelector<HTMLElement>('[data-aside-progress-text]');
+    const ringText = document.querySelector<HTMLElement>('[data-aside-ring-text]');
+    const ring = document.querySelector<SVGCircleElement>('[data-aside-ring]');
+    if (!article || !box || !caption || !ringText || !ring) return;
+
+    const minutes = Number(box.dataset.readingMinutes) || 1;
+    const circumference = Number(ring.dataset.circumference) || 0;
+    const marker = document.querySelector<HTMLElement>('[data-aside-marker]');
+    const links = Array.from(document.querySelectorAll<HTMLElement>('[data-aside-toc-link]'));
+
+    // Pair each TOC link with its heading; drop links whose heading is missing
+    // so the two arrays stay index-aligned.
+    const pairs = links
+      .map((link) => ({ link, heading: document.getElementById(link.dataset.slug ?? '') }))
+      .filter((p): p is { link: HTMLElement; heading: HTMLElement } => p.heading instanceof HTMLElement);
+
+    // Activation line sits just under the top bar.
+    const offset = 44 + 24 + 16;
+
+    // Visual marker follows the current section; before the first heading it
+    // rests on the first entry (aria-current stays honest: none).
+    function moveMarker(index: number) {
+      const visual = Math.max(0, index);
+      pairs.forEach((p, i) => (i === visual ? p.link.setAttribute('data-on', '') : p.link.removeAttribute('data-on')));
+      const target = pairs[visual]?.link;
+      if (marker && target) {
+        marker.style.transform = `translateY(${target.offsetTop}px)`;
+        marker.style.height = `${target.offsetHeight}px`;
+      }
+    }
+    moveMarker(-1);
+
+    function paint(percent: number) {
+      ringText!.textContent = `${percent}%`;
+      ring!.style.strokeDashoffset = String(circumference * (1 - percent / 100));
+      caption!.textContent = readingLeftLabel(minutes, percent);
+    }
+
+    const off = attachTocScrollspy({
+      headings: pairs.map((p) => p.heading),
+      links: pairs.map((p) => p.link),
+      offset,
+      scrollContainer: document.querySelector<HTMLElement>('.reader-aside'),
+      onActiveChange: (index) => moveMarker(index),
+      onProgress: paint,
+    });
+    // No headings (nothing to spy on): the scrollspy no-ops, so drive the
+    // progress readout directly.
+    if (pairs.length === 0) {
+      const onScroll = () => {
+        const doc = document.documentElement;
+        const scrollable = doc.scrollHeight - doc.clientHeight;
+        const percent = scrollable > 0 ? Math.round(Math.min(1, Math.max(0, window.scrollY / scrollable)) * 100) : 0;
+        paint(percent);
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+      return () => {
+        off();
+        window.removeEventListener('scroll', onScroll);
+      };
+    }
+    return off;
+  });
+</script>

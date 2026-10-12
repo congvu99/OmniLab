@@ -1,66 +1,181 @@
 ---
-// "Học tiếp" tab — continue-reading-card.astro fills `.continue-reading-slot`
-// client-side from localStorage (empty on a first visit, before any lesson
-// has been read), so below it we always show every domain with a
-// "Bắt đầu từ bài 1" CTA straight into its first lesson.
+// "Học tiếp" tab (concept "Studio"): mono date eyebrow + large title, the
+// continue card (filled client-side from localStorage; an empty prompt on a
+// first visit), the three stat cells, every domain (rows on mobile, art cards
+// on desktop) and "up next". Domains are always listed so a first-time visitor
+// has somewhere to go.
 import AppLayout from '../layouts/app-layout.astro';
+import LargeTitleHeader from '../components/shell/large-title-header.astro';
+import Icon from '../components/icon/icon.astro';
 import DomainCard from '../components/domain/domain-card.astro';
 import ContinueReadingCard from '../components/islands/continue-reading-card.astro';
+import LearningStats from '../components/islands/learning-stats.astro';
+import UpNextList from '../components/islands/up-next-list.astro';
 import { getDomains, getLessonsByDomain } from '../lib/content-queries';
+import { buildDomainMeta } from '../lib/build-domain-meta';
 
 const domains = await getDomains();
 const domainCards = await Promise.all(
   domains.map(async (domain) => {
     const lessons = await getLessonsByDomain(domain.id);
-    const totalReadingMinutes = lessons.reduce((sum, l) => sum + l.readingMinutes, 0);
     return {
       domain,
       lessonCount: lessons.length,
-      totalReadingMinutes,
-      firstLessonUrl: lessons[0]?.url ?? `/linh-vuc/${domain.id}`,
+      totalReadingMinutes: lessons.reduce((sum, l) => sum + l.readingMinutes, 0),
     };
   }),
 );
+const totalLessons = domainCards.reduce((sum, d) => sum + d.lessonCount, 0);
+const meta = buildDomainMeta(domains);
 ---
 
-<AppLayout title="OmniLab" largeTitle="Học tiếp">
-  <ContinueReadingCard />
-  <ul class="domain-list">
-    {
-      domainCards.map(({ domain, lessonCount, totalReadingMinutes, firstLessonUrl }) => (
-        <li>
-          <DomainCard
-            href={firstLessonUrl}
-            domainId={domain.id}
-            icon={domain.data.icon}
-            title={domain.data.title}
-            tagline={domain.data.tagline}
-            accent={domain.data.accent}
-            accentDark={domain.data.accentDark}
-            lessonCount={lessonCount}
-            totalReadingMinutes={totalReadingMinutes}
-            ctaLabel="Bắt đầu từ bài 1"
-          />
-        </li>
-      ))
-    }
-  </ul>
+<AppLayout title="OmniLab">
+  <LargeTitleHeader title="Học tiếp" eyebrowToday eyebrowExtra={`${domains.length} lĩnh vực`}>
+    <a href="/tim-kiem" class="btn btn-secondary btn-icon btn-sm head-search head-search--touch" aria-label="Tìm kiếm">
+      <Icon name="search" size={18} />
+    </a>
+    <button type="button" class="btn btn-secondary btn-sm head-search head-search--kbd" data-open-palette>
+      <Icon name="search" size={18} />
+      Tìm bài
+      <span class="kbds" aria-hidden="true"><kbd data-kbd-mod>⌘</kbd><kbd>K</kbd></span>
+    </button>
+  </LargeTitleHeader>
+
+  <div class="home">
+    <section class="home__hero home__pad" aria-label="Đang học">
+      <ContinueReadingCard meta={meta} />
+      <LearningStats totalLessons={totalLessons} />
+    </section>
+
+    <section class="home__domains" aria-labelledby="home-domains-title">
+      <div class="sec-h home__pad">
+        <h2 id="home-domains-title">Lĩnh vực</h2>
+        <a href="/linh-vuc">Xem tất cả</a>
+      </div>
+      <ul class="rows home__rows">
+        {
+          domainCards.map(({ domain, lessonCount, totalReadingMinutes }, i) => (
+            <li>
+              <DomainCard
+                variant="row"
+                href={`/linh-vuc/${domain.id}`}
+                domainId={domain.id}
+                icon={domain.data.icon}
+                title={domain.data.title}
+                tagline={domain.data.tagline}
+                accent={domain.data.accent}
+                accentDark={domain.data.accentDark}
+                lessonCount={lessonCount}
+                totalReadingMinutes={totalReadingMinutes}
+                stagger={4 + i}
+              />
+            </li>
+          ))
+        }
+      </ul>
+      <ul class="home__cards home__pad">
+        {
+          domainCards.map(({ domain, lessonCount, totalReadingMinutes }, i) => (
+            <li>
+              <DomainCard
+                href={`/linh-vuc/${domain.id}`}
+                domainId={domain.id}
+                icon={domain.data.icon}
+                title={domain.data.title}
+                tagline={domain.data.tagline}
+                accent={domain.data.accent}
+                accentDark={domain.data.accentDark}
+                lessonCount={lessonCount}
+                totalReadingMinutes={totalReadingMinutes}
+                index={i + 1}
+                stagger={2 + i}
+              />
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <div class="home__pad">
+      <UpNextList meta={meta} limit={4} />
+    </div>
+  </div>
 </AppLayout>
 
 <style>
-  .domain-list {
-    margin: var(--space-4);
-    padding: 0;
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
+  .home__pad {
+    padding-inline: var(--gutter-l) var(--gutter-r);
   }
 
-  @media (min-width: 768px) {
-    .domain-list {
+  /* Card, then the stat strip (12px apart). */
+  .home__hero {
+    display: grid;
+    gap: 12px;
+  }
+
+  /* 8px from the screen edge at portrait (rows carry their own 14px padding). */
+  .home__rows {
+    margin-inline: calc(var(--gutter-l) - 12px) calc(var(--gutter-r) - 12px);
+  }
+
+  .home__cards {
+    display: none;
+  }
+
+  .head-search--kbd {
+    display: none;
+  }
+
+  .head-search--touch {
+    border-radius: var(--radius-row);
+  }
+
+  /* 34px visual, 44px hit area in both axes. */
+  .head-search--touch::after {
+    inset: -5px;
+  }
+
+  .kbds {
+    display: inline-flex;
+    gap: 3px;
+    margin-left: 4px;
+  }
+
+  @media (min-width: 1024px) {
+    .head-search--touch {
+      display: none;
+    }
+
+    .head-search--kbd {
+      display: inline-flex;
+    }
+
+    .home__hero {
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    /* Concept desktop: art cards directly under the dashboard grid; the
+       section label stays for assistive tech, the link lives in the sidebar. */
+    .home__domains .sec-h {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+    }
+
+    .home__rows {
+      display: none;
+    }
+
+    .home__cards {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 16px;
     }
   }
 </style>

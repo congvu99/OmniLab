@@ -3,6 +3,7 @@
 // suspected translation errors, outdated facts or source mistakes, each with a
 // suggested correction. The original text above stays untouched; this block is
 // added content, so verify-fidelity and the search index both skip it.
+// Dashed outline signals "editorial layer, not source text".
 ---
 
 <aside class="review-note" aria-labelledby="review-note-title">
@@ -17,27 +18,33 @@
 
 <style>
   .review-note {
-    margin: var(--space-7) 0 0;
-    padding: var(--space-4);
-    border: 1px dashed var(--line);
-    border-radius: var(--radius-row);
-    background: var(--surface);
-    font-size: var(--text-footnote);
-    color: var(--ink-2);
+    margin: 36px 0 0;
+    padding: 18px;
+    border-radius: var(--radius-lg);
+    border: 1px dashed var(--line-3);
+    font-size: var(--text-small);
+    line-height: 1.6;
+    color: var(--text-2);
   }
+
   .review-note__title {
-    margin: 0 0 var(--space-1);
-    color: var(--ink);
+    margin: 0 0 4px;
+    color: var(--text);
     font-weight: 700;
+    font-size: var(--text-callout);
+    letter-spacing: var(--track-tight);
   }
+
   .review-note__lead {
-    margin: 0 0 var(--space-3);
+    margin: 0 0 12px;
   }
+
   .review-note__body :global(ul) {
     margin: 0;
-    padding-left: var(--space-5);
+    padding-left: 20px;
   }
+
   .review-note__body :global(li + li) {
-    margin-top: var(--space-2);
+    margin-top: 8px;
   }
 </style>

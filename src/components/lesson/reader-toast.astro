@@ -1,0 +1,114 @@
+---
+// Shared reader toast (concept "toast"): always-dark card (ink dock tokens), volt icon tile,
+// title + mono sub line, optional "Hoàn tác". Driven by src/lib/reader-toast.ts
+// (mark-complete + bookmark islands call showReaderToast). Icon variants are
+// server-rendered and switched via [data-icon] so the script only mutates
+// attributes/text (keeps Astro's scoped styles applicable).
+import Icon from '../icon/icon.astro';
+---
+
+<div class="rt" data-rt data-icon="check" hidden>
+  <span class="rt__ic" aria-hidden="true">
+    <Icon name="check" size={16} stroke-width={2.2} class="rt__glyph rt__glyph--check" />
+    <Icon name="bookmark" size={16} stroke-width={2.2} class="rt__glyph rt__glyph--bookmark" />
+    <Icon name="close" size={16} stroke-width={2.2} class="rt__glyph rt__glyph--close" />
+  </span>
+  <div class="rt__text" aria-hidden="true">
+    <span class="rt__title" data-rt-title></span>
+    <small class="rt__sub tnum" data-rt-sub hidden></small>
+  </div>
+  <button type="button" class="rt__undo" data-rt-undo hidden>Hoàn tác</button>
+</div>
+<span class="sr-only" role="status" aria-live="polite" data-rt-announce></span>
+
+<style>
+  .rt {
+    position: fixed;
+    left: 50%;
+    bottom: calc(24px + env(safe-area-inset-bottom));
+    z-index: var(--z-toast);
+    transform: translateX(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    max-width: min(420px, calc(100vw - 32px));
+    padding: 10px 6px 10px 10px;
+    border-radius: 14px;
+    background: var(--dock);
+    color: var(--dock-text-strong);
+    border: 1px solid var(--dock-line);
+    box-shadow: var(--dock-shadow);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  /* An unconditional `display` would otherwise beat the UA's [hidden] rule. */
+  .rt[hidden],
+  .rt [hidden] {
+    display: none;
+  }
+
+  .rt:not(:has(.rt__undo:not([hidden]))) {
+    padding-right: 16px;
+  }
+
+  .rt__ic {
+    flex: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--volt);
+    color: var(--on-volt);
+    display: grid;
+    place-items: center;
+  }
+
+  .rt__glyph {
+    display: none;
+  }
+
+  .rt[data-icon='check'] .rt__glyph--check,
+  .rt[data-icon='bookmark'] .rt__glyph--bookmark,
+  .rt[data-icon='close'] .rt__glyph--close {
+    display: block;
+  }
+
+  .rt__text {
+    min-width: 0;
+  }
+
+  .rt__title {
+    display: block;
+  }
+
+  .rt__sub {
+    display: block;
+    margin-top: 1px;
+    font: 400 11px/1.4 var(--font-mono);
+    color: var(--dock-text);
+    overflow-wrap: anywhere;
+  }
+
+  .rt__undo {
+    position: relative;
+    flex: none;
+    margin-left: 4px;
+    min-height: 44px;
+    padding: 0 12px;
+    border-radius: 10px;
+    font: 500 12px var(--font-mono);
+    color: var(--volt);
+  }
+
+  .rt__undo:focus-visible {
+    outline: 2px solid var(--volt);
+    outline-offset: -2px;
+  }
+</style>
+
+<script>
+  import { resetReaderToast } from '../../lib/reader-toast';
+
+  document.addEventListener('astro:before-swap', resetReaderToast);
+</script>

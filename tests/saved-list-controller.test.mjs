@@ -277,3 +277,63 @@ describe('attachSavedList: loading skeleton', () => {
     expect(readSavedListElements(root)?.loadingState).toBe(loading);
   });
 });
+
+describe('attachSavedList: count labels and row enrichments', () => {
+  const lessons = [
+    { id: 'd/m/1', url: '/d/1', title: 'One', domainTitle: 'Dom', domain: 'd', readingMinutes: 4 },
+    { id: 'd/m/2', url: '/d/2', title: 'Two', domainTitle: 'Dom', domain: 'd', readingMinutes: 6 },
+  ];
+
+  function setupEnriched(bookmarks) {
+    const store = createProgressStore({ storage: createFakeStorage() });
+    for (const id of bookmarks) store.toggleBookmark(id);
+    const built = [];
+    const template = {
+      content: {
+        cloneNode: () => {
+          const base = createFakeRow();
+          const index = { textContent: '' };
+          const minutes = { textContent: '' };
+          const props = {};
+          base.link.style = { setProperty: (k, v) => (props[k] = v) };
+          const fragment = {
+            querySelector(sel) {
+              if (sel === '[data-saved-row-index]') return index;
+              if (sel === '[data-saved-row-minutes]') return minutes;
+              return base.row.querySelector(sel);
+            },
+          };
+          built.push({ ...base, index, minutes, props });
+          return fragment;
+        },
+      },
+    };
+    const label = { textContent: '' };
+    const els = {
+      root: {},
+      emptyState: createFakeEmptyState(),
+      rowsList: createFakeRowsList(),
+      template,
+      meta: [{ id: 'd', title: 'Dom', accent: '#111111', accentDark: '#eeeeee', modules: {} }],
+      countLabels: [label],
+    };
+    attachSavedList(els, store, () => Promise.resolve(lessons));
+    return { store, built, label, els };
+  }
+
+  it('fills index, minutes and the domain hue, and keeps the count label in sync', async () => {
+    const { built, label, store } = setupEnriched(['d/m/2', 'd/m/1']);
+    await flush();
+    expect(label.textContent).toBe('2');
+    expect(built[0].index.textContent).toBe('02');
+    expect(built[0].minutes.textContent).toBe(' · 6 phút');
+    expect(built[0].props).toEqual({ '--hue-l': '#111111', '--hue-d': '#eeeeee' });
+
+    store.toggleBookmark('d/m/2');
+    await flush();
+    expect(label.textContent).toBe('1');
+    store.toggleBookmark('d/m/1');
+    await flush();
+    expect(label.textContent).toBe('0');
+  });
+});

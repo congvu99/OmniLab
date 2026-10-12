@@ -1,198 +1,315 @@
 ---
-// Toggle button for `.lesson-complete-slot` (rendered by the reader page,
-// [slug].astro). Both icon states + the undo toast are server-rendered
-// (hidden via CSS/[hidden]) so the client script only ever mutates
-// attributes/text — no innerHTML/createElement, so Astro's scoped <style>
-// below applies correctly to every state (creating DOM client-side instead
-// would render outside Astro's per-component style scoping).
-import Circle from '@lucide/astro/icons/circle';
-import CircleCheck from '@lucide/astro/icons/circle-check';
-
+// "Hoàn thành bài học" toggle. Two placements, one state source (the progress
+// store); every `[data-mcb]` on the page is bound and re-rendered from it, so
+// copies never drift:
+// - "inline" (default): the concept's done-zone card at the end of the lesson
+//   (progress badge + hint text + primary button).
+// - "aside": compact secondary button in the desktop reader aside.
+// All state variants are server-rendered and switched through [data-done]
+// (CSS) + aria-pressed, so the client script only mutates attributes/text and
+// Astro's scoped styles keep applying. Completing plays the concept motion
+// (ring -> disc -> tick + sparks, src/lib/complete-check-motion.ts) and a toast.
 interface Props {
   lessonId: string;
+  /** "aside" renders the compact desktop-aside button. */
+  placement?: 'inline' | 'aside';
+  /** Shown in the toast sub line: "12/27 · <domainTitle>". */
+  domainId?: string;
+  domainTitle?: string;
 }
 
-const { lessonId } = Astro.props;
+const { lessonId, placement = 'inline', domainId, domainTitle } = Astro.props;
+const zone = placement === 'inline';
 ---
 
-<div class="mcb" data-mcb data-lesson-id={lessonId} data-done="false">
+<div
+  class:list={['mcb', zone ? 'mcb--zone' : 'mcb--aside']}
+  data-mcb
+  data-lesson-id={lessonId}
+  data-domain-id={domainId}
+  data-domain-title={domainTitle}
+  data-done="false"
+>
+  {
+    zone && (
+      <div class="mcb-badge" data-mcb-check aria-hidden="true">
+        <svg viewBox="0 0 84 84" focusable="false">
+          <circle class="c-track" cx="42" cy="42" r="38" />
+          <path class="c-ghost" d="M29 43l9 9 18-19" />
+          <circle class="c-fill" cx="42" cy="42" r="38" pathLength="100" />
+          <circle class="c-disc" cx="42" cy="42" r="30" />
+          <path class="c-tick" d="M29 43l9 9 18-19" pathLength="100" />
+        </svg>
+      </div>
+    )
+  }
+  {
+    zone && (
+      <p class="mcb-hint">
+        <span class="mcb-hint__todo">Đọc xong rồi? Đánh dấu để cập nhật tiến độ lĩnh vực.</span>
+        <span class="mcb-hint__done">Bài học đã hoàn thành. Tiến độ lĩnh vực đã được cập nhật.</span>
+      </p>
+    )
+  }
   <button
     type="button"
-    class="mcb-button tap-scale"
+    class:list={['btn', 'mcb-button', zone ? 'btn-primary' : 'btn-secondary btn-sm']}
     data-mcb-button
     aria-pressed="false"
   >
-    <Circle size={20} stroke-width={2} aria-hidden="true" class="mcb-icon mcb-icon--todo" />
-    <CircleCheck size={20} stroke-width={2} aria-hidden="true" class="mcb-icon mcb-icon--done" />
-    <span>Hoàn thành bài học</span>
+    <svg class="mcb-ck" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M5.75 12.5l4 4 8.5-9" pathLength="100"></path>
+    </svg>
+    <span>Đánh dấu đã xong</span>
   </button>
-  <div class="mcb-toast" data-mcb-toast hidden>
-    <span data-mcb-toast-text></span>
-    <button type="button" class="mcb-undo tap-scale" data-mcb-undo>Hoàn tác</button>
-  </div>
-  <span class="sr-only" role="status" aria-live="polite" data-mcb-announce></span>
 </div>
 
 <style>
   .mcb {
-    margin: var(--space-6) 0 0;
+    --check-size: 52px;
   }
 
-  .mcb-button {
-    display: flex;
+  /* ---- Inline done-zone card (concept .done-zone) ---- */
+  .mcb--zone {
+    margin: 28px 0 0;
+    padding: 18px;
+    border-radius: var(--radius-card);
+    border: 1px solid var(--line-2);
+    background: var(--surface);
+    box-shadow: var(--glow);
+    display: grid;
+    grid-template-columns: var(--check-size) minmax(0, 1fr);
     align-items: center;
-    justify-content: center;
-    gap: var(--space-2);
+    column-gap: 14px;
+    row-gap: 14px;
+  }
+
+  .mcb-hint {
+    margin: 0;
+    font-size: var(--text-small);
+    line-height: 1.5;
+    color: var(--text-2);
+  }
+
+  .mcb--zone .mcb-button {
+    grid-column: 1 / -1;
     width: 100%;
-    min-height: 44px;
-    padding: var(--space-3) var(--space-4);
-    border-radius: var(--radius-row);
+  }
+
+  .mcb--zone[data-done='false'] .mcb-hint__done,
+  .mcb--zone[data-done='true'] .mcb-hint__todo {
+    display: none;
+  }
+
+  /* Done: concept .done-btn.is-done - quiet surface, volt-ink tick. */
+  .mcb--zone[data-done='true'] .mcb-button {
     background: var(--surface-2);
-    color: var(--ink);
-    font-size: var(--text-body);
-    font-weight: 600;
+    color: var(--text);
+    border: 1px solid var(--line-2);
+    box-shadow: none;
   }
 
-  .mcb[data-done='true'] .mcb-button {
-    background: var(--accent);
-    color: var(--accent-on);
+  /* ---- Progress badge: ring -> disc -> tick (final state in CSS) ---- */
+  .mcb-badge {
+    width: var(--check-size);
+    height: var(--check-size);
   }
 
-  .mcb-icon--done {
-    display: none;
-  }
-
-  .mcb[data-done='true'] .mcb-icon--todo {
-    display: none;
-  }
-
-  .mcb[data-done='true'] .mcb-icon--done {
+  .mcb-badge svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
     display: block;
   }
 
-  /* [hidden] and an unconditional `display` on the same element are equal
-     specificity, and author styles win cascade ties over the UA stylesheet
-     — so `display: flex` below would silently defeat `.hidden = true`
-     without this explicit override (found via real-browser testing, not
-     just static CSS reasoning). The same fix is applied to every other
-     hidden-toggled element with a non-default `display` across this
-     codebase's islands. */
-  .mcb-toast[hidden] {
-    display: none;
+  .c-track {
+    fill: none;
+    stroke: var(--surface-3);
+    stroke-width: 3;
   }
 
-  .mcb-toast {
-    margin-top: var(--space-3);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-3);
-    padding: var(--space-3) var(--space-4);
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-row);
-    font-size: var(--text-footnote);
-    color: var(--ink);
+  .c-ghost {
+    fill: none;
+    stroke: var(--line-3);
+    stroke-width: 4.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 
-  .mcb-undo {
-    flex-shrink: 0;
-    min-height: 44px;
-    padding-inline: var(--space-2);
-    font-weight: 700;
-    color: var(--accent);
+  .c-fill {
+    fill: none;
+    stroke: var(--volt-ink);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+  }
+
+  .c-disc {
+    fill: var(--volt);
+    stroke: var(--volt-ink);
+    stroke-width: 1.5;
+    transform: scale(0);
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .c-tick {
+    fill: none;
+    stroke: var(--on-volt);
+    stroke-width: 4.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+  }
+
+  .mcb[data-done='true'] .c-fill,
+  .mcb[data-done='true'] .c-tick {
+    stroke-dashoffset: 0;
+  }
+
+  .mcb[data-done='true'] .c-disc {
+    transform: scale(1);
+  }
+
+  .mcb[data-done='true'] .c-ghost {
+    opacity: 0;
+  }
+
+  /* ---- Button check glyph ---- */
+  .mcb-ck {
+    flex: none;
+    width: 22px;
+    height: 22px;
+  }
+
+  .mcb-ck path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 0;
+  }
+
+  .mcb--aside .mcb-ck {
+    width: 18px;
+    height: 18px;
+  }
+
+  .mcb[data-done='true'] .mcb-ck {
+    color: var(--volt-ink);
+  }
+
+  .mcb--aside .mcb-button {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .mcb--aside[data-done='true'] .mcb-button {
+    border-color: var(--volt-ink);
+  }
+
+  /* Wide screens: hint left, button right (concept desktop done-zone). */
+  @media (min-width: 720px) {
+    .mcb--zone {
+      grid-template-columns: var(--check-size) minmax(0, 1fr) auto;
+      margin-top: 36px;
+    }
+
+    .mcb--zone .mcb-button {
+      grid-column: auto;
+      width: auto;
+    }
   }
 </style>
 
 <script>
   import { getProgressStore } from '../../lib/progress-store';
+  import { fetchLessonsIndex } from '../../lib/lessons-index-client';
+  import { playCompleteMotion } from '../../lib/complete-check-motion';
+  import { showReaderToast } from '../../lib/reader-toast';
 
-  const TOAST_DURATION_MS = 4000;
-  let unsubscribe: (() => void) | null = null;
+  let unsubscribers: Array<() => void> = [];
+  // Set only around a click-initiated change so page load / cross-tab sync
+  // render silently while the user's own completion plays the motion.
+  let animateNextDone = false;
 
-  function init() {
-    unsubscribe?.();
-    unsubscribe = null;
+  async function domainProgressLabel(domainId: string | undefined, domainTitle: string | undefined) {
+    if (!domainId) return undefined;
+    try {
+      const lessons = (await fetchLessonsIndex()).filter((l) => l.domain === domainId);
+      const state = getProgressStore().get();
+      const done = lessons.filter((l) => state.lessons[l.id]?.done).length;
+      return `${done}/${lessons.length}${domainTitle ? ` · ${domainTitle}` : ''}`;
+    } catch {
+      return domainTitle;
+    }
+  }
 
-    const root = document.querySelector<HTMLElement>('[data-mcb]');
-    const lessonId = root?.dataset.lessonId;
-    if (!root || !lessonId) return;
-
+  function bind(root: HTMLElement): (() => void) | null {
+    const lessonId = root.dataset.lessonId;
     const button = root.querySelector<HTMLButtonElement>('[data-mcb-button]');
-    const toast = root.querySelector<HTMLElement>('[data-mcb-toast]');
-    const toastText = root.querySelector<HTMLElement>('[data-mcb-toast-text]');
-    const undoButton = root.querySelector<HTMLButtonElement>('[data-mcb-undo]');
-    const announce = root.querySelector<HTMLElement>('[data-mcb-announce]');
-    if (!button || !toast || !toastText || !undoButton || !announce) return;
+    if (!lessonId || !button) return null;
 
     const store = getProgressStore();
-    let toastTimer: ReturnType<typeof setTimeout> | undefined;
+    const check = root.querySelector<Element>('[data-mcb-check]');
+    const buttonTick = root.querySelector<Element>('.mcb-ck path');
+    let lastDone: boolean | null = null;
 
     function render(done: boolean) {
-      root!.dataset.done = String(done);
-      // The visible label is constant and IS the accessible name (WCAG 2.5.3
-      // label-in-name: voice-control users can say what they see). State is
-      // carried by aria-pressed for AT and by the icon + fill for sighted users.
+      root.dataset.done = String(done);
+      // Constant visible label = accessible name (WCAG 2.5.3 label-in-name);
+      // state is carried by aria-pressed, the badge and the fill.
       button!.setAttribute('aria-pressed', String(done));
+      if (animateNextDone && done && lastDone === false) {
+        playCompleteMotion({ check, button: button!, buttonTick });
+      }
+      lastDone = done;
     }
 
-    function showToast(message: string) {
-      toastText!.textContent = message;
-      toast!.hidden = false;
-      // `announce` (a permanently-rendered, never-hidden aria-live region —
-      // see the .sr-only element in markup) is what a screen reader
-      // actually picks up: toggling [hidden] and setting text on the same
-      // element in one tick is unreliable for triggering the announcement,
-      // confirmed via real-browser testing, not just spec reasoning.
-      announce!.textContent = message;
-      scheduleHide();
-    }
-
-    // Hiding the toast while focus is inside it would drop focus to <body>;
-    // hand it back to the toggle instead.
-    function hideToast() {
-      clearTimeout(toastTimer);
-      const hadFocus = toast!.contains(document.activeElement);
-      toast!.hidden = true;
-      if (hadFocus) button!.focus();
-    }
-
-    function scheduleHide() {
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(hideToast, TOAST_DURATION_MS);
-    }
-
-    // Auto-dismiss pauses while the user is on the toast (keyboard focus or
-    // pointer), so the undo action can't vanish mid-reach (WCAG 2.2.1).
-    const pause = () => clearTimeout(toastTimer);
-    const resume = (ev: Event) => {
-      const next = (ev as FocusEvent).relatedTarget;
-      if (next instanceof Node && toast.contains(next)) return;
-      // Pointer left but keyboard focus is still on the undo button: stay paused.
-      if (ev.type === 'pointerleave' && toast.contains(document.activeElement)) return;
-      if (!toast.hidden) scheduleHide();
-    };
-    // Mouse only: a tap fires a synthetic enter with no reliable leave on
-    // touch screens, which would pin the toast open forever.
-    const isMouse = (ev: PointerEvent) => ev.pointerType === 'mouse';
-    toast.addEventListener('focusin', pause);
-    toast.addEventListener('focusout', resume);
-    toast.addEventListener('pointerenter', (ev) => isMouse(ev) && pause());
-    toast.addEventListener('pointerleave', (ev) => isMouse(ev) && resume(ev));
-
-    button.addEventListener('click', () => {
+    const onClick = () => {
       const willBeDone = !(store.get().lessons[lessonId]?.done ?? false);
+      animateNextDone = true;
       store.markDone(lessonId, willBeDone);
-      showToast(willBeDone ? 'Đã đánh dấu hoàn thành bài học.' : 'Đã bỏ đánh dấu hoàn thành.');
-    });
+      animateNextDone = false;
 
-    undoButton.addEventListener('click', () => {
-      const current = store.get().lessons[lessonId]?.done ?? false;
-      store.markDone(lessonId, !current);
-      hideToast();
-    });
+      if (willBeDone) {
+        void domainProgressLabel(root.dataset.domainId, root.dataset.domainTitle).then((sub) => {
+          // Navigated away while the index loaded: don't toast (with an undo
+          // for this lesson) on the next page.
+          if (!root.isConnected) return;
+          showReaderToast({
+            icon: 'check',
+            title: 'Đã hoàn thành bài',
+            sub,
+            onUndo: () => store.markDone(lessonId, false),
+          });
+        });
+      } else {
+        showReaderToast({ icon: 'close', title: 'Đã bỏ đánh dấu hoàn thành' });
+      }
+    };
+    button.addEventListener('click', onClick);
 
-    unsubscribe = store.subscribe((state) => render(state.lessons[lessonId]?.done ?? false));
+    const unsubscribe = store.subscribe((state) => render(state.lessons[lessonId]?.done ?? false));
+    return () => {
+      button.removeEventListener('click', onClick);
+      unsubscribe();
+    };
+  }
+
+  function init() {
+    unsubscribers.forEach((fn) => fn());
+    unsubscribers = [];
+    document.querySelectorAll<HTMLElement>('[data-mcb]').forEach((root) => {
+      const off = bind(root);
+      if (off) unsubscribers.push(off);
+    });
   }
 
   document.addEventListener('astro:page-load', init);

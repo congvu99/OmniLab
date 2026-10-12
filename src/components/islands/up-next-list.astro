@@ -1,0 +1,227 @@
+---
+// "Tiếp theo · <domain>" on the Học tiếp screen: the next unfinished lessons
+// after the one the learner is reading. Hidden until the script has data (a
+// first-time learner has nothing "next"), and it sits at the end of the page,
+// so showing it never shifts content above. Mobile = concept ".list.idx";
+// desktop = the concept's "recent" table (# / lesson / domain / time / status)
+// built from the same rows via grid. Rows are cloned from the template so
+// Astro's scoped styles apply (see mark-complete-button.astro's note).
+import { serializeDomainMeta, type DomainMeta } from '../../lib/domain-meta';
+
+interface Props {
+  meta?: DomainMeta[];
+  /** Max rows to show. */
+  limit?: number;
+}
+
+const { meta = [], limit = 4 } = Astro.props;
+---
+
+<section class="upnext" data-upnext data-meta={serializeDomainMeta(meta)} data-limit={limit} aria-labelledby="upnext-title" hidden>
+  <div class="sec-h upnext__head">
+    <h2 id="upnext-title" data-upnext-heading>Tiếp theo</h2>
+  </div>
+  <div class="upnext__card">
+    <div class="upnext__th" aria-hidden="true">
+      <span>#</span><span>Bài học</span><span>Lĩnh vực</span><span>Thời lượng</span><span>Trạng thái</span>
+    </div>
+    <ul class="rows rows--idx upnext__list" data-upnext-list></ul>
+  </div>
+
+  <template data-upnext-template>
+    <li class="rise">
+      <a class="row upnext__row hue" data-un-link>
+        <span class="idx tnum" data-un-idx></span>
+        <span class="tt"><b data-un-title></b><small data-un-meta></small></span>
+        <span class="upnext__dom" data-un-domain></span>
+        <span class="upnext__min tnum" data-un-min></span>
+        <span class="st" aria-hidden="true"></span>
+      </a>
+    </li>
+  </template>
+</section>
+
+<style>
+  .upnext[hidden] {
+    display: none;
+  }
+
+  .upnext__th {
+    display: none;
+  }
+
+  .upnext__dom,
+  .upnext__min {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .upnext__head {
+      padding-top: 28px;
+    }
+
+    .upnext__card {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--surface);
+    }
+
+    .upnext__th,
+    .upnext__row {
+      display: grid;
+      grid-template-columns: 40px minmax(0, 1fr) 200px 110px 100px;
+      gap: 16px;
+      align-items: center;
+      padding-inline: 18px;
+    }
+
+    .upnext__th {
+      height: 38px;
+      border-bottom: 1px solid var(--line);
+      font: 500 var(--text-nano) var(--font-mono);
+      letter-spacing: var(--track-label);
+      text-transform: uppercase;
+      color: var(--text-3);
+    }
+
+    .upnext__list {
+      --inset: 18px;
+      margin: 0;
+    }
+
+    .upnext__row:focus-visible {
+      outline-offset: -2px;
+      box-shadow: none;
+    }
+
+    .upnext__row {
+      min-height: 52px;
+      padding-block: 0;
+      border-radius: 0;
+      font-size: 14px;
+    }
+
+    .upnext__row :global(.tt small) {
+      display: none;
+    }
+
+    .upnext__row :global(.tt b) {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font-weight: 600;
+      letter-spacing: 0;
+    }
+
+    .upnext__row .st {
+      justify-self: start;
+    }
+
+    .upnext__dom {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font: 500 11px / 1.5 var(--font-mono);
+      letter-spacing: var(--track-label);
+      text-transform: uppercase;
+      color: var(--c, var(--volt-ink));
+    }
+
+    .upnext__dom::before {
+      content: '';
+      flex: none;
+      width: 7px;
+      height: 7px;
+      border-radius: 2px;
+      background: var(--c, var(--volt-ink));
+      box-shadow: 0 0 10px var(--c, var(--volt-ink));
+    }
+
+    .upnext__min {
+      display: block;
+      font: 500 12px var(--font-mono);
+      color: var(--text-3);
+    }
+  }
+</style>
+
+<script>
+  import { getProgressStore } from '../../lib/progress-store';
+  import { fetchLessonsIndex } from '../../lib/lessons-index-client';
+  import { upNextLessons } from '../../lib/domain-progress';
+  import { applyHue, parseDomainMeta } from '../../lib/domain-meta';
+  import { onPageLoad } from '../../lib/page-lifecycle';
+
+  onPageLoad(() => {
+    const root = document.querySelector<HTMLElement>('[data-upnext]');
+    const list = root?.querySelector<HTMLElement>('[data-upnext-list]');
+    const template = root?.querySelector<HTMLTemplateElement>('[data-upnext-template]');
+    const heading = root?.querySelector<HTMLElement>('[data-upnext-heading]');
+    if (!root || !list || !template || !heading) return;
+
+    const meta = parseDomainMeta(root.dataset.meta);
+    const limit = Number(root.dataset.limit) || 4;
+    const store = getProgressStore();
+    let cancelled = false;
+    let unsubscribe: (() => void) | undefined;
+
+    void (async () => {
+      let lessons;
+      try {
+        lessons = await fetchLessonsIndex();
+      } catch {
+        return; // stays hidden
+      }
+      if (cancelled) return;
+      const known = new Set(lessons.map((l) => l.id));
+
+      let lastSignature = '';
+      unsubscribe = store.subscribe((state) => {
+        const currentId = store.lastUnfinished(known);
+        const next = currentId ? upNextLessons(state, lessons, currentId, limit) : [];
+        // Re-rendering replays the entrance animation; skip when nothing changed.
+        const signature = `${currentId}|${next.map((l) => l.id).join(',')}`;
+        if (signature === lastSignature) return;
+        lastSignature = signature;
+        list.replaceChildren();
+        if (!currentId || next.length === 0) {
+          root.hidden = true;
+          return;
+        }
+
+        const current = lessons.find((l) => l.id === currentId)!;
+        const inDomain = lessons.filter((l) => l.domain === current.domain);
+        heading.textContent = `Tiếp theo · ${current.domainTitle}`;
+
+        next.forEach((lesson, i) => {
+          const node = template.content.cloneNode(true) as DocumentFragment;
+          const li = node.querySelector<HTMLElement>('li')!;
+          const link = node.querySelector<HTMLAnchorElement>('[data-un-link]')!;
+          const moduleTitle = meta.find((m) => m.id === lesson.domain)?.modules[lesson.module];
+          node.querySelector('[data-un-idx]')!.textContent = String(
+            inDomain.findIndex((l) => l.id === lesson.id) + 1,
+          ).padStart(2, '0');
+          node.querySelector('[data-un-title]')!.textContent = lesson.title;
+          node.querySelector('[data-un-meta]')!.textContent = `${moduleTitle ? `${moduleTitle} · ` : ''}${lesson.readingMinutes} phút`;
+          node.querySelector('[data-un-domain]')!.textContent = lesson.domainTitle;
+          node.querySelector('[data-un-min]')!.textContent = `${lesson.readingMinutes} phút`;
+          link.href = lesson.url;
+          applyHue(link, meta.find((m) => m.id === lesson.domain));
+          li.style.setProperty('--i', String(i));
+          list.append(node);
+        });
+        root.hidden = false;
+      });
+    })();
+
+    return () => {
+      cancelled = true;
+      unsubscribe?.();
+    };
+  });
+</script>

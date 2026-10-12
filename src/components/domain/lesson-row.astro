@@ -1,81 +1,54 @@
 ---
-// One lesson row inside a module section on /linh-vuc/[domain]. The row root
-// (this <a>) carries data-lesson-id/data-domain — the DOM contract the
-// progress-tracking scripts (progress-store subscribers) read to know which
-// row they're decorating. `.lesson-status-slot` is the empty element those
-// scripts fill with a checkmark once a lesson is marked done.
-import CircleCheck from '@lucide/astro/icons/circle-check';
+// One lesson row inside a module list on /linh-vuc/[domain] (concept
+// ".row" + mono index + status dot). The row root (this <a>) carries
+// data-lesson-id/data-domain/data-done — the DOM contract the progress script
+// below (and any progress-store subscriber) reads. Visual state, set
+// client-side on both the row and its `.st` dot:
+//   data-done="true"      -> volt disc with a check
+//   data-state="reading"  -> started, not done: ring filled to the scroll ratio
+//   (neither)             -> empty ring
+// The visually-hidden status text keeps the state non-color-only.
+import Icon from '../icon/icon.astro';
 
 interface Props {
   href: string;
-  order: number;
+  /** 1-based position within the whole domain, shown as "04". */
+  index: number;
   title: string;
   readingMinutes: number;
   lessonId: string;
   domainId: string;
+  /** Stagger slot (--i) for the entrance animation. */
+  stagger?: number;
 }
 
-const { href, order, title, readingMinutes, lessonId, domainId } = Astro.props;
+const { href, index, title, readingMinutes, lessonId, domainId, stagger = 0 } = Astro.props;
 ---
 
-<a href={href} class="lesson-row tap-scale" data-lesson-id={lessonId} data-domain={domainId} data-done="false">
-  <span class="lesson-row__order" aria-hidden="true">{order}</span>
-  <span class="lesson-row__body">
-    <span class="lesson-row__title">{title}</span>
-    <span class="lesson-row__meta">{readingMinutes} phút đọc</span>
+<a
+  href={href}
+  class="row lesson-row rise"
+  style={`--i:${stagger}`}
+  data-lesson-id={lessonId}
+  data-domain={domainId}
+  data-done="false"
+>
+  <span class="idx tnum">{String(index).padStart(2, '0')}</span>
+  <span class="tt">
+    <b>{title}</b>
+    <small class="tnum">
+      {readingMinutes} phút đọc
+      <span class="sr-only" data-lesson-status-text></span>
+    </small>
   </span>
-  <span class="lesson-status-slot">
-    <CircleCheck size={20} stroke-width={2} aria-hidden="true" class="lesson-status-icon" />
-    <span class="lesson-status-text visually-hidden" data-lesson-status-text></span>
+  <span class="st lesson-status" aria-hidden="true">
+    <Icon name="check" size={13} stroke-width={2.4} />
   </span>
 </a>
 
 <style>
-  .lesson-row {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    min-height: 44px;
-    padding: var(--space-3) var(--space-4);
-    text-decoration: none;
-    color: inherit;
-    border-bottom: 1px solid var(--line);
-    transition: background-color var(--dur-fast) var(--ease-out);
-  }
-
-  @media (hover: hover) {
-    .lesson-row:hover {
-      background: var(--surface-2);
-    }
-  }
-
-  li:last-child > .lesson-row {
-    border-bottom: none;
-  }
-
-  .lesson-row__order {
-    flex-shrink: 0;
-    width: 24px;
-    text-align: center;
-    font-size: var(--text-footnote);
-    font-weight: 600;
-    color: var(--ink-2);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .lesson-row__body {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .lesson-row__title {
-    font-size: var(--text-body);
-    color: var(--ink);
-    /* Two lines, not one: long Vietnamese titles lose their meaning when cut
-       at ~30 chars on a 375px phone. */
+  /* Long Vietnamese titles lose their meaning when cut: allow two lines. */
+  .lesson-row :global(.tt b) {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
@@ -83,47 +56,26 @@ const { href, order, title, readingMinutes, lessonId, domainId } = Astro.props;
     overflow: hidden;
   }
 
-  .lesson-row__meta {
-    font-size: var(--text-caption);
-    color: var(--ink-2);
-  }
-
-  /* Checkmark hidden until the row's own [data-done] (toggled client-side —
-     see the <script> below) flips to "true"; the visually-hidden text next
-     to it is the non-color-only signal for screen readers. */
-  .lesson-status-slot {
-    flex-shrink: 0;
-    width: 22px;
-    height: 22px;
-    color: var(--success);
-  }
-
-  .lesson-status-icon {
+  /* The check only shows on a done disc. */
+  .lesson-status :global(.ic) {
     display: none;
   }
 
-  .lesson-row[data-done='true'] .lesson-status-icon {
+  .lesson-status.done :global(.ic) {
     display: block;
   }
 
-  .visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
+  /* In progress: arc = scroll ratio over a full hairline ring (base .st.prog
+     leaves the rest transparent). */
+  .lesson-status.prog {
+    background: conic-gradient(var(--volt-ink) calc(var(--p, 0) * 1%), var(--line-3) 0);
   }
 </style>
 
 <script>
-  // Decorates every `.lesson-row` on the page with a checkmark once its
-  // lesson is done. Astro dedupes identical component <script> content, so
-  // this runs once per page regardless of how many lesson-row instances
-  // render it (same reasoning as domain-card.astro's bootstrap script).
+  // Decorates every `.lesson-row` with done / in-progress state. Astro dedupes
+  // identical component <script> content, so this runs once per page
+  // regardless of how many lesson-row instances render it.
   import { getProgressStore } from '../../lib/progress-store';
 
   let unsubscribe: (() => void) | null = null;
@@ -140,10 +92,22 @@ const { href, order, title, readingMinutes, lessonId, domainId } = Astro.props;
       for (const row of rows) {
         const lessonId = row.dataset.lessonId;
         if (!lessonId) continue;
-        const done = Boolean(state.lessons[lessonId]?.done);
+        const entry = state.lessons[lessonId];
+        const done = Boolean(entry?.done);
+        const reading = !done && entry?.visitedAt !== undefined;
         row.dataset.done = String(done);
+        if (reading) row.dataset.state = 'reading';
+        else delete row.dataset.state;
+
+        const dot = row.querySelector<HTMLElement>('.lesson-status');
+        if (dot) {
+          dot.classList.toggle('done', done);
+          dot.classList.toggle('prog', reading);
+          // At least a sliver, so "started" is visible even at 0% scroll.
+          dot.style.setProperty('--p', String(Math.max(8, Math.round((entry?.scroll ?? 0) * 100))));
+        }
         const text = row.querySelector<HTMLElement>('[data-lesson-status-text]');
-        if (text) text.textContent = done ? 'Đã hoàn thành' : '';
+        if (text) text.textContent = done ? ' · Đã hoàn thành' : reading ? ' · Đang đọc' : '';
       }
     });
   }

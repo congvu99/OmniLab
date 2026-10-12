@@ -4,22 +4,70 @@
 // visually distinct block. The heading itself is passed as a child (slot),
 // not a prop, per the migration contract — verify-fidelity keeps all of its
 // text (it is original translator content, not added content).
+import Icon from '../icon/icon.astro';
 ---
 
 <aside class="translator-note">
-  <slot />
+  <Icon name="info" size={20} stroke-width={1.75} aria-hidden="true" class="translator-note__icon" />
+  <div class="translator-note__body">
+    <slot />
+  </div>
 </aside>
 
 <style>
   .translator-note {
-    margin: var(--space-7) 0 0;
-    padding-top: var(--space-5);
-    border-top: 1px solid var(--line);
-    color: var(--ink-2);
-    font-size: var(--text-footnote);
+    display: flex;
+    gap: 12px;
+    margin: 36px 0 0;
+    padding: 18px;
+    background: var(--surface-2);
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius-lg);
+    color: var(--text-2);
+    font-size: var(--text-subhead);
+    line-height: 1.65;
   }
-  .translator-note :global(h2) {
-    color: var(--ink);
-    font-size: var(--text-title3);
+
+  .translator-note__icon {
+    flex: none;
+    align-self: flex-start;
+    margin-top: 2px;
+    color: var(--text);
+  }
+
+  .translator-note__body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* The note's own section heading: a label, not a numbered body section. */
+  aside.translator-note :global(h2) {
+    display: block;
+    margin: 0 0 10px;
+    color: var(--text);
+    font-size: var(--text-headline);
+    line-height: 1.3;
+    letter-spacing: var(--track-tight);
+  }
+
+  aside.translator-note :global(h2) {
+    counter-increment: none;
+  }
+
+  aside.translator-note :global(h2::before) {
+    content: none;
+  }
+
+  div.translator-note__body :global(p),
+  div.translator-note__body :global(li) {
+    font-size: inherit;
+  }
+
+  div.translator-note__body :global(strong) {
+    color: var(--text);
+  }
+
+  div.translator-note__body :global(> :last-child) {
+    margin-bottom: 0;
   }
 </style>

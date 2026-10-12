@@ -1,45 +1,58 @@
 ---
 // Real 404 page (no SPA fallback — Caddyfile handle_errors routes here).
 // Uses app-layout so it matches the rest of the app's chrome/fonts/theme.
+import Icon from '../components/icon/icon.astro';
 import AppLayout from '../layouts/app-layout.astro';
+import LargeTitleHeader from '../components/shell/large-title-header.astro';
 ---
 
-<AppLayout title="Không tìm thấy trang - OmniLab" largeTitle="404">
+<AppLayout title="Không tìm thấy trang - OmniLab">
+  <LargeTitleHeader title="404" eyebrow="Lỗi · không tìm thấy" />
   <div class="not-found">
+    <span class="eic" aria-hidden="true"><Icon name="omni" size={28} /></span>
+    <p class="not-found-title">Không tìm thấy trang</p>
     <p class="not-found-body">Trang bạn tìm không tồn tại hoặc đã bị di chuyển.</p>
-    <a href="/" class="not-found-cta tap-scale">Về trang chủ</a>
+    <a href="/" class="btn btn-primary not-found-cta">
+      Về trang chủ
+      <Icon name="arrow-right" size={18} stroke-width={1.75} />
+    </a>
   </div>
 </AppLayout>
 
 <style>
   .not-found {
-    margin: var(--space-6) var(--space-4);
-    padding: var(--space-6) var(--space-5);
-    background: var(--surface);
-    border-radius: var(--radius-card);
-    box-shadow: var(--shadow-card);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+    max-width: 520px;
+    margin: var(--space-4) auto 0;
+    padding: 48px var(--gutter-r) 48px var(--gutter-l);
     text-align: center;
-    gap: var(--space-3);
+    color: var(--text-2);
+    font-size: 14.5px;
+  }
+
+  .eic {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border: 1px dashed var(--line-3);
+    border-radius: var(--radius-xl);
+    color: var(--text-3);
+  }
+
+  .not-found-title {
+    font-size: var(--text-callout);
+    font-weight: 700;
+    color: var(--text);
   }
 
   .not-found-body {
-    color: var(--ink-2);
     max-width: 32ch;
   }
 
   .not-found-cta {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 44px;
-    padding: 0 var(--space-5);
-    border-radius: var(--radius-row);
-    background: var(--accent);
-    color: var(--accent-on);
-    font-weight: 600;
-    text-decoration: none;
+    margin-top: var(--space-3);
   }
 </style>

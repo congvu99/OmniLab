@@ -3,12 +3,21 @@
 // or an empty state explaining how to bookmark. Both states + the row
 // template are server-rendered (see mark-complete-button.astro's header
 // comment re: why client JS here only clones/mutates, never builds HTML
-// from scratch).
-import Bookmark from '@lucide/astro/icons/bookmark';
-import X from '@lucide/astro/icons/x';
+// from scratch). Rows follow the concept: mono index, title, "■ domain · N
+// phút" meta, and a 44px remove button.
+//
+// `meta` (serialized DomainMeta[]) tints each row with its domain hue.
+import Icon from '../icon/icon.astro';
+import { serializeDomainMeta, type DomainMeta } from '../../lib/domain-meta';
+
+interface Props {
+  meta?: DomainMeta[];
+}
+
+const { meta = [] } = Astro.props;
 ---
 
-<div data-saved-list>
+<div class="saved-wrap" data-saved-list data-meta={serializeDomainMeta(meta)}>
   <!-- Loading state (default): with bookmarks present, the lessons index
        must load before rows can render — without this the empty state
        would flash first. No bookmarks → controller swaps to the empty state
@@ -21,123 +30,101 @@ import X from '@lucide/astro/icons/x';
   </div>
 
   <div class="empty-state" data-saved-empty tabindex="-1" hidden>
-    <Bookmark size={40} stroke-width={1.75} aria-hidden="true" />
-    <p class="empty-title">Chưa có bài đã lưu</p>
-    <p class="empty-body">
-      Mở một bài học, nhấn biểu tượng lưu ở đầu trang để thêm bài vào đây.
-    </p>
+    <span class="eic"><Icon name="bookmark" size={28} aria-hidden="true" /></span>
+    <p class="empty-title">Chưa lưu bài nào</p>
+    <p class="empty-body">Trong lúc đọc, chạm biểu tượng lưu ở góc trên để giữ bài lại đây.</p>
+    <a href="/linh-vuc" class="btn btn-secondary btn-sm">Khám phá lĩnh vực</a>
   </div>
 
-  <ul class="saved-rows" data-saved-rows hidden></ul>
+  <ul class="rows rows--idx saved-rows" data-saved-rows hidden></ul>
 
   <template data-saved-row-template>
-    <li class="saved-row">
-      <a class="saved-row__link" data-saved-row-link>
-        <span class="saved-row__title" data-saved-row-title></span>
-        <span class="saved-row__domain" data-saved-row-domain></span>
+    <li class="saved-row rise">
+      <a class="row saved-row__link hue" data-saved-row-link>
+        <span class="idx tnum" data-saved-row-index></span>
+        <span class="tt">
+          <b data-saved-row-title></b>
+          <small class="tnum"><span class="sq" aria-hidden="true"></span><span data-saved-row-domain></span><span data-saved-row-minutes></span></small>
+        </span>
       </a>
-      <button type="button" class="saved-row__remove tap-scale" data-saved-row-remove aria-label="Bỏ lưu bài này">
-        <X size={18} stroke-width={2} aria-hidden="true" />
+      <button type="button" class="btn btn-ghost btn-icon btn-sm saved-row__remove" data-saved-row-remove aria-label="Bỏ lưu bài này">
+        <Icon name="close" size={18} aria-hidden="true" />
       </button>
     </li>
   </template>
 </div>
 
 <style>
+  .saved-wrap {
+    max-width: 760px;
+  }
+
   /* See mark-complete-button.astro's [hidden] comment. */
-  .empty-state[hidden] {
+  .empty-state[hidden],
+  .saved-skeleton[hidden],
+  .saved-rows[hidden] {
     display: none;
   }
 
   .empty-state {
-    margin: var(--space-6) var(--space-4);
-    padding: var(--space-6) var(--space-5);
-    background: var(--surface);
-    border-radius: var(--radius-card);
-    box-shadow: var(--shadow-card);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+    padding: 48px 32px;
     text-align: center;
-    gap: var(--space-2);
-    color: var(--ink-2);
+    font-size: 14.5px;
+    color: var(--text-2);
+  }
+
+  .eic {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border: 1px dashed var(--line-3);
+    border-radius: var(--radius-xl);
+    color: var(--text-3);
   }
 
   .empty-title {
-    font-size: var(--text-title3);
+    font-size: var(--text-callout);
     font-weight: 700;
-    color: var(--ink);
+    color: var(--text);
   }
 
   .empty-body {
     max-width: 32ch;
-  }
-
-  .saved-skeleton[hidden] {
-    display: none;
+    margin-bottom: 4px;
+    line-height: var(--leading-normal);
   }
 
   .saved-skeleton {
-    margin: var(--space-4);
-    padding: var(--space-3) var(--space-4);
-    background: var(--surface);
-    border-radius: var(--radius-card);
-    box-shadow: var(--shadow-card);
-    display: flex;
-    flex-direction: column;
+    display: grid;
     gap: var(--space-3);
+    padding-inline: var(--gutter-l) var(--gutter-r);
   }
 
-  /* Matches a real row's 44px min tap height minus its vertical padding. */
   .saved-skeleton__row {
-    height: 40px;
+    height: 56px;
+    border-radius: var(--radius-row);
   }
 
   .saved-rows {
-    margin: var(--space-4);
-    padding: 0;
-    list-style: none;
-    background: var(--surface);
-    border-radius: var(--radius-card);
-    box-shadow: var(--shadow-card);
-    overflow: hidden;
+    --inset: 50px;
+    margin-inline: calc(var(--gutter-l) - 12px) calc(var(--gutter-r) - 12px);
   }
 
   .saved-row {
     display: flex;
     align-items: center;
-    gap: var(--space-2);
-    border-bottom: 1px solid var(--line);
-  }
-
-  .saved-row:last-child {
-    border-bottom: none;
   }
 
   .saved-row__link {
     flex: 1;
     min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    min-height: 44px;
-    justify-content: center;
-    padding: var(--space-3) var(--space-4);
-    text-decoration: none;
-    color: inherit;
-    transition: background-color var(--dur-fast) var(--ease-out);
   }
 
-  @media (hover: hover) {
-    .saved-row__link:hover,
-    .saved-row__remove:hover {
-      background: var(--surface-2);
-    }
-  }
-
-  .saved-row__title {
-    font-size: var(--text-body);
-    color: var(--ink);
+  .saved-row__link :global(.tt b) {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
@@ -145,21 +132,37 @@ import X from '@lucide/astro/icons/x';
     overflow: hidden;
   }
 
-  .saved-row__domain {
-    font-size: var(--text-caption);
-    color: var(--ink-2);
+  .sq {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    margin-right: 7px;
+    border-radius: 2px;
+    background: var(--c);
   }
 
   .saved-row__remove {
-    flex-shrink: 0;
-    width: 44px;
-    height: 44px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--ink-2);
-    margin-right: var(--space-2);
-    border-radius: var(--radius-row);
+    --h: 44px;
+    flex: none;
+    margin-right: 4px;
+    color: var(--text-3);
+  }
+
+  @media (min-width: 1024px) {
+    .saved-rows {
+      --inset: 56px;
+      margin: 0 var(--gutter-r) 0 var(--gutter-l);
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--surface);
+    }
+
+    .saved-rows :global(.row:focus-visible),
+    .saved-rows :global(.btn:focus-visible) {
+      outline-offset: -2px;
+      box-shadow: none;
+    }
   }
 </style>
 

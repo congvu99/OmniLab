@@ -1,46 +1,61 @@
 ---
-// One-line meta row under the lesson cover: module title · reading time ·
-// source name.
-import Clock from '@lucide/astro/icons/clock';
+// Concept ".by" strip under the lesson header: reading time, source + license
+// (shortened here; the full credit sits in the lesson footer) and (only when the editorial pass is done) "Đã soát ví dụ". Mono 11.5px on
+// hairline rules above and below.
+import Icon from '../icon/icon.astro';
+import { shortLicenseLabel, shortSourceLabel } from '../../lib/lesson-reader-model';
 
 interface Props {
-  moduleTitle: string;
   readingMinutes: number;
   sourceName: string;
+  license: string;
+  examplesReviewed: boolean;
 }
 
-const { moduleTitle, readingMinutes, sourceName } = Astro.props;
+const { readingMinutes, sourceName, license, examplesReviewed } = Astro.props;
 ---
 
-<p class="lesson-meta">
-  <span>{moduleTitle}</span>
-  <span class="lesson-meta__dot" aria-hidden="true">·</span>
-  <span class="lesson-meta__reading">
-    <Clock size={14} stroke-width={2} aria-hidden="true" />
-    {readingMinutes} phút đọc
-  </span>
-  <span class="lesson-meta__dot" aria-hidden="true">·</span>
-  <span>{sourceName}</span>
-</p>
+<ul class="lesson-meta">
+  <li>
+    <Icon name="clock" size={14} stroke-width={1.75} aria-hidden="true" />
+    <span class="tnum">{readingMinutes} phút đọc</span>
+  </li>
+  <li>
+    <Icon name="doc" size={14} stroke-width={1.75} aria-hidden="true" />
+    <span>{shortSourceLabel(sourceName)} · {shortLicenseLabel(license)}</span>
+  </li>
+  {
+    examplesReviewed && (
+      <li>
+        <Icon name="check-circle" size={14} stroke-width={1.75} aria-hidden="true" />
+        <span>Đã soát ví dụ</span>
+      </li>
+    )
+  }
+</ul>
 
 <style>
   .lesson-meta {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-2);
-    margin: 0 0 var(--space-5);
-    font-size: var(--text-caption);
-    color: var(--ink-2);
+    gap: 6px 14px;
+    margin: 16px 0 0;
+    padding: 12px 0;
+    list-style: none;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    font: 500 var(--text-label) / 1.4 var(--font-mono);
+    color: var(--text-3);
   }
 
-  .lesson-meta__dot {
-    opacity: 0.6;
+  .lesson-meta li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
   }
 
-  .lesson-meta__reading {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
+  .lesson-meta span {
+    overflow-wrap: anywhere;
   }
 </style>

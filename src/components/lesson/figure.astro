@@ -25,8 +25,7 @@
 // separate labelled overlay button (plus tap-anywhere on the diagram for
 // pointer users), so the diagram never gets flattened into a button name.
 import { Image } from 'astro:assets';
-import Maximize2 from '@lucide/astro/icons/maximize-2';
-import X from '@lucide/astro/icons/x';
+import Icon from '../icon/icon.astro';
 import type { ImageMetadata } from 'astro';
 
 interface Props {
@@ -51,12 +50,12 @@ const isImageMetadata = typeof src === 'object' && src !== null;
             duplicate its <title>/marker ids). See figure-zoom-controller.ts. */}
         <div class="figure__svg-host" data-figure-svg-host set:html={svg} />
         <button type="button" class="figure__zoom tap-scale" data-figure-zoom aria-label="Phóng to hình">
-          <Maximize2 size={16} stroke-width={2} aria-hidden="true" />
+          <Icon name="expand" size={18} stroke-width={1.75} aria-hidden="true" />
         </button>
         <dialog class="figure__dialog" data-figure-dialog aria-label={alt}>
           <div class="figure__dialog-bar">
             <button type="button" class="figure__dialog-close tap-scale" data-figure-close aria-label="Đóng hình phóng to">
-              <X size={22} stroke-width={2.25} aria-hidden="true" />
+              <Icon name="close" size={20} stroke-width={1.75} aria-hidden="true" />
             </button>
           </div>
           <div class="figure__dialog-body" data-figure-dialog-body></div>
@@ -79,65 +78,69 @@ const isImageMetadata = typeof src === 'object' && src !== null;
 </figure>
 
 <style>
+  /* Concept figure: hairline card, diagram centered with 6px inset, caption
+     in a ruled footer. The card clips, so the zoom button lives inside it. */
   .figure {
-    margin: var(--space-5) 0;
+    position: relative;
+    margin: 20px 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    overflow: hidden;
   }
   /* Content images/diagrams only — a bare `.figure svg` would also hit the
-     lucide icons inside the zoom/close buttons. */
+     sprite icons inside the zoom/close buttons. */
   .figure :global(img),
-  .figure > :global(svg),
-  .figure__svg-host :global(svg) {
+  .figure > :global(svg) {
     display: block;
     width: 100%;
     height: auto;
-    border-radius: var(--radius-card);
-    border: 1px solid var(--line);
-  }
-  /* Diagram SVGs carry their own text labels, so give them breathing room
-     against a tinted panel instead of the photo-style flush border above. */
-  .figure__svg {
-    padding: var(--space-4);
-    background: var(--surface-2);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-card);
-  }
-  .figure__svg :global(svg) {
-    border: none;
     border-radius: 0;
   }
-  @media (max-width: 479px) {
-    /* Every px of panel padding shrinks the diagram's text further. */
-    .figure__svg {
-      padding: var(--space-2);
-    }
-  }
   .figure__svg {
-    position: relative;
+    padding: 6px;
+  }
+  /* No caption: reserve a row for the zoom button so it never covers drawing. */
+  .figure__svg:last-child {
+    padding-bottom: 50px;
   }
   .figure__svg-host {
     display: block;
     cursor: zoom-in;
   }
-  /* Sits in the panel's bottom-right corner, overlapping the padding more
-     than the drawing; 44px hit area via ::after around a 28px chip. */
+  .figure__svg-host :global(svg) {
+    display: block;
+    width: 100%;
+    max-width: 640px;
+    height: auto;
+    margin-inline: auto;
+    border: none;
+    border-radius: 0;
+  }
+  /* 44px visible target, bottom-right over the caption footer. */
   .figure__zoom {
     position: absolute;
-    right: var(--space-1);
-    bottom: var(--space-1);
-    width: 28px;
-    height: 28px;
+    right: 6px;
+    bottom: 6px;
+    width: 44px;
+    height: 44px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--radius-full);
-    background: var(--surface);
-    border: 1px solid var(--line-strong);
-    color: var(--ink-2);
+    border-radius: 12px;
+    background: var(--material-bar);
+    -webkit-backdrop-filter: var(--material-blur);
+    backdrop-filter: var(--material-blur);
+    border: 1px solid var(--line-2);
+    color: var(--text-2);
+    transition: color var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease),
+      transform var(--dur-1) var(--ease);
   }
-  .figure__zoom::after {
-    content: '';
-    position: absolute;
-    inset: -8px;
+  @media (hover: hover) {
+    .figure__zoom:hover {
+      color: var(--text);
+      border-color: var(--line-3);
+    }
   }
   .figure__dialog {
     width: 100vw;
@@ -148,14 +151,14 @@ const isImageMetadata = typeof src === 'object' && src !== null;
     padding: 0;
     border: none;
     background: var(--bg);
-    color: var(--ink);
+    color: var(--text);
   }
   .figure__dialog[open] {
     display: flex;
     flex-direction: column;
   }
   .figure__dialog::backdrop {
-    background: rgba(0, 0, 0, 0.5);
+    background: var(--material-overlay);
   }
   .figure__dialog-bar {
     display: flex;
@@ -168,7 +171,10 @@ const isImageMetadata = typeof src === 'object' && src !== null;
     justify-content: center;
     width: 44px;
     height: 44px;
-    color: var(--ink);
+    border-radius: 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--line-2);
+    color: var(--text);
   }
   .figure__dialog-body {
     flex: 1;
@@ -186,12 +192,19 @@ const isImageMetadata = typeof src === 'object' && src !== null;
     margin-inline: auto;
   }
   figcaption {
-    margin-top: var(--space-2);
-    font-size: var(--text-footnote);
-    color: var(--ink-2);
     display: flex;
     flex-direction: column;
-    gap: var(--space-1);
+    gap: 4px;
+    padding: 10px 14px;
+    border-top: 1px solid var(--line);
+    font-size: var(--text-caption);
+    line-height: 1.5;
+    color: var(--text-3);
+  }
+  .figure:has(.figure__zoom) figcaption {
+    padding-right: 60px;
+    min-height: 56px;
+    justify-content: center;
   }
   .figure__credit :global(a) {
     color: inherit;

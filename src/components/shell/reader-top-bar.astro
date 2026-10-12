@@ -1,10 +1,11 @@
 ---
-// Reader-mode top bar: back button (>=44pt target), title that fades in once
+// Reader-mode top bar (Studio focus mode: no dock on this layout): back button
+// (>=44pt target, volt-ink), title that fades in once
 // the article's own <h1> (rendered inside reader-layout's #reader-content)
 // scrolls behind the bar, a slot for actions (bookmark-button.astro), and a
 // reading-progress bar driven by `transform: scaleX()` (not `width` — avoids
 // layout/paint, GPU-composited).
-import ChevronLeft from '@lucide/astro/icons/chevron-left';
+import Icon from '../icon/icon.astro';
 
 interface Props {
   title: string;
@@ -25,7 +26,7 @@ const backAriaLabel = backLabel === 'Quay lại' ? backLabel : `Quay lại ${bac
 <header class="rtb-bar" data-rtb-bar>
   <div class="rtb-row">
     <a href={backHref} class="rtb-back tap-scale" aria-label={backAriaLabel}>
-      <ChevronLeft size={22} stroke-width={2.5} />
+      <Icon name="chevron-left" size={22} stroke-width={1.75} />
       <span class="rtb-back-label">{backLabel}</span>
     </a>
     <span class="rtb-title" data-rtb-title>{title}</span>
@@ -39,39 +40,54 @@ const backAriaLabel = backLabel === 'Quay lại' ? backLabel : `Quay lại ${bac
 </header>
 
 <style>
-  .rtb-bar {
+.rtb-bar {
     position: sticky;
     top: 0;
     z-index: var(--z-nav);
     padding-top: env(safe-area-inset-top);
-    background: var(--surface-veil);
-    backdrop-filter: blur(20px) saturate(1.4);
-    -webkit-backdrop-filter: blur(20px) saturate(1.4);
-    border-bottom: 1px solid var(--line);
+    /* Concept navbar: transparent over the article header, material + hairline
+       once the page has scrolled. */
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    transition:
+      background-color var(--dur-2) var(--ease),
+      border-color var(--dur-2) var(--ease);
+  }
+
+  .rtb-bar[data-solid='true'] {
+    background: var(--material-bar);
+    -webkit-backdrop-filter: var(--material-blur);
+    backdrop-filter: var(--material-blur);
+    border-bottom-color: var(--line);
   }
 
   .rtb-row {
     height: var(--shell-navbar-h);
     display: grid;
-    grid-template-columns: minmax(44px, auto) 1fr minmax(44px, auto);
+    grid-template-columns: minmax(44px, auto) minmax(0, 1fr) minmax(44px, auto);
     align-items: center;
     gap: var(--space-2);
     padding-inline: max(var(--space-2), env(safe-area-inset-left)) max(var(--space-2), env(safe-area-inset-right));
   }
 
   .rtb-back {
+    justify-self: start;
     display: inline-flex;
     align-items: center;
     gap: 2px;
     min-height: 44px;
-    padding-inline: var(--space-2);
-    color: var(--accent);
+    min-width: 44px;
+    padding-inline: var(--space-1) var(--space-2);
+    border-radius: 10px;
+    color: var(--volt-ink);
+    transition: opacity var(--dur-1) var(--ease);
     text-decoration: none;
-    font-size: var(--text-body);
+    font-size: var(--text-subhead);
+    font-weight: 600;
   }
 
   .rtb-back-label {
-    max-width: 22vw;
+    max-width: 42vw;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -80,18 +96,22 @@ const backAriaLabel = backLabel === 'Quay lại' ? backLabel : `Quay lại ${bac
   .rtb-title {
     justify-self: center;
     text-align: center;
-    font-size: var(--text-body);
-    font-weight: 600;
+    font-size: 14.5px;
+    font-weight: 700;
     opacity: 0;
-    transition: opacity var(--dur-fast) var(--ease-out);
+    transform: translateY(4px);
+    transition:
+      opacity var(--dur-2),
+      transform var(--dur-2) var(--ease);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: 60vw;
+    max-width: 100%;
   }
 
   .rtb-bar[data-collapsed='true'] .rtb-title {
     opacity: 1;
+    transform: none;
   }
 
   .rtb-actions {
@@ -101,22 +121,36 @@ const backAriaLabel = backLabel === 'Quay lại' ? backLabel : `Quay lại ${bac
     min-height: 44px;
   }
 
+  /* 2px volt-ink reading progress hugging the bar's bottom hairline (concept
+     .rprog), with the volt glow. */
   .rtb-progress-track {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
     height: 2px;
-    background: var(--line);
   }
 
   .rtb-progress-bar {
     height: 100%;
     width: 100%;
-    background: var(--accent);
+    background: var(--volt-ink);
+    box-shadow: 0 0 8px var(--volt);
     transform-origin: left;
     transform: scaleX(0);
   }
 
   @media (prefers-reduced-motion: no-preference) {
     .rtb-progress-bar {
-      transition: transform var(--dur-fast) linear;
+      transition: transform var(--dur-1) linear;
+    }
+  }
+
+  /* Desktop: the sidebar owns the left edge; shift the bar so the back
+     button and title are centered over the content area, not the viewport. */
+  @media (min-width: 1024px) {
+    .rtb-bar {
+      margin-left: var(--shell-sidebar-w);
     }
   }
 </style>
@@ -134,7 +168,11 @@ const backAriaLabel = backLabel === 'Quay lại' ? backLabel : `Quay lại ${bac
     // reader-layout.astro wraps the slotted lesson body in <main id="reader-content">;
     // its first <h1> is the article's own "large title" that this bar's small
     // title stands in for once scrolled away.
-    const articleHeading = document.querySelector<HTMLElement>('#reader-content h1');
+    // The layout's sr-only fallback <h1> is display:none (never intersects)
+    // whenever the lesson renders its own visible <h1>, so skip it.
+    const articleHeading = document.querySelector<HTMLElement>(
+      '#reader-content h1:not([data-reader-fallback-h1])',
+    );
 
     let observer: IntersectionObserver | undefined;
     let onScroll: (() => void) | undefined;
@@ -165,14 +203,21 @@ const backAriaLabel = backLabel === 'Quay lại' ? backLabel : `Quay lại ${bac
         const ratio = scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 0;
         progress.style.transform = `scaleX(${ratio})`;
       };
+      const syncSolid = () => {
+        if (bar) bar.dataset.solid = String(window.scrollY > 24);
+      };
       onScroll = () => {
         if (!ticking) {
           ticking = true;
-          requestAnimationFrame(updateProgress);
+          requestAnimationFrame(() => {
+            updateProgress();
+            syncSolid();
+          });
         }
       };
       window.addEventListener('scroll', onScroll, { passive: true });
       updateProgress();
+      syncSolid();
     }
 
     return () => {

@@ -1,6 +1,7 @@
 ---
-// Shared SVG "% complete" ring markup — used by both domain-card.astro and
-// domain-hero.astro. Purely presentational + static (0%) at server-render
+// Shared SVG "% complete" ring markup (concept ".ring": 3px hairline track,
+// rounded fill in the nearest .hue --c, mono number) — used by domain-hero.astro
+// and available to any domain-scoped surface. Purely presentational + static (0%) at server-render
 // time; this component's own bootstrap <script> below fills in the real
 // ratio client-side by reading this exact DOM shape. Astro hoists/dedupes
 // identical component <script> content, so the script runs once per page
@@ -38,13 +39,13 @@ const fontSize = Math.max(10, Math.round(size * 0.26));
 >
   <span class="progress-ring-circle" style={`--size:${size}px`}>
     <svg class="progress-ring-svg" viewBox={`0 0 ${size} ${size}`} width={size} height={size} aria-hidden="true">
-      <circle cx={center} cy={center} r={radius} fill="none" stroke="var(--line)" stroke-width={strokeWidth} />
+      <circle cx={center} cy={center} r={radius} fill="none" stroke="var(--surface-3)" stroke-width={strokeWidth} />
       <circle
         cx={center}
         cy={center}
         r={radius}
         fill="none"
-        stroke="var(--card-accent, var(--accent))"
+        stroke="var(--c, var(--volt-ink))"
         stroke-width={strokeWidth}
         stroke-linecap="round"
         transform={`rotate(-90 ${center} ${center})`}
@@ -75,7 +76,7 @@ const fontSize = Math.max(10, Math.round(size * 0.26));
   }
 
   .progress-ring-svg circle {
-    transition: stroke-dashoffset var(--dur) var(--ease-out);
+    transition: stroke-dashoffset var(--dur-4) var(--ease);
   }
 
   /* Until the script applies the real ratio the fill circle has no
@@ -93,15 +94,16 @@ const fontSize = Math.max(10, Math.round(size * 0.26));
 
   .progress-ring-text {
     position: absolute;
+    font-family: var(--font-mono);
     font-size: var(--ring-font-size);
-    font-weight: 700;
+    font-weight: 500;
     font-variant-numeric: tabular-nums;
-    color: var(--ink);
+    color: var(--text);
   }
 
   .progress-ring-fraction {
-    font-size: var(--text-footnote);
-    color: var(--ink-2);
+    font: 500 var(--text-label) var(--font-mono);
+    color: var(--text-3);
   }
 </style>
 

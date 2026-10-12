@@ -1,7 +1,9 @@
-// WCAG contrast guard for the design tokens (src/styles/tokens.css) and every
-// domain accent (src/content/domains/*.yaml), in BOTH themes. Accents are used
-// as text on --bg, --surface and --surface-2 (links, TOC, sidebar active item),
-// so all three backgrounds are checked, not just one.
+// WCAG contrast guard for the "Studio" design tokens (src/styles/tokens.css)
+// and every domain accent (src/content/domains/*.yaml), in BOTH themes. Text
+// tokens, the volt-ink text variant, the domain hues and every domain accent
+// are used as text on --bg, --surface and --surface-2, so all three
+// backgrounds are checked. --volt is a fill only: its text (--on-volt) is
+// checked against it instead. Thresholds: 4.5:1 text, 3:1 UI boundary.
 import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -44,6 +46,7 @@ const domains = readdirSync(DOMAINS_DIR)
   });
 
 const BACKGROUNDS = ['bg', 'surface', 'surface-2'];
+const TEXT_TOKENS = ['text', 'text-2', 'text-3', 'volt-ink', 'danger', 'success', 'arch', 'fin', 'pro'];
 const themes = [
   ['light', light, 'accent'],
   ['dark', dark, 'accentDark'],
@@ -60,7 +63,7 @@ describe('token contrast (WCAG AA)', () => {
 
   for (const [theme, t, accentKey] of themes) {
     for (const bg of BACKGROUNDS) {
-      for (const fg of ['ink', 'ink-2', 'danger', 'success']) {
+      for (const fg of TEXT_TOKENS) {
         it(`${theme}: --${fg} on --${bg} >= 4.5`, () => {
           expect(contrast(t[fg], t[bg])).toBeGreaterThanOrEqual(4.5);
         });
@@ -80,5 +83,23 @@ describe('token contrast (WCAG AA)', () => {
         expect(contrast(t['accent-on'], d[accentKey])).toBeGreaterThanOrEqual(4.5);
       });
     }
+
+    it(`${theme}: --on-volt on --volt fill >= 4.5`, () => {
+      expect(contrast(t['on-volt'], t.volt)).toBeGreaterThanOrEqual(4.5);
+    });
+
+    it(`${theme}: --accent-on on the default (no-domain) accent fill --volt-ink >= 4.5`, () => {
+      expect(contrast(t['accent-on'], t['volt-ink'])).toBeGreaterThanOrEqual(4.5);
+    });
+
+    it(`${theme}: --dock-text on --dock >= 4.5`, () => {
+      expect(contrast(t['dock-text'], t.dock)).toBeGreaterThanOrEqual(4.5);
+    });
+
+    // Toast (always-dark ink card): title text and the volt "Hoàn tác" label.
+    it(`${theme}: --dock-text-strong and --volt on --dock >= 4.5`, () => {
+      expect(contrast(t['dock-text-strong'], t.dock)).toBeGreaterThanOrEqual(4.5);
+      expect(contrast(t.volt, t.dock)).toBeGreaterThanOrEqual(4.5);
+    });
   }
 });

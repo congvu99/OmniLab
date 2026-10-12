@@ -1,135 +1,337 @@
 ---
-// Renders into `.continue-reading-slot` on `/`. Both states (empty prompt +
-// card) are server-rendered so the client script only ever mutates
-// text/attributes/hidden — never innerHTML/createElement — matching the
+// Renders into the "Học tiếp" screen. Three states are server-rendered
+// (loading skeleton, empty prompt, card) so the client script only ever
+// mutates text/attributes/hidden — never innerHTML/createElement — matching the
 // scoping-safe pattern every island in this codebase follows (see
 // mark-complete-button.astro's header comment for why that matters).
+//
+// Card = concept ".cont": surface with a domain-hue glow + technical grid,
+// mono domain chip and "BÀI 04 / 27", 22px/800 title, 12-segment progress,
+// mono meta and the ONE volt action of the screen.
+//
+// `meta` (serialized DomainMeta[]) lets the script color the card with the
+// current lesson's domain hue; /lessons-index.json has no accent colors.
+import Icon from '../icon/icon.astro';
+import { serializeDomainMeta, type DomainMeta } from '../../lib/domain-meta';
+
+interface Props {
+  meta?: DomainMeta[];
+}
+
+const { meta = [] } = Astro.props;
+const SEGMENTS = 12;
 ---
 
-<div class="crc" data-crc>
+<div class="crc" data-crc data-meta={serializeDomainMeta(meta)} data-segments={SEGMENTS}>
   <!-- Loading state (default until the script resolves the lessons index):
        without it the empty prompt below would flash first and then flip to
        the card, i.e. briefly tell a returning learner they have nothing in
-       progress. Shaped like .crc-card so the swap doesn't shift layout. -->
-  <div class="crc-card crc-skeleton" data-crc-loading>
-    <span class="skeleton crc-skeleton__eyebrow"></span>
+       progress. Shaped like the card so the swap doesn't shift layout. -->
+  <div class="cont crc-skeleton" data-crc-loading>
+    <div class="crc-top">
+      <span class="skeleton crc-skeleton__chip"></span>
+      <span class="skeleton crc-skeleton__chip crc-skeleton__chip--s"></span>
+    </div>
     <span class="skeleton crc-skeleton__title"></span>
+    <span class="skeleton crc-skeleton__title crc-skeleton__title--s"></span>
     <span class="skeleton crc-skeleton__track"></span>
-    <span class="skeleton crc-skeleton__percent"></span>
+    <span class="skeleton crc-skeleton__foot"></span>
     <span class="sr-only">Đang tải bài đang học…</span>
   </div>
-  <p class="crc-empty" data-crc-empty hidden>
-    Chưa có bài đang học — chọn một lĩnh vực bên dưới để bắt đầu.
-  </p>
-  <a href="#" class="crc-card tap-scale" data-crc-card hidden>
-    <span class="crc-eyebrow" data-crc-eyebrow></span>
+
+  <div class="cont crc-empty" data-crc-empty hidden>
+    <div class="crc-top">
+      <span class="dchip crc-empty__chip">Bắt đầu</span>
+    </div>
+    <p class="crc-empty__title">Chưa có bài đang học</p>
+    <p class="crc-empty__body">Chọn một lĩnh vực để bắt đầu. Tiến độ đọc được lưu trên máy này.</p>
+    <a href="/linh-vuc" class="btn btn-primary crc-empty__cta">
+      Chọn lĩnh vực
+      <Icon name="arrow-right" size={18} stroke-width={1.75} />
+    </a>
+  </div>
+
+  <a href="#" class="cont hue crc-card" data-crc-card hidden>
+    <span class="crc-top">
+      <span class="dchip" data-crc-eyebrow></span>
+      <span class="crc-num tnum" data-crc-num></span>
+    </span>
     <span class="crc-title" data-crc-title></span>
-    <span class="crc-progress-track" aria-hidden="true"><span class="crc-progress-bar" data-crc-progress-bar></span></span>
-    <span class="crc-percent" data-crc-percent></span>
+    <span class="seg crc-seg" style={`--n:${SEGMENTS}`} aria-hidden="true">
+      {Array.from({ length: SEGMENTS }, () => <i />)}
+    </span>
+    <span class="crc-foot">
+      <span class="crc-meta tnum">
+        <b data-crc-percent>0%</b> đã đọc · còn <span data-crc-left>0</span> phút
+      </span>
+      <span class="btn btn-primary btn-sm crc-cta" aria-hidden="true">
+        Tiếp tục
+        <Icon name="arrow-right" size={18} stroke-width={1.75} />
+      </span>
+    </span>
   </a>
 </div>
 
 <style>
   .crc {
-    margin: 0 var(--space-4) var(--space-5);
+    margin: 0;
   }
 
-  .crc-empty {
-    padding: var(--space-4);
-    background: var(--surface-2);
-    border-radius: var(--radius-card);
-    color: var(--ink-2);
-    font-size: var(--text-footnote);
-  }
-
-  /* See mark-complete-button.astro's [hidden] comment. */
-  .crc-card[hidden] {
-    display: none;
-  }
-
-  .crc-card {
+  /* Card chrome shared by the three states. */
+  .cont {
+    position: relative;
     display: flex;
     flex-direction: column;
-    gap: var(--space-1);
-    padding: var(--space-4);
-    background: var(--surface);
+    overflow: hidden;
+    isolation: isolate;
+    padding: 18px;
+    border: 1px solid var(--line-2);
     border-radius: var(--radius-card);
-    box-shadow: var(--shadow-card);
+    background: var(--surface);
+    box-shadow: var(--glow), var(--shadow);
+    color: var(--text);
     text-decoration: none;
-    color: inherit;
-    transition: box-shadow var(--dur-fast) var(--ease-out);
   }
 
-  @media (hover: hover) {
-    .crc-card:hover {
-      box-shadow: var(--shadow-card), 0 0 0 1px var(--line-strong);
+  /* Hue glow, top right. */
+  .crc-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(120% 90% at 100% 0%, var(--volt-soft), transparent 55%);
+  }
+
+  @supports (color: color-mix(in srgb, red 10%, blue)) {
+    .crc-card::before {
+      background: radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--c) 22%, transparent), transparent 55%);
     }
   }
 
-  .crc-eyebrow {
-    font-size: var(--text-caption);
-    font-weight: 600;
-    color: var(--accent);
-  }
-
-  .crc-title {
-    font-size: var(--text-title3);
-    font-weight: 700;
-    color: var(--ink);
-  }
-
-  .crc-progress-track {
-    margin-top: var(--space-2);
-    height: 4px;
-    border-radius: var(--radius-full);
-    background: var(--surface-2);
-    overflow: hidden;
-  }
-
-  .crc-progress-bar {
-    display: block;
-    height: 100%;
-    width: 0%;
-    background: var(--accent);
-    border-radius: var(--radius-full);
-  }
-
-  .crc-percent {
-    font-size: var(--text-caption);
-    color: var(--ink-2);
+  /* Technical grid fading toward the bottom left. */
+  .crc-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 16px 16px;
+    mask-image: linear-gradient(200deg, #000, transparent 55%);
+    -webkit-mask-image: linear-gradient(200deg, #000, transparent 55%);
   }
 
   /* See mark-complete-button.astro's [hidden] comment. */
+  .crc-card[hidden],
+  .crc-empty[hidden],
   .crc-skeleton[hidden] {
     display: none;
   }
 
-  /* Line heights mirror the real card's text rows (font-size x line-height). */
-  .crc-skeleton__eyebrow {
-    width: 40%;
-    height: calc(var(--text-caption) * 1.4);
+  .crc-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+
+  .dchip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+    font: 500 11px / 1 var(--font-mono);
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--c, var(--volt-ink));
+  }
+
+  .dchip::before {
+    content: '';
+    flex: none;
+    width: 7px;
+    height: 7px;
+    border-radius: 2px;
+    background: var(--c, var(--volt-ink));
+    box-shadow: 0 0 10px var(--c, var(--volt-ink));
+  }
+
+  .crc-num {
+    flex: none;
+    font: 500 11px var(--font-mono);
+    color: var(--text-3);
+  }
+
+  .crc-title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    overflow: hidden;
+    margin-bottom: 16px;
+    font-size: var(--text-title2);
+    font-weight: 800;
+    line-height: 1.22;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  .crc-foot {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .crc-meta {
+    flex: 1;
+    min-width: 0;
+    font: 500 12px var(--font-mono);
+    color: var(--text-2);
+  }
+
+  .crc-meta b {
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .crc-cta {
+    flex: none;
+  }
+
+  .crc-card {
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      transform var(--dur-1) var(--ease),
+      border-color var(--dur-1);
+  }
+
+  .crc-card:active {
+    transform: scale(0.985);
+  }
+
+  @media (hover: hover) {
+    .crc-card:hover {
+      border-color: var(--line-3);
+    }
+
+    .crc-card:hover .crc-cta {
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.45),
+        inset 0 -2px 0 rgba(0, 0, 0, 0.14),
+        0 0 24px -6px var(--volt);
+    }
+  }
+
+  /* Segmented bar fills in segment by segment. */
+  .crc-seg > i {
+    transition: background-color var(--dur-3) var(--ease);
+  }
+
+  /* ---- empty ---- */
+  .crc-empty__title {
+    margin-bottom: 8px;
+    font-size: var(--text-title2);
+    font-weight: 800;
+    line-height: 1.22;
+    letter-spacing: -0.03em;
+  }
+
+  .crc-empty__body {
+    max-width: 38ch;
+    margin-bottom: 20px;
+    font-size: var(--text-small);
+    line-height: var(--leading-normal);
+    color: var(--text-2);
+  }
+
+  .crc-empty__cta {
+    align-self: flex-start;
+  }
+
+  .crc-empty__chip {
+    --c: var(--text-3);
+  }
+
+  /* ---- skeleton: mirrors the card's footprint so the swap doesn't shift layout ---- */
+  .crc-skeleton__chip {
+    width: 38%;
+    height: 11px;
+  }
+
+  .crc-skeleton__chip--s {
+    width: 16%;
   }
 
   .crc-skeleton__title {
-    width: 75%;
-    height: calc(var(--text-title3) * 1.3);
+    width: 86%;
+    height: 27px;
+    margin-bottom: 8px;
+  }
+
+  .crc-skeleton__title--s {
+    width: 58%;
   }
 
   .crc-skeleton__track {
-    margin-top: var(--space-2);
-    height: 4px;
-    border-radius: var(--radius-full);
+    height: 6px;
+    margin-top: 8px;
   }
 
-  .crc-skeleton__percent {
-    width: 25%;
-    height: calc(var(--text-caption) * 1.4);
+  .crc-skeleton__foot {
+    height: 34px;
+    margin-top: 16px;
+  }
+
+  /* ---- desktop: the big card of the dashboard grid ---- */
+  @media (min-width: 1024px) {
+    .crc,
+    .cont {
+      height: 100%;
+    }
+
+    .cont {
+      min-height: 300px;
+      padding: 26px;
+    }
+
+    .crc-title {
+      max-width: 18ch;
+      font-size: 34px;
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+    }
+
+    .crc-empty__title {
+      font-size: 34px;
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+    }
+
+    .crc-foot {
+      margin-top: auto;
+      padding-top: 16px;
+    }
+
+    .crc-empty__cta {
+      margin-top: auto;
+    }
+
+    .crc-cta {
+      --h: 44px;
+      padding: 0 18px;
+      font-size: 15px;
+      border-radius: var(--radius-row);
+    }
   }
 </style>
 
 <script>
   import { getProgressStore } from '../../lib/progress-store';
   import { fetchLessonsIndex } from '../../lib/lessons-index-client';
+  import { applyHue, parseDomainMeta } from '../../lib/domain-meta';
 
   let unsubscribe: (() => void) | null = null;
 
@@ -142,12 +344,15 @@
     const empty = root.querySelector<HTMLElement>('[data-crc-empty]');
     const card = root.querySelector<HTMLAnchorElement>('[data-crc-card]');
     const eyebrow = root.querySelector<HTMLElement>('[data-crc-eyebrow]');
+    const num = root.querySelector<HTMLElement>('[data-crc-num]');
     const title = root.querySelector<HTMLElement>('[data-crc-title]');
-    const progressBar = root.querySelector<HTMLElement>('[data-crc-progress-bar]');
     const percentText = root.querySelector<HTMLElement>('[data-crc-percent]');
+    const left = root.querySelector<HTMLElement>('[data-crc-left]');
     const loading = root.querySelector<HTMLElement>('[data-crc-loading]');
-    if (!empty || !card || !eyebrow || !title || !progressBar || !percentText || !loading) return;
+    if (!empty || !card || !eyebrow || !num || !title || !percentText || !left || !loading) return;
 
+    const segments = Array.from(card.querySelectorAll<HTMLElement>('.seg > i'));
+    const meta = parseDomainMeta(root.dataset.meta);
     const store = getProgressStore();
 
     /** Every render() exit goes through here or the card branch — the skeleton never outlives the first render. */
@@ -188,14 +393,20 @@
         return;
       }
 
+      const inDomain = lessons.filter((l) => l.domain === entry.domain);
+      const position = inDomain.findIndex((l) => l.id === id) + 1;
       const ratio = store.get().lessons[id]?.scroll ?? 0;
       const percent = Math.round(ratio * 100);
+      const lit = Math.round(ratio * segments.length);
 
-      eyebrow!.textContent = `Học tiếp · ${entry.domainTitle}`;
+      eyebrow!.textContent = entry.domainTitle;
+      num!.textContent = `BÀI ${String(position).padStart(2, '0')} / ${inDomain.length}`;
       title!.textContent = entry.title;
       card!.href = entry.url;
-      progressBar!.style.width = `${percent}%`;
-      percentText!.textContent = `${percent}% đã đọc`;
+      percentText!.textContent = `${percent}%`;
+      left!.textContent = String(Math.max(1, Math.round(entry.readingMinutes * (1 - ratio))));
+      segments.forEach((seg, i) => seg.classList.toggle('on', i < lit));
+      applyHue(card!, meta.find((m) => m.id === entry.domain));
 
       settle();
       empty!.hidden = true;

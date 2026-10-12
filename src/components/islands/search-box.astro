@@ -6,54 +6,152 @@
 // a fully-unaccented query). All states (hint, loading, error, empty,
 // results) are server-rendered and toggled via [hidden] — see
 // mark-complete-button.astro's header comment for why.
-import Search from '@lucide/astro/icons/search';
-import LoaderCircle from '@lucide/astro/icons/loader-circle';
-import Inbox from '@lucide/astro/icons/inbox';
-import WifiOff from '@lucide/astro/icons/wifi-off';
+//
+// Layout (concept "Studio"): sticky field, domain filter chips, then either
+// the hint (suggested queries + a way in per domain) or results. Behavior
+// lives in src/lib/search-box-controller.ts; this file owns markup + CSS.
+import Icon from '../icon/icon.astro';
+
+interface Suggestion {
+  url: string;
+  title: string;
+  domainTitle: string;
+  accent: string;
+  accentDark: string;
+  index: number;
+  minutes: number;
+}
+
+interface Props {
+  domains: { id: string; title: string; accent: string; accentDark: string }[];
+  /** One entry lesson per domain, shown while the field is empty. */
+  suggestions?: Suggestion[];
+}
+
+const { domains, suggestions = [] } = Astro.props;
+// Queries that are known to hit real lessons (also demonstrate unaccented search).
+const SUGGESTED_QUERIES = ['cache', 'lãi kép', 'CAP', 'quỹ dự phòng', 'thuế'];
 ---
 
 <div class="search-shell" data-search>
-  <label class="search-field" for="search-input">
-    <Search size={20} stroke-width={2} aria-hidden="true" />
-    <span class="sr-only">Tìm kiếm bài học</span>
-    <input
-      id="search-input"
-      type="search"
-      name="q"
-      placeholder="Tìm bài học, ví dụ: cache, bộ nhớ đệm..."
-      autocomplete="off"
-      enterkeyhint="search"
-      data-search-input
-    />
-  </label>
+  <div class="search-sticky">
+    <div class="field search-field">
+      <Icon name="search" size={19} aria-hidden="true" />
+      <label class="sr-only" for="search-input">Tìm kiếm bài học</label>
+      <input
+        id="search-input"
+        type="search"
+        name="q"
+        placeholder="Tìm bài, khái niệm…"
+        autocomplete="off"
+        enterkeyhint="search"
+        data-search-input
+      />
+      <button type="button" class="btn btn-ghost btn-icon btn-sm" data-search-clear aria-label="Xóa nội dung tìm" hidden>
+        <Icon name="close" size={18} />
+      </button>
+    </div>
+  </div>
 
-  <p class="search-status" data-search-hint>Gõ để tìm — hỗ trợ gõ không dấu, ví dụ "bo nho dem".</p>
+  <div class="search-chips" role="group" aria-label="Lọc theo lĩnh vực">
+    <button type="button" class="chip" aria-pressed="true" data-search-filter="all">Tất cả</button>
+    {
+      domains.map((d) => (
+        <button
+          type="button"
+          class="chip hue search-chip"
+          aria-pressed="false"
+          data-search-filter={d.id}
+          style={`--hue-l:${d.accent};--hue-d:${d.accentDark}`}
+        >
+          <span class="dot" aria-hidden="true" />
+          {d.title}
+        </button>
+      ))
+    }
+  </div>
+
+  <p class="search-count" data-search-count-label aria-hidden="true"></p>
+
+  <div class="search-hint" data-search-hint>
+    <div class="sec-h">
+      <h2>Thử tìm</h2>
+    </div>
+    <p class="search-hint__note">Gõ không dấu cũng được, ví dụ “bo nho dem”.</p>
+    <div class="search-suggest">
+      {
+        SUGGESTED_QUERIES.map((q) => (
+          <button type="button" class="chip" data-search-suggest={q}>
+            <Icon name="search" size={15} aria-hidden="true" />
+            {q}
+          </button>
+        ))
+      }
+    </div>
+    {
+      suggestions.length > 0 && (
+        <>
+          <div class="sec-h">
+            <h2>Bắt đầu từ đây</h2>
+          </div>
+          <ul class="rows rows--idx search-start">
+            {suggestions.map((s, i) => (
+              <li>
+                <a
+                  href={s.url}
+                  class="row hue rise"
+                  style={`--hue-l:${s.accent};--hue-d:${s.accentDark};--i:${i}`}
+                >
+                  <span class="idx tnum">{String(s.index).padStart(2, '0')}</span>
+                  <span class="tt">
+                    <b>{s.title}</b>
+                    <small class="tnum">
+                      <span class="sq" aria-hidden="true" /> {s.domainTitle} · {s.minutes} phút
+                    </small>
+                  </span>
+                  <Icon name="chevron-right" size={18} class="chev" aria-hidden="true" />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </>
+      )
+    }
+  </div>
+
   <!-- Announced via the result-count status region below (a region that
        toggles [hidden] and text in one tick is not reliably announced). -->
   <p class="search-status" data-search-loading hidden>
-    <LoaderCircle size={16} stroke-width={2} class="search-spin" aria-hidden="true" /> Đang tìm...
+    <Icon name="loader" size={16} stroke-width={2} class="search-spin" aria-hidden="true" /> Đang tìm...
   </p>
-  <p class="search-status" data-search-error hidden>
-    <WifiOff size={18} stroke-width={2} aria-hidden="true" /> Không tải được dữ liệu tìm kiếm.
-    <button type="button" class="search-retry tap-scale" data-search-retry>Thử lại</button>
-  </p>
-  <p class="search-status" data-search-empty hidden>
-    <Inbox size={18} stroke-width={2} aria-hidden="true" /> Không tìm thấy kết quả phù hợp.
-  </p>
+  <div class="empty" data-search-error hidden>
+    <span class="eic"><Icon name="wifi-off" size={28} aria-hidden="true" /></span>
+    <b>Không tải được dữ liệu tìm kiếm</b>
+    <span>Kiểm tra kết nối rồi thử lại.</span>
+    <button type="button" class="btn btn-secondary btn-sm" data-search-retry>Thử lại</button>
+  </div>
+  <div class="empty" data-search-empty hidden>
+    <span class="eic"><Icon name="search" size={28} aria-hidden="true" /></span>
+    <b>Không tìm thấy kết quả phù hợp</b>
+    <span>Thử từ khóa ngắn hơn, hoặc gõ không dấu — ví dụ “lai suat”.</span>
+  </div>
 
   <!-- One concise status announcement ("N kết quả") instead of aria-live on
        the whole list below — the list can render many rows per keystroke,
        which would otherwise have a screen reader read out every title,
        domain and snippet on every result set. -->
   <p class="sr-only" role="status" aria-live="polite" data-search-result-count></p>
-  <ul class="search-results" data-search-results hidden></ul>
+  <ul class="rows search-results" data-search-results hidden></ul>
 
   <template data-search-result-template>
-    <li class="search-result">
-      <a class="search-result__link tap-scale" data-search-result-link>
-        <span class="search-result__title" data-search-result-title></span>
-        <span class="search-result__domain" data-search-result-domain></span>
-        <span class="search-result__snippet" data-search-result-snippet></span>
+    <li class="search-result rise">
+      <a class="row search-result__link" data-search-result-link>
+        <span class="tt">
+          <b data-search-result-title></b>
+          <small class="search-result__domain" data-search-result-domain></small>
+          <span class="search-result__snippet" data-search-result-snippet></span>
+        </span>
+        <Icon name="chevron-right" size={18} class="chev" aria-hidden="true" />
       </a>
     </li>
   </template>
@@ -61,74 +159,172 @@ import WifiOff from '@lucide/astro/icons/wifi-off';
 
 <style>
   .search-shell {
-    margin: var(--space-4);
+    max-width: 760px;
+    padding-bottom: var(--space-4);
   }
 
-  .search-field {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    min-height: 44px;
-    padding: 0 var(--space-3);
-    background: var(--surface);
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius-row);
-    color: var(--ink-2);
+  /* Field stays pinned under the collapsed nav bar. */
+  .search-sticky {
+    position: sticky;
+    top: calc(var(--shell-navbar-h) + env(safe-area-inset-top));
+    z-index: 4;
+    padding: 0 var(--gutter-r) 10px var(--gutter-l);
+    background: var(--bg);
   }
 
+  /* The input fills the whole 46px field so the full row is a 44px target. */
   .search-field input {
-    flex: 1;
-    min-height: 44px;
-    border: none;
-    background: none;
-    font-size: var(--text-body);
-    color: var(--ink);
+    align-self: stretch;
   }
 
-  .search-field input::placeholder {
-    color: var(--ink-2);
+  /* .btn sets display, which would otherwise beat the [hidden] attribute. */
+  .search-field [hidden] {
+    display: none;
   }
 
-  /* Suppress the outline for a mouse/touch click (no visible keyboard focus
-     ring needed there — the border-color change below is enough), but keep
-     it for real keyboard focus (:focus-visible) — a border-color-only
-     change is not a strong enough focus indicator on its own for keyboard
-     users. */
-  .search-field input:focus:not(:focus-visible) {
-    outline: none;
+  .search-field input::-webkit-search-cancel-button,
+  .search-field input::-webkit-search-decoration {
+    display: none;
+    -webkit-appearance: none;
   }
 
-  .search-field:focus-within {
-    border-color: var(--accent);
+  .search-chips {
+    display: flex;
+    gap: 6px;
+    padding: 0 var(--gutter-r) 4px var(--gutter-l);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .search-chips::-webkit-scrollbar {
+    display: none;
+  }
+
+  .search-chips .chip {
+    flex: none;
+    position: relative;
+  }
+
+  /* 44px touch band around the 32px chip. */
+  .search-chips .chip::after,
+  .search-suggest .chip::after {
+    content: '';
+    position: absolute;
+    inset: -6px -2px;
+  }
+
+  .search-chip .dot {
+    background: var(--c);
+  }
+
+  /* Visible result count (mono label). */
+  .search-count {
+    margin: 0;
+    padding: 0 var(--gutter-r) 0 var(--gutter-l);
+    font: 500 var(--text-label) / 1 var(--font-mono);
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+
+  .search-count:not(:empty) {
+    padding-top: 22px;
+    padding-bottom: 8px;
   }
 
   /* See mark-complete-button.astro's [hidden] comment. */
+  .search-hint[hidden],
   .search-status[hidden],
-  .search-results[hidden] {
+  .search-results[hidden],
+  .empty[hidden] {
     display: none;
+  }
+
+  .search-hint .sec-h {
+    padding-inline: var(--gutter-l) var(--gutter-r);
+  }
+
+  .search-hint__note {
+    margin: 0;
+    padding: 0 var(--gutter-r) 10px var(--gutter-l);
+    font-size: var(--text-caption);
+    color: var(--text-3);
+  }
+
+  .search-suggest {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0 var(--gutter-r) 0 var(--gutter-l);
+  }
+
+  .search-suggest .chip {
+    position: relative;
+  }
+
+  .search-start,
+  .search-results {
+    --inset: 14px;
+    margin-inline: calc(var(--gutter-l) - 12px) calc(var(--gutter-r) - 12px);
+  }
+
+  .search-start {
+    --inset: 50px;
+  }
+
+  .sq {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    margin-right: 2px;
+    border-radius: 2px;
+    background: var(--c);
   }
 
   .search-status {
     display: flex;
     align-items: center;
-    gap: var(--space-2);
-    margin-top: var(--space-3);
-    font-size: var(--text-footnote);
-    color: var(--ink-2);
-    text-align: center;
     justify-content: center;
-    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: var(--space-6) 0 0;
+    padding-inline: var(--gutter-l) var(--gutter-r);
+    font-size: var(--text-small);
+    color: var(--text-2);
   }
 
-  .search-retry {
-    min-height: 44px;
-    padding-inline: var(--space-2);
-    font-weight: 700;
-    color: var(--accent);
+  .empty {
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+    padding: 48px 32px;
+    text-align: center;
+    font-size: 14.5px;
+    color: var(--text-2);
+  }
+
+  .empty .eic {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border: 1px dashed var(--line-3);
+    border-radius: var(--radius-xl);
+    color: var(--text-3);
+  }
+
+  .empty b {
+    font-size: var(--text-callout);
+    color: var(--text);
   }
 
   .search-spin {
     animation: search-spin 0.8s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .search-spin {
+      animation: none;
+    }
   }
 
   @keyframes search-spin {
@@ -137,70 +333,65 @@ import WifiOff from '@lucide/astro/icons/wifi-off';
     }
   }
 
-  .search-results {
-    margin: var(--space-4) 0 0;
-    padding: 0;
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-  }
-
+  /* ---- result rows (cloned from the template; --card-accent set by the controller) ---- */
   .search-result__link {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    padding: var(--space-3) var(--space-4);
-    background: var(--surface);
-    border-radius: var(--radius-row);
-    box-shadow: var(--shadow-card);
-    text-decoration: none;
-    color: inherit;
-    min-height: 44px;
-    transition: background-color var(--dur-fast) var(--ease-out);
-  }
-
-  @media (hover: hover) {
-    .search-result__link:hover {
-      background: var(--surface-2);
-    }
-  }
-
-  .search-result__title {
-    font-size: var(--text-body);
-    font-weight: 700;
-    color: var(--ink);
-  }
-
-  /* Colored via --card-accent/--card-accent-dark, set inline on the row's
-     <a> by search-box-controller.ts from that lesson's own domain metadata
-     (search-index.json's domainAccent/domainAccentDark). Falls back to the
-     default accent token so a result row still looks correct before that
-     inline style is applied (e.g. a domain with no accent color, which
-     shouldn't happen but must not render invisible/unstyled text). */
-  .search-result__domain {
-    display: inline-block;
-    align-self: flex-start;
-    font-size: var(--text-caption);
-    font-weight: 600;
-    color: var(--card-accent, var(--accent));
+    align-items: flex-start;
+    padding-block: var(--space-3);
+    --c: var(--card-accent, var(--volt-ink));
   }
 
   @media (prefers-color-scheme: dark) {
-    .search-result__domain {
-      color: var(--card-accent-dark, var(--accent));
+    .search-result__link {
+      --c: var(--card-accent-dark, var(--card-accent, var(--volt-ink)));
     }
   }
 
-  .search-result__snippet {
-    font-size: var(--text-footnote);
-    color: var(--ink-2);
+  .search-result__link .chev {
+    align-self: center;
   }
 
-  .search-result__snippet :global(mark) {
-    background: none;
-    color: var(--accent);
-    font-weight: 700;
+  .search-result__link :global(.tt) {
+    overflow-wrap: anywhere;
+  }
+
+  /* Two classes: must outrank the base `.row .tt small` (block + ellipsis). */
+  .search-result__link .search-result__domain {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    overflow: visible;
+    white-space: normal;
+  }
+
+  .search-result__link .search-result__domain::before {
+    content: '';
+    flex: none;
+    width: 7px;
+    height: 7px;
+    border-radius: 2px;
+    background: var(--c);
+  }
+
+  .search-result__snippet {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    margin-top: 4px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--text-2);
+  }
+
+  @media (min-width: 1024px) {
+    .search-sticky {
+      top: 0;
+    }
+
+    .search-shell {
+      padding-top: 4px;
+    }
   }
 </style>
 

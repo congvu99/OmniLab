@@ -2,8 +2,8 @@
 id: tai-chinh
 title: Tài chính cá nhân
 tagline: Lộ trình 12 tuần, bài tập, an toàn giao dịch và nguồn học có thẩm định.
-accent: "#1C7455"
-accentDark: "#6EE7B7"
+accent: "#0B7259"
+accentDark: "#4FD8B4"
 icon: wallet
 order: 2
 isFinance: true

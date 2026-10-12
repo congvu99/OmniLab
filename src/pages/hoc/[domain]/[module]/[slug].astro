@@ -1,14 +1,16 @@
 ---
 // Lesson reader — the real per-lesson page for every `/hoc/<domain>/<module>/<slug>`
-// route. Full-bleed ReaderLayout (back -> domain page), cover, meta,
-// collapsible TOC, <Disclaimer> for isFinance-domain lessons, MDX body,
-// source/license attribution, end-of-lesson slot + next-lesson navigation.
+// route (Studio concept reader). Full-bleed ReaderLayout (back -> domain page),
+// header (eyebrow, h1, dek, meta strip), collapsible TOC (inline <1280px;
+// sticky aside with progress ring + TOC + actions at >=1280px), <Disclaimer>
+// for isFinance-domain lessons, MDX body, source/license attribution,
+// completion card + next-lesson navigation.
 import { getCollection, render } from 'astro:content';
 import ReaderLayout from '../../../../layouts/reader-layout.astro';
 import { lessonMdxComponents } from '../../../../components/lesson/mdx-components';
 import Disclaimer from '../../../../components/lesson/disclaimer.astro';
-import LessonCover from '../../../../components/lesson/lesson-cover.astro';
-import LessonMeta from '../../../../components/lesson/lesson-meta.astro';
+import LessonHeader from '../../../../components/lesson/lesson-header.astro';
+import LessonAside from '../../../../components/lesson/lesson-aside.astro';
 import LessonToc from '../../../../components/lesson/lesson-toc.astro';
 import AttributionFooter from '../../../../components/lesson/attribution-footer.astro';
 import NextLessonCard from '../../../../components/lesson/next-lesson-card.astro';
@@ -16,7 +18,8 @@ import MarkCompleteButton from '../../../../components/islands/mark-complete-but
 import BookmarkButton from '../../../../components/islands/bookmark-button.astro';
 import ReaderProgressTracker from '../../../../components/islands/reader-progress-tracker.astro';
 import { lessonIdOf } from '../../../../lib/lesson-id';
-import { computeReadingMinutes, getAdjacent, getDomain, getModules } from '../../../../lib/content-queries';
+import { computeReadingMinutes, getAdjacent, getDomain, getLessonsByDomain, getModules } from '../../../../lib/content-queries';
+import { cleanSummary, findTitleDuplicate, needsHeadingFiller } from '../../../../lib/lesson-reader-model';
 
 export async function getStaticPaths() {
   const lessons = await getCollection('lessons');
@@ -39,7 +42,24 @@ const modules = await getModules(domainId);
 const currentModule = modules.find((m) => m.id === moduleId);
 
 const { next } = await getAdjacent(lessonId);
-const toc = headings.filter((h) => h.depth === 2);
+const domainLessons = await getLessonsByDomain(domainId);
+const position = Math.max(1, domainLessons.findIndex((l) => l.id === lessonId) + 1);
+
+// The reader header renders the title as the page <h1>. A body heading that
+// repeats it (first heading only) is hidden so the title is never shown twice;
+// it is also dropped from the TOC and the heading-outline check.
+const titleDuplicate = findTitleDuplicate(headings, lesson.data.title);
+const visibleHeadings = headings.filter((h) => h !== titleDuplicate);
+const toc = visibleHeadings.filter((h) => h.depth === 2);
+const hideDuplicateCss = titleDuplicate ? `[id=${JSON.stringify(titleDuplicate.slug)}]{display:none}` : null;
+const nextLink = next ? { href: next.url, title: next.title } : null;
+const domainHref = `/linh-vuc/${domainId}`;
+const readingMinutes = computeReadingMinutes(lesson);
+// Body opens deeper than h2 (most finance lessons start at "###"): an sr-only
+// h2 right after the header's h1 keeps the outline h1 -> h2 -> h3. It must sit
+// AFTER the header (the layout's own fallback h2 precedes the slot, which would
+// put it before our h1 and break heading order).
+const needsFiller = needsHeadingFiller(visibleHeadings);
 ---
 
 <ReaderLayout
@@ -47,10 +67,20 @@ const toc = headings.filter((h) => h.depth === 2);
   description={lesson.data.summary}
   domainAccent={domain.data.accent}
   domainAccentDark={domain.data.accentDark}
-  backHref={`/linh-vuc/${domainId}`}
+  backHref={domainHref}
   backLabel={domain.data.title}
 >
   <BookmarkButton lessonId={lessonId} slot="top-actions" />
+  <LessonAside
+    slot="aside"
+    headings={toc}
+    lessonId={lessonId}
+    next={nextLink}
+    domainHref={domainHref}
+    domainId={domainId}
+    domainTitle={domain.data.title}
+    readingMinutes={readingMinutes}
+  />
   <ReaderProgressTracker />
   <article
     class="lesson-article"
@@ -58,27 +88,54 @@ const toc = headings.filter((h) => h.depth === 2);
     data-domain={domainId}
     data-examples-reviewed={lesson.data.examplesReviewed ? 'true' : 'false'}
   >
-    <LessonCover cover={lesson.data.cover} title={lesson.data.title} domainIcon={domain.data.icon} />
-    <LessonMeta
+    {hideDuplicateCss && <style is:inline set:html={hideDuplicateCss} />}
+    <LessonHeader
+      title={lesson.data.title}
+      summary={cleanSummary(lesson.data.summary)}
+      domainTitle={domain.data.title}
       moduleTitle={currentModule?.title ?? moduleId}
-      readingMinutes={computeReadingMinutes(lesson)}
+      position={position}
+      total={domainLessons.length}
+      readingMinutes={readingMinutes}
       sourceName={lesson.data.source.name}
+      license={lesson.data.source.license}
+      examplesReviewed={lesson.data.examplesReviewed}
+      cover={lesson.data.cover}
     />
+    {needsFiller && <h2 class="sr-only lesson-filler-heading">Nội dung bài</h2>}
     <LessonToc headings={toc} />
     {domain.data.isFinance && <Disclaimer />}
-    <Content components={lessonMdxComponents} />
+    <div class="lesson-body">
+      <Content components={lessonMdxComponents} />
+    </div>
     <AttributionFooter
       sourceName={lesson.data.source.name}
       author={lesson.data.source.author}
       license={lesson.data.source.license}
       url={lesson.data.source.url}
     />
-    <div class="lesson-complete-slot" data-lesson-id={lessonId} data-domain={domainId}>
-      <MarkCompleteButton lessonId={lessonId} />
-    </div>
-    <NextLessonCard
-      next={next ? { href: next.url, title: next.title } : null}
-      domainHref={`/linh-vuc/${domainId}`}
-    />
+    <MarkCompleteButton lessonId={lessonId} domainId={domainId} domainTitle={domain.data.title} />
+    <NextLessonCard next={nextLink} domainHref={domainHref} />
   </article>
 </ReaderLayout>
+
+<style>
+  /* Concept reading column: 700px max, centered in the (wider) desktop main. */
+  .lesson-article {
+    max-width: 700px;
+    margin-inline: auto;
+  }
+
+  .lesson-body {
+    padding-top: 8px;
+  }
+
+  /* The sr-only filler must not consume a prose section number. */
+  .lesson-filler-heading {
+    counter-increment: none;
+  }
+
+  .lesson-filler-heading::before {
+    content: none;
+  }
+</style>

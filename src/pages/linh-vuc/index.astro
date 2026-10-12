@@ -1,8 +1,9 @@
 ---
-// "Lĩnh vực" tab — real domain cards from the content collection (accent,
-// icon, tagline, lesson count, reading minutes, live progress-ring), each
-// linking to its /linh-vuc/<domain> detail page.
+// "Lĩnh vực" tab — one art card per domain from the content collection
+// (index, tagline, lesson count, reading minutes, live progress bar), each
+// linking to its /linh-vuc/<domain> page.
 import AppLayout from '../../layouts/app-layout.astro';
+import LargeTitleHeader from '../../components/shell/large-title-header.astro';
 import DomainCard from '../../components/domain/domain-card.astro';
 import { getDomains, getLessonsByDomain } from '../../lib/content-queries';
 
@@ -14,12 +15,14 @@ const domainCards = await Promise.all(
     return { domain, lessonCount: lessons.length, totalReadingMinutes };
   }),
 );
+const totalLessons = domainCards.reduce((sum, d) => sum + d.lessonCount, 0);
 ---
 
-<AppLayout title="Lĩnh vực - OmniLab" largeTitle="Lĩnh vực">
-  <ul class="domain-list">
+<AppLayout title="Lĩnh vực - OmniLab">
+  <LargeTitleHeader title="Lĩnh vực" eyebrow={`${domains.length} lĩnh vực · ${totalLessons} bài`} />
+  <ul class="domain-grid">
     {
-      domainCards.map(({ domain, lessonCount, totalReadingMinutes }) => (
+      domainCards.map(({ domain, lessonCount, totalReadingMinutes }, i) => (
         <li>
           <DomainCard
             href={`/linh-vuc/${domain.id}`}
@@ -31,42 +34,50 @@ const domainCards = await Promise.all(
             accentDark={domain.data.accentDark}
             lessonCount={lessonCount}
             totalReadingMinutes={totalReadingMinutes}
+            index={i + 1}
+            headingLevel={2}
+            stagger={i}
           />
         </li>
       ))
     }
   </ul>
   <p class="linh-vuc-footer">
-    <a href="/gioi-thieu">Nguồn & giấy phép nội dung</a>
+    <a href="/gioi-thieu">Nguồn &amp; giấy phép nội dung</a>
   </p>
 </AppLayout>
 
 <style>
-  .domain-list {
-    margin: var(--space-4);
-    padding: 0;
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-  }
-
-  @media (min-width: 768px) {
-    .domain-list {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-    }
+  /* Concept: 16px side margins on phones, then a fluid multi-column grid. */
+  .domain-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+    gap: 12px;
+    margin: 0;
+    padding-inline: calc(var(--gutter-l) - 4px) calc(var(--gutter-r) - 4px);
   }
 
   .linh-vuc-footer {
-    margin: var(--space-5) var(--space-4);
+    margin: var(--space-5) 0 0;
+    padding-inline: var(--gutter-l) var(--gutter-r);
     text-align: center;
-    font-size: var(--text-caption);
   }
 
   .linh-vuc-footer a {
-    color: var(--ink-2);
-    text-decoration: underline;
-    text-underline-offset: 2px;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font: 500 var(--text-label) var(--font-mono);
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--volt-ink);
+    text-decoration: none;
+  }
+
+  @media (min-width: 1024px) {
+    .domain-grid {
+      gap: 16px;
+      padding-inline: var(--gutter-l) var(--gutter-r);
+    }
   }
 </style>

@@ -4,16 +4,23 @@
 // Renders only <head> children; the <html>/<head> tags themselves live in
 // each layout because that's where the domain-accent inline style (see
 // domain-accent.ts) has to be attached to <html>.
+// Be Vietnam Pro: UI + display (800 = tight display titles); latin +
+// vietnamese subsets only (split by unicode-range, so only used files load).
 import '@fontsource/be-vietnam-pro/latin-400.css';
 import '@fontsource/be-vietnam-pro/latin-500.css';
 import '@fontsource/be-vietnam-pro/latin-600.css';
 import '@fontsource/be-vietnam-pro/latin-700.css';
+import '@fontsource/be-vietnam-pro/latin-800.css';
 import '@fontsource/be-vietnam-pro/vietnamese-400.css';
 import '@fontsource/be-vietnam-pro/vietnamese-500.css';
 import '@fontsource/be-vietnam-pro/vietnamese-600.css';
 import '@fontsource/be-vietnam-pro/vietnamese-700.css';
+import '@fontsource/be-vietnam-pro/vietnamese-800.css';
+// JetBrains Mono: tabular numerals, mono labels, keycaps (400 + 500).
 import '@fontsource/jetbrains-mono/latin-400.css';
+import '@fontsource/jetbrains-mono/latin-500.css';
 import '@fontsource/jetbrains-mono/vietnamese-400.css';
+import '@fontsource/jetbrains-mono/vietnamese-500.css';
 import '../styles/tokens.css';
 import '../styles/base.css';
 import '../styles/view-transitions.css';
@@ -36,8 +43,8 @@ const { title, description = 'OmniLab - ứng dụng học tập đa lĩnh vực
 <link rel="manifest" href="/manifest.webmanifest" />
 
 <!-- theme-color follows system light/dark, matches --bg in tokens.css -->
-<meta name="theme-color" content="#F7F6F2" media="(prefers-color-scheme: light)" />
-<meta name="theme-color" content="#111315" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#F3F4F6" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#0B0C0E" media="(prefers-color-scheme: dark)" />
 
 <!-- iOS "Add to Home Screen" standalone behavior.
      status-bar-style: "default" (not "black-translucent") — deliberate:

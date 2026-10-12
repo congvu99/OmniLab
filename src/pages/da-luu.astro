@@ -1,10 +1,19 @@
 ---
 // "Đã lưu" tab — bookmarked lessons (client-side, see progress-store.ts),
-// rendered by saved-list.astro.
+// rendered by saved-list.astro. The eyebrow count is a live `[data-saved-count]`
+// kept in sync by saved-list-controller.
 import AppLayout from '../layouts/app-layout.astro';
+import LargeTitleHeader from '../components/shell/large-title-header.astro';
 import SavedList from '../components/islands/saved-list.astro';
+import { getDomains } from '../lib/content-queries';
+import { buildDomainMeta } from '../lib/build-domain-meta';
+
+const meta = buildDomainMeta(await getDomains());
 ---
 
-<AppLayout title="Đã lưu - OmniLab" largeTitle="Đã lưu">
-  <SavedList />
+<AppLayout title="Đã lưu - OmniLab">
+  <LargeTitleHeader title="Đã lưu">
+    <span slot="eyebrow" class="tnum"><span data-saved-count>–</span> bài · lưu trên máy này</span>
+  </LargeTitleHeader>
+  <SavedList meta={meta} />
 </AppLayout>

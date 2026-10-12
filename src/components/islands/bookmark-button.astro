@@ -1,26 +1,32 @@
 ---
-// Placed in ReaderLayout's `top-actions` named slot (reader-top-bar.astro
-// passes it through). >=44px tap target, aria-pressed reflects saved state.
-import Bookmark from '@lucide/astro/icons/bookmark';
-import BookmarkCheck from '@lucide/astro/icons/bookmark-check';
+// Bookmark toggle. Two placements share one state source (the progress
+// store); every `[data-bb]` on the page is bound, so copies stay in sync:
+// - "icon" (default): reader top bar `top-actions` slot, 44px icon button
+//   (concept navbar .acts button: text-2, volt-ink + filled glyph when saved).
+// - "labeled": compact secondary button for the reader aside (>=1280px).
+// aria-pressed reflects saved state; the accessible name is constant.
+import Icon from '../icon/icon.astro';
 
 interface Props {
   lessonId: string;
+  variant?: 'icon' | 'labeled';
 }
 
-const { lessonId } = Astro.props;
+const { lessonId, variant = 'icon' } = Astro.props;
+const labeled = variant === 'labeled';
 ---
 
 <button
   type="button"
-  class="bb tap-scale"
+  class:list={['bb', 'tap-scale', labeled ? 'btn btn-secondary btn-sm bb--labeled' : 'bb--icon']}
   data-bb
   data-lesson-id={lessonId}
   aria-pressed="false"
-  aria-label="Lưu bài học"
+  aria-label={labeled ? undefined : 'Lưu bài học'}
 >
-  <Bookmark size={22} stroke-width={2} aria-hidden="true" class="bb-icon bb-icon--off" />
-  <BookmarkCheck size={22} stroke-width={2} aria-hidden="true" class="bb-icon bb-icon--on" />
+  <Icon name="bookmark" size={labeled ? 18 : 21} stroke-width={1.75} aria-hidden="true" class="bb-icon bb-icon--off" />
+  <Icon name="bookmark" filled size={labeled ? 18 : 21} stroke-width={1.75} aria-hidden="true" class="bb-icon bb-icon--on" />
+  {labeled && <span>Lưu bài học</span>}
 </button>
 
 <style>
@@ -28,13 +34,39 @@ const { lessonId } = Astro.props;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 44px;
-    min-height: 44px;
-    color: var(--ink);
   }
 
-  .bb[aria-pressed='true'] {
-    color: var(--accent);
+  .bb--icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    color: var(--text-2);
+    transition: color var(--dur-1) var(--ease), background-color var(--dur-1) var(--ease),
+      transform var(--dur-1) var(--ease);
+  }
+
+  @media (hover: hover) {
+    .bb--icon:hover {
+      color: var(--text);
+      background: var(--surface-2);
+    }
+  }
+
+  .bb--icon[aria-pressed='true'] {
+    color: var(--volt-ink);
+  }
+
+  .bb--labeled {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .bb--labeled[aria-pressed='true'] {
+    border-color: var(--volt-ink);
+  }
+
+  .bb--labeled[aria-pressed='true'] .bb-icon {
+    color: var(--volt-ink);
   }
 
   .bb-icon--on {
@@ -52,25 +84,46 @@ const { lessonId } = Astro.props;
 
 <script>
   import { getProgressStore } from '../../lib/progress-store';
+  import { showReaderToast } from '../../lib/reader-toast';
 
-  let unsubscribe: (() => void) | null = null;
+  let unsubscribers: Array<() => void> = [];
+
+  const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function init() {
-    unsubscribe?.();
-    unsubscribe = null;
-
-    const button = document.querySelector<HTMLButtonElement>('[data-bb]');
-    const lessonId = button?.dataset.lessonId;
-    if (!button || !lessonId) return;
+    unsubscribers.forEach((fn) => fn());
+    unsubscribers = [];
 
     const store = getProgressStore();
+    document.querySelectorAll<HTMLButtonElement>('[data-bb]').forEach((button) => {
+      const lessonId = button.dataset.lessonId;
+      if (!lessonId) return;
 
-    button.addEventListener('click', () => {
-      store.toggleBookmark(lessonId);
-    });
-
-    unsubscribe = store.subscribe((state) => {
-      button.setAttribute('aria-pressed', String(state.bookmarks.includes(lessonId)));
+      const onClick = () => {
+        const saved = store.toggleBookmark(lessonId);
+        // Concept: glyph pops (.7 -> 1.15 -> 1, snap easing). Animate whichever
+        // of the two glyphs is displayed after the state flip.
+        const glyph = Array.from(button.querySelectorAll<SVGElement>('.bb-icon')).find((el) => el.getClientRects().length);
+        if (glyph && !reducedMotion()) {
+          glyph.animate([{ transform: 'scale(.7)' }, { transform: 'scale(1.15)' }, { transform: 'scale(1)' }], {
+            duration: 240,
+            easing: 'cubic-bezier(.3,1.35,.5,1)',
+          });
+        }
+        showReaderToast({
+          icon: saved ? 'bookmark' : 'close',
+          title: saved ? 'Đã lưu bài' : 'Đã bỏ lưu',
+          sub: saved ? 'Xem trong tab Đã lưu' : undefined,
+        });
+      };
+      button.addEventListener('click', onClick);
+      const unsubscribe = store.subscribe((state) => {
+        button.setAttribute('aria-pressed', String(state.bookmarks.includes(lessonId)));
+      });
+      unsubscribers.push(() => {
+        button.removeEventListener('click', onClick);
+        unsubscribe();
+      });
     });
   }
 

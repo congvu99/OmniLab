@@ -228,3 +228,126 @@ describe('attachSearchBox', () => {
     expect(input.removeEventListener).toHaveBeenCalledWith('input', expect.any(Function));
   });
 });
+
+describe('attachSearchBox: domain filters, clear button, suggestions, count label', () => {
+  let attachSearchBox;
+  let input;
+  let els;
+  let rows;
+
+  function chip(dataset) {
+    const el = createFakeEl('button');
+    el.dataset = dataset;
+    el.attrs = {};
+    el.setAttribute = (name, value) => {
+      el.attrs[name] = value;
+    };
+    return el;
+  }
+
+  beforeEach(async () => {
+    vi.resetModules();
+    ({ attachSearchBox } = await import('../src/lib/search-box-controller.ts'));
+    input = { value: '', addEventListener: vi.fn(), removeEventListener: vi.fn(), focus: vi.fn() };
+    rows = [];
+    const hidden = (value) => Object.assign(createFakeEl(), { hidden: value });
+    els = {
+      root: createFakeEl(),
+      input,
+      hint: hidden(false),
+      loading: hidden(true),
+      error: hidden(true),
+      empty: hidden(true),
+      resultsList: Object.assign(createFakeEl('ul'), { hidden: true }),
+      template: {
+        content: {
+          cloneNode: () => {
+            const row = createFakeTemplateRow();
+            rows.push(row);
+            return row.fragment;
+          },
+        },
+      },
+      resultCount: createFakeEl(),
+      countLabel: createFakeEl(),
+      clearButton: Object.assign(createFakeEl('button'), { hidden: true }),
+      filters: [chip({ searchFilter: 'all' }), chip({ searchFilter: 'kien-truc' }), chip({ searchFilter: 'tai-chinh' })],
+      suggestions: [chip({ searchSuggest: 'cache' })],
+    };
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.clearAllMocks();
+  });
+
+  const typeQuery = async (value) => {
+    const onInput = input.addEventListener.mock.calls.find((c) => c[0] === 'input')[1];
+    input.value = value;
+    onInput();
+    await vi.advanceTimersByTimeAsync(200);
+  };
+
+  it('shows the clear button only while the field has text and mirrors the count into the visible label', async () => {
+    attachSearchBox(els);
+    await typeQuery('cache');
+    expect(els.clearButton.hidden).toBe(false);
+    expect(els.countLabel.textContent).toBe('1 kết quả');
+    await typeQuery('');
+    expect(els.clearButton.hidden).toBe(true);
+    expect(els.countLabel.textContent).toBe('');
+    expect(els.hint.hidden).toBe(false);
+  });
+
+  it('a domain chip narrows the fetched results without re-searching, and "all" restores them', async () => {
+    attachSearchBox(els);
+    await typeQuery('cache');
+    const [all, arch, fin] = els.filters;
+
+    fin._fire('click');
+    expect(fin.attrs['aria-pressed']).toBe('true');
+    expect(all.attrs['aria-pressed']).toBe('false');
+    expect(els.empty.hidden).toBe(false);
+    expect(els.resultsList.hidden).toBe(true);
+    expect(els.resultCount.textContent).toBe('0 kết quả');
+
+    arch._fire('click');
+    expect(els.empty.hidden).toBe(true);
+    expect(els.resultsList.hidden).toBe(false);
+    expect(els.countLabel.textContent).toBe('1 kết quả');
+
+    all._fire('click');
+    expect(els.resultsList.hidden).toBe(false);
+  });
+
+  it('a suggestion chip fills the field and searches immediately (no debounce)', async () => {
+    attachSearchBox(els);
+    els.suggestions[0]._fire('click');
+    await vi.advanceTimersByTimeAsync(0);
+    expect(input.value).toBe('cache');
+    expect(input.focus).toHaveBeenCalled();
+    expect(els.resultsList.hidden).toBe(false);
+    expect(rows).toHaveLength(1);
+  });
+
+  it('the clear button empties the field, restores the hint and refocuses the input', async () => {
+    attachSearchBox(els);
+    await typeQuery('cache');
+    els.clearButton._fire('click');
+    await vi.advanceTimersByTimeAsync(0);
+    expect(input.value).toBe('');
+    expect(els.clearButton.hidden).toBe(true);
+    expect(els.hint.hidden).toBe(false);
+    expect(els.resultsList.hidden).toBe(true);
+    expect(input.focus).toHaveBeenCalled();
+  });
+
+  it('cleanup() also detaches chip handlers', () => {
+    const cleanup = attachSearchBox(els);
+    const removed = vi.fn();
+    els.filters[0].removeEventListener = removed;
+    cleanup();
+    expect(removed).toHaveBeenCalledWith('click', expect.any(Function));
+  });
+});

@@ -1,30 +1,79 @@
 ---
-// iOS-style large title (34px) that collapses into a small 17px title inside
-// a sticky nav bar once scrolled past, via IntersectionObserver (no scroll
-// listener). Used by app-layout.astro for the 4 top-level tab pages.
+// Studio screen header: 34px/800 title (44px desktop) with a mono eyebrow and
+// an optional actions slot, plus a pinned nav bar (mobile/tablet) that shows a
+// small title once the large one scrolls away (IntersectionObserver, no scroll
+// listener). Rendered by the tab pages themselves (first child of their
+// layout slot) so each page can supply its own eyebrow/actions.
+//
+// Modes:
+//  - default: renders eyebrow + <h1> + actions (default slot).
+//  - bare: the page supplies its own <h1> and a `[data-lth-sentinel]` element
+//    (domain hero); only the pinned nav bar is rendered here.
+//  - backHref: nav bar gets a "‹ label" back link on the left; slot="nav"
+//    content sits on the right (e.g. a search link).
+import Icon from '../icon/icon.astro';
+
 interface Props {
   title: string;
+  eyebrow?: string;
+  /** Fills the eyebrow with "Thứ Hai · 12.10" on the client (static build has no "today"). */
+  eyebrowToday?: boolean;
+  /** Extra bold volt text after the date, desktop only (concept: "3 lĩnh vực"). */
+  eyebrowExtra?: string;
+  backHref?: string;
+  backLabel?: string;
+  bare?: boolean;
 }
 
-const { title } = Astro.props;
+const { title, eyebrow, eyebrowToday = false, eyebrowExtra, backHref, backLabel = 'Quay lại', bare = false } = Astro.props;
+const hasEyebrow = Boolean(eyebrow || eyebrowToday || Astro.slots.has('eyebrow'));
 ---
 
-<!-- The sticky bar is a SIBLING of <header>, not a child: a sticky element
-     only sticks within its parent's box, so inside the (short) <header> it
-     scrolled away with the large title. As a direct child of .app-shell it
-     stays pinned for the whole page. Its small title duplicates the <h1>, so
-     it is aria-hidden (also keeps it out of axe's "region" landmark rule). -->
-<div class="lth-navbar" data-lth-navbar data-collapsed="false">
+<!-- The sticky bar is a SIBLING of the header block, not a child: a sticky
+     element only sticks within its parent's box. Its small title duplicates the
+     <h1>, so it is aria-hidden (also keeps it out of axe's "region" rule). -->
+<div class="lth-navbar" data-lth-navbar data-collapsed="false" data-has-back={backHref ? 'true' : 'false'}>
   <div class="lth-navbar-inner">
+    <div class="lth-navbar-side">
+      {
+        backHref && (
+          <a href={backHref} class="lth-back">
+            <Icon name="chevron-left" size={22} />
+            <span>{backLabel}</span>
+          </a>
+        )
+      }
+    </div>
     <span class="lth-navbar-title" data-lth-navbar-title aria-hidden="true">{title}</span>
+    <div class="lth-navbar-side lth-navbar-side--end"><slot name="nav" /></div>
   </div>
 </div>
-<header class="lth-wrapper">
-  <div class="lth-block">
-    <h1 class="lth-title">{title}</h1>
-    <span class="lth-sentinel" data-lth-sentinel aria-hidden="true"></span>
-  </div>
-</header>
+{
+  !bare && (
+    <header class="lth-wrapper">
+      <div class="lth-block">
+        <div class="lth-head">
+          <div class="lth-text">
+            {hasEyebrow && (
+              <p class="eyebrow lth-eyebrow">
+                <slot name="eyebrow">
+                  {eyebrowToday && <span data-lth-today>&nbsp;</span>}
+                  {eyebrow && <span>{eyebrow}</span>}
+                  {eyebrowExtra && <b class="lth-eyebrow-extra">{eyebrowExtra}</b>}
+                </slot>
+              </p>
+            )}
+            <h1 class="lth-title">{title}</h1>
+          </div>
+          <div class="lth-actions">
+            <slot />
+          </div>
+        </div>
+        <span class="lth-sentinel" data-lth-sentinel aria-hidden="true" />
+      </div>
+    </header>
+  )
+}
 
 <style>
   .lth-navbar {
@@ -32,68 +81,179 @@ const { title } = Astro.props;
     top: 0;
     z-index: var(--z-nav);
     padding-top: env(safe-area-inset-top);
-    /* Expanded (top of page): invisible, blends into --bg so it reads as the
-       space above the large title rather than an empty white band.
-       Collapsed: solid surface + hairline (a translucent veil let the list
-       text ghost through behind the small title). */
+    /* Expanded (top of page): invisible, blends into --bg. Collapsed: glass
+       material + hairline scrolled under content. */
     background: transparent;
     border-bottom: 1px solid transparent;
     transition:
-      background-color var(--dur) var(--ease-out),
-      border-color var(--dur) var(--ease-out);
+      background-color var(--dur-2) var(--ease),
+      border-color var(--dur-2) var(--ease);
   }
 
   .lth-navbar[data-collapsed='true'] {
-    background: var(--surface);
+    background: var(--material-bar);
+    -webkit-backdrop-filter: var(--material-blur);
+    backdrop-filter: var(--material-blur);
     border-bottom-color: var(--line);
   }
 
   .lth-navbar-inner {
+    display: grid;
+    grid-template-columns: minmax(max-content, 1fr) minmax(0, auto) minmax(max-content, 1fr);
+    align-items: center;
+    gap: var(--space-2);
     height: var(--shell-navbar-h);
+    padding-inline: max(10px, env(safe-area-inset-left)) max(10px, env(safe-area-inset-right));
+  }
+
+  .lth-navbar-side {
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding-inline: var(--gutter-l) var(--gutter-r);
+    min-width: 0;
+  }
+
+  .lth-navbar-side--end {
+    justify-content: flex-end;
+  }
+
+  .lth-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    min-height: 44px;
+    padding: 0 8px 0 4px;
+    border-radius: 10px;
+    color: var(--volt-ink);
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .lth-back:active {
+    opacity: 0.6;
   }
 
   .lth-navbar-title {
-    font-size: var(--text-body);
-    font-weight: 600;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 14.5px;
+    font-weight: 700;
     opacity: 0;
-    transition: opacity var(--dur-fast) var(--ease-out);
+    transform: translateY(4px);
+    transition:
+      opacity var(--dur-2),
+      transform var(--dur-2) var(--ease);
     text-align: center;
   }
 
   .lth-navbar[data-collapsed='true'] .lth-navbar-title {
     opacity: 1;
+    transform: none;
   }
 
   .lth-block {
-    padding: 0 var(--gutter-r) var(--space-3) var(--gutter-l);
+    padding: var(--space-2) var(--gutter-r) var(--space-4) var(--gutter-l);
+  }
+
+  .lth-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .lth-text {
+    min-width: 0;
+  }
+
+  .lth-eyebrow {
+    margin-bottom: 6px;
+    min-height: calc(var(--text-label) * 1.2);
+  }
+
+  .lth-eyebrow-extra {
+    display: none;
+  }
+
+  .lth-eyebrow-extra::before {
+    content: '·';
+    margin-right: 10px;
+    font-weight: 400;
+    color: var(--text-3);
   }
 
   .lth-title {
     font-size: var(--text-large);
-    font-weight: 700;
-    line-height: 1.15;
-    padding-top: var(--space-1);
+    font-weight: 800;
+    letter-spacing: var(--track-display);
+    line-height: var(--leading-large);
+    text-wrap: balance;
+  }
+
+  .lth-actions {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .lth-actions:empty {
+    display: none;
   }
 
   .lth-sentinel {
     display: block;
     height: 1px;
   }
+
+  @media (min-width: 1024px) {
+    /* No sticky bar on desktop: the sidebar owns navigation. */
+    .lth-navbar {
+      display: none;
+    }
+
+    /* Same centered column as .app-main (app-layout.astro). */
+    .lth-block {
+      max-width: calc(var(--shell-content-max) + var(--gutter-l) + var(--gutter-r));
+      margin-inline: auto;
+      padding-top: 40px;
+      padding-bottom: var(--space-6);
+    }
+
+    .lth-eyebrow {
+      margin-bottom: 10px;
+    }
+
+    .lth-eyebrow-extra {
+      display: inline;
+    }
+
+    .lth-title {
+      font-size: var(--text-display-d);
+      letter-spacing: -0.05em;
+      line-height: 1;
+    }
+  }
 </style>
 
 <script>
-  // One large-title-header instance per page (iOS large-title pattern is a
-  // single per-screen header) — plain querySelector is enough, no scoping.
-  // Re-bound on every soft navigation (onPageLoad): navbar/sentinel are
-  // fresh DOM nodes after each swap, and the previous page's observer must
-  // be disconnected before its nodes are discarded (see page-lifecycle.ts).
+  // One header instance per page. Re-bound on every soft navigation
+  // (onPageLoad): navbar/sentinel are fresh DOM nodes after each swap, and the
+  // previous page's observer must be disconnected before its nodes are
+  // discarded (see page-lifecycle.ts).
   import { onPageLoad } from '../../lib/page-lifecycle';
+  import { formatTodayVi } from '../../lib/format-today-vi';
+  import { applyModKeyLabel } from '../../lib/kbd-platform';
 
   onPageLoad(() => {
+    const today = document.querySelector<HTMLElement>('[data-lth-today]');
+    if (today) today.textContent = formatTodayVi(new Date());
+    applyModKeyLabel(document);
+
     const navbar = document.querySelector<HTMLElement>('[data-lth-navbar]');
     const sentinel = document.querySelector<HTMLElement>('[data-lth-sentinel]');
 

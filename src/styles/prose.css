@@ -1,99 +1,192 @@
 /*
- * `.prose` — long-form lesson body typography (reader-layout content only).
- * Measure ~60-68ch, body 17px/1.7. Content markup itself (MDX -> HTML) comes
- * from the lesson MDX + mdx-components.ts; this file only styles the
- * standard elements it emits.
+ * `.prose` — long-form lesson body typography (reader-layout content only),
+ * Studio reading scale: 16.5px/1.72 on phones, 18px from 1024px. The measure
+ * (700px column) is owned by reader-layout.astro, not here. Markup comes from
+ * the lesson MDX + mdx-components.ts; this file only styles the standard
+ * elements it emits. Lesson components (note, real-life, figure, ...) carry
+ * their own scoped styles.
  */
 
 .prose {
-  max-width: 65ch;
-  margin-inline: auto;
-  font-size: var(--text-body);
-  line-height: var(--leading-relaxed);
-  color: var(--ink);
+  font-size: 16.5px;
+  line-height: 1.72;
+  color: var(--text);
+  overflow-wrap: break-word;
+  -webkit-text-size-adjust: 100%;
+  /* Numbers the body's h2 sections ("01", "02", ...). */
+  counter-reset: prose-section;
+}
+
+@media (min-width: 1024px) {
+  .prose {
+    font-size: 18px;
+  }
 }
 
 .prose > :first-child {
   margin-top: 0;
 }
 
+/* --- Headings. Anchored targets clear the top bar. --- */
 .prose h1,
 .prose h2,
 .prose h3,
 .prose h4 {
-  font-weight: 700;
-  line-height: var(--leading-tight);
-  margin-top: var(--space-6);
-  margin-bottom: var(--space-3);
+  font-weight: 800;
+  line-height: 1.3;
+  scroll-margin-top: calc(var(--shell-navbar-h) + env(safe-area-inset-top) + var(--space-4));
+  text-wrap: balance;
 }
 
-.prose h1 { font-size: var(--text-large); }
-.prose h2 { font-size: var(--text-title1); }
-.prose h3 { font-size: var(--text-title2); }
-.prose h4 { font-size: var(--text-title3); }
+.prose h1 {
+  margin: 30px 0 10px;
+  font-size: var(--text-title1);
+  line-height: 1.15;
+  letter-spacing: var(--track-title);
+}
+
+.prose h2 {
+  counter-increment: prose-section;
+  margin: 30px 0 10px;
+  padding-left: 32px;
+  text-indent: -32px;
+  font-size: 21px;
+  letter-spacing: var(--track-heading);
+}
+
+/* Section number: mono, volt-ink (concept h2 .n), hanging in a 32px gutter so
+   wrapped titles align under the first line. Inline (not flex) so inline markup
+   inside a heading cannot be split into flex items. */
+.prose h2::before {
+  content: counter(prose-section, decimal-leading-zero);
+  display: inline-block;
+  width: 22px;
+  margin-right: 10px;
+  text-indent: 0;
+  font: 500 var(--text-micro) var(--font-mono);
+  letter-spacing: 0;
+  color: var(--volt-ink);
+  vertical-align: baseline;
+}
+
+.prose h3 {
+  margin: 26px 0 8px;
+  font-size: 17.5px;
+  font-weight: 700;
+  letter-spacing: var(--track-tight);
+}
+
+.prose h4 {
+  margin: 22px 0 6px;
+  font-size: var(--text-callout);
+  font-weight: 700;
+  letter-spacing: var(--track-tight);
+}
+
+@media (min-width: 1024px) {
+  .prose h2 {
+    margin-top: 40px;
+    font-size: 25px;
+  }
+
+  .prose h3 {
+    font-size: 19px;
+  }
+
+  .prose h4 {
+    font-size: 17px;
+  }
+}
 
 .prose p {
-  margin-top: 0;
-  margin-bottom: var(--space-4);
+  margin: 0 0 14px;
 }
 
+/* --- Lists --- */
 .prose ul,
 .prose ol {
-  margin: 0 0 var(--space-4);
-  padding-left: var(--space-5);
+  margin: 0 0 14px;
+  padding-left: 1.4em;
 }
 
 .prose ul { list-style: disc; }
 .prose ol { list-style: decimal; }
 
 .prose li {
-  margin-bottom: var(--space-2);
+  margin-bottom: 6px;
+  padding-left: 0.2em;
+}
+
+.prose li::marker {
+  color: var(--text-3);
+}
+
+.prose ol > li::marker {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
 }
 
 .prose li > ul,
 .prose li > ol {
-  margin-top: var(--space-2);
+  margin-top: 6px;
   margin-bottom: 0;
 }
 
-/* Wide tables: rehype-wrap-tables.mjs plugin (registered in astro.config.mjs)
-   wraps every <table> in a <div class="table-wrap"> with proper accessibility
-   attributes (role="region", aria-label). This solution is better than :has()
-   because it creates a proper semantic wrapper and doesn't rely on CSS
-   specificity tricks. Browsers properly contain overflow inside the wrapper
-   without side effects. */
+/* --- Tables: rehype-wrap-tables.mjs wraps every <table> in
+   <div class="table-wrap" role="region" tabindex="0"> so wide tables scroll
+   horizontally inside a hairline card instead of the page. --- */
 .prose .table-wrap {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  margin: 20px 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glow);
 }
 
 .prose table {
   border-collapse: collapse;
   min-width: 100%;
-  font-size: var(--text-footnote);
-  margin: 0 0 var(--space-4);
+  font-size: var(--text-small);
+  line-height: 1.5;
+  margin: 0;
 }
 
 .prose th,
 .prose td {
-  border: 1px solid var(--line);
-  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--line);
+  padding: 11px 14px;
   text-align: left;
+  vertical-align: top;
   white-space: normal;
+}
+
+.prose tbody tr:last-child td,
+.prose tr:last-child td {
+  border-bottom: none;
 }
 
 .prose th {
   background: var(--surface-2);
-  font-weight: 600;
+  font: 500 var(--text-label) / 1.3 var(--font-mono);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-3);
+  white-space: nowrap;
 }
 
-/* Code */
+.prose td {
+  color: var(--text-2);
+}
+
+/* --- Code --- */
 .prose code {
   font-family: var(--font-mono);
-  font-size: 0.9em;
-  background: var(--surface-2);
-  border-radius: 4px;
-  padding: 0.15em 0.4em;
+  font-size: 0.86em;
+  background: var(--surface-3);
+  border-radius: var(--radius-xs);
+  padding: 0.12em 0.4em;
   /* Inline code can be one long unbreakable token (paths, API routes) that
      pushed the whole page into horizontal scroll at 375px. */
   overflow-wrap: anywhere;
@@ -101,14 +194,16 @@
 
 .prose pre {
   font-family: var(--font-mono);
-  font-size: var(--text-footnote);
-  background: var(--surface-2);
+  font-size: 13.5px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--glow);
   border-radius: var(--radius-row);
-  padding: var(--space-4);
-  margin: 0 0 var(--space-4);
+  padding: 16px;
+  margin: 20px 0;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  line-height: var(--leading-normal);
+  line-height: 1.6;
 }
 
 .prose pre code {
@@ -131,65 +226,78 @@
   }
 }
 
-/* Blockquote */
+/* --- Blockquote: concept pull-quote (2px volt-ink rule, 17px/600) --- */
 .prose blockquote {
-  margin: 0 0 var(--space-4);
-  padding-left: var(--space-4);
-  border-left: 3px solid var(--accent);
-  color: var(--ink-2);
-  font-style: italic;
+  margin: 18px 0;
+  padding: 4px 0 4px 16px;
+  border-left: 2px solid var(--volt-ink);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.55;
+  letter-spacing: var(--track-tight);
+  color: var(--text);
 }
 
-.prose blockquote p:last-child {
+.prose blockquote > :last-child {
   margin-bottom: 0;
 }
 
-/* Media */
+@media (min-width: 1024px) {
+  .prose blockquote {
+    font-size: 19px;
+  }
+}
+
+/* --- Media --- */
 .prose img,
 .prose svg {
   max-width: 100%;
   height: auto;
-  border-radius: var(--radius-card);
 }
 
-.prose figure {
-  margin: 0 0 var(--space-4);
-}
-
-.prose figcaption {
-  margin-top: var(--space-2);
-  font-size: var(--text-caption);
-  color: var(--ink-2);
-  text-align: center;
+.prose img {
+  border-radius: var(--radius-row);
 }
 
 .prose hr {
   border: none;
   border-top: 1px solid var(--line);
-  margin: var(--space-6) 0;
+  margin: 28px 0;
 }
 
-/* Links: underline for visibility without relying on color alone. Inline
-   text links are exempt from the 44px touch-target minimum (standard
-   accepted exception for running text; the target itself — one word — is
-   still individually tappable and surrounded by line-height padding).
+/* --- Links ---
+   Running-text links: ink text with a 2px volt underline (never color alone).
+   Padding extends the tap area vertically without moving the line (negative
+   margin cancels it); `box-decoration-break: clone` keeps that on wrapped
+   links. Scoped to text containers so standalone link components (next
+   lesson, attribution) keep their own sizing.
    overflow-wrap: a handful of exercise lessons link their source repo path
-   verbatim as the link text (e.g. "solutions/system_design/pastebin/
-   README.md") — one long slash-separated token with no natural break point,
-   which at 375px pushed past the viewport and forced the whole page to
-   horizontally scroll (found via a real-browser scrollWidth audit across
-   all 58 built pages). overflow-wrap: break-word only breaks mid-word as a
-   last resort, when the word would otherwise overflow its container — short
-   link text is unaffected. */
-.prose a {
-  color: var(--accent);
+   verbatim as the link text — one long slash-separated token with no natural
+   break point that at 375px forced the page to scroll horizontally.
+   break-word only breaks mid-word as a last resort. */
+.prose :is(p, li, td, th, blockquote, figcaption, h2, h3, h4) a {
+  color: var(--text);
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-decoration-color: var(--volt-ink);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
   overflow-wrap: break-word;
+  padding-block: 0.4em;
+  margin-block: -0.4em;
+  border-radius: 4px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition: background-color var(--dur-1) var(--ease);
 }
 
-.prose a:hover {
-  text-decoration-thickness: 2px;
+@media (hover: hover) {
+  .prose :is(p, li, td, th, blockquote, figcaption, h2, h3, h4) a:hover {
+    background: var(--volt-soft);
+  }
+}
+
+.prose :is(p, li, td, th, blockquote, figcaption, h2, h3, h4) a:active {
+  background: var(--volt-soft);
 }
 
 .prose strong {

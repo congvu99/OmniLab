@@ -1,15 +1,18 @@
 ---
-// Shell for the 4 top-level tab pages: sidebar (>=1024px) or bottom tab bar
-// (<1024px) + optional iOS large-title header + <main>. Reader screens use
-// reader-layout.astro instead (full-bleed, no tab chrome).
+// Shell for the 4 top-level tab pages: sidebar (>=1024px) or ink dock
+// (<1024px) + optional large-title header + <main>. Reader screens use
+// reader-layout.astro instead (focus mode: no dock). <body data-shell="tabs">
+// marks this shell for page-level CSS.
 import { ClientRouter } from 'astro:transitions';
-import X from '@lucide/astro/icons/x';
+import Icon from '../components/icon/icon.astro';
+import IconSprite from '../components/icon/icon-sprite.astro';
 import BaseHead from './base-head.astro';
 import { domainAccentStyle } from './domain-accent';
 import TabBar from '../components/shell/tab-bar.astro';
 import SidebarNav from '../components/shell/sidebar-nav.astro';
 import LargeTitleHeader from '../components/shell/large-title-header.astro';
 import NavigationProgressBar from '../components/shell/navigation-progress-bar.astro';
+import CommandPalette from '../components/command-palette/command-palette.astro';
 
 interface Props {
   title: string;
@@ -29,15 +32,17 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
     <BaseHead title={title} description={description} />
     <ClientRouter />
   </head>
-  <body>
+  <body data-shell="tabs">
+    <IconSprite />
     <NavigationProgressBar />
+    <CommandPalette />
     <a href="#main-content" class="skip-link">Bỏ qua, đến nội dung chính</a>
     <SidebarNav />
     <div class="app-shell">
       <div class="ios-hint" data-ios-hint hidden>
         <p class="ios-hint__text">Thêm OmniLab vào màn hình chính để lưu tiến độ lâu dài.</p>
         <button type="button" class="ios-hint__dismiss tap-scale" data-ios-hint-dismiss aria-label="Đóng gợi ý">
-          <X size={16} stroke-width={2.5} aria-hidden="true" />
+          <Icon name="close" size={16} stroke-width={2} />
         </button>
       </div>
       <p class="storage-warning" data-storage-warning hidden>
@@ -89,7 +94,9 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
     padding-right: max(0px, calc(env(safe-area-inset-right) - var(--space-4)));
     /* Room for the fixed bottom tab bar + its safe-area inset, plus a little
        breathing room so the last row of content isn't flush against it. */
-    padding-bottom: calc(var(--shell-tabbar-h) + env(safe-area-inset-bottom) + var(--space-4));
+    padding-bottom: calc(
+      var(--shell-tabbar-h) + var(--shell-tabbar-gap) + env(safe-area-inset-bottom) + var(--space-5)
+    );
   }
 
   /* iOS Safari, not running standalone, not yet dismissed — see
@@ -109,14 +116,14 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
     align-items: center;
     gap: var(--space-3);
     padding: var(--space-2) var(--gutter-r) var(--space-2) var(--gutter-l);
-    background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+    background: var(--accent-tint);
     border-bottom: 1px solid var(--line);
   }
 
   .ios-hint__text {
     flex: 1;
     font-size: var(--text-caption);
-    color: var(--ink);
+    color: var(--text);
   }
 
   .ios-hint__dismiss {
@@ -131,7 +138,7 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: var(--ink-2);
+    color: var(--text-2);
   }
 
   .ios-hint__dismiss::after {
@@ -149,7 +156,7 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
     background: var(--surface-2);
     border-bottom: 1px solid var(--line);
     font-size: var(--text-caption);
-    color: var(--ink-2);
+    color: var(--text-2);
     text-align: center;
   }
 
@@ -159,8 +166,10 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
     }
 
     .app-main {
-      /* No bottom tab bar at this breakpoint (sidebar instead). */
-      padding-bottom: var(--space-6);
+      /* Centered readable column; no bottom tab bar at this breakpoint. */
+      max-width: calc(var(--shell-content-max) + var(--gutter-l) + var(--gutter-r));
+      margin-inline: auto;
+      padding-bottom: var(--space-7);
     }
   }
 </style>

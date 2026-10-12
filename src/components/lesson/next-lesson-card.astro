@@ -1,80 +1,105 @@
 ---
-// End-of-lesson navigation card: link to the next lesson (crossing module
-// boundaries within the domain, see src/lib/content-queries.ts getAdjacent),
-// or a "Hoàn thành lĩnh vực" card when there is no next lesson (domain's last
-// lesson).
-import ArrowRight from '@lucide/astro/icons/arrow-right';
-import PartyPopper from '@lucide/astro/icons/party-popper';
+// End-of-lesson navigation card (concept ".next"): link to the next lesson
+// (crossing module boundaries within the domain, see
+// src/lib/content-queries.ts getAdjacent), or a "Hoàn thành lĩnh vực" card
+// when there is no next lesson (domain's last lesson). Mono caps eyebrow,
+// 15/700 title, volt arrow tile.
+import Icon from '../icon/icon.astro';
 
 interface Props {
   next: { href: string; title: string } | null;
   /** Where the "Hoàn thành lĩnh vực" card links back to when `next` is null. */
   domainHref: string;
+  class?: string;
 }
 
-const { next, domainHref } = Astro.props;
+const { next, domainHref, class: className } = Astro.props;
 ---
 
 {
   next ? (
-    <a href={next.href} class="next-lesson-card tap-scale">
-      <span class="next-lesson-card__eyebrow">Bài tiếp theo</span>
-      <span class="next-lesson-card__title">{next.title}</span>
-      <ArrowRight size={20} stroke-width={2} aria-hidden="true" class="next-lesson-card__icon" />
+    <a href={next.href} class:list={['next-lesson-card', 'tap-scale', className]}>
+      <span class="next-lesson-card__text">
+        <span class="next-lesson-card__eyebrow">Bài tiếp theo</span>
+        <span class="next-lesson-card__title">{next.title}</span>
+      </span>
+      <span class="next-lesson-card__tile" aria-hidden="true">
+        <Icon name="arrow-right" size={19} stroke-width={1.75} />
+      </span>
     </a>
   ) : (
-    <a href={domainHref} class="next-lesson-card next-lesson-card--complete tap-scale">
-      <PartyPopper size={22} stroke-width={1.75} aria-hidden="true" />
-      <span class="next-lesson-card__title">Hoàn thành lĩnh vực — xem lại các bài</span>
+    <a href={domainHref} class:list={['next-lesson-card', 'tap-scale', className]}>
+      <span class="next-lesson-card__text">
+        <span class="next-lesson-card__eyebrow">Hết lĩnh vực</span>
+        <span class="next-lesson-card__title">Hoàn thành lĩnh vực — xem lại các bài</span>
+      </span>
+      <span class="next-lesson-card__tile" aria-hidden="true">
+        <Icon name="spark" size={19} stroke-width={1.75} />
+      </span>
     </a>
   )
 }
 
 <style>
   .next-lesson-card {
-    margin: var(--space-6) 0 0;
-    padding: var(--space-4) var(--space-5);
+    margin: 12px 0 0;
+    padding: 16px;
     display: flex;
     align-items: center;
-    gap: var(--space-3);
-    min-height: 44px;
-    background: var(--surface-2);
-    border-radius: var(--radius-card);
+    gap: 14px;
+    min-height: 72px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    box-shadow: var(--glow);
     text-decoration: none;
-    color: var(--ink);
-    transition: box-shadow var(--dur-fast) var(--ease-out);
+    color: var(--text);
+    transition: border-color var(--dur-1) var(--ease), transform var(--dur-1) var(--ease),
+      opacity var(--dur-1) var(--ease);
   }
 
   @media (hover: hover) {
     .next-lesson-card:hover {
-      box-shadow: var(--shadow-card), 0 0 0 1px var(--line-strong);
+      border-color: var(--line-3);
+    }
+
+    .next-lesson-card:hover .next-lesson-card__tile {
+      transform: translateX(2px);
     }
   }
 
-  .next-lesson-card__eyebrow {
-    display: block;
-    width: 100%;
-    font-size: var(--text-caption);
-    font-weight: 600;
-    color: var(--ink-2);
+  .next-lesson-card__text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
   }
 
-  .next-lesson-card:not(.next-lesson-card--complete) {
-    flex-wrap: wrap;
+  .next-lesson-card__eyebrow {
+    font: 500 var(--text-nano) / 1.2 var(--font-mono);
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--text-3);
   }
 
   .next-lesson-card__title {
-    font-size: var(--text-body);
+    font-size: var(--text-subhead);
     font-weight: 700;
-    flex: 1;
+    line-height: 1.3;
+    letter-spacing: var(--track-tight);
+    overflow-wrap: anywhere;
   }
 
-  .next-lesson-card__icon {
-    color: var(--accent);
-    flex-shrink: 0;
-  }
-
-  .next-lesson-card--complete {
-    color: var(--accent);
+  .next-lesson-card__tile {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--volt);
+    color: var(--on-volt);
+    display: grid;
+    place-items: center;
+    transition: transform var(--dur-1) var(--ease);
   }
 </style>

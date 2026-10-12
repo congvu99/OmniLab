@@ -25,3 +25,11 @@ repomix-output.xml
 
 # deploy (VPS)
 .deployed-tag
+
+# design review artifacts (screenshots, HTML prototypes, bundled fonts) stay local;
+# only plan/report markdown is versioned
+plans/261012-*/**/*.png
+plans/261012-*/**/*.html
+plans/261012-*/**/assets/
+plans/261012-full-restyle-concepts/concept-a-aurora-glass/
+plans/261012-full-restyle-concepts/concept-c-soft-bento/

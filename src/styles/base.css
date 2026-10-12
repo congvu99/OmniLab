@@ -1,8 +1,28 @@
 /*
- * Global reset + base typography + motion primitives shared by every page.
- * Imported once per layout (app-layout.astro / reader-layout.astro via
- * base-head.astro). Long-form lesson body styling lives in prose.css, not
- * here — this file is app-shell chrome only.
+ * Global reset + base typography + shared "Studio" utilities (graphite / paper,
+ * Volt signature, hairlines + inner glows). Imported once per layout via
+ * base-head.astro. Lesson body typography lives in prose.css. Tokens: tokens.css.
+ *
+ * Studio utilities (use these instead of re-inventing per component):
+ *   .btn                 44px button (use on <a>/<button>); variants
+ *     .btn-primary       volt fill + --on-volt text. The ONE main action per screen.
+ *     .btn-secondary     surface-2 + hairline + glow
+ *     .btn-ghost         text only, surface-2 on hover
+ *     .btn-sm / .btn-icon  34px visual (44px hit area) / square icon-only
+ *   .chip                32px pill filter; [aria-pressed="true"] / .on = inverted
+ *   .card                surface + hairline + inner glow + shadow (radius 16)
+ *   .row                 56px list row: > .idx (mono index) .tt (b title + small meta) .chev
+ *   .bar > i             4px progress track; width via --p, color via --c
+ *   .seg > i             segmented bar (--n columns), i.on filled with --c
+ *   .st(.done|.prog)     22px status dot (--p for .prog)
+ *   .field               46px input shell (icon + input + .kbd); text-field boundary >=3:1
+ *   .kbd / kbd           keycap hint; only show hints for keys that really work
+ *   .eyebrow             mono uppercase 11.5px label (b = volt-ink accent)
+ *   .mono .tnum          JetBrains Mono / tabular numerals
+ *   .dom-ic              40px tinted domain icon tile, color from --c
+ *   .tap-scale           press feedback. .sr-only, .skip-link, .skeleton
+ *   .hide-at-aside-width hides inline copies once the reader aside is visible
+ * Icons: <Icon> (src/components/icon) renders svg.ic.
  */
 
 *,
@@ -14,7 +34,7 @@
 html {
   color-scheme: light dark; /* native form controls / scrollbars follow system theme */
   /* Prevents iOS/older mobile browsers' automatic text-inflation on rotation.
-     Does NOT disable pinch-zoom or OS Dynamic Type — those stay user-controlled. */
+     Does NOT disable pinch-zoom or OS Dynamic Type - those stay user-controlled. */
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   /* Guard against accidental horizontal overflow from any component without
@@ -23,18 +43,35 @@ html {
      that a lone `overflow-x: hidden` would trigger on `overflow-y`. */
   overflow-x: hidden;
   overflow-y: auto;
+  scroll-padding-top: calc(var(--shell-navbar-h) + env(safe-area-inset-top) + var(--space-4));
 }
 
 body {
   margin: 0;
   min-height: 100dvh;
   background: var(--bg);
-  color: var(--ink);
+  color: var(--text);
   font-family: var(--font-ui);
-  font-size: var(--text-body); /* 17px, >=16px per non-functional requirement */
+  font-size: var(--text-body); /* 16px, >=16px per non-functional requirement */
   line-height: var(--leading-normal);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/* Grain: SVG fractal noise as an inline data-URI (CSP img-src allows data:).
+   Desktop only (mix-blend-mode over a full-screen layer is GPU-heavy on
+   phones) and skipped when the OS asks for reduced transparency. */
+@media (min-width: 1024px) and (prefers-reduced-transparency: no-preference) {
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-overlay);
+    pointer-events: none;
+    opacity: var(--grain);
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
 }
 
 img,
@@ -86,16 +123,61 @@ p {
   margin: 0;
 }
 
+::selection {
+  background: var(--volt);
+  color: var(--on-volt);
+}
+
+mark {
+  background: var(--volt-soft);
+  color: inherit;
+  border-radius: 3px;
+  padding: 0 1px;
+  box-shadow: inset 0 -1.5px 0 var(--volt-ink);
+}
+
+/* --- Icons (<Icon>): stroke styling is set as svg attributes by the
+   component; this only handles layout helpers. --- */
+.icon-sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.ic {
+  flex: none;
+}
+
+.ic--filled {
+  fill: currentColor;
+}
+
+.ic[data-rotate="90"] {
+  rotate: 90deg;
+}
+
+.ic[data-rotate="270"] {
+  rotate: 270deg;
+}
+
 /* --- Accessibility: focus rings --- */
-/* Visible on keyboard focus only; mouse/touch activation stays clean. */
+/* Visible on keyboard focus only; mouse/touch activation stays clean. Dark:
+   volt ring. Light: ink ring + volt halo (volt alone is too pale on paper). */
 :focus {
   outline: none;
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--volt);
   outline-offset: 2px;
-  border-radius: 4px;
+}
+
+@media (prefers-color-scheme: light) {
+  :focus-visible {
+    outline-color: var(--text);
+    box-shadow: 0 0 0 5px var(--volt);
+  }
 }
 
 /* --- Screen-reader-only content: visually hidden, still in the a11y tree
@@ -122,33 +204,34 @@ p {
   z-index: var(--z-toast);
   padding: var(--space-2) var(--space-4);
   background: var(--surface);
-  color: var(--ink);
+  color: var(--text);
+  border: 1px solid var(--line-2);
   border-radius: var(--radius-row);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--glow), var(--shadow);
   font-weight: 600;
   text-decoration: none;
   transform: translateY(-200%);
-  transition: transform var(--dur-fast) var(--ease-out);
+  transition: transform var(--dur-1) var(--ease);
 }
 
 .skip-link:focus-visible {
   transform: translateY(0);
 }
 
-/* --- Tap feedback: subtle scale, transform/opacity only (no layout shift,
-   no reliance on iOS's quirky :active-without-touch-listener behavior —
-   see the touchstart no-op registered in app-layout.astro/reader-layout.astro,
-   which "arms" :active for the whole page). --- */
+/* --- Tap feedback: subtle scale, transform only (no layout shift, no
+   reliance on iOS's quirky :active-without-touch-listener behavior - see the
+   touchstart no-op registered in app-layout.astro/reader-layout.astro, which
+   "arms" :active for the whole page). --- */
 .tap-scale {
-  transition: transform var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease-out);
+  transition: transform var(--dur-1) var(--ease), opacity var(--dur-1) var(--ease);
 }
 
 .tap-scale:active {
   transform: scale(0.97);
-  opacity: 0.9;
 }
 
-/* --- Reduced motion: kill all durations/transitions/smooth-scroll --- */
+/* --- Reduced motion: transitions/animations collapse to ~instant; page swaps
+   become a 120ms crossfade (view-transitions.css). --- */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -160,15 +243,55 @@ p {
   }
 }
 
-/* View Transitions (forward/back slide, reduced-motion handling): see
-   view-transitions.css — split out to keep this file under ~150 lines. */
+/* View Transitions (depth push, reduced-motion crossfade): see
+   view-transitions.css. */
 
-/* --- Skeleton placeholder: shown by data islands while /lessons-index.json
+/* ===== Type helpers ===== */
+.mono {
+  font-family: var(--font-mono);
+}
+
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font: 500 var(--text-label) / 1.2 var(--font-mono);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.eyebrow b {
+  color: var(--volt-ink);
+  font-weight: 500;
+}
+
+kbd,
+.kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 5px;
+  border: 1px solid var(--line-2);
+  border-bottom-width: 2px;
+  background: var(--surface-2);
+  color: var(--text-2);
+  font: 500 11px / 1 var(--font-mono);
+}
+
+/* ===== Skeleton placeholder: shown by data islands while /lessons-index.json
    is in flight, so they never flash a wrong "empty" state first. Callers
-   size the block to match the real content (no layout shift on swap). --- */
+   size the block to match the real content (no layout shift on swap). ===== */
 .skeleton {
   display: block;
-  background: var(--surface-2);
+  background: var(--surface-3);
   border-radius: var(--radius-row);
 }
 
@@ -186,4 +309,437 @@ p {
   50% {
     opacity: 0.55;
   }
+}
+
+/* ===== Buttons ===== */
+.btn {
+  --h: 44px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: var(--h);
+  padding: 0 18px;
+  border-radius: var(--radius-row);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--dur-1) var(--ease), background-color var(--dur-1), border-color var(--dur-1),
+    box-shadow var(--dur-2) var(--ease), color var(--dur-1);
+}
+
+.btn .ic {
+  font-size: 18px;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn[disabled],
+.btn[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--volt);
+  color: var(--on-volt);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0 -2px 0 rgba(0, 0, 0, 0.14);
+}
+
+.btn-secondary {
+  background: var(--surface-2);
+  border: 1px solid var(--line-2);
+  box-shadow: var(--glow);
+}
+
+.btn-ghost {
+  color: var(--text-2);
+}
+
+@media (hover: hover) {
+  .btn-primary:hover {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0 -2px 0 rgba(0, 0, 0, 0.14),
+      0 0 24px -6px var(--volt);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--line-3);
+  }
+
+  .btn-ghost:hover {
+    color: var(--text);
+    background: var(--surface-2);
+  }
+}
+
+/* Small buttons keep the concept's 34px look; the pseudo-element extends the
+   hit area to 44px (WCAG 2.5.5). */
+.btn-sm {
+  --h: 34px;
+  padding: 0 12px;
+  font-size: 13.5px;
+  border-radius: var(--radius-sm);
+  gap: 8px;
+}
+
+.btn-sm::after {
+  content: "";
+  position: absolute;
+  inset: -5px 0;
+}
+
+.btn-icon {
+  width: var(--h);
+  padding: 0;
+}
+
+.btn .kbd {
+  margin-left: 2px;
+  background: transparent;
+}
+
+.btn-primary .kbd {
+  border-color: rgba(0, 0, 0, 0.2);
+  color: rgba(0, 0, 0, 0.6);
+}
+
+/* ===== Chip (filter pill) ===== */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius-full);
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: all var(--dur-1) var(--ease);
+}
+
+.chip .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+.chip[aria-pressed="true"],
+.chip.on {
+  background: var(--text);
+  color: var(--bg);
+  border-color: transparent;
+}
+
+@media (hover: hover) {
+  .chip:hover {
+    border-color: var(--line-3);
+  }
+}
+
+/* ===== Card ===== */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glow), var(--shadow);
+}
+
+/* ===== Progress ===== */
+.bar {
+  position: relative;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--surface-3);
+  overflow: hidden;
+}
+
+.bar > i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--p, 0%);
+  background: var(--c, var(--volt));
+  border-radius: inherit;
+  transition: width var(--dur-4) var(--ease);
+}
+
+.seg {
+  display: grid;
+  grid-template-columns: repeat(var(--n, 10), 1fr);
+  gap: 3px;
+}
+
+.seg > i {
+  height: 6px;
+  border-radius: 2px;
+  background: var(--surface-3);
+}
+
+.seg > i.on {
+  background: var(--c, var(--volt));
+}
+
+/* ===== Status dot (lesson done / in progress) ===== */
+.st {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line-3);
+  font-size: 13px;
+}
+
+.st.done {
+  background: var(--volt);
+  border-color: transparent;
+  color: var(--on-volt);
+}
+
+.st.prog {
+  border: 0;
+  padding: 3px;
+  background: conic-gradient(var(--volt-ink) calc(var(--p, 0) * 1%), transparent 0);
+}
+
+.st.prog::before {
+  content: "";
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--surface);
+}
+
+/* ===== Domain icon tile (color from --c, e.g. var(--arch)) ===== */
+.dom-ic {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  font-size: 21px;
+  color: var(--c, var(--accent));
+  background: var(--accent-tint);
+  box-shadow: inset 0 0 0 1px var(--line-2);
+}
+
+@supports (color: color-mix(in srgb, red 10%, blue)) {
+  .dom-ic {
+    background: color-mix(in srgb, var(--c, var(--accent)) 13%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--c, var(--accent)) 24%, transparent);
+  }
+}
+
+/* ===== Row (flat list row inside a card/list) ===== */
+.row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 56px;
+  padding: 12px 14px;
+  border-radius: var(--radius-row);
+  text-align: left;
+  text-decoration: none;
+  transition: background-color var(--dur-1) var(--ease);
+}
+
+.row .idx {
+  flex: none;
+  width: 22px;
+  font: 500 12px var(--font-mono);
+  color: var(--text-3);
+}
+
+.row .tt {
+  flex: 1;
+  min-width: 0;
+}
+
+.row .tt b {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: var(--track-tight);
+}
+
+.row .tt small {
+  display: block;
+  margin-top: 2px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font: 400 11.5px / 1.5 var(--font-mono);
+  color: var(--text-3);
+}
+
+.row .chev {
+  font-size: 18px;
+  color: var(--text-3);
+  transition: transform var(--dur-1) var(--ease), color var(--dur-1);
+}
+
+@media (hover: hover) {
+  .row:hover {
+    background: var(--surface-2);
+  }
+
+  .row:hover .chev {
+    transform: translateX(2px);
+    color: var(--text);
+  }
+}
+
+/* ===== Field (input shell) ===== */
+.field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 46px;
+  padding: 0 12px 0 14px;
+  border-radius: var(--radius-row);
+  /* line-strong, not line-2: a text field's boundary must be >=3:1 (WCAG 1.4.11). */
+  border: 1px solid var(--line-strong);
+  background: var(--surface-2);
+  box-shadow: var(--glow);
+  color: var(--text-3);
+  transition: border-color var(--dur-1), box-shadow var(--dur-2) var(--ease);
+}
+
+.field .ic {
+  font-size: 19px;
+}
+
+.field input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: none;
+  outline: none;
+  color: var(--text);
+  font-size: 16px; /* >=16px stops iOS zooming on focus */
+}
+
+.field input::placeholder {
+  color: var(--text-3);
+}
+
+.field:focus-within {
+  border-color: var(--volt-ink);
+  box-shadow: 0 0 0 4px var(--volt-soft);
+}
+
+/* Content that duplicates the reader's aside column (e.g. inline TOC) takes
+   this class so it hides exactly when reader-layout's aside appears. */
+@media (min-width: 1280px) {
+  .hide-at-aside-width {
+    display: none !important;
+  }
+}
+
+/* ===== Tab-screen shared utilities ===== */
+
+/* Domain hue: set --hue-l / --hue-d inline (from content YAML accent /
+   accentDark); --c then follows the system theme. Feeds .dom-ic, .bar, .st. */
+.hue {
+  --c: var(--hue-l, var(--volt-ink));
+}
+
+@media (prefers-color-scheme: dark) {
+  .hue {
+    --c: var(--hue-d, var(--hue-l, var(--volt-ink)));
+  }
+}
+
+/* Staggered entrance: give each item `style="--i:N"`. 30ms step, 8px rise. */
+@keyframes ol-stagger-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.rise {
+  animation: ol-stagger-in var(--dur-3) var(--ease) backwards;
+  animation-delay: calc(var(--i, 0) * var(--stagger));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise {
+    animation: none;
+  }
+}
+
+/* Section head: mono label left, optional text action right (volt-ink). */
+.sec-h {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 26px 0 8px;
+}
+
+.sec-h h2 {
+  font: 500 var(--text-label) / 1 var(--font-mono);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.sec-h a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-block: -14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--volt-ink);
+  text-decoration: none;
+}
+
+/* Flat list of .row items separated by inset hairlines (concept .list).
+   --inset = where the hairline starts (68px after a 40px icon tile, 50px
+   after a mono index). Wrap rows in <li>. */
+.rows {
+  --inset: 68px;
+  display: grid;
+  /* minmax(0, 1fr), not the implicit `auto` track: a row's nowrap meta line
+     would otherwise size the track to its full text and push rows past the
+     viewport (seen at 320px) instead of ellipsizing. */
+  grid-template-columns: minmax(0, 1fr);
+  margin: 0 8px;
+}
+
+.rows--idx {
+  --inset: 50px;
+}
+
+.rows > li {
+  position: relative;
+}
+
+.rows > li + li::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: var(--inset);
+  right: 14px;
+  height: 1px;
+  background: var(--line);
+  pointer-events: none;
 }

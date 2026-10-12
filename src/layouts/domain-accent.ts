@@ -3,8 +3,8 @@
  * CSS custom properties on the <html> element itself.
  *
  * Why inline on <html>: src/styles/tokens.css resolves `--accent` at the
- * `:root` selector (`--accent: var(--domain-accent, #4F46E5)`, flipped to
- * `--domain-accent-dark` under `prefers-color-scheme: dark`). Custom
+ * `:root` selector (`--accent: var(--domain-accent, var(--volt-ink))`, flipped
+ * to `--domain-accent-dark` under `prefers-color-scheme: dark`). Custom
  * properties only cascade downward, so an override has to land on `:root`
  * itself (i.e. <html>, the same element) — setting it on <body> or lower
  * would never reach that `:root` rule's computed value.

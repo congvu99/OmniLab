@@ -1,7 +1,10 @@
 ---
-// <Note title?> — generic callout box. Used both for original content boxes
-// converted 1:1 (finance ".note"/".box"/".warm" divs — text stays original,
-// so verify-fidelity keeps it) and for any future added notes.
+// <Note title?> — generic callout box (concept ".note"): info glyph + body on a
+// quiet surface-2 card. Used both for original content boxes converted 1:1
+// (finance ".note"/".box"/".warm" divs — text stays original, so verify-fidelity
+// keeps it) and for any future added notes.
+import Icon from '../icon/icon.astro';
+
 interface Props {
   title?: string;
 }
@@ -9,26 +12,57 @@ const { title } = Astro.props;
 ---
 
 <div class="note">
-  {title && <p class="note__title">{title}</p>}
-  <div class="note__body">
-    <slot />
+  <Icon name="info" size={20} stroke-width={1.75} aria-hidden="true" class="note__icon" />
+  <div class="note__main">
+    {title && <p class="note__title">{title}</p>}
+    <div class="note__body">
+      <slot />
+    </div>
   </div>
 </div>
 
 <style>
   .note {
-    margin: var(--space-5) 0;
-    padding: var(--space-4);
+    display: flex;
+    gap: 12px;
+    margin: 20px 0;
+    padding: 14px 16px;
+    border-radius: var(--radius-row);
+    border: 1px solid var(--line-2);
     background: var(--surface-2);
-    border-left: 4px solid var(--accent);
-    border-radius: 0 var(--radius-row) var(--radius-row) 0;
+    font-size: var(--text-subhead);
+    line-height: 1.6;
+    color: var(--text-2);
   }
+
+  .note__icon {
+    flex: none;
+    align-self: flex-start;
+    margin-top: 1px;
+    color: var(--text);
+  }
+
+  .note__main {
+    flex: 1;
+    min-width: 0;
+  }
+
   .note__title {
-    margin: 0 0 var(--space-2);
+    margin: 0 0 4px;
     font-weight: 700;
-    font-size: var(--text-footnote);
+    color: var(--text);
   }
-  .note__body :global(> :last-child) {
+
+  div.note__body :global(p) {
+    margin: 0 0 8px;
+    font-size: inherit;
+  }
+
+  div.note__body :global(> :last-child) {
     margin-bottom: 0;
+  }
+
+  div.note__body :global(strong) {
+    color: var(--text);
   }
 </style>

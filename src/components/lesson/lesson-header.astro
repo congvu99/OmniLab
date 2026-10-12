@@ -1,0 +1,106 @@
+---
+// Reader header (concept ".art-head"): mono eyebrow (domain / module · Bài NN/N),
+// 28px/800 title (44px desktop), optional summary dek, meta strip. This is the
+// page's real <h1>; the body's own duplicate title heading is hidden by the
+// reader page. The reader top bar shows the title only after this <h1> has
+// scrolled behind it, so the title is never repeated on screen.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import LessonMeta from './lesson-meta.astro';
+import { pad2 } from '../../lib/lesson-reader-model';
+
+interface Props {
+  title: string;
+  summary: string | null;
+  domainTitle: string;
+  moduleTitle: string;
+  /** 1-based position inside the domain, and the domain's lesson count. */
+  position: number;
+  total: number;
+  readingMinutes: number;
+  sourceName: string;
+  license: string;
+  examplesReviewed: boolean;
+  cover?: ImageMetadata;
+}
+
+const { title, summary, domainTitle, moduleTitle, position, total, readingMinutes, sourceName, license, examplesReviewed, cover } =
+  Astro.props;
+---
+
+<header class="rd-head">
+  <p class="eyebrow rd-eyebrow">
+    <span class="rd-dom"><span aria-hidden="true">■ </span>{domainTitle}</span>
+    <span aria-hidden="true">/</span>
+    <span>{moduleTitle}</span>
+    <span aria-hidden="true">·</span>
+    <span class="tnum">Bài {pad2(position)}/{total}</span>
+  </p>
+  <h1 class="rd-title">{title}</h1>
+  {summary && <p class="rd-sum">{summary}</p>}
+  <LessonMeta
+    readingMinutes={readingMinutes}
+    sourceName={sourceName}
+    license={license}
+    examplesReviewed={examplesReviewed}
+  />
+  {cover && <Image src={cover} alt="" class="rd-cover" loading="eager" decoding="async" />}
+</header>
+
+<style>
+  .rd-head {
+    padding: 10px 0 4px;
+  }
+
+  .rd-eyebrow {
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    margin: 0 0 12px;
+  }
+
+  .rd-dom {
+    color: var(--accent);
+  }
+
+  .rd-title {
+    margin: 0;
+    font-size: var(--text-title1);
+    line-height: 1.15;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+    overflow-wrap: anywhere;
+  }
+
+  .rd-sum {
+    margin: 12px 0 0;
+    font-size: var(--text-callout);
+    line-height: 1.55;
+    color: var(--text-2);
+  }
+
+  .rd-head :global(.rd-cover) {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-top: 16px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line);
+  }
+
+  @media (min-width: 1024px) {
+    .rd-head {
+      padding-top: 0;
+    }
+
+    .rd-title {
+      font-size: var(--text-display-d);
+      line-height: 1.08;
+      letter-spacing: var(--track-display);
+    }
+
+    .rd-sum {
+      font-size: 19px;
+    }
+  }
+</style>

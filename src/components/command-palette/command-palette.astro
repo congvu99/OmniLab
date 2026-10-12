@@ -1,0 +1,309 @@
+---
+/**
+ * ⌘K / Ctrl+K command palette. Mount ONCE in the base layout, e.g.
+ *   import CommandPalette from '../components/command-palette/command-palette.astro';
+ *   <CommandPalette />
+ * Open from any button with:
+ *   document.dispatchEvent(new CustomEvent('omnilab:open-palette'))
+ * (or give it `data-open-palette`, handled below via event delegation).
+ *
+ * Markup is static and `hidden`; the bundled script (CSP: script-src 'self')
+ * lazily fetches data on first open. Styles are global (rows are created at
+ * runtime, so Astro's scoped attributes would not apply) and namespaced
+ * with the `cmdk` prefix.
+ */
+---
+
+<div class="cmdk-ov" data-cmdk hidden>
+  <div class="cmdk" data-cmdk-panel role="dialog" aria-modal="true" aria-label="Bảng lệnh tìm kiếm">
+    <div class="cmdk-in">
+      <svg class="cmdk-ic" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+      <input
+        data-cmdk-input
+        type="text"
+        role="combobox"
+        aria-label="Tìm bài học, lĩnh vực hoặc trang"
+        aria-expanded="false"
+        aria-controls="cmdk-list"
+        aria-autocomplete="list"
+        placeholder="Tìm bài học, lĩnh vực hoặc trang…"
+        autocomplete="off"
+        autocapitalize="off"
+        spellcheck="false"
+        enterkeyhint="go"
+      />
+      <kbd class="cmdk-kbd">Esc</kbd>
+    </div>
+    <ul id="cmdk-list" class="cmdk-res" data-cmdk-list role="listbox" aria-label="Kết quả"></ul>
+    <p class="cmdk-msg" data-cmdk-message hidden></p>
+    <div class="cmdk-ft" aria-hidden="true">
+      <span><kbd class="cmdk-kbd">↑</kbd><kbd class="cmdk-kbd">↓</kbd> chọn</span>
+      <span><kbd class="cmdk-kbd">↵</kbd> mở</span>
+      <span><kbd class="cmdk-kbd">Esc</kbd> đóng</span>
+      <span class="cmdk-count" data-cmdk-count></span>
+    </div>
+    <div class="cmdk-sr" data-cmdk-status role="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<script>
+  import { navigate } from 'astro:transitions/client';
+  import { createCommandPalette, OPEN_PALETTE_EVENT } from '../../lib/command-palette-controller';
+  import { fetchLessonsIndex } from '../../lib/lessons-index-client';
+  import { fetchSearchIndexDocs } from '../../lib/search-index-client';
+  import { getProgressStore } from '../../lib/progress-store';
+
+  // Module scripts run once per session under ClientRouter: create the
+  // controller (document-level listeners) once, re-bind element listeners
+  // to the current DOM on every astro:page-load.
+  const palette = createCommandPalette({
+    navigate: (url) => navigate(url),
+    fetchLessons: fetchLessonsIndex,
+    fetchDocs: fetchSearchIndexDocs,
+    getContinueId: (known) => getProgressStore().lastUnfinished(known),
+  });
+
+  document.addEventListener('astro:page-load', () => {
+    palette.bind(document.querySelector<HTMLElement>('[data-cmdk]'));
+  });
+  // Initial hard load: the page-load event fires after this module has run
+  // in ClientRouter pages, but bind eagerly too in case it already fired.
+  palette.bind(document.querySelector<HTMLElement>('[data-cmdk]'));
+
+  // Any element with [data-open-palette] opens it (delegated, survives swaps).
+  document.addEventListener('click', (e) => {
+    if ((e.target as Element | null)?.closest?.('[data-open-palette]')) {
+      document.dispatchEvent(new CustomEvent(OPEN_PALETTE_EVENT));
+    }
+  });
+</script>
+
+<style is:global>
+  /* Local aliases of the Studio tokens (tokens.css), scoped to the palette. */
+  .cmdk-ov {
+    --cp-surface: var(--surface);
+    --cp-surface-3: var(--surface-3);
+    --cp-bg-2: var(--bg-2);
+    --cp-line: var(--line);
+    --cp-line-2: var(--line-2);
+    --cp-text: var(--text);
+    --cp-text-2: var(--text-2);
+    --cp-text-3: var(--text-3);
+    --cp-volt: var(--volt-ink);
+    --cp-glow: var(--glow);
+    --cp-ease: var(--ease);
+    --cp-font: var(--font-ui);
+    --cp-mono: var(--font-mono);
+
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-overlay);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: min(14vh, 120px) 16px 16px;
+    background: transparent;
+    backdrop-filter: blur(0);
+    opacity: 0;
+    transition:
+      opacity 150ms var(--cp-ease),
+      background 150ms var(--cp-ease);
+    font-family: var(--cp-font);
+  }
+  .cmdk-ov[hidden] {
+    display: none;
+  }
+  .cmdk-ov[data-state='open'] {
+    opacity: 1;
+    background: var(--material-overlay);
+    backdrop-filter: blur(6px);
+  }
+  html.cmdk-lock {
+    overflow: hidden;
+  }
+  .cmdk {
+    width: min(660px, 100%);
+    max-height: calc(100dvh - 32px);
+    display: flex;
+    flex-direction: column;
+    border-radius: 18px;
+    background: var(--cp-surface);
+    border: 1px solid var(--cp-line-2);
+    box-shadow:
+      0 40px 100px -20px rgba(0, 0, 0, 0.7),
+      var(--cp-glow);
+    overflow: hidden;
+    color: var(--cp-text);
+    transform: translateY(-8px) scale(0.98);
+    transition: transform 150ms var(--cp-ease);
+  }
+  .cmdk-ov[data-state='open'] .cmdk {
+    transform: none;
+  }
+  .cmdk-in {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 60px;
+    padding: 0 18px;
+    border-bottom: 1px solid var(--cp-line);
+    flex: none;
+  }
+  .cmdk-ic {
+    color: var(--cp-text-3);
+    flex: none;
+  }
+  .cmdk-in input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: none;
+    outline: none;
+    font: inherit;
+    font-size: 18px;
+    color: var(--cp-text);
+  }
+  .cmdk-in input::placeholder {
+    color: var(--cp-text-3);
+  }
+  .cmdk-kbd {
+    font: 500 11px var(--cp-mono);
+    color: var(--cp-text-3);
+    border: 1px solid var(--cp-line-2);
+    border-radius: 6px;
+    padding: 2px 6px;
+    background: transparent;
+  }
+  .cmdk-res {
+    list-style: none;
+    margin: 0;
+    padding: 8px;
+    overflow: auto;
+    overscroll-behavior: contain;
+    max-height: 420px;
+    min-height: 0;
+  }
+  .cmdk-gh {
+    font: 500 10.5px var(--cp-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cp-text-3);
+    padding: 10px 12px 6px;
+  }
+  .cmdk-it {
+    --cmdk-c: var(--cmdk-accent, var(--cp-text-3));
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 46px;
+    padding: 0 12px;
+    border-radius: 10px;
+    font-size: 14.5px;
+    color: var(--cp-text-2);
+    cursor: pointer;
+    transition: background 120ms var(--cp-ease);
+  }
+  @media (prefers-color-scheme: dark) {
+    .cmdk-it {
+      --cmdk-c: var(--cmdk-accent-dark, var(--cmdk-accent, var(--cp-text-3)));
+    }
+  }
+  .cmdk-it[aria-selected='true'] {
+    background: var(--cp-surface-3);
+    box-shadow: inset 0 0 0 1px var(--cp-line-2);
+    color: var(--cp-text);
+  }
+  .cmdk-it[aria-selected='true']::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 12px;
+    bottom: 12px;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--volt);
+  }
+  .cmdk-it b {
+    font-weight: 600;
+    color: var(--cp-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+  .cmdk-it mark {
+    background: none;
+    color: var(--cp-volt);
+  }
+  .cmdk-meta {
+    margin-left: auto;
+    flex: none;
+    font: 500 11px var(--cp-mono);
+    color: var(--cmdk-c);
+  }
+  .cmdk-msg {
+    margin: 0;
+    padding: 32px 16px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--cp-text-3);
+  }
+  .cmdk-msg[hidden] {
+    display: none;
+  }
+  .cmdk-ft {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    height: 42px;
+    padding: 0 16px;
+    border-top: 1px solid var(--cp-line);
+    font-size: 12px;
+    color: var(--cp-text-3);
+    background: var(--cp-bg-2);
+    flex: none;
+  }
+  .cmdk-ft span {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .cmdk-count {
+    margin-left: auto;
+    font-family: var(--cp-mono);
+  }
+  .cmdk-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  @media (max-width: 640px) {
+    .cmdk-ov {
+      padding-top: 8vh;
+    }
+    .cmdk-ft span:not(.cmdk-count):nth-child(-n + 2) {
+      display: none;
+    }
+  }
+  /* Reduced transparency: keep the scrim, drop the blur (see tokens.css). */
+  @media (prefers-reduced-transparency: reduce) {
+    .cmdk-ov[data-state='open'] {
+      backdrop-filter: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cmdk,
+    .cmdk-ov[data-state='open'] .cmdk {
+      transform: none;
+      transition: none;
+    }
+    .cmdk-ov {
+      transition-duration: 150ms;
+      backdrop-filter: none !important;
+    }
+  }
+</style>

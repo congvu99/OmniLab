@@ -1,8 +1,12 @@
 ---
-// <RealLife title?> — life example callout. This is ADDED content (never
-// original translated text) so verify-fidelity removes this subtree wholesale
-// when comparing a lesson against its source snapshot. See
+// <RealLife title?> — life example callout (concept ".reallife"). This is ADDED
+// content (never original translated text) so verify-fidelity removes this
+// subtree wholesale when comparing a lesson against its source snapshot. See
 // docs/content-authoring-guide.md for the writing rules and usage pattern.
+//
+// Layout: mono caps tag "Ví dụ đời sống" (+ "Nháp" badge), the example's own
+// title as a 16/700 line (a <p>, not a heading, so it never breaks the
+// lesson's heading outline), then the body. The tint follows the domain accent.
 //
 // Draft badge: while a lesson's `examplesReviewed` frontmatter is still
 // `false`, the reader page ([slug].astro) sets
@@ -11,20 +15,21 @@
 // selector (no JS, no prop) so the badge automatically disappears the
 // moment a content reviewer flips `examplesReviewed: true` in
 // frontmatter — nothing here needs to change when that happens.
-import Lightbulb from '@lucide/astro/icons/lightbulb';
+import Icon from '../icon/icon.astro';
 
 interface Props {
   title?: string;
 }
-const { title = 'Ví dụ đời sống' } = Astro.props;
+const { title } = Astro.props;
 ---
 
-<aside class="real-life">
-  <p class="real-life__title">
-    <Lightbulb size={16} stroke-width={2} aria-hidden="true" class="real-life__icon" />
-    <span>{title}</span>
+<aside class="real-life" aria-label={title ? `Ví dụ đời sống: ${title}` : 'Ví dụ đời sống'}>
+  <p class="real-life__tag">
+    <Icon name="bulb" size={16} stroke-width={1.75} aria-hidden="true" />
+    <span>Ví dụ đời sống</span>
     <span class="real-life__badge">Nháp</span>
   </p>
+  {title && <p class="real-life__title">{title}</p>}
   <div class="real-life__body">
     <slot />
   </div>
@@ -32,47 +37,72 @@ const { title = 'Ví dụ đời sống' } = Astro.props;
 
 <style>
   .real-life {
-    margin: var(--space-5) 0;
-    padding: var(--space-4);
-    background: color-mix(in srgb, var(--accent) 10%, var(--surface));
-    border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--line));
-    border-radius: var(--radius-card);
+    position: relative;
+    margin: 20px 0;
+    padding: 18px;
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    border: 1px solid var(--line-2);
+    box-shadow: var(--glow);
+    font-size: var(--text-subhead);
+    line-height: 1.65;
+    color: var(--text-2);
   }
-  .real-life__title {
+
+  @supports (color: color-mix(in srgb, red 50%, blue)) {
+    .real-life {
+      background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 9%, var(--surface)), var(--surface));
+      border-color: color-mix(in srgb, var(--accent) 26%, transparent);
+    }
+  }
+
+  .real-life__tag {
     display: flex;
     align-items: center;
-    gap: var(--space-2);
-    margin: 0 0 var(--space-2);
-    font-weight: 700;
-    font-size: var(--text-footnote);
+    gap: 6px;
+    margin: 0 0 10px;
+    font: 500 var(--text-nano) / 1 var(--font-mono);
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
     color: var(--accent);
   }
-  .real-life__icon {
-    flex: none;
-    color: var(--accent);
-  }
+
   .real-life__badge {
     display: none;
-    flex: none;
     margin-left: auto;
-    padding: 2px var(--space-2);
-    font-size: 12px; /* 12px floor for any text */
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-    color: var(--accent-on);
-    background: var(--accent);
+    padding: 3px 7px;
     border-radius: var(--radius-full);
+    background: var(--accent);
+    color: var(--accent-on);
+    font-size: 11px;
+    letter-spacing: 0.04em;
   }
+
   /* Ancestor set by the reader page while examplesReviewed: false — see
      comment above. */
   :global([data-examples-reviewed='false']) .real-life .real-life__badge {
     display: inline-block;
   }
-  .real-life__body {
-    color: var(--ink);
+
+  .real-life__title {
+    margin: 0 0 6px;
+    font-size: var(--text-callout);
+    font-weight: 700;
+    letter-spacing: var(--track-tight);
+    line-height: 1.35;
+    color: var(--text);
   }
-  .real-life__body :global(> :last-child) {
+
+  div.real-life__body :global(p) {
+    margin: 0 0 10px;
+    font-size: inherit;
+  }
+
+  div.real-life__body :global(> :last-child) {
     margin-bottom: 0;
+  }
+
+  div.real-life__body :global(strong) {
+    color: var(--text);
   }
 </style>

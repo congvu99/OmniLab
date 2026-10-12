@@ -1,12 +1,15 @@
 ---
-// Domain detail: hero card + one section per module + lesson rows. Still
-// inside the app shell (tab bar/sidebar) — only the reader itself
-// (/hoc/**) goes full-bleed. nav-items.ts already treats /linh-vuc/* as part
-// of the "Lĩnh vực" tab (see activePrefixes), so the tab bar highlights
-// correctly here.
+// Domain page: pinned nav bar (back to Lĩnh vực + search), hero (icon, title,
+// KPIs, one volt CTA), module filter chips, then one list per module. Still
+// inside the app shell (dock/sidebar) — only the reader (/hoc/**) goes
+// full-bleed. nav-items.ts treats /linh-vuc/* as part of the "Lĩnh vực" tab,
+// so the dock/sidebar highlight correctly here.
 import AppLayout from '../../../layouts/app-layout.astro';
+import LargeTitleHeader from '../../../components/shell/large-title-header.astro';
+import Icon from '../../../components/icon/icon.astro';
 import DomainHero from '../../../components/domain/domain-hero.astro';
 import LessonRow from '../../../components/domain/lesson-row.astro';
+import DomainPageControls from '../../../components/islands/domain-page-controls.astro';
 import { getDomains, getDomain, getModules, getLessonsByDomain } from '../../../lib/content-queries';
 
 export async function getStaticPaths() {
@@ -22,7 +25,11 @@ const modules = await getModules(domainId!);
 const lessons = await getLessonsByDomain(domainId!);
 const totalReadingMinutes = lessons.reduce((sum, l) => sum + l.readingMinutes, 0);
 
-const lessonsByModule = new Map(modules.map((m) => [m.id, lessons.filter((l) => l.moduleId === m.id)]));
+// Position of each lesson within the whole domain ("04"), in reading order.
+const positionOf = new Map(lessons.map((l, i) => [l.id, i + 1]));
+const sections = modules
+  .map((m) => ({ module: m, lessons: lessons.filter((l) => l.moduleId === m.id) }))
+  .filter((s) => s.lessons.length > 0);
 ---
 
 <AppLayout
@@ -30,76 +37,124 @@ const lessonsByModule = new Map(modules.map((m) => [m.id, lessons.filter((l) => 
   description={domain.data.tagline}
   domainAccent={domain.data.accent}
   domainAccentDark={domain.data.accentDark}
-  largeTitle={domain.data.title}
 >
-  <DomainHero
-    icon={domain.data.icon}
-    tagline={domain.data.tagline}
-    accent={domain.data.accent}
-    accentDark={domain.data.accentDark}
-    lessonCount={lessons.length}
-    totalReadingMinutes={totalReadingMinutes}
-  />
+  <LargeTitleHeader title={domain.data.title} bare backHref="/linh-vuc" backLabel="Lĩnh vực">
+    <a href="/tim-kiem" slot="nav" class="btn btn-ghost btn-icon nav-search" aria-label="Tìm kiếm">
+      <Icon name="search" size={21} />
+    </a>
+  </LargeTitleHeader>
 
-  {
-    modules.map((moduleItem) => {
-      const moduleLessons = lessonsByModule.get(moduleItem.id) ?? [];
-      if (moduleLessons.length === 0) return null;
-      return (
-        <section class="module-section">
-          <h2 class="module-section__title">
-            {moduleItem.title}
-            <span class="module-section__count">{moduleLessons.length} bài</span>
-          </h2>
-          <ul class="lesson-list">
-            {moduleLessons.map((lesson) => (
-              <li>
-                <LessonRow
-                  href={lesson.url}
-                  order={lesson.order}
-                  title={lesson.title}
-                  readingMinutes={lesson.readingMinutes}
-                  lessonId={lesson.id}
-                  domainId={domainId!}
-                />
-              </li>
-            ))}
-          </ul>
-        </section>
-      );
-    })
-  }
+  <div data-domain-page>
+    <DomainHero
+      domainId={domain.id}
+      title={domain.data.title}
+      icon={domain.data.icon}
+      tagline={domain.data.tagline}
+      accent={domain.data.accent}
+      accentDark={domain.data.accentDark}
+      lessonCount={lessons.length}
+      totalReadingMinutes={totalReadingMinutes}
+      moduleCount={sections.length}
+      firstLessonUrl={lessons[0]?.url ?? '/linh-vuc'}
+    />
+
+    <DomainPageControls modules={sections.map((s) => ({ id: s.module.id, title: s.module.title }))} />
+
+    <div class="modules">
+      {
+        sections.map(({ module: moduleItem, lessons: moduleLessons }, s) => (
+          <section class="mod" data-module={moduleItem.id} aria-labelledby={`mod-${moduleItem.id}`}>
+            <div class="mod-h rise" style={`--i:${Math.min(s * 2, 8)}`}>
+              <h2 id={`mod-${moduleItem.id}`}>{moduleItem.title}</h2>
+              <span class="tnum" data-mod-count>
+                0/{moduleLessons.length}
+              </span>
+            </div>
+            <ul class="rows rows--idx mod-list">
+              {moduleLessons.map((lesson, i) => (
+                <li>
+                  <LessonRow
+                    href={lesson.url}
+                    index={positionOf.get(lesson.id) ?? i + 1}
+                    title={lesson.title}
+                    readingMinutes={lesson.readingMinutes}
+                    lessonId={lesson.id}
+                    domainId={domainId!}
+                    stagger={Math.min(s * 2 + i + 1, 10)}
+                  />
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </div>
+  </div>
 </AppLayout>
 
 <style>
-  .module-section {
-    margin: var(--space-5) var(--space-4);
+  .nav-search {
+    color: var(--text-2);
+    border-radius: var(--radius-row);
   }
 
-  .module-section__title {
+  .modules {
+    padding-top: 6px;
+  }
+
+  .mod-h {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    font-size: var(--text-title3);
+    gap: var(--space-3);
+    padding: 22px calc(var(--gutter-r) + 2px) 6px calc(var(--gutter-l) + 2px);
+  }
+
+  .mod-h h2 {
+    font-size: 15px;
     font-weight: 700;
-    color: var(--ink);
-    margin: 0 0 var(--space-2);
-    padding: 0 var(--space-2);
+    letter-spacing: var(--track-tight);
   }
 
-  .module-section__count {
-    font-size: var(--text-caption);
-    font-weight: 500;
-    color: var(--ink-2);
+  .mod-h span {
+    flex: none;
+    font: 500 11px var(--font-mono);
+    color: var(--text-3);
   }
 
-  .lesson-list {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    background: var(--surface);
-    border-radius: var(--radius-card);
-    box-shadow: var(--shadow-card);
-    overflow: hidden;
+  .mod-list {
+    margin-inline: calc(var(--gutter-l) - 12px) calc(var(--gutter-r) - 12px);
+  }
+
+  @media (min-width: 1024px) {
+    .modules {
+      max-width: calc(var(--shell-content-max) + var(--gutter-l) + var(--gutter-r));
+      margin-inline: auto;
+      padding: 8px var(--gutter-r) 0 var(--gutter-l);
+    }
+
+    .mod-h {
+      padding-inline: 4px;
+    }
+
+    /* Framed list like the concept's desktop tables. */
+    .mod-list {
+      --inset: 56px;
+      margin: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--surface);
+    }
+
+    .mod-list :global(.lesson-row) {
+      border-radius: 0;
+    }
+
+    /* The framed list clips an outside focus ring; draw it inside instead. */
+    .mod-list :global(.lesson-row:focus-visible) {
+      outline-offset: -2px;
+      box-shadow: none;
+    }
   }
 </style>

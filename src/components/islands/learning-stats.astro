@@ -1,0 +1,151 @@
+---
+// Three headline numbers under the continue card: lessons done / saved /
+// minutes read. Mobile = one 3-cell strip, desktop = stacked rows beside the
+// continue card (concept ".stats" / ".dstats"). Values are filled client-side
+// from the progress store + lessons index; "–" until then. The denominator is
+// known at build time, so it is rendered statically.
+interface Props {
+  totalLessons: number;
+}
+
+const { totalLessons } = Astro.props;
+---
+
+<dl class="stats tnum" data-stats>
+  <div class="stat rise" style="--i:1">
+    <dt class="stat__label">bài đã xong<small>trên {totalLessons} bài</small></dt>
+    <dd class="stat__value"><span data-stat="done">–</span><small class="stat__of">/{totalLessons}</small></dd>
+  </div>
+  <div class="stat rise" style="--i:2">
+    <dt class="stat__label">đã lưu<small>đọc sau</small></dt>
+    <dd class="stat__value"><span data-stat="saved">–</span></dd>
+  </div>
+  <div class="stat rise" style="--i:3">
+    <dt class="stat__label">đã đọc<small>tổng thời lượng</small></dt>
+    <dd class="stat__value"><span data-stat="minutes">–</span><span class="stat__unit" aria-hidden="true">′</span><span class="sr-only"> phút</span></dd>
+  </div>
+</dl>
+
+<style>
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    margin: 0;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--line);
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    padding: 12px 12px 11px;
+    background: var(--surface);
+  }
+
+  .stat__value {
+    margin: 0;
+    font: 500 22px / 1.1 var(--font-mono);
+    letter-spacing: -0.04em;
+  }
+
+  .stat__of {
+    font-size: 12px;
+    letter-spacing: 0;
+    color: var(--text-3);
+  }
+
+  .stat__label {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--text-3);
+  }
+
+  .stat__label small {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .stats {
+      grid-template-columns: none;
+      grid-template-rows: repeat(3, 1fr);
+      height: 100%;
+      border-radius: var(--radius-card);
+    }
+
+    .stat {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 22px;
+    }
+
+    .stat__value {
+      font-size: 34px;
+      line-height: 1;
+      letter-spacing: -0.05em;
+    }
+
+    .stat__of {
+      display: none;
+    }
+
+    .stat__label {
+      font-size: 13.5px;
+      font-weight: 400;
+      color: var(--text-2);
+    }
+
+    .stat__label small {
+      display: block;
+      margin-top: 4px;
+      font: 400 11px var(--font-mono);
+      color: var(--text-3);
+    }
+  }
+</style>
+
+<script>
+  import { getProgressStore } from '../../lib/progress-store';
+  import { fetchLessonsIndex } from '../../lib/lessons-index-client';
+  import { learningStats } from '../../lib/domain-progress';
+  import { onPageLoad } from '../../lib/page-lifecycle';
+
+  onPageLoad(() => {
+    const root = document.querySelector<HTMLElement>('[data-stats]');
+    if (!root) return;
+    const cell = (name: string) => root.querySelector<HTMLElement>(`[data-stat="${name}"]`);
+    const done = cell('done');
+    const saved = cell('saved');
+    const minutes = cell('minutes');
+    if (!done || !saved || !minutes) return;
+
+    let cancelled = false;
+    let unsubscribe: (() => void) | undefined;
+
+    void (async () => {
+      let lessons;
+      try {
+        lessons = await fetchLessonsIndex();
+      } catch {
+        return; // keep the "–" placeholders
+      }
+      if (cancelled) return;
+
+      unsubscribe = getProgressStore().subscribe((state) => {
+        const stats = learningStats(state, lessons);
+        done.textContent = String(stats.done);
+        saved.textContent = String(stats.saved);
+        minutes.textContent = String(stats.minutesRead);
+      });
+    })();
+
+    return () => {
+      cancelled = true;
+      unsubscribe?.();
+    };
+  });
+</script>

@@ -1,12 +1,45 @@
 ---
 // "Tìm kiếm" tab — MiniSearch over /search-index.json (see search-box.astro
 // and docs/system-architecture.md "Tìm kiếm" for why MiniSearch was chosen
-// over Pagefind). Input focus already hides the bottom tab bar globally via
+// over Pagefind). Input focus already hides the bottom dock globally via
 // tab-bar.astro's focusin/focusout listener.
 import AppLayout from '../layouts/app-layout.astro';
+import LargeTitleHeader from '../components/shell/large-title-header.astro';
 import SearchBox from '../components/islands/search-box.astro';
+import { getDomains, getLessonsByDomain } from '../lib/content-queries';
+
+const domains = await getDomains();
+const perDomain = await Promise.all(domains.map((d) => getLessonsByDomain(d.id)));
+const totalLessons = perDomain.reduce((sum, lessons) => sum + lessons.length, 0);
+
+// One way in per domain while the field is empty: its first lesson.
+const suggestions = domains.flatMap((d, i) => {
+  const first = perDomain[i][0];
+  return first
+    ? [
+        {
+          url: first.url,
+          title: first.title,
+          domainTitle: d.data.title,
+          accent: d.data.accent,
+          accentDark: d.data.accentDark,
+          index: 1,
+          minutes: first.readingMinutes,
+        },
+      ]
+    : [];
+});
 ---
 
-<AppLayout title="Tìm kiếm - OmniLab" largeTitle="Tìm kiếm">
-  <SearchBox />
+<AppLayout title="Tìm kiếm - OmniLab">
+  <LargeTitleHeader title="Tìm kiếm" eyebrow={`${totalLessons} bài · tìm không cần dấu`} />
+  <SearchBox
+    domains={domains.map((d) => ({
+      id: d.id,
+      title: d.data.title,
+      accent: d.data.accent,
+      accentDark: d.data.accentDark,
+    }))}
+    suggestions={suggestions}
+  />
 </AppLayout>

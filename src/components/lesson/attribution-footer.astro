@@ -1,7 +1,7 @@
 ---
 // End-of-lesson source/license attribution — required on every lesson
 // ("Mỗi bài hiển thị nguồn + license").
-import ExternalLink from '@lucide/astro/icons/external-link';
+import Icon from '../icon/icon.astro';
 
 interface Props {
   sourceName: string;
@@ -23,7 +23,7 @@ const { sourceName, author, license, url } = Astro.props;
       <p>
         <a href={url} target="_blank" rel="noopener noreferrer">
           Xem bản gốc
-          <ExternalLink size={14} stroke-width={2} aria-hidden="true" />
+          <Icon name="external" size={14} stroke-width={2} aria-hidden="true" />
         </a>
       </p>
     )
@@ -31,24 +31,40 @@ const { sourceName, author, license, url } = Astro.props;
 </footer>
 
 <style>
+  /* Quiet ruled footer: provenance is required but must not compete with the
+     completion card below it. */
   .attribution-footer {
-    margin: var(--space-7) 0 0;
-    padding-top: var(--space-4);
+    margin: 36px 0 0;
+    padding: 16px 0 0;
     border-top: 1px solid var(--line);
-    font-size: var(--text-caption);
-    color: var(--ink-2);
+    font: 400 var(--text-label) / 1.6 var(--font-mono);
+    color: var(--text-3);
   }
 
   .attribution-footer p {
-    margin: 0 0 var(--space-1);
+    margin: 0 0 2px;
+  }
+
+  .attribution-footer strong {
+    font-weight: 500;
+    color: var(--text-2);
   }
 
   .attribution-footer a {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    color: var(--accent);
+    gap: 6px;
+    min-height: 44px;
+    color: var(--text-2);
     text-decoration: underline;
-    text-underline-offset: 2px;
+    text-decoration-color: var(--volt-ink);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+
+  @media (hover: hover) {
+    .attribution-footer a:hover {
+      color: var(--text);
+    }
   }
 </style>

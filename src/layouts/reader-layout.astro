@@ -1,14 +1,25 @@
 ---
-// Full-bleed reading shell: back button + collapsing title + progress bar
-// (reader-top-bar.astro), no tab bar/sidebar (maximizes reading space).
+// Reading shell (focus mode): glass top bar (back button + collapsing title +
+// progress bar, reader-top-bar.astro). <1024px: single full-bleed column, NO
+// dock (concept: the dock is hidden while reading); >=1024px keeps the
+// sidebar. <body data-shell="reader"> marks this shell for page-level CSS.
+// >=1024px: sidebar | main (700px column) | optional aside. The "aside" slot
+// (progress ring, TOC, actions) is a sticky column shown only at >=1280px;
+// below that it is display:none, so anything in it must also be reachable
+// inline (put the inline copy in the default slot and add the
+// .hide-at-aside-width class so it disappears when the aside shows).
 // Default slot content is wrapped in <main id="reader-content" class="prose">
 // — consumers just drop MDX/HTML output in directly, no need to remember
 // the "prose" class themselves.
 import { ClientRouter } from 'astro:transitions';
 import BaseHead from './base-head.astro';
+import IconSprite from '../components/icon/icon-sprite.astro';
 import { domainAccentStyle } from './domain-accent';
+import SidebarNav from '../components/shell/sidebar-nav.astro';
 import ReaderTopBar from '../components/shell/reader-top-bar.astro';
 import NavigationProgressBar from '../components/shell/navigation-progress-bar.astro';
+import CommandPalette from '../components/command-palette/command-palette.astro';
+import ReaderToast from '../components/lesson/reader-toast.astro';
 import '../styles/prose.css';
 
 interface Props {
@@ -21,6 +32,7 @@ interface Props {
 }
 
 const { title, description, domainAccent, domainAccentDark, backHref, backLabel } = Astro.props;
+const hasAside = Astro.slots.has('aside');
 const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
 ---
 
@@ -29,12 +41,17 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
     <BaseHead title={title} description={description} />
     <ClientRouter />
   </head>
-  <body>
+  <body data-shell="reader">
+    <IconSprite />
     <NavigationProgressBar />
+    <CommandPalette />
+    <ReaderToast />
     <a href="#reader-content" class="skip-link">Bỏ qua, đến nội dung chính</a>
+    <SidebarNav />
     <ReaderTopBar title={title} backHref={backHref} backLabel={backLabel}>
       <slot name="top-actions" slot="top-actions" />
     </ReaderTopBar>
+    <div class="reader-grid" data-has-aside={hasAside ? "true" : undefined}>
     <main id="reader-content" class="prose reader-content">
       <!-- Fallback page <h1>+<h2>: most lesson MDX bodies start with their
            own "# Title" (the real, visible <h1> reader-top-bar.astro watches
@@ -44,14 +61,22 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
            page-has-heading-one). Always render a real <h1> here for the a11y
            tree; also render an <h2> filler so a body that opens at "###"
            doesn't jump 2 levels from our injected h1 (axe heading-order).
-           The :has() rule below hides both — sighted AND assistive-tech,
-           since display:none removes a11y-tree nodes too — whenever
-           `.lesson-article` already supplies its own <h1>, so those lessons
-           are untouched and no title is ever announced twice. -->
+           The lesson reader header now supplies the real <h1>, so the :has()
+           rules below hide the fallback <h1> whenever `.lesson-article` has
+           one, and the fallback <h2> for every `.lesson-article` (the lesson
+           page renders its own sr-only filler h2 right after its header h1,
+           since this one would precede that h1). display:none removes
+           a11y-tree nodes too, so no title or filler is announced twice. -->
       <h1 class="sr-only reader-fallback-heading" data-reader-fallback-h1>{title}</h1>
       <h2 class="sr-only reader-fallback-heading" data-reader-fallback-h2>Nội dung bài</h2>
       <slot />
     </main>
+    {hasAside && (
+      <aside class="reader-aside" aria-label="Thông tin bài học">
+        <slot name="aside" />
+      </aside>
+    )}
+    </div>
     <script>
       document.addEventListener('touchstart', () => {}, { passive: true });
     </script>
@@ -68,14 +93,67 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
 
 <style>
   .reader-content {
-    padding: var(--space-5) var(--gutter-r) var(--space-8) var(--gutter-l);
+    padding: var(--space-2) var(--gutter-r) calc(var(--space-7) + env(safe-area-inset-bottom)) var(--gutter-l);
   }
 
   /* .sr-only (base.css) keeps these in the a11y tree/heading outline while
      invisible on screen. Hidden entirely (removed from the a11y tree too)
-     when the lesson body already provides its own <h1> — see the comment
-     above the elements in the markup. */
-  .reader-content:has(.lesson-article h1) .reader-fallback-heading {
+     when the lesson provides its own heading — see the comment above the
+     elements in the markup. */
+  .reader-content:has(.lesson-article h1) [data-reader-fallback-h1],
+  .reader-content:has(.lesson-article) [data-reader-fallback-h2] {
     display: none;
+  }
+
+  /* The sr-only filler must not consume a body section number. */
+  .reader-fallback-heading {
+    counter-increment: none !important;
+  }
+
+  .reader-fallback-heading::before {
+    content: none !important;
+  }
+
+  .reader-aside {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .reader-grid {
+      padding-left: var(--shell-sidebar-w);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      align-items: stretch;
+    }
+
+    .reader-content {
+      width: 100%;
+      padding: var(--space-5) clamp(24px, 4.5vw, 64px) var(--space-8);
+    }
+  }
+
+  /* Aside column (concept desktop reader): shown only where there is room for
+     sidebar + 700px column + 300px aside. A hairline separates the columns. */
+  @media (min-width: 1280px) {
+    .reader-grid[data-has-aside] {
+      grid-template-columns: minmax(0, 1fr) var(--shell-aside-w);
+    }
+
+    .reader-grid[data-has-aside] .reader-content {
+      border-right: 1px solid var(--line);
+    }
+
+    .reader-aside {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      align-self: start;
+      position: sticky;
+      top: calc(var(--shell-navbar-h) + env(safe-area-inset-top));
+      max-height: calc(100dvh - var(--shell-navbar-h));
+      overflow-y: auto;
+      padding: 28px 24px;
+      scrollbar-width: thin;
+    }
   }
 </style>

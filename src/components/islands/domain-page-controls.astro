@@ -1,0 +1,132 @@
+---
+// Client behavior of /linh-vuc/[domain], all derived from the page's own DOM
+// plus the progress store (no extra fetch):
+//  - module filter chips (shown only once this script runs; without JS every
+//    module simply stays listed),
+//  - per-module "done/total" counters,
+//  - hero KPI "% xong" and the primary CTA ("Học tiếp: bài 04" / "Bắt đầu:
+//    bài 01" / "Ôn lại: bài 01") retargeted to the first unfinished lesson.
+// DOM contract: root [data-domain-page]; chips [data-mod-chip=<id|all>] inside
+// [data-mod-chips]; sections [data-module=<id>] containing .lesson-row rows and
+// [data-mod-count]; hero [data-dh-percent], a[data-domain-cta] with
+// [data-cta-label].
+interface Props {
+  modules: { id: string; title: string }[];
+}
+
+const { modules } = Astro.props;
+---
+
+<div class="mods" data-mod-chips hidden>
+  <button type="button" class="chip" aria-pressed="true" data-mod-chip="all">Tất cả</button>
+  {
+    modules.map((m) => (
+      <button type="button" class="chip" aria-pressed="false" data-mod-chip={m.id}>
+        {m.title}
+      </button>
+    ))
+  }
+</div>
+
+<style>
+  .mods[hidden] {
+    display: none;
+  }
+
+  /* Horizontal scroller that bleeds to the screen edge but starts on the gutter. */
+  .mods {
+    display: flex;
+    gap: 6px;
+    padding: 4px var(--gutter-r) 6px var(--gutter-l);
+    overflow-x: auto;
+    scrollbar-width: none;
+    /* A chip is 32px tall; padding gives the row a 44px touch band. */
+    min-height: 44px;
+    align-items: center;
+  }
+
+  .mods::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mods :global(.chip) {
+    flex: none;
+    position: relative;
+  }
+
+  .mods :global(.chip)::after {
+    content: '';
+    position: absolute;
+    inset: -6px -2px;
+  }
+
+  @media (min-width: 1024px) {
+    .mods {
+      flex-wrap: wrap;
+      max-width: calc(var(--shell-content-max) + var(--gutter-l) + var(--gutter-r));
+      margin-inline: auto;
+      overflow: visible;
+      padding-top: 24px;
+    }
+  }
+</style>
+
+<script>
+  import { getProgressStore } from '../../lib/progress-store';
+  import { onPageLoad } from '../../lib/page-lifecycle';
+
+  onPageLoad(() => {
+    const page = document.querySelector<HTMLElement>('[data-domain-page]');
+    const chipBar = document.querySelector<HTMLElement>('[data-mod-chips]');
+    if (!page) return;
+
+    const sections = Array.from(page.querySelectorAll<HTMLElement>('[data-module]'));
+    const rows = Array.from(page.querySelectorAll<HTMLElement>('.lesson-row[data-lesson-id]'));
+    const percent = document.querySelector<HTMLElement>('[data-dh-percent]');
+    const cta = document.querySelector<HTMLAnchorElement>('[data-domain-cta]');
+    const ctaLabel = cta?.querySelector<HTMLElement>('[data-cta-label]');
+    const serverCtaHref = cta?.getAttribute('href') ?? '';
+
+    // --- module filter ---
+    const chips = chipBar ? Array.from(chipBar.querySelectorAll<HTMLButtonElement>('[data-mod-chip]')) : [];
+    const onChipClick = (ev: Event) => {
+      const chip = (ev.currentTarget as HTMLElement).dataset.modChip ?? 'all';
+      for (const c of chips) c.setAttribute('aria-pressed', String(c.dataset.modChip === chip));
+      for (const section of sections) section.hidden = chip !== 'all' && section.dataset.module !== chip;
+    };
+    for (const chip of chips) chip.addEventListener('click', onChipClick);
+    if (chipBar) chipBar.hidden = false;
+
+    // --- progress-derived text ---
+    const store = getProgressStore();
+    const unsubscribe = store.subscribe((state) => {
+      let doneTotal = 0;
+      for (const section of sections) {
+        const sectionRows = section.querySelectorAll<HTMLElement>('.lesson-row[data-lesson-id]');
+        let done = 0;
+        for (const row of sectionRows) if (state.lessons[row.dataset.lessonId ?? '']?.done) done += 1;
+        doneTotal += done;
+        const count = section.querySelector<HTMLElement>('[data-mod-count]');
+        if (count) count.textContent = `${done}/${sectionRows.length}`;
+      }
+
+      if (percent) percent.textContent = `${rows.length ? Math.round((doneTotal / rows.length) * 100) : 0}%`;
+
+      if (cta && ctaLabel && rows.length) {
+        const next = rows.find((row) => !state.lessons[row.dataset.lessonId ?? '']?.done);
+        const target = next ?? rows[0];
+        const entry = state.lessons[target.dataset.lessonId ?? ''];
+        const started = doneTotal > 0 || entry?.visitedAt !== undefined;
+        const verb = !next ? 'Ôn lại' : started ? 'Học tiếp' : 'Bắt đầu';
+        const index = target.querySelector<HTMLElement>('.idx')?.textContent?.trim() ?? '';
+        ctaLabel.textContent = index ? `${verb}: bài ${index}` : verb;
+        cta.setAttribute('href', target.getAttribute('href') ?? serverCtaHref);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+      for (const chip of chips) chip.removeEventListener('click', onChipClick);
+    };
+  });
+</script>

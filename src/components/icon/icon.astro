@@ -1,0 +1,55 @@
+---
+// <Icon name="search" size={20} /> - monoline icon from the sprite
+// (icon-sprite.astro must be on the page; both layouts include it).
+// - `name`: concept icon name; YAML / legacy names are mapped by
+//   icon-names.ts (unknown names fall back to "domains").
+// - `size`: px number or any CSS length; omitted = 1em (scales with font-size).
+// - `stroke-width`: default 1.5 (concept). `filled`: fills the glyph with
+//   currentColor (pressed bookmark etc).
+// - decorative by default (aria-hidden); pass `label` to expose it as an image.
+// Extra attributes (class, data-*, Astro scope attrs) are forwarded to <svg>
+// so parent-scoped styles keep targeting it.
+import type { HTMLAttributes } from 'astro/types';
+import { resolveIcon } from './icon-names';
+
+interface Props extends Omit<HTMLAttributes<'svg'>, 'name' | 'size'> {
+  name: string;
+  size?: number | string;
+  'stroke-width'?: number | string;
+  filled?: boolean;
+  label?: string;
+}
+
+const {
+  name,
+  size,
+  'stroke-width': strokeWidth = 1.5,
+  filled = false,
+  label,
+  class: className,
+  ...rest
+} = Astro.props;
+
+const { name: id, rotate } = resolveIcon(name);
+const dim = size === undefined ? '1em' : typeof size === 'number' ? String(size) : size;
+---
+
+<svg
+  class:list={['ic', { 'ic--filled': filled }, className]}
+  width={dim}
+  height={dim}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width={strokeWidth}
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  data-rotate={rotate}
+  aria-hidden={label ? undefined : 'true'}
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  focusable="false"
+  {...rest}
+>
+  <use href={`#i-${id}`}></use>
+</svg>

@@ -1,21 +1,17 @@
 ---
-// Domain summary card — used on both `/linh-vuc` (links to the domain detail
-// page) and `/` "Học tiếp" (links straight to the domain's first lesson via
-// `ctaLabel`/`href`, see src/pages/index.astro). Whole card is one tappable
-// link (>=44px tall).
+// Domain summary, two variants (concept "Studio"):
+//  - "card": art header + mono index, 20px/800 title, tagline, footer with
+//    counts and a live progress bar (Lĩnh vực tab, desktop Học tiếp grid).
+//  - "row": 40px tinted icon tile, title, mono meta and a mini % + bar (mobile
+//    Học tiếp list); the parent supplies the `.rows > li` wrapper.
+// The whole item is one link (>=44px tall). The domain hue comes from the
+// content YAML via .hue (--hue-l / --hue-d), so a new domain needs no code.
 //
-// Icon: domain YAML authors an arbitrary Lucide icon name (kebab-case, e.g.
-// "network"). Adding a domain must not require a code change ("thêm lĩnh
-// vực mới không cần sửa code"), so this can't be a fixed per-icon import
-// map like tab-bar/sidebar-nav use for the 4 static nav icons — so this
-// looks the icon up dynamically from `@lucide/astro`'s `icons` namespace
-// export (PascalCase keys). This *does* pull the full Lucide icon set into
-// the server-side build (no client JS/bundle impact — Astro components
-// render to static HTML at build time), which is the accepted tradeoff for
-// genuine no-code-change extensibility.
-import ChevronRight from '@lucide/astro/icons/chevron-right';
-import { icons } from '@lucide/astro';
-import ProgressRing from '../islands/progress-ring.astro';
+// Icon: domain YAML authors an icon name (e.g. "network"); <Icon> maps it to
+// the sprite set and falls back to a generic glyph for unknown names.
+import IconGlyph from '../icon/icon.astro';
+import DomainArt from './domain-art.astro';
+import DomainProgress from '../islands/domain-progress.astro';
 
 interface Props {
   href: string;
@@ -27,132 +23,150 @@ interface Props {
   accentDark: string;
   lessonCount: number;
   totalReadingMinutes: number;
-  /** When set, renders a CTA row (e.g. "Bắt đầu từ bài 1" on the homepage variant). */
-  ctaLabel?: string;
+  variant?: 'card' | 'row';
+  /** 1-based position, shown as "01" on the card variant. */
+  index?: number;
+  /** Heading level of the card title (2 on pages where cards sit directly under the h1). */
+  headingLevel?: 2 | 3;
+  /** Stagger slot (--i) for the entrance animation. */
+  stagger?: number;
 }
 
-const { href, domainId, icon, title, tagline, accent, accentDark, lessonCount, totalReadingMinutes, ctaLabel } =
-  Astro.props;
-
-function toPascalCase(kebab: string): string {
-  return kebab
-    .split('-')
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join('');
-}
-
-// Unknown/typo'd icon name in content YAML falls back to a generic icon
-// rather than breaking the build.
-const Icon = icons[toPascalCase(icon) as keyof typeof icons] ?? icons.Layers;
+const {
+  href,
+  domainId,
+  icon,
+  title,
+  tagline,
+  accent,
+  accentDark,
+  lessonCount,
+  totalReadingMinutes,
+  variant = 'card',
+  index,
+  headingLevel = 3,
+  stagger = 0,
+} = Astro.props;
+const isRow = variant === 'row';
+const Heading = `h${headingLevel}` as 'h2' | 'h3';
+const hue = `--hue-l:${accent};--hue-d:${accentDark};--i:${stagger}`;
 ---
 
-<a href={href} class="domain-card tap-scale" style={`--card-accent:${accent};--card-accent-dark:${accentDark}`}>
-  <span class="domain-card__icon">
-    <Icon size={26} stroke-width={1.75} aria-hidden="true" />
-  </span>
-  <span class="domain-card__body">
-    <span class="domain-card__title">{title}</span>
-    <span class="domain-card__tagline">{tagline}</span>
-    <span class="domain-card__meta">{lessonCount} bài · {totalReadingMinutes} phút đọc</span>
-    {ctaLabel && (
-      <span class="domain-card__cta">
-        {ctaLabel}
-        <ChevronRight size={16} stroke-width={2.5} aria-hidden="true" />
+{
+  isRow ? (
+    <a href={href} class="row drow hue rise" style={hue}>
+      <span class="dom-ic">
+        <IconGlyph name={icon} size={21} />
       </span>
-    )}
-  </span>
-  <span class="progress-ring-wrap">
-    <ProgressRing domainId={domainId} size={32} />
-  </span>
-</a>
+      <span class="tt">
+        <b>{title}</b>
+        <small class="tnum">
+          {lessonCount} bài · {totalReadingMinutes} phút
+        </small>
+      </span>
+      <DomainProgress domainId={domainId} layout="stack" />
+    </a>
+  ) : (
+    <a href={href} class="dcard hue rise" style={hue}>
+      <span class="dcard__art">
+        <DomainArt domainId={domainId} />
+        {index !== undefined && <span class="dcard__num tnum">{String(index).padStart(2, '0')}</span>}
+      </span>
+      <Heading class="dcard__title">{title}</Heading>
+      <p class="dcard__tagline">{tagline}</p>
+      <span class="dcard__ft tnum">
+        <span>{lessonCount} bài</span>
+        <span>{totalReadingMinutes} phút</span>
+        <DomainProgress domainId={domainId} layout="inline" />
+      </span>
+    </a>
+  )
+}
 
 <style>
-  .domain-card {
+  /* ---- row ---- */
+  .drow {
+    color: var(--text);
+  }
+
+  /* ---- card ---- */
+  .dcard {
     position: relative;
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-4);
-    padding: var(--space-4);
-    background: var(--surface);
+    display: block;
+    height: 100%;
+    padding: 16px;
+    overflow: hidden;
+    border: 1px solid var(--line);
     border-radius: var(--radius-card);
-    box-shadow: var(--shadow-card);
+    background: var(--surface);
+    box-shadow: var(--glow);
+    color: var(--text);
     text-decoration: none;
-    color: inherit;
-    min-height: 44px;
-    transition: box-shadow var(--dur-fast) var(--ease-out);
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      transform var(--dur-1) var(--ease),
+      border-color var(--dur-1);
+  }
+
+  .dcard:active {
+    transform: scale(0.985);
   }
 
   @media (hover: hover) {
-    .domain-card:hover {
-      box-shadow: var(--shadow-card), 0 0 0 1px var(--line-strong);
+    .dcard:hover {
+      border-color: color-mix(in srgb, var(--c) 40%, var(--line));
     }
   }
 
-  .domain-card__icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    flex-shrink: 0;
-    border-radius: var(--radius-row);
-    color: var(--card-accent);
-    background: color-mix(in srgb, var(--card-accent) 12%, var(--surface));
+  .dcard__art {
+    position: relative;
+    display: block;
+    height: 92px;
+    margin: -16px -16px 14px;
+    overflow: hidden;
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(180deg, var(--surface-2), var(--surface));
   }
 
-  @media (prefers-color-scheme: dark) {
-    .domain-card__icon {
-      color: var(--card-accent-dark);
-      background: color-mix(in srgb, var(--card-accent-dark) 16%, var(--surface));
+  @supports (color: color-mix(in srgb, red 10%, blue)) {
+    .dcard__art {
+      background: linear-gradient(180deg, color-mix(in srgb, var(--c) 14%, var(--surface)), var(--surface));
     }
   }
 
-  .domain-card__body {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    min-width: 0;
-    /* Clear the absolutely-positioned progress ring (32px) at the top-right. */
-    padding-right: calc(32px + var(--space-2));
-  }
-
-  .domain-card__title {
-    font-size: var(--text-title3);
-    font-weight: 700;
-    color: var(--ink);
-  }
-
-  .domain-card__tagline {
-    font-size: var(--text-footnote);
-    color: var(--ink-2);
-  }
-
-  .domain-card__meta {
-    margin-top: var(--space-1);
-    font-size: var(--text-caption);
-    color: var(--ink-2);
-  }
-
-  .domain-card__cta {
-    margin-top: var(--space-2);
-    display: inline-flex;
-    align-items: center;
-    gap: 2px;
-    font-size: var(--text-footnote);
-    font-weight: 600;
-    color: var(--card-accent);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .domain-card__cta {
-      color: var(--card-accent-dark);
-    }
-  }
-
-  .progress-ring-wrap {
+  .dcard__num {
     position: absolute;
-    top: var(--space-4);
-    right: var(--space-4);
+    top: 12px;
+    right: 14px;
+    font: 500 11px var(--font-mono);
+    color: var(--text-3);
+  }
+
+  .dcard__title {
+    font-size: var(--text-title3);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: var(--track-heading);
+  }
+
+  .dcard__tagline {
+    margin: 6px 0 14px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--text-2);
+  }
+
+  .dcard__ft {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font: 500 11.5px var(--font-mono);
+    color: var(--text-3);
+  }
+
+  @media (min-width: 1024px) {
+    .dcard__art {
+      height: 110px;
+    }
   }
 </style>

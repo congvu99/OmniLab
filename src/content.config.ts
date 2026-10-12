@@ -19,7 +19,8 @@ const domains = defineCollection({
     tagline: z.string(),
     accent: z.string(),
     accentDark: z.string(),
-    // Lucide icon name (see @lucide/astro), e.g. "network" / "wallet".
+    // Icon name resolved by src/components/icon/icon-names.ts (e.g. "network" / "wallet");
+    // unknown names fall back to a generic glyph.
     icon: z.string(),
     order: z.number(),
     // Drives <Disclaimer> rendering in the reader layout for this domain's lessons.

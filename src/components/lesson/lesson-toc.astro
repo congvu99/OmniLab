@@ -1,6 +1,13 @@
 ---
 // Collapsible table of contents from a lesson's h2 headings, using native
-// <details>/<summary> — no JS needed for collapse/expand.
+// <details>/<summary> — no JS needed for collapse/expand. Shown below 1280px;
+// at >=1280px the aside's sticky TOC (lesson-aside.astro) replaces it
+// (`.hide-at-aside-width`), so no duplicate links are exposed.
+// Styled as a concept card: toc glyph + label + mono count, rows with mono
+// section numbers matching the numbered h2 headings in the body.
+import Icon from '../icon/icon.astro';
+import { pad2 } from '../../lib/lesson-reader-model';
+
 interface Heading {
   depth: number;
   slug: string;
@@ -16,12 +23,20 @@ const { headings } = Astro.props;
 
 {
   headings.length > 0 && (
-    <details class="lesson-toc">
-      <summary>Mục lục</summary>
+    <details class="lesson-toc hide-at-aside-width">
+      <summary>
+        <Icon name="toc" size={18} stroke-width={1.75} aria-hidden="true" class="lesson-toc__lead" />
+        <span class="lesson-toc__label">Mục lục</span>
+        <span class="lesson-toc__count tnum">{headings.length} phần</span>
+        <Icon name="chevron-down" size={18} stroke-width={1.75} aria-hidden="true" class="lesson-toc__chevron" />
+      </summary>
       <ol>
-        {headings.map((h) => (
+        {headings.map((h, i) => (
           <li>
-            <a href={`#${h.slug}`}>{h.text}</a>
+            <a href={`#${h.slug}`}>
+              <span class="lesson-toc__n tnum">{pad2(i + 1)}</span>
+              <span>{h.text}</span>
+            </a>
           </li>
         ))}
       </ol>
@@ -31,43 +46,103 @@ const { headings } = Astro.props;
 
 <style>
   .lesson-toc {
-    margin: 0 0 var(--space-5);
-    padding: var(--space-3) var(--space-4);
-    background: var(--surface-2);
-    border-radius: var(--radius-row);
+    margin: 20px 0 0;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--glow);
+    overflow: hidden;
   }
 
   .lesson-toc summary {
     cursor: pointer;
-    font-weight: 600;
-    font-size: var(--text-footnote);
-    color: var(--ink);
-    min-height: 44px;
+    list-style: none;
     display: flex;
     align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 0 14px;
+    font-weight: 600;
+    font-size: var(--text-subhead);
+    color: var(--text);
+  }
+
+  .lesson-toc summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .lesson-toc__lead {
+    color: var(--volt-ink);
+    flex: none;
+  }
+
+  .lesson-toc__label {
+    flex: 1;
+  }
+
+  .lesson-toc__count {
+    font: 500 var(--text-label) var(--font-mono);
+    color: var(--text-3);
+  }
+
+  .lesson-toc__chevron {
+    flex: none;
+    color: var(--text-3);
+    transition: transform var(--dur-2) var(--ease);
+  }
+
+  .lesson-toc[open] .lesson-toc__chevron {
+    transform: rotate(180deg);
   }
 
   .lesson-toc ol {
-    margin: var(--space-3) 0 0;
-    padding-left: var(--space-5);
+    list-style: none;
+    margin: 0;
+    padding: 4px 6px 6px;
+    border-top: 1px solid var(--line);
   }
 
   .lesson-toc li {
-    margin-bottom: 0;
-    font-size: var(--text-footnote);
-  }
-
-  .lesson-toc li:last-child {
-    margin-bottom: 0;
+    margin: 0;
+    padding: 0;
   }
 
   .lesson-toc a {
-    color: var(--accent);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-    /* Block + vertical padding: each entry is a standalone target (not
-       running text), so it gets a >=44px-tall hit area. */
-    display: block;
-    padding-block: 10px;
+    /* Each entry is a standalone target (not running text): >=44px tall. */
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    min-height: 44px;
+    padding: 11px 8px;
+    border-radius: var(--radius-sm);
+    color: var(--text-2);
+    text-decoration: none;
+    font-size: var(--text-subhead);
+    line-height: 1.35;
+    transition: background-color var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+  }
+
+  .lesson-toc__n {
+    flex: none;
+    width: 22px;
+    font: 500 var(--text-micro) var(--font-mono);
+    color: var(--text-3);
+  }
+
+  @media (hover: hover) {
+    .lesson-toc a:hover {
+      background: var(--surface-2);
+      color: var(--text);
+    }
+  }
+
+  .lesson-toc a:active {
+    background: var(--surface-2);
+  }
+
+  /* The card clips (overflow:hidden), so keep focus rings inside. */
+  .lesson-toc summary:focus-visible,
+  .lesson-toc a:focus-visible {
+    outline-offset: -2px;
   }
 </style>

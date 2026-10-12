@@ -1,0 +1,98 @@
+---
+// "% done" meter for one domain: a thin bar (--c from the nearest .hue
+// ancestor) + a mono percentage. Server-renders 0%; the script below fills
+// every meter on the page from the progress store + lessons index (so the bar
+// "fills" in like the concept). `layout="stack"` = % above bar (list row),
+// `"inline"` = bar then % (card footer).
+interface Props {
+  domainId: string;
+  layout?: 'stack' | 'inline';
+}
+
+const { domainId, layout = 'stack' } = Astro.props;
+---
+
+<span class:list={['dp', `dp--${layout}`]} data-domain-progress data-domain={domainId} role="img" aria-label="Chưa bắt đầu">
+  <span class="dp__pct tnum" data-dp-percent aria-hidden="true">0%</span>
+  <span class="bar dp__bar" aria-hidden="true"><i></i></span>
+</span>
+
+<style>
+  .dp {
+    display: grid;
+    flex: none;
+    font: 500 var(--text-nano) var(--font-mono);
+    color: var(--text-3);
+  }
+
+  .dp--stack {
+    width: 56px;
+    gap: 5px;
+    justify-items: end;
+  }
+
+  .dp--stack .dp__bar {
+    width: 56px;
+    height: 3px;
+  }
+
+  .dp--inline {
+    flex: 1;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 12px;
+    font-size: 11.5px;
+  }
+
+  .dp--inline .dp__pct {
+    order: 2;
+    min-width: 3ch;
+    text-align: right;
+  }
+
+  .dp--inline .dp__bar {
+    order: 1;
+  }
+</style>
+
+<script>
+  import { getProgressStore } from '../../lib/progress-store';
+  import { fetchLessonsIndex } from '../../lib/lessons-index-client';
+  import { domainProgress } from '../../lib/domain-progress';
+  import { onPageLoad } from '../../lib/page-lifecycle';
+
+  onPageLoad(() => {
+    const meters = Array.from(document.querySelectorAll<HTMLElement>('[data-domain-progress]'));
+    if (meters.length === 0) return;
+
+    // A navigation can happen before the index resolves; `cancelled` drops a
+    // stale resolution instead of subscribing meters that are already detached.
+    let cancelled = false;
+    let unsubscribe: (() => void) | undefined;
+
+    void (async () => {
+      let lessons;
+      try {
+        lessons = await fetchLessonsIndex();
+      } catch {
+        return; // keep the static 0% meter
+      }
+      if (cancelled) return;
+
+      unsubscribe = getProgressStore().subscribe((state) => {
+        for (const meter of meters) {
+          const { done, total, percent } = domainProgress(state, lessons, meter.dataset.domain ?? '');
+          const pct = meter.querySelector<HTMLElement>('[data-dp-percent]');
+          if (pct) pct.textContent = `${percent}%`;
+          meter.querySelector<HTMLElement>('.bar')?.style.setProperty('--p', `${percent}%`);
+          meter.setAttribute('aria-label', `Đã hoàn thành ${done} trên ${total} bài, ${percent} phần trăm`);
+        }
+      });
+    })();
+
+    return () => {
+      cancelled = true;
+      unsubscribe?.();
+    };
+  });
+</script>

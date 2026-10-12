@@ -1,0 +1,12 @@
+---
+// Hidden SVG sprite with one <symbol id="i-<name>"> per icon. Rendered once
+// per page by the layouts (right after <body> opens); <Icon> references it
+// via <use href="#i-name">, which is same-document and CSP-safe.
+import { ICON_PATHS } from './icon-paths';
+
+const symbols = Object.entries(ICON_PATHS);
+---
+
+<svg class="icon-sprite" width="0" height="0" aria-hidden="true" focusable="false">
+  {symbols.map(([name, markup]) => <symbol id={`i-${name}`} viewBox="0 0 24 24" set:html={markup} />)}
+</svg>

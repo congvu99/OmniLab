@@ -1,105 +1,172 @@
 ---
-// Mobile bottom tab bar (<1024px). Data comes from nav-items.ts (single
-// source shared with sidebar-nav.astro). Fixed to viewport bottom with
-// safe-area padding; hides on focus of an <input>/<textarea> elsewhere on
-// the page to avoid iOS keyboard-open layout jumps (e.g. Tìm kiếm page).
-import GraduationCap from '@lucide/astro/icons/graduation-cap';
-import Layers from '@lucide/astro/icons/layers';
-import Search from '@lucide/astro/icons/search';
-import Bookmark from '@lucide/astro/icons/bookmark';
+// Mobile "ink dock" (<1024px): floating, ink-colored in BOTH themes, with a
+// volt indicator under the active tab. Data comes from nav-items.ts (single
+// source shared with sidebar-nav.astro). Rendered only by app-layout.astro:
+// reader pages (reader-layout.astro) have no dock = focus mode. It fades out /
+// in across that boundary (view-transition-name, see view-transitions.css).
+// Hides while a text field elsewhere on the page has focus so the iOS keyboard
+// doesn't shove it into the middle of the viewport (Tìm kiếm page).
+import Icon from '../icon/icon.astro';
 import { navItems, isNavItemActive } from './nav-items';
 
-const iconMap = {
-  'graduation-cap': GraduationCap,
-  layers: Layers,
-  search: Search,
-  bookmark: Bookmark,
-} as const;
-
 const pathname = Astro.url.pathname;
+const states = navItems.map((item) => isNavItemActive(pathname, item));
+const activeIndex = states.indexOf(true);
 ---
 
-<nav class="tab-bar" aria-label="Điều hướng chính" data-tab-bar>
+<nav
+  class="tab-bar"
+  aria-label="Điều hướng chính"
+  data-tab-bar
+  data-has-active={activeIndex >= 0 ? 'true' : 'false'}
+  style={`--i:${Math.max(activeIndex, 0)}`}
+>
+  <span class="tab-indicator" aria-hidden="true"></span>
   <ul class="tab-list">
-    {navItems.map((item) => {
-      const Icon = iconMap[item.icon];
-      const active = isNavItemActive(pathname, item);
-      return (
-        <li>
-          <a
-            href={item.href}
-            class="tab-link tap-scale"
-            aria-current={active ? 'page' : undefined}
-            data-active={active}
-          >
-            <Icon size={24} stroke-width={active ? 2.25 : 2} aria-hidden="true" />
-            <span class="tab-label">{item.label}</span>
-          </a>
-        </li>
-      );
-    })}
+    {navItems.map((item, i) => (
+      <li>
+        <a
+          href={item.href}
+          class="tab-link"
+          aria-current={states[i] ? 'page' : undefined}
+          data-active={states[i]}
+        >
+          <Icon name={item.icon} size={23} />
+          <span class="tab-label">{item.label}</span>
+          {item.href === '/da-luu' && (
+            <span class="tab-badge tnum" data-saved-badge aria-hidden="true" hidden>
+              0
+            </span>
+            <span class="sr-only" data-saved-badge-sr></span>
+          )}
+        </a>
+      </li>
+    ))}
   </ul>
 </nav>
 
 <style>
   .tab-bar {
     position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    left: max(14px, env(safe-area-inset-left));
+    right: max(14px, env(safe-area-inset-right));
+    bottom: calc(env(safe-area-inset-bottom) + var(--shell-tabbar-gap));
+    max-width: 480px;
+    height: var(--shell-tabbar-h);
+    margin-inline: auto;
     z-index: var(--z-nav);
-    /* Solid, not translucent: scrolling text showing through the bar read as
-       content "floating" under the tab labels. */
-    background: var(--surface);
-    border-top: 1px solid var(--line);
-    box-shadow: var(--shadow-bar);
-    padding-bottom: env(safe-area-inset-bottom);
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
+    padding: 6px;
+    border-radius: var(--radius-dock);
+    background: var(--dock);
+    border: 1px solid var(--dock-line);
+    box-shadow: var(--dock-shadow);
     transform: translateY(0);
-    transition: transform var(--dur) var(--ease-out);
+    transition: transform var(--dur-3) var(--ease);
+    view-transition-name: ol-dock;
   }
 
   .tab-bar[data-hidden='true'] {
-    transform: translateY(100%);
+    transform: translateY(calc(100% + env(safe-area-inset-bottom) + var(--shell-tabbar-gap) + var(--space-4)));
+  }
+
+  /* Volt pill under the active tab; --i is the server-rendered tab index. */
+  .tab-indicator {
+    position: absolute;
+    top: 6px;
+    bottom: 6px;
+    left: 6px;
+    width: calc((100% - 12px) / 4);
+    border-radius: 18px;
+    background: var(--volt);
+    box-shadow: 0 0 20px -4px var(--volt), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    transform: translateX(calc(var(--i) * 100%));
+    transition: transform var(--dur-3) var(--ease);
+  }
+
+  .tab-bar[data-has-active='false'] .tab-indicator {
+    display: none;
   }
 
   .tab-list {
-    display: flex;
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    height: 100%;
     margin: 0;
     padding: 0;
   }
 
   .tab-list li {
-    flex: 1;
     display: flex;
+    min-width: 0;
   }
 
   .tab-link {
+    position: relative;
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    min-height: var(--shell-tabbar-h);
-    padding: var(--space-1);
-    color: var(--ink-2);
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: 3px;
+    min-width: 0;
+    border-radius: 18px;
+    color: var(--dock-text);
     text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: color var(--dur-2) var(--ease);
+  }
+
+  .tab-link :global(svg) {
+    transition: transform var(--dur-1) var(--ease);
+  }
+
+  .tab-link:active :global(svg) {
+    transform: scale(0.9);
   }
 
   .tab-link[data-active='true'] {
-    color: var(--accent);
+    color: var(--on-volt);
   }
 
   .tab-label {
-    font-size: var(--text-caption);
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--text-nano);
+    font-weight: 600;
     line-height: 1;
-    font-weight: 500;
   }
 
-  .tab-link[data-active='true'] .tab-label {
-    font-weight: 700;
+  /* Saved-count badge (count from the progress store, see script). Grey on ink
+     in both themes: --dock-text fill with --dock text. */
+  .tab-badge {
+    position: absolute;
+    top: 6px;
+    left: calc(50% + 6px);
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 8px;
+    background: var(--dock-text);
+    color: var(--dock);
+    font: 500 10px / 16px var(--font-mono);
+    text-align: center;
+  }
+
+  .tab-badge[hidden] {
+    display: none;
+  }
+
+  /* The dock sits on an ink surface in both themes: keep a light focus ring. */
+  .tab-link:focus-visible {
+    outline: 2px solid var(--volt);
+    outline-offset: -2px;
+    box-shadow: none;
+  }
+
+  .tab-link[data-active='true']:focus-visible {
+    outline-color: var(--on-volt);
   }
 
   @media (min-width: 1024px) {
@@ -110,11 +177,11 @@ const pathname = Astro.url.pathname;
 </style>
 
 <script>
-  // Hide the fixed tab bar while any text input/textarea elsewhere on the
-  // page has focus, so the iOS on-screen keyboard doesn't shove it into the
-  // middle of the viewport. Re-bound on every soft navigation (onPageLoad)
-  // because the tab bar itself is a fresh DOM node after each swap.
+  // Hide the fixed dock while any text input/textarea elsewhere on the page
+  // has focus. Re-bound on every soft navigation (onPageLoad) because the dock
+  // itself is a fresh DOM node after each swap.
   import { onPageLoad } from '../../lib/page-lifecycle';
+  import { getProgressStore } from '../../lib/progress-store';
 
   const isTextInput = (el: EventTarget | null) =>
     el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement;
@@ -133,9 +200,25 @@ const pathname = Astro.url.pathname;
     document.addEventListener('focusin', onFocusIn);
     document.addEventListener('focusout', onFocusOut);
 
+    // Saved-count badge on the "Đã lưu" tab (bookmarks.length; the lessons
+    // index is not needed for a badge).
+    const badge = bar.querySelector<HTMLElement>('[data-saved-badge]');
+    // Spoken count lives in an sr-only suffix of the link text (not an
+    // aria-label override, which would no longer contain the visible label).
+    const badgeSr = bar.querySelector<HTMLElement>('[data-saved-badge-sr]');
+    const unsubscribe = badge
+      ? getProgressStore().subscribe((state) => {
+          const n = state.bookmarks.length;
+          badge.textContent = String(n);
+          badge.hidden = n === 0;
+          if (badgeSr) badgeSr.textContent = n > 0 ? `, ${n} bài` : '';
+        })
+      : undefined;
+
     return () => {
       document.removeEventListener('focusin', onFocusIn);
       document.removeEventListener('focusout', onFocusOut);
+      unsubscribe?.();
     };
   });
 </script>

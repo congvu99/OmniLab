@@ -18,28 +18,30 @@
     left: 0;
     right: 0;
     z-index: var(--z-toast);
-    height: 3px;
-    background: var(--accent);
+    height: 2px;
+    background: var(--volt-ink);
+    box-shadow: 0 0 8px var(--volt);
+    view-transition-name: ol-progress;
     transform-origin: left center;
     transform: scaleX(0);
     opacity: 0;
     pointer-events: none;
-    transition: opacity var(--dur-fast) var(--ease-out);
+    transition: opacity var(--dur-1) var(--ease);
   }
 
   .nav-progress.is-visible {
     opacity: 1;
     transition:
-      transform 300ms var(--ease-out),
-      opacity var(--dur-fast) var(--ease-out);
+      transform 300ms var(--ease),
+      opacity var(--dur-1) var(--ease);
   }
 
   /* Run to 100% first, then fade (opacity delayed until the fill lands). */
   .nav-progress.is-done {
     opacity: 0;
     transition:
-      transform var(--dur-fast) var(--ease-out),
-      opacity var(--dur) var(--ease-out) var(--dur-fast);
+      transform var(--dur-1) var(--ease),
+      opacity var(--dur-3) var(--ease) var(--dur-1);
   }
 
   /* No creeping/width animation: a static full-width bar that just appears
@@ -49,7 +51,7 @@
     .nav-progress.is-visible,
     .nav-progress.is-done {
       transform: none !important;
-      transition: opacity var(--dur-fast) linear;
+      transition: opacity var(--dur-1) linear;
     }
   }
 </style>

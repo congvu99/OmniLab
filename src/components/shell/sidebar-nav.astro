@@ -1,44 +1,106 @@
 ---
-// Desktop sidebar (>=1024px), same 4 items as tab-bar.astro via nav-items.ts.
-// app-layout.astro reserves --shell-sidebar-w of left padding on <main> at
-// this breakpoint so content never sits under the fixed sidebar.
-import GraduationCap from '@lucide/astro/icons/graduation-cap';
-import Layers from '@lucide/astro/icons/layers';
-import Search from '@lucide/astro/icons/search';
-import Bookmark from '@lucide/astro/icons/bookmark';
+// Desktop sidebar (>=1024px, "Studio"): solid bg-2 rail with hairline edge,
+// brand mark, search button (opens the ⌘K palette), the same 4 items as
+// tab-bar.astro via nav-items.ts, a "Lĩnh vực" section with a colored
+// square + lesson count per domain, the three latest bookmarks and a footer
+// with overall progress (both filled client-side from localStorage). Active
+// item = raised surface-2 pill with a volt edge marker. Stays visible on
+// reader pages (the dock is mobile-only; focus mode only removes the dock).
+// app-layout.astro / reader-layout.astro reserve --shell-sidebar-w of left
+// padding so content never sits under it.
+import Icon from '../icon/icon.astro';
 import { navItems, isNavItemActive } from './nav-items';
-
-const iconMap = {
-  'graduation-cap': GraduationCap,
-  layers: Layers,
-  search: Search,
-  bookmark: Bookmark,
-} as const;
+import { getDomains, getLessonsByDomain } from '../../lib/content-queries';
+import { buildDomainMeta } from '../../lib/build-domain-meta';
+import { serializeDomainMeta } from '../../lib/domain-meta';
 
 const pathname = Astro.url.pathname;
+const domains = await getDomains();
+const counts = await Promise.all(domains.map(async (d) => (await getLessonsByDomain(d.id)).length));
+const totalLessons = counts.reduce((sum, n) => sum + n, 0);
+const RING_R = 18; // 40px ring, 3px stroke
+// A domain is "current" on its own page and on every lesson inside it.
+const isDomainActive = (id: string) =>
+  pathname === `/linh-vuc/${id}` || pathname.startsWith(`/linh-vuc/${id}/`) || pathname.startsWith(`/hoc/${id}/`);
 ---
 
-<nav class="sidebar-nav" aria-label="Điều hướng chính">
-  <a href="/" class="sidebar-brand tap-scale">OmniLab</a>
+<nav class="sidebar-nav" aria-label="Điều hướng chính" data-sidebar data-meta={serializeDomainMeta(buildDomainMeta(domains))}>
+  <a href="/" class="sidebar-brand">
+    <span class="sidebar-mark"><Icon name="omni" size={16} stroke-width={2} /></span>
+    OmniLab
+  </a>
+  <button type="button" class="sidebar-search" data-open-palette>
+    <Icon name="search" size={17} />
+    <span>Tìm kiếm…</span>
+    <span class="sr-only">(mở bảng lệnh)</span>
+    <span class="sidebar-kbds" aria-hidden="true"><kbd data-kbd-mod>⌘</kbd><kbd>K</kbd></span>
+  </button>
   <ul class="sidebar-list">
     {navItems.map((item) => {
-      const Icon = iconMap[item.icon];
       const active = isNavItemActive(pathname, item);
       return (
         <li>
           <a
             href={item.href}
-            class="sidebar-link tap-scale"
+            class="sidebar-link"
             aria-current={active ? 'page' : undefined}
             data-active={active}
           >
-            <Icon size={20} stroke-width={active ? 2.25 : 2} aria-hidden="true" />
+            <Icon name={item.icon} size={19} />
             <span>{item.label}</span>
           </a>
         </li>
       );
     })}
   </ul>
+  {/* Unnamed <section>s on purpose (not region landmarks): a named "Lĩnh
+      vực" region would duplicate the home page's own (axe landmark-unique). */}
+  {domains.length > 0 && (
+    <section class="sidebar-section">
+      <h2 class="sidebar-section-title" id="sidebar-domains-heading">Lĩnh vực</h2>
+      <ul class="sidebar-list">
+        {domains.map((d, i) => {
+          const active = isDomainActive(d.id);
+          return (
+            <li>
+              <a
+                href={`/linh-vuc/${d.id}`}
+                class="sidebar-domain"
+                aria-current={active && pathname === `/linh-vuc/${d.id}` ? 'page' : undefined}
+                data-active={active}
+              >
+                <span class="sidebar-dot" style={`--dot:${d.data.accent};--dot-dark:${d.data.accentDark}`} aria-hidden="true" />
+                <span class="sidebar-domain-name">{d.data.title}</span>
+                <span class="sidebar-count">{counts[i]}</span>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  )}
+  <section class="sidebar-section" data-sidebar-saved hidden>
+    <h2 class="sidebar-section-title" id="sidebar-saved-heading">Đã lưu</h2>
+    <ul class="sidebar-list" data-sidebar-saved-list></ul>
+  </section>
+  <template data-sidebar-saved-template>
+    <li>
+      <a class="sidebar-domain hue" data-ss-link>
+        <span class="sidebar-dot sidebar-dot--round" aria-hidden="true"></span>
+        <span class="sidebar-domain-name" data-ss-title></span>
+      </a>
+    </li>
+  </template>
+  <div class="sidebar-foot" role="group" aria-label="Tiến độ học">
+    <span class="sidebar-ring tnum">
+      <svg viewBox="0 0 40 40" width="40" height="40" aria-hidden="true">
+        <circle class="sidebar-ring__tr" cx="20" cy="20" r={RING_R}></circle>
+        <circle class="sidebar-ring__fl" cx="20" cy="20" r={RING_R} data-sidebar-ring-fill></circle>
+      </svg>
+      <span data-sidebar-ring-text>0%</span>
+    </span>
+    <span class="sidebar-foot__text"><b class="tnum" data-sidebar-done>–/{totalLessons}</b>bài đã xong</span>
+  </div>
 </nav>
 
 <style>
@@ -50,60 +112,328 @@ const pathname = Astro.url.pathname;
     .sidebar-nav {
       display: flex;
       flex-direction: column;
-      gap: var(--space-5);
+      gap: 4px;
       position: fixed;
       left: 0;
       top: 0;
       bottom: 0;
       width: var(--shell-sidebar-w);
-      padding: var(--space-5) var(--space-4);
+      padding: 16px 12px;
       border-right: 1px solid var(--line);
-      background: var(--surface);
+      background: var(--material-sidebar);
       z-index: var(--z-nav);
       overflow-y: auto;
+      view-transition-name: ol-sidebar;
     }
   }
 
   .sidebar-brand {
-    font-size: var(--text-title2);
-    font-weight: 700;
-    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px 14px;
+    color: var(--text);
+    font-size: var(--text-callout);
+    font-weight: 800;
+    letter-spacing: -0.02em;
     text-decoration: none;
-    padding: var(--space-2);
+  }
+
+  .sidebar-mark {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    background: var(--volt);
+    color: var(--on-volt);
+    box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.18), 0 0 18px -4px var(--volt);
+  }
+
+  .sidebar-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    height: 36px;
+    margin-bottom: 14px;
+    padding: 0 10px;
+    border: 1px solid var(--line-2);
+    border-radius: 9px;
+    background: var(--surface);
+    box-shadow: var(--glow);
+    color: var(--text-3);
+    font-size: 13.5px;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color var(--dur-1);
+  }
+
+  .sidebar-kbds {
+    display: flex;
+    gap: 3px;
+    margin-left: auto;
+  }
+
+  .sidebar-search:hover {
+    border-color: var(--line-3);
   }
 
   .sidebar-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
+    display: grid;
+    gap: 2px;
     margin: 0;
     padding: 0;
   }
 
-  .sidebar-link {
+  .sidebar-list > li {
+    min-width: 0;
+  }
+
+  .sidebar-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .sidebar-section-title {
+    padding: 14px 10px 6px;
+    font: 500 var(--text-nano) var(--font-mono);
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+
+  .sidebar-link,
+  .sidebar-domain {
+    position: relative;
     display: flex;
     align-items: center;
-    gap: var(--space-3);
-    min-height: 44px;
-    padding: var(--space-2) var(--space-3);
-    border-radius: var(--radius-row);
-    color: var(--ink-2);
+    gap: 11px;
+    min-height: 36px;
+    padding: 0 10px;
+    border-radius: 9px;
+    color: var(--text-2);
+    font-size: 14px;
+    font-weight: 600;
     text-decoration: none;
-    font-weight: 500;
-    transition: background-color var(--dur-fast) var(--ease-out);
+    transition: color var(--dur-1), background-color var(--dur-1);
+  }
+
+  @media (pointer: coarse) {
+    .sidebar-link,
+    .sidebar-domain {
+      min-height: 44px;
+    }
   }
 
   @media (hover: hover) {
     .sidebar-link:hover {
-      background: var(--surface-2);
-      color: var(--ink);
+      color: var(--text);
+    }
+
+    .sidebar-domain:hover {
+      background: var(--surface);
+      color: var(--text);
     }
   }
 
-  .sidebar-link[data-active='true'],
-  .sidebar-link[data-active='true']:hover {
-    color: var(--accent);
+  .sidebar-link[data-active='true'] {
+    color: var(--text);
     background: var(--surface-2);
-    font-weight: 700;
+    box-shadow: inset 0 0 0 1px var(--line-2), var(--glow);
+  }
+
+  .sidebar-link[data-active='true'] :global(svg) {
+    color: var(--volt-ink);
+  }
+
+  /* Volt edge marker on the rail's inner edge. */
+  .sidebar-link[data-active='true']::before {
+    content: '';
+    position: absolute;
+    left: -12px;
+    top: 9px;
+    bottom: 9px;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: var(--volt);
+  }
+
+  .sidebar-domain {
+    font-size: 13.5px;
+    font-weight: 500;
+  }
+
+  .sidebar-domain[data-active='true'] {
+    color: var(--text);
+    background: var(--surface);
+  }
+
+  .sidebar-dot {
+    flex: none;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    background: var(--dot, var(--c));
+  }
+
+  .sidebar-dot--round {
+    border-radius: 50%;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .sidebar-dot {
+      background: var(--dot-dark, var(--dot, var(--c)));
+    }
+  }
+
+  .sidebar-section[hidden] {
+    display: none;
+  }
+
+  /* Overall progress, pinned to the rail's bottom edge. */
+  .sidebar-foot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: auto;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-row);
+    background: var(--surface);
+    font-size: 12.5px;
+    color: var(--text-2);
+  }
+
+  .sidebar-foot__text b {
+    display: block;
+    margin-bottom: 3px;
+    font: 500 18px / 1 var(--font-mono);
+    color: var(--text);
+  }
+
+  .sidebar-ring {
+    position: relative;
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    font: 500 var(--text-nano) var(--font-mono);
+    color: var(--text);
+  }
+
+  .sidebar-ring svg {
+    position: absolute;
+    inset: 0;
+    transform: rotate(-90deg);
+  }
+
+  .sidebar-ring circle {
+    fill: none;
+    stroke-width: 3;
+  }
+
+  .sidebar-ring__tr {
+    stroke: var(--surface-3);
+  }
+
+  .sidebar-ring__fl {
+    stroke: var(--volt-ink);
+    stroke-linecap: round;
+    transition: stroke-dashoffset var(--dur-4) var(--ease);
+  }
+
+  .sidebar-domain-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sidebar-count {
+    margin-left: auto;
+    font: 500 11px var(--font-mono);
+    color: var(--text-3);
   }
 </style>
+
+<script>
+  // Fills the footer ring + counter and the "Đã lưu" shortcuts from the
+  // progress store. Rebound on every soft navigation: the rail is a fresh DOM
+  // node after each swap.
+  import { getProgressStore } from '../../lib/progress-store';
+  import { fetchLessonsIndex } from '../../lib/lessons-index-client';
+  import { learningStats } from '../../lib/domain-progress';
+  import { applyHue, parseDomainMeta } from '../../lib/domain-meta';
+  import { applyModKeyLabel } from '../../lib/kbd-platform';
+  import { onPageLoad } from '../../lib/page-lifecycle';
+
+  const SAVED_SHOWN = 3;
+
+  onPageLoad(() => {
+    applyModKeyLabel(document);
+
+    const root = document.querySelector<HTMLElement>('[data-sidebar]');
+    if (!root) return;
+    const fill = root.querySelector<SVGCircleElement>('[data-sidebar-ring-fill]');
+    const ringText = root.querySelector<HTMLElement>('[data-sidebar-ring-text]');
+    const doneText = root.querySelector<HTMLElement>('[data-sidebar-done]');
+    const savedSection = root.querySelector<HTMLElement>('[data-sidebar-saved]');
+    const savedList = root.querySelector<HTMLElement>('[data-sidebar-saved-list]');
+    const template = root.querySelector<HTMLTemplateElement>('[data-sidebar-saved-template]');
+    if (!fill || !ringText || !doneText || !savedSection || !savedList || !template) return;
+
+    const meta = parseDomainMeta(root.dataset.meta);
+    const circumference = 2 * Math.PI * Number(fill.getAttribute('r'));
+    fill.style.strokeDasharray = String(circumference);
+    fill.style.strokeDashoffset = String(circumference);
+
+    let cancelled = false;
+    let unsubscribe: (() => void) | undefined;
+
+    void (async () => {
+      let lessons;
+      try {
+        lessons = await fetchLessonsIndex();
+      } catch {
+        return; // keep the static placeholders
+      }
+      if (cancelled) return;
+      const byId = new Map(lessons.map((l) => [l.id, l]));
+
+      unsubscribe = getProgressStore().subscribe((state) => {
+        const stats = learningStats(state, lessons);
+        const ratio = stats.total > 0 ? stats.done / stats.total : 0;
+        fill.style.strokeDashoffset = String(circumference * (1 - ratio));
+        ringText.textContent = `${Math.round(ratio * 100)}%`;
+        doneText.textContent = `${stats.done}/${stats.total}`;
+
+        // Most recent bookmarks first.
+        const shown = state.bookmarks
+          .slice()
+          .reverse()
+          .map((id) => byId.get(id))
+          .filter((l): l is NonNullable<typeof l> => Boolean(l))
+          .slice(0, SAVED_SHOWN);
+        savedList.replaceChildren();
+        for (const lesson of shown) {
+          const node = template.content.cloneNode(true) as DocumentFragment;
+          const link = node.querySelector<HTMLAnchorElement>('[data-ss-link]')!;
+          node.querySelector('[data-ss-title]')!.textContent = lesson.title;
+          link.href = lesson.url;
+          link.title = lesson.title;
+          applyHue(link, meta.find((m) => m.id === lesson.domain));
+          savedList.append(node);
+        }
+        savedSection.hidden = shown.length === 0;
+      });
+    })();
+
+    return () => {
+      cancelled = true;
+      unsubscribe?.();
+    };
+  });
+</script>

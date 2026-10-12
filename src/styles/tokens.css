@@ -1,49 +1,98 @@
 /*
- * Design tokens — single source of truth for color, spacing, type, motion.
- * Components MUST only reference these custom properties, never raw hex or
- * bare px magic numbers for color/spacing/radius/duration.
+ * Design tokens - "Studio" look: graphite dark / cool-paper light, one Volt
+ * signature color, hairline borders + inner glows, Be Vietnam Pro display +
+ * JetBrains Mono tabular labels. Source of truth for the look:
+ * plans/261012-full-restyle-concepts/concept-b-studio/index.html.
+ * Components MUST only reference these custom properties, never raw hex.
  *
- * Dark mode: driven entirely by `@media (prefers-color-scheme: dark)` — no
- * manual toggle/class.
+ * Theme: driven entirely by `@media (prefers-color-scheme: dark)` - no manual
+ * toggle/class. Dark is the "hero" theme of the design. The contrast test
+ * (tests/token-contrast.test.mjs) parses the `--name: #RRGGBB;` hex tokens in
+ * this file, so keep that exact form for bg / surface / surface-2 / text /
+ * text-2 / text-3 / volt / volt-ink / on-volt / line-strong / danger / success /
+ * accent-on in both blocks. The first dark-scheme media query in this file
+ * must be the dark palette block (the test splits the file there).
  *
- * Domain accent: `--domain-accent` / `--domain-accent-dark` are set as an
- * inline style on the layout root (see app-layout.astro / reader-layout.astro
- * `domainAccent` / `domainAccentDark` props) per content YAML. `--accent`
- * resolves to the light or dark variant depending on system theme, with a
- * neutral fallback (Kiến trúc indigo) when a page has no domain context
- * (e.g. Tìm kiếm, Đã lưu). Contrast for both domain accents verified
- * ≥4.5:1 against surface/bg in light AND dark.
+ * VOLT RULE: --volt is a FILL (buttons, indicators, check discs) and always
+ * carries --on-volt (near-black) text. --volt-ink is the TEXT/line variant
+ * (links, eyebrows, active icons): lime on dark, deep olive on light. Never use
+ * --volt as text on a light background.
+ *
+ * Domain accent: `--domain-accent` / `--domain-accent-dark` are set as inline
+ * style on the layout root (see src/layouts/domain-accent.ts) from content
+ * YAML. `--accent` resolves to the light or dark variant by system theme and
+ * falls back to --volt-ink on pages with no domain context.
+ *
+ * Illustration contract: --ink / --ink-2 (plus --accent, --surface-2, --line,
+ * --danger) are referenced by the inline lesson SVGs in src/assets/illustrations
+ * (docs/illustration-style-guide.md). Keep them; UI code uses --text / --text-2.
  */
 
 :root {
-  /* --- Color: light (default) --- */
-  --bg: #F7F6F2;
+  /* --- Color: light ("cool paper") --- */
+  --bg: #F3F4F6;
+  --bg-2: #ECEEF1; /* sidebar, secondary canvas */
   --surface: #FFFFFF;
-  --surface-2: #EFEDE7;
-  --ink: #1C1F24;
-  --ink-2: #5A606B;
-  --line: #E3E0D8;
-  /* Boundary of interactive controls (inputs): >=3:1 vs --surface/--bg per
-     WCAG 1.4.11. --line stays for decorative dividers only. */
+  --surface-2: #F8F9FA; /* fields, secondary buttons, hover rows */
+  --surface-3: #EDEFF2; /* tracks, pressed fills, skeletons */
+  --line: rgba(12, 14, 18, 0.08); /* hairline: decorative separators */
+  --line-2: rgba(12, 14, 18, 0.13); /* control/card borders */
+  --line-3: rgba(12, 14, 18, 0.24); /* hover borders, unchecked rings */
+  /* Solid boundary of interactive controls (inputs): >=3:1 vs bg/surface/
+     surface-2 per WCAG 1.4.11. Use for a field that has no other affordance. */
   --line-strong: #80858F;
+  --text: #0C0E12;
+  --text-2: #4A505C;
+  --text-3: #5F6672; /* tertiary: meta, mono labels; still >=4.5:1 on bg */
 
-  --domain-accent: #4F46E5;
-  --domain-accent-dark: #A5B4FC;
-  --accent: var(--domain-accent, #4F46E5);
-  --accent-on: #FFFFFF; /* text/icon color placed on top of a solid --accent fill */
+  --volt: #C8F031; /* FILL only, text on it is --on-volt */
+  --volt-ink: #4A6B00; /* text / line / icon variant of the signature color */
+  --on-volt: #0B0C0E;
+  --volt-soft: rgba(140, 190, 0, 0.14); /* tinted wash behind volt-ink text */
+
+  /* Domain hues (concept): Kien truc / Tai chinh / Nghe tai chinh. */
+  --arch: #4B45D1;
+  --fin: #0B7259;
+  --pro: #A4440C;
+
+  --accent: var(--domain-accent, var(--volt-ink));
+  --accent-on: #FFFFFF; /* text/icon on a solid --accent fill */
+  /* Tinted fill behind accent text. Falls back to --volt-soft where color-mix
+     is unsupported (see @supports below). Mixed into --surface, not
+     transparent, so accent text on it keeps >=4.5:1 whatever sits behind. */
+  --accent-tint: var(--volt-soft);
 
   --danger: #B3261E;
   --success: #1C7455;
 
-  /* Translucent veil for fixed bars (tab bar, reader top bar): mostly-opaque
-     so contrast stays effectively identical to --surface, with backdrop-filter
-     blur as a purely decorative layer-separation cue (spec: "blur nền nhẹ
-     chỉ để tách lớp"). Raw rgba lives here only — components read the token. */
-  --surface-veil: rgba(255, 255, 255, 0.94);
+  --glow: inset 0 1px 0 rgba(255, 255, 255, 0.95); /* top inner highlight */
+  --shadow: 0 1px 2px rgba(12, 14, 18, 0.06), 0 12px 32px -14px rgba(12, 14, 18, 0.22);
 
-  /* --- Radius --- */
-  --radius-card: 16px;
-  --radius-row: 12px; /* also used for buttons/inputs — one control radius, no extra token */
+  /* Dock stays ink-colored in BOTH themes. */
+  --dock: #0E1014;
+  --dock-text: #A3A8B3;
+  --dock-text-strong: #EDEEF0; /* primary text on ink surfaces (dock, toast) */
+  --dock-line: rgba(255, 255, 255, 0.08);
+  --dock-shadow: 0 18px 40px -14px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  --grain: 0.04; /* grain overlay opacity (desktop only, see base.css) */
+  --grid-line: rgba(12, 14, 18, 0.045); /* technical-drawing grid */
+
+  /* --- Materials (translucent bars). Solid fallbacks below. --- */
+  --material-bar: rgba(243, 244, 246, 0.82); /* top bars, collapsing nav */
+  --material-sidebar: var(--bg-2); /* sidebar is solid in Studio */
+  --material-border: var(--line);
+  --material-blur: blur(14px) saturate(1.4);
+  --material-overlay: rgba(5, 6, 8, 0.52); /* modal scrim (palette) */
+
+  /* --- Radius (concept r-xs..r-xl) --- */
+  --radius-xs: 6px; /* kbd, inline code */
+  --radius-sm: 8px; /* small buttons, tb-btn */
+  --radius-row: 12px; /* buttons, inputs, list rows (r-md) */
+  --radius-lg: 16px; /* cards, figures, callouts */
+  --radius-card: 20px; /* continue card, domain cards */
+  --radius-xl: 22px;
+  --radius-dock: 24px;
   --radius-full: 999px;
 
   /* --- Spacing: 4pt grid --- */
@@ -56,70 +105,147 @@
   --space-7: 48px;
   --space-8: 64px;
 
-  /* --- Motion --- */
-  --dur-fast: 150ms;
-  --dur: 250ms;
-  --dur-exit: 170ms; /* view-transition exit is shorter than enter (~68% of --dur) */
-  --ease-out: cubic-bezier(.2, .8, .2, 1); /* entering content */
-  --ease-in: cubic-bezier(.4, 0, 1, 1); /* exiting content */
+  /* --- Motion: snappy 120-200ms, ease-out. Reduced motion: page swaps become
+     a 120ms crossfade (view-transitions.css), CSS transitions ~instant (base.css). --- */
+  --dur-1: 120ms; /* press, hover */
+  --dur-2: 160ms; /* color, small reveals */
+  --dur-3: 200ms; /* glide, page push */
+  --dur-4: 280ms; /* progress fill */
+  --ease: cubic-bezier(.2, .8, .2, 1); /* main ease-out */
+  --ease-snap: cubic-bezier(.3, 1.35, .5, 1); /* slight overshoot: check, chip, switch */
+  --stagger: 30ms;
 
-  /* --- Type --- */
+  /* --- Type: Be Vietnam Pro (UI + display, up to 800) + JetBrains Mono
+     (numbers, labels, kbd). Mono numerals are tabular by design. --- */
   --font-ui: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Consolas, monospace;
 
+  --text-nano: 10.5px; /* dock labels, tiny mono */
+  --text-label: 11.5px; /* mono eyebrow / section label, uppercase .08em */
+  --text-micro: 12px;
   --text-caption: 13px;
-  --text-footnote: 15px;
-  --text-body: 17px;
+  --text-small: 14px;
+  --text-subhead: 15px;
+  --text-callout: 16px;
+  --text-body: 16px; /* UI body */
+  --text-headline: 17px; /* use with weight 600 */
+  --text-read: 17px; /* long-form reading (mobile); 18px from 1024px in prose.css */
   --text-title3: 20px;
   --text-title2: 22px;
   --text-title1: 28px;
-  --text-large: 34px;
+  --text-large: 34px; /* mobile screen title (display weight 800) */
+  --text-h1: 32px;
+  --text-h2: 24px;
+  --text-h3: 18px;
+  --text-display-d: 44px; /* desktop screen / article title */
+  --text-display: clamp(36px, 6vw, 52px);
 
+  --leading-large: 1.05;
   --leading-tight: 1.25;
-  --leading-normal: 1.5;
-  --leading-relaxed: 1.7; /* long-form reading measure, see prose.css */
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.72; /* long-form reading, see prose.css */
+
+  /* Display uses weight 800 + tight tracking. */
+  --track-display: -0.045em;
+  --track-title: -0.035em;
+  --track-heading: -0.025em;
+  --track-tight: -0.01em;
+  --track-label: 0.08em; /* mono uppercase labels */
 
   /* --- Z-index scale --- */
-  --z-nav: 100; /* tab bar / sidebar / reader top bar */
+  --z-nav: 100;
   --z-overlay: 200;
   --z-toast: 300;
 
-  /* --- Elevation (flat design, used sparingly: card separation only) --- */
-  --shadow-card: 0 1px 2px rgba(28, 31, 36, 0.06), 0 1px 1px rgba(28, 31, 36, 0.04);
-  --shadow-bar: 0 -1px 8px rgba(28, 31, 36, 0.06); /* bottom tab bar, casts upward */
+  /* --- Shell layout --- */
+  --shell-navbar-h: 44px; /* nav-bar row height, excl. safe-area */
+  --shell-tabbar-h: 66px; /* ink dock height */
+  --shell-tabbar-gap: 12px; /* gap between dock and the bottom edge / safe area */
+  --shell-sidebar-w: 256px; /* >=1024px */
+  --shell-aside-w: 300px; /* reader aside column, >=1280px */
+  --shell-content-max: 1072px; /* tab-screen content max width on desktop */
+  --shell-measure: 68ch; /* reading measure in the reader */
 
-  /* --- Shell layout constants (shared by tab-bar / sidebar-nav / headers so
-     app-layout's content insets never drift out of sync with the nav's own
-     CSS) --- */
-  --shell-navbar-h: 44px; /* iOS standard nav-bar height, excl. safe-area */
-  --shell-tabbar-h: 56px; /* excl. safe-area-inset-bottom */
-  --shell-sidebar-w: 240px; /* >=1024px only */
+  /* Horizontal page gutters honoring the landscape notch / Dynamic Island. */
+  --gutter: 20px;
+  --gutter-l: max(var(--gutter), env(safe-area-inset-left));
+  --gutter-r: max(var(--gutter), env(safe-area-inset-right));
 
-  /* Horizontal page gutters honoring the landscape notch / Dynamic Island
-     (viewport-fit=cover is on, so content would otherwise sit under it). */
-  --gutter-l: max(var(--space-4), env(safe-area-inset-left));
-  --gutter-r: max(var(--space-4), env(safe-area-inset-right));
+  /* --- Illustration contract (lesson SVGs, see header) --- */
+  --ink: var(--text);
+  --ink-2: var(--text-2);
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --gutter: 56px;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #111315;
-    --surface: #1A1D21;
-    --surface-2: #22262B;
-    --ink: #F2F1ED;
-    --ink-2: #A7ACB6;
-    --line: #2C3036;
-    --line-strong: #6E747E;
+    --bg: #0B0C0E;
+    --bg-2: #0F1013;
+    --surface: #15171B;
+    --surface-2: #1B1E23;
+    --surface-3: #23262C;
+    --line: rgba(255, 255, 255, 0.07);
+    --line-2: rgba(255, 255, 255, 0.12);
+    --line-3: rgba(255, 255, 255, 0.22);
+    --line-strong: #6B717C;
+    --text: #EDEEF0;
+    --text-2: #A3A8B3;
+    --text-3: #7F8591;
 
-    --accent: var(--domain-accent-dark, #A5B4FC);
-    --accent-on: #111315; /* light accent tints need dark text/icon on top */
+    --volt: #D4FF3A;
+    --volt-ink: #D4FF3A;
+    --on-volt: #0B0C0E;
+    --volt-soft: rgba(212, 255, 58, 0.12);
 
-    --danger: #F2A29C;
+    --arch: #9B9BFF;
+    --fin: #4FD8B4;
+    --pro: #FFA766;
+
+    --accent: var(--domain-accent-dark, var(--volt-ink));
+    --accent-on: #0B0C0E;
+
+    --danger: #FF9A94;
     --success: #6EE7B7;
 
-    --surface-veil: rgba(26, 29, 33, 0.94);
+    --glow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    --shadow: 0 1px 0 rgba(0, 0, 0, 0.5), 0 16px 40px -16px rgba(0, 0, 0, 0.7);
 
-    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 1px rgba(0, 0, 0, 0.3);
-    --shadow-bar: 0 -1px 8px rgba(0, 0, 0, 0.45);
+    --dock: #16181C;
+    --dock-line: rgba(255, 255, 255, 0.09);
+
+    --grain: 0.06;
+    --grid-line: rgba(255, 255, 255, 0.035);
+
+    --material-bar: rgba(11, 12, 14, 0.82);
+  }
+}
+
+/* color-mix (Safari 16.2+): accent-tinted fill; older engines keep --volt-soft. */
+@supports (color: color-mix(in srgb, red 10%, blue)) {
+  :root {
+    --accent-tint: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  }
+}
+
+/* No backdrop-filter support: swap translucent materials for solid fills so
+   text never sits on busy scrolling content. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root {
+    --material-bar: var(--bg);
+    --material-blur: none;
+  }
+}
+
+/* User asked the OS to reduce transparency: same solid fills as above. */
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --material-bar: var(--bg);
+    --material-blur: none;
+    --material-overlay: rgba(5, 6, 8, 0.8);
   }
 }

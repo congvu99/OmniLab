@@ -4,6 +4,7 @@
 // content disclaimer. Linked from the /linh-vuc footer.
 import { getCollection } from 'astro:content';
 import AppLayout from '../layouts/app-layout.astro';
+import LargeTitleHeader from '../components/shell/large-title-header.astro';
 
 // Third-party image credits: derived at build time from EVERY lesson's raw
 // MDX body, across all domains (not just kien-truc — a new domain with a
@@ -30,10 +31,11 @@ const allLessons = await getCollection('lessons');
 const imageCredits = [...new Set(allLessons.flatMap((l) => extractFigureCredits(l.body ?? '')))].sort();
 ---
 
-<AppLayout title="Giới thiệu - OmniLab" largeTitle="Giới thiệu">
+<AppLayout title="Giới thiệu - OmniLab">
+  <LargeTitleHeader title="Giới thiệu" eyebrow="Nguồn · giấy phép · miễn trừ" />
   <div class="about">
-    <section class="about-section">
-      <h2>Mục đích</h2>
+    <section class="card about-section rise" style="--i:0" aria-labelledby="about-purpose">
+      <h2 id="about-purpose"><span class="eyebrow-n tnum">01</span>Mục đích</h2>
       <p>
         OmniLab là ứng dụng học tập cá nhân, dịch và biên soạn lại nội dung gốc theo từng lĩnh vực (Kiến
         trúc hệ thống, Tài chính cá nhân) để đọc thuận tiện trên điện thoại, có thêm ví dụ đời sống và sơ
@@ -42,28 +44,28 @@ const imageCredits = [...new Set(allLessons.flatMap((l) => extractFigureCredits(
       </p>
     </section>
 
-    <section class="about-section">
-      <h2>Nguồn & giấy phép</h2>
+    <section class="card about-section rise" style="--i:1" aria-labelledby="about-sources">
+      <h2 id="about-sources"><span class="eyebrow-n tnum">02</span>Nguồn &amp; giấy phép</h2>
       <ul class="source-list">
         <li>
-          <strong>The System Design Primer</strong> — Donne Martin và cộng đồng đóng góp. Giấy phép
-          <strong>CC BY 4.0</strong>.
+          <strong>The System Design Primer</strong> — Donne Martin và cộng đồng đóng góp. Giấy phép{' '}
+          <strong>CC BY 4.0</strong>.{' '}
           <a href="https://github.com/donnemartin/system-design-primer" target="_blank" rel="noopener noreferrer">
             github.com/donnemartin/system-design-primer
           </a>
-          . Nội dung lĩnh vực "Kiến trúc hệ thống" dịch sang tiếng Việt từ bản gốc tiếng Anh, giữ nguyên ý
+          {'. '}Nội dung lĩnh vực "Kiến trúc hệ thống" dịch sang tiếng Việt từ bản gốc tiếng Anh, giữ nguyên ý
           nghĩa; các đoạn "Ghi chú của người dịch" là phần thêm mới của người dịch, không thuộc bản gốc.
         </li>
         <li>
-          <strong>Lộ trình nền tảng tài chính — Sổ tay thực hành</strong> — OmniLab (tổng hợp). Giấy phép:
+          <strong>Lộ trình nền tảng tài chính — Sổ tay thực hành</strong> — OmniLab (tổng hợp). Giấy phép:{' '}
           <em>chưa xác định, đang chờ xác nhận</em>. Nội dung lĩnh vực "Tài chính cá nhân" tổng hợp lại từ
           sổ tay nội bộ; xem miễn trừ trách nhiệm bên dưới.
         </li>
       </ul>
     </section>
 
-    <section class="about-section">
-      <h2>Ảnh minh hoạ (bên thứ ba)</h2>
+    <section class="card about-section rise" style="--i:2" aria-labelledby="about-images">
+      <h2 id="about-images"><span class="eyebrow-n tnum">03</span>Ảnh minh hoạ (bên thứ ba)</h2>
       {
         imageCredits.length > 0 ? (
           <>
@@ -89,8 +91,8 @@ const imageCredits = [...new Set(allLessons.flatMap((l) => extractFigureCredits(
       }
     </section>
 
-    <section class="about-section">
-      <h2>Miễn trừ trách nhiệm</h2>
+    <section class="card about-section rise" style="--i:3" aria-labelledby="about-disclaimer">
+      <h2 id="about-disclaimer"><span class="eyebrow-n tnum">04</span>Miễn trừ trách nhiệm</h2>
       <p>
         Nội dung lĩnh vực "Tài chính cá nhân" mang tính giáo dục, không phải tư vấn đầu tư hay khuyến nghị
         mua/bán sản phẩm tài chính cụ thể. Kiểm tra lại số liệu, quy định pháp luật và điều kiện sản phẩm
@@ -102,71 +104,113 @@ const imageCredits = [...new Set(allLessons.flatMap((l) => extractFigureCredits(
 
 <style>
   .about {
-    margin: var(--space-4);
-    max-width: 65ch;
+    display: grid;
+    gap: 12px;
+    max-width: 760px;
+    padding-inline: calc(var(--gutter-l) - 4px) calc(var(--gutter-r) - 4px);
+  }
+
+  @media (min-width: 1024px) {
+    .about {
+      padding-inline: var(--gutter-l) var(--gutter-r);
+      gap: 16px;
+    }
   }
 
   .about-section {
-    margin-bottom: var(--space-6);
+    padding: 20px;
+    border-radius: var(--radius-card);
+  }
+
+  .about-section > :last-child {
+    margin-bottom: 0;
   }
 
   .about-section h2 {
-    font-size: var(--text-title3);
-    font-weight: 700;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
     margin: 0 0 var(--space-3);
+    font-size: var(--text-title3);
+    font-weight: 800;
+    letter-spacing: var(--track-heading);
+  }
+
+  .eyebrow-n {
+    font: 500 12px var(--font-mono);
+    color: var(--volt-ink);
+    letter-spacing: 0;
   }
 
   .about-section p {
+    margin: 0 0 var(--space-3);
     font-size: var(--text-body);
     line-height: var(--leading-relaxed);
-    color: var(--ink);
-    margin: 0 0 var(--space-3);
+    color: var(--text-2);
   }
 
   .about-section code {
+    padding: 0.15em 0.4em;
+    border-radius: 6px;
+    background: var(--surface-3);
+    color: var(--text);
     font-family: var(--font-mono);
     font-size: 0.9em;
-    background: var(--surface-2);
-    border-radius: 4px;
-    padding: 0.15em 0.4em;
   }
 
   .source-list {
-    margin: 0;
-    padding-left: var(--space-5);
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
 
   .source-list li {
     font-size: var(--text-body);
     line-height: var(--leading-relaxed);
+    color: var(--text-2);
+  }
+
+  .source-list strong {
+    color: var(--text);
   }
 
   .about a {
-    color: var(--accent);
+    color: var(--volt-ink);
     text-decoration: underline;
     text-underline-offset: 2px;
     word-break: break-word;
   }
 
   .credit-list summary {
-    cursor: pointer;
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--volt-ink);
     font-weight: 600;
-    color: var(--ink);
+    cursor: pointer;
   }
 
   .credit-list ul {
-    margin: var(--space-3) 0 0;
-    padding-left: var(--space-5);
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
+    margin: var(--space-3) 0 0;
+    padding-left: var(--space-5);
+    list-style: disc;
+  }
+
+  .credit-list :global(a) {
+    color: var(--volt-ink);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    word-break: break-word;
   }
 
   .credit-list li {
-    font-size: var(--text-footnote);
-    color: var(--ink-2);
+    font-size: var(--text-caption);
+    color: var(--text-2);
   }
 </style>
