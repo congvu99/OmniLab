@@ -2,6 +2,8 @@
 
 **Tháng 09/2026**: App học tập Astro 7 (static) cho hệ thống thiết kế + tài chính cá nhân Việt Nam. 50 bài (27 kiến-trúc + 23 tài-chính), progress tracking, tìm kiếm, iOS standalone. Mục tiêu: Lighthouse ≥95 (xem QA report).
 
+**Cập nhật 2026-10-12**: thêm tài khoản (tên + mật khẩu) và đồng bộ tiến độ qua máy chủ đồng bộ (sidecar). Deploy chính chuyển sang VPS Docker Compose. Học vẫn chạy khi không đăng nhập. Chi tiết: [system-architecture.md](./system-architecture.md#máy-chủ-đồng-bộ-sync-sidecar).
+
 ## Tầm nhìn
 
 Nền tảng học tập mã nguồn mở, bền vững, cho developer Việt. Độc lập server (Astro static), có thể thêm domain mà không sửa code, support iOS standalone.
@@ -32,6 +34,14 @@ Nền tảng học tập mã nguồn mở, bền vững, cho developer Việt. �
 - Safe-area inset (notch, home bar)
 - Progress lưu localStorage (in-memory fallback private mode)
 
+**6. Tài khoản & đồng bộ** (thêm 2026-10-12)
+- Đăng ký / đăng nhập bằng tên + mật khẩu, không email. Mục Tài khoản ở tab Tôi (`/toi`)
+- Đăng nhập → tiến độ và bookmark của máy được gộp với tài khoản (không ghi đè), đồng bộ giữa các thiết bị
+- Máy đang có dữ liệu của tài khoản khác: hỏi trước khi gộp, không tự gộp
+- Đăng xuất (có tuỳ chọn xoá dữ liệu trên máy), đăng xuất mọi thiết bị
+- Chưa đăng nhập hoặc sidecar sập: học như cũ, UI báo "Chưa kết nối được máy chủ đồng bộ"
+- Ngoài phạm vi v1: quên mật khẩu qua email, OAuth, mã mời, xuất/nhập JSON (hạ ưu tiên)
+
 ## Yêu cầu phi chức năng
 
 | Yêu cầu | Mục tiêu | Ghi chú |
@@ -44,6 +54,8 @@ Nền tảng học tập mã nguồn mở, bền vững, cho developer Việt. �
 | Nội dung gốc | 100% bất biến | `pnpm verify:fidelity` gate |
 | Browser | Modern (iOS 16+, Chrome 120+) | No polyfill |
 | **Offline** | **KHÔNG hỗ trợ v1** | Service worker = v2 candidate |
+| Đồng bộ | Sidecar không egress, không publish cổng, RAM 192 MB; dữ liệu đồng bộ phải backup | Backup 1 lần/ngày (cron 03:15), giữ 14 ngày; cần backup ra ngoài VPS (khuyến nghị) |
+| Bảo mật tài khoản | scrypt, throttle đăng nhập theo tên, cookie HttpOnly + HMAC, CSP không đổi | Chi tiết: mục "Mô hình đe doạ" trong system-architecture |
 
 ## Mô hình nội dung v1
 
@@ -66,12 +78,20 @@ Nền tảng học tập mã nguồn mở, bền vững, cho developer Việt. �
 - [ ] `pnpm verify:fidelity` pass (nội dung gốc bất biến)
 - [ ] Lighthouse: Xem phase-07-qa-report.md (mục tiêu ≥95)
 - [ ] Domain extensibility test (YAML + 1 bài MDX → build pass, không sửa code)
+- [ ] Đồng bộ: đăng ký ở máy A, đánh dấu xong + bookmark; đăng nhập ở máy B thấy ngay; B bỏ bookmark → A thấy khi quay lại tab
+- [ ] Máy dùng chung: A đăng xuất, B đăng nhập → được hỏi gộp, không tự gộp
+- [ ] Sidecar sập: site 200, `/api/*` 503 JSON, UI báo chưa kết nối, tiến độ local vẫn dùng
+- [ ] Backup và restore đã thử trên VPS (checklist trong deployment-vps-guide.html)
 
 ## Quyết định (Khóa — không đảo ngược)
 
 | Quyết định | Lý do | Khóa |
 |-----------|-------|------|
-| Static output (no server) | Railpack simple, no DB, no cost scale | Yes |
+| Static output (no server) | Railpack simple, no DB, no cost scale | Đã thay đổi 2026-10-12: site vẫn tĩnh, nhưng tài khoản/đồng bộ cần sidecar + DB trên VPS. Railpack không chạy được sidecar |
+| Tài khoản bằng tên + mật khẩu, không email | Không cần dịch vụ email; dữ liệu cá nhân tối thiểu | Yes (2026-10-12) |
+| Chấp nhận 409 lộ tên đã tồn tại | Đăng ký đơn giản; rủi ro dò tên được giảm bằng giới hạn đăng ký và throttle | Yes (2026-10-12) |
+| Không rollback client qua mốc schema v2 | Client cũ không hiểu v2; client v2 chỉ đọc khi gặp v>2 | Yes (2026-10-12) |
+| Server và client deploy cùng lúc | Header `X-Sync-User` là hợp đồng mới giữa hai phía | Yes (2026-10-12) |
 | MiniSearch not Pagefind | Pagefind failed "bo nho dem" (cache vắng top 15) | Yes (phase 5 spike) |
 | Offline not v1 | Complexity, v2 candidate (service worker + IndexedDB) | Yes |
 | Dark: system preference | No toggle UI, respects OS setting | Yes |
@@ -80,15 +100,20 @@ Nền tảng học tập mã nguồn mở, bền vững, cho developer Việt. �
 
 ## Deploy
 
-**Nền tảng**: Vibe Deploy Nhân Hòa (Railpack + Caddy). User setup domain/TLS/git remote (xem [`docs/deployment-guide.md`](./deployment-guide.md)).
+**Nền tảng chính**: VPS dùng chung với Docker Compose (xem [`docs/deployment-vps-guide.html`](./deployment-vps-guide.html)). Hai service: `app` (site tĩnh) và `sync` (đồng bộ, cần DB và backup).
 
-**Env var** (dashboard Vibe Deploy):
-- `SITE_URL=https://domain` (sitemap, canonical URL)
+**Phương án cũ**: Vibe Deploy Nhân Hòa (Railpack + Caddy), chỉ site tĩnh, không có đồng bộ (xem [`docs/deployment-guide.md`](./deployment-guide.md)).
+
+**Env var**:
+- `SITE_URL=https://domain` (sitemap, canonical URL), build time
+- `SESSION_SECRET` (≥ 32 ký tự, sidecar; đổi giá trị = mọi phiên đăng nhập hết hạn)
+- `OMNILAB_DATA_DIR` (tuỳ chọn, mặc định `/srv/data/omnilab`)
 
 **Caddyfile** (repo):
 - Cache: `/_astro/*` immutable, mọi đường dẫn khác no-cache
 - CSP: `script-src 'self'`, `style-src 'unsafe-inline'`
 - No SPA fallback (404 thật)
+- `/api/*` → sidecar; sidecar không có → 503 JSON
 
 ## Nội dung License
 
@@ -106,7 +131,8 @@ Nền tảng học tập mã nguồn mở, bền vững, cho developer Việt. �
 | License nội dung tài chính? | Xác nhận + document trước public launch |
 | Upstream "~1m 5s" downtim figure fix? | System Design Primer nêu sai, nên "~1m 0.5s" (verify + PR?) |
 | UptimeRobot monitoring? | Optional, user tự setup (ngoài repo) |
-| v2 roadmap priority? | Offline likely first, sau đó multi-device sync |
+| v2 roadmap priority? | Multi-device sync đã xong (2026-10-12). Offline vẫn là ứng viên v2 đầu tiên |
+| Backup ra ngoài VPS? | Chưa cấu hình. Khuyến nghị rclone, xem chương 6 deployment-vps-guide |
 
 ## Bảng điểm & thành công
 

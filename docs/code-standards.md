@@ -187,10 +187,13 @@ it('fold diacritics', () => {
 **Quality gate**: 
 ```bash
 pnpm verify:fidelity  # Nội dung gốc bất biến (snapshot check)
-pnpm test             # 436 tests in 25 files pass
+pnpm test             # Toàn bộ test (Vitest) pass
 pnpm check            # 0 errors (astro check + schema)
+pnpm check:server     # Type-check server/sync (tsconfig.server.json, strict, erasableSyntaxOnly)
 pnpm build            # Full build → verify:fidelity + astro build → dist/ (73 pages)
 ```
+
+**Server (`server/sync/`)**: Node 24, chạy TypeScript bằng type stripping, nên chỉ dùng cú pháp erasable (không `enum`, không `namespace`, không parameter properties). Import tương đối giữ đuôi `.ts`. Module dùng chung với client (`src/lib/progress-state.ts`, `progress-merge.ts`, `progress-sync-types.ts`) phải là thuần, không DOM, không `window`. File mới nên dưới 200 dòng.
 
 ## Git & Commit
 
@@ -216,7 +219,7 @@ Added explicit .foo[hidden] { display: none; }.
 
 ## CSP & Security
 
-**Caddyfile** (Railpack serve):
+**Caddyfile** (repo, dùng cho VPS và Railpack):
 - `script-src 'self'`: All external (vite.build.assetsInlineLimit: 0), no hashes
 - `style-src 'self' 'unsafe-inline'`: Shiki inline style only
 - `default-src 'self'`, `object-src 'none'`, `frame-ancestors 'none'`

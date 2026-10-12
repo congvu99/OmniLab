@@ -5,7 +5,10 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   attachAccountPanel,
   errorText,
+  fieldOfCode,
+  logoutFailureText,
   readAccountPanelElements,
+  sidebarAccountView,
   validateAuthForm,
   viewOf,
 } from '../src/lib/account-sync-panel-controller.ts';
@@ -42,6 +45,47 @@ describe('validateAuthForm', () => {
       code: 'password_mismatch', field: 'confirm',
     });
     expect(validateAuthForm('login', { ...ok, confirm: '' })).toBeNull();
+  });
+});
+
+describe('validateAuthForm NFC', () => {
+  const nfd = 'mật khẩu 1'.normalize('NFD'); // 10 chars NFC, longer when decomposed
+  it('counts length after NFC (decomposed 6-char password is still too short)', () => {
+    const short = 'mậtkhẩ'.normalize('NFD'); // 6 chars NFC, more decomposed
+    expect(short.length).toBeGreaterThanOrEqual(8);
+    expect(validateAuthForm('login', { username: 'an_nguyen', password: short, confirm: '' })?.code).toBe('invalid_password');
+  });
+  it('treats decomposed and composed confirm as equal', () => {
+    expect(
+      validateAuthForm('register', { username: 'an_nguyen', password: nfd, confirm: nfd.normalize('NFC') }),
+    ).toBeNull();
+  });
+});
+
+describe('helpers', () => {
+  it('fieldOfCode maps codes to fields', () => {
+    expect(fieldOfCode('username_taken')).toBe('username');
+    expect(fieldOfCode('bad_credentials')).toBe('password');
+    expect(fieldOfCode('rate_limited')).toBeNull();
+  });
+  it('logoutFailureText: null once signed out, otherwise its own copy (not the sync copy)', () => {
+    expect(logoutFailureText({ kind: 'signed-out' })).toBeNull();
+    const t = logoutFailureText({ kind: 'error', username: 'an', code: 'unavailable' });
+    expect(t.startsWith('Chưa đăng xuất được.')).toBe(true);
+    expect(t).not.toContain('Chưa đồng bộ được');
+  });
+  it('sidebarAccountView shows name + dot only when an account is attached', () => {
+    expect(sidebarAccountView({ kind: 'signed-out' })).toBeNull();
+    expect(sidebarAccountView({ kind: 'checking' })).toBeNull();
+    expect(sidebarAccountView({ kind: 'unavailable' })).toBeNull();
+    expect(sidebarAccountView({ kind: 'synced', username: 'an', at: 1 })).toMatchObject({ name: 'an', dot: 'ok' });
+    expect(sidebarAccountView({ kind: 'syncing', username: 'an' })?.dot).toBe('busy');
+    expect(sidebarAccountView({ kind: 'error', username: 'an', code: 'busy' })?.dot).toBe('error');
+  });
+  it('viewOf gives avatar initial and dot state', () => {
+    expect(viewOf({ kind: 'synced', username: 'an', at: 0 })).toMatchObject({ initial: 'A', dot: 'ok' });
+    expect(viewOf({ kind: 'syncing', username: 'an' }).dot).toBe('busy');
+    expect(viewOf({ kind: 'error', username: 'an', code: 'busy' }).dot).toBe('error');
   });
 });
 
@@ -95,6 +139,7 @@ function el(extra = {}) {
     addEventListener(t, fn) { (listeners[t] ??= []).push(fn); },
     removeEventListener(t, fn) { listeners[t] = (listeners[t] ?? []).filter((f) => f !== fn); },
     setAttribute(k, v) { attrs[k] = v; },
+    removeAttribute(k) { delete attrs[k]; },
     getAttribute: (k) => attrs[k] ?? null,
     focus() { this.focused++; },
     fire(t, ev = {}) { for (const fn of listeners[t] ?? []) fn({ preventDefault() {}, ...ev }); },
@@ -105,7 +150,8 @@ function el(extra = {}) {
 const NAMES = [
   'checking', 'form', 'unavailable', 'merge', 'account', 'login-tab', 'register-tab', 'username',
   'password', 'confirm', 'confirm-row', 'submit', 'error', 'merge-text', 'merge-keep', 'merge-use',
-  'merge-title', 'account-name', 'account-status', 'logout', 'logout-all', 'clear-local',
+  'merge-cancel', 'merge-title', 'account-name', 'account-status', 'avatar', 'dot', 'logout',
+  'logout-all', 'clear-local', 'notice', 'wipe-block', 'wipe', 'wipe-confirm', 'wipe-yes', 'wipe-no',
 ];
 function setup() {
   const nodes = Object.fromEntries(NAMES.map((n) => [n, el()]));
@@ -122,8 +168,9 @@ function setup() {
   };
   const push = (s) => { status = s; for (const fn of subs) fn(s); };
   const els = readAccountPanelElements(root);
-  const cleanup = attachAccountPanel(els, sync);
-  return { nodes, sync, push, cleanup, subs };
+  const clearProgress = vi.fn();
+  const cleanup = attachAccountPanel(els, sync, { clearLocalProgress: clearProgress });
+  return { nodes, sync, push, cleanup, subs, clearProgress };
 }
 const fill = (n, u = 'an_nguyen', p = 'matkhau123', c = 'matkhau123') => {
   n.username.value = u; n.password.value = p; n.confirm.value = c;
@@ -248,7 +295,7 @@ describe('attachAccountPanel', () => {
     push({ kind: 'synced', username: 'an', at: 0 });
     nodes['clear-local'].checked = true;
     nodes['logout-all'].fire('click');
-    expect(sync.logoutAll).toHaveBeenCalledTimes(1);
+    expect(sync.logoutAll).toHaveBeenCalledWith({ clearLocal: true });
     push({ kind: 'signed-out' });
     expect(nodes['clear-local'].checked).toBe(false);
   });
@@ -258,5 +305,105 @@ describe('attachAccountPanel', () => {
     cleanup();
     expect(subs.size).toBe(0);
     expect(nodes.form.listenerCount('submit')).toBe(0);
+  });
+});
+
+describe('rework behaviours', () => {
+  it('merge cancel logs out without clearing local data', () => {
+    const { nodes, sync, push } = setup();
+    push({ kind: 'needs-merge-decision', username: 'b' });
+    nodes['merge-cancel'].fire('click');
+    expect(sync.logout).toHaveBeenCalledWith({ clearLocal: false });
+    expect(sync.resolveMerge).not.toHaveBeenCalled();
+  });
+
+  it('failed logout shows its own line in the notice', async () => {
+    const { nodes, sync, push } = setup();
+    push({ kind: 'synced', username: 'an', at: 0 });
+    sync.logout.mockImplementationOnce(async () => push({ kind: 'error', username: 'an', code: 'unavailable' }));
+    nodes.logout.fire('click');
+    await flush();
+    expect(nodes.notice.textContent.startsWith('Chưa đăng xuất được.')).toBe(true);
+  });
+
+  it('focus follows the user: account name after login, username after logout, not on first paint', async () => {
+    const { nodes, sync, push } = setup();
+    push({ kind: 'signed-out' });
+    expect(nodes.username.focused).toBe(0);
+    fill(nodes);
+    sync.login.mockImplementationOnce(async () => {
+      push({ kind: 'syncing', username: 'an' });
+      return { ok: true, username: 'an', needsMergeDecision: false };
+    });
+    nodes.form.fire('submit');
+    await flush();
+    expect(nodes['account-name'].focused).toBe(1);
+    sync.logout.mockImplementationOnce(async () => push({ kind: 'signed-out' }));
+    nodes.logout.fire('click');
+    await flush();
+    expect(nodes.username.focused).toBe(1);
+  });
+
+  it('boot straight into signed-in does not steal focus', () => {
+    const { nodes, push } = setup();
+    push({ kind: 'synced', username: 'an', at: 0 });
+    expect(nodes['account-name'].focused).toBe(0);
+  });
+
+  it('marks the offending input aria-invalid and describes it by the error line', () => {
+    const { nodes, push } = setup();
+    push({ kind: 'signed-out' });
+    fill(nodes, 'a');
+    nodes.form.fire('submit');
+    expect(nodes.username.getAttribute('aria-invalid')).toBe('true');
+    expect(nodes.username.getAttribute('aria-describedby')).toContain('ap-error');
+    fill(nodes);
+    nodes.form.fire('submit');
+    expect(nodes.username.getAttribute('aria-invalid')).toBeNull();
+  });
+
+  it('sync ticks syncing<->synced do not write the live notice; an error does', () => {
+    const { nodes, push } = setup();
+    push({ kind: 'syncing', username: 'an' });
+    push({ kind: 'synced', username: 'an', at: 0 });
+    push({ kind: 'syncing', username: 'an' });
+    expect(nodes.notice.textContent).toBe('');
+    push({ kind: 'error', username: 'an', code: 'busy' });
+    expect(nodes.notice.textContent).toContain(errorText('busy'));
+    push({ kind: 'synced', username: 'an', at: 0 });
+    expect(nodes.notice.textContent).toBe('');
+  });
+
+  it('avatar letter and dot state follow the status', () => {
+    const { nodes, push } = setup();
+    push({ kind: 'syncing', username: 'an' });
+    expect(nodes.avatar.textContent).toBe('A');
+    expect(nodes.dot.getAttribute('data-state')).toBe('busy');
+    push({ kind: 'error', username: 'an', code: 'busy' });
+    expect(nodes.dot.getAttribute('data-state')).toBe('error');
+  });
+
+  it('wipe needs two steps; cancel keeps data; confirm clears', () => {
+    const { nodes, push, clearProgress } = setup();
+    push({ kind: 'signed-out' });
+    expect(nodes['wipe-block'].hidden).toBe(false);
+    nodes.wipe.fire('click');
+    expect(nodes['wipe-confirm'].hidden).toBe(false);
+    expect(clearProgress).not.toHaveBeenCalled();
+    nodes['wipe-no'].fire('click');
+    expect(nodes['wipe-confirm'].hidden).toBe(true);
+    expect(clearProgress).not.toHaveBeenCalled();
+    nodes.wipe.fire('click');
+    nodes['wipe-yes'].fire('click');
+    expect(clearProgress).toHaveBeenCalledTimes(1);
+    expect(nodes['wipe-confirm'].hidden).toBe(true);
+    expect(nodes.notice.textContent).toBe('Đã xoá tiến độ trên máy này.');
+  });
+
+  it('wipe is unavailable while checking or deciding a merge', () => {
+    const { nodes, push } = setup();
+    expect(nodes['wipe-block'].hidden).toBe(true);
+    push({ kind: 'needs-merge-decision', username: 'b' });
+    expect(nodes['wipe-block'].hidden).toBe(true);
   });
 });

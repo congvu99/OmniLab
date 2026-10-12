@@ -4,7 +4,6 @@
 // kept in sync by saved-list-controller.
 import AppLayout from '../layouts/app-layout.astro';
 import LargeTitleHeader from '../components/shell/large-title-header.astro';
-import AccountSyncPanel from '../components/islands/account-sync-panel.astro';
 import SavedList from '../components/islands/saved-list.astro';
 import { getDomains } from '../lib/content-queries';
 import { buildDomainMeta } from '../lib/build-domain-meta';
@@ -16,6 +15,5 @@ const meta = buildDomainMeta(await getDomains());
   <LargeTitleHeader title="Đã lưu">
     <span slot="eyebrow" class="tnum"><span data-saved-count>–</span> bài · lưu trên máy này</span>
   </LargeTitleHeader>
-  <AccountSyncPanel />
   <SavedList meta={meta} />
 </AppLayout>

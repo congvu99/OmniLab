@@ -1,103 +1,147 @@
 ---
-// "Tài khoản & đồng bộ" panel on /da-luu: sign in / register, merge prompt
-// when this device holds another account's progress, sync status, logout.
+// "Tài khoản & đồng bộ" panel, mounted in /toi's #tai-khoan: sign in /
+// register, merge prompt when this device holds another account's progress,
+// sync status, logout, and the two-step "Xoá tiến độ trên máy".
 // Server-rendered shell; account-sync-panel-controller.ts toggles sections
 // by status and fills text via textContent only (never innerHTML). Initial
 // state is "checking" so the signed-out form never flashes for a signed-in
-// user while /api/me is pending.
+// user while /api/me is pending. Theme + motion come from tokens and
+// <html data-theme / data-motion>; no colors defined here.
 ---
 
-<section class="ap card" data-account-panel aria-labelledby="ap-title">
-  <h2 class="eyebrow ap-title" id="ap-title">Tài khoản &amp; đồng bộ</h2>
+<div class="ap" data-account-panel>
+  <div class="sec-h"><h2 id="me-account">Tài khoản &amp; đồng bộ</h2></div>
 
-  <div data-ap="checking" class="ap-checking">
-    <span class="skeleton ap-skeleton"></span>
-    <span class="sr-only">Đang kiểm tra tài khoản…</span>
-  </div>
-
-  <p data-ap="unavailable" class="ap-note ap-unavailable" role="status" hidden></p>
-
-  <form data-ap="form" class="ap-form" novalidate hidden>
-    <div class="ap-tabs" role="group" aria-label="Chế độ">
-      <button type="button" class="chip" data-ap="login-tab" aria-pressed="true">Đăng nhập</button>
-      <button type="button" class="chip" data-ap="register-tab" aria-pressed="false">Tạo tài khoản</button>
+  <div class="card ap-card">
+    <div data-ap="checking" class="ap-checking">
+      <span class="skeleton ap-skeleton"></span>
+      <span class="sr-only">Đang kiểm tra tài khoản…</span>
     </div>
 
-    <label class="ap-label" for="ap-username">Tên đăng nhập</label>
-    <div class="field">
-      <input id="ap-username" data-ap="username" type="text" name="username" autocomplete="username"
-        autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="32" aria-describedby="ap-hint" />
-    </div>
-    <p class="ap-hint" id="ap-hint">3-32 ký tự: chữ thường không dấu, số, . _ -</p>
+    <p data-ap="unavailable" class="ap-unavailable" hidden></p>
 
-    <label class="ap-label" for="ap-password">Mật khẩu</label>
-    <div class="field">
-      <input id="ap-password" data-ap="password" type="password" name="password" autocomplete="current-password" maxlength="128" />
-    </div>
+    <form data-ap="form" class="ap-form" novalidate hidden>
+      <h3 class="ap-heading">Đồng bộ tiến độ giữa các thiết bị</h3>
+      <p class="ap-note">Đăng nhập để tiếp tục học trên điện thoại hay máy tính: tiến độ và dấu trang đi theo bạn.</p>
 
-    <div data-ap="confirm-row" class="ap-confirm" hidden>
-      <label class="ap-label" for="ap-confirm">Nhập lại mật khẩu</label>
+      <div class="ap-seg" role="group" aria-label="Chế độ">
+        <button type="button" data-ap="login-tab" aria-pressed="true">Đăng nhập</button>
+        <button type="button" data-ap="register-tab" aria-pressed="false">Tạo tài khoản</button>
+      </div>
+
+      <label class="ap-label" for="ap-username">Tên đăng nhập</label>
       <div class="field">
-        <input id="ap-confirm" data-ap="confirm" type="password" name="confirm" autocomplete="new-password" maxlength="128" />
+        <input id="ap-username" data-ap="username" type="text" name="username" autocomplete="username"
+          autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="32" aria-describedby="ap-hint" />
+      </div>
+      <p class="ap-hint" id="ap-hint">3-32 ký tự: chữ thường không dấu, số, . _ -</p>
+
+      <label class="ap-label" for="ap-password">Mật khẩu</label>
+      <div class="field">
+        <input id="ap-password" data-ap="password" type="password" name="password" autocomplete="current-password" maxlength="128" />
+      </div>
+
+      <div data-ap="confirm-row" class="ap-confirm" hidden>
+        <label class="ap-label" for="ap-confirm">Nhập lại mật khẩu</label>
+        <div class="field">
+          <input id="ap-confirm" data-ap="confirm" type="password" name="confirm" autocomplete="new-password" maxlength="128" />
+        </div>
+      </div>
+
+      <p data-ap="error" class="ap-error" id="ap-error" aria-live="polite"></p>
+      <button type="submit" class="btn btn-primary ap-submit" data-ap="submit">Đăng nhập</button>
+      <p class="ap-note">Không có khôi phục mật khẩu qua email. Chỉ lưu tên đăng nhập và tiến độ học.</p>
+    </form>
+
+    <div data-ap="merge" class="ap-merge" role="group" aria-labelledby="ap-merge-title" hidden>
+      <h3 id="ap-merge-title" class="ap-heading" data-ap="merge-title" tabindex="-1">Chọn cách xử lý tiến độ</h3>
+      <p data-ap="merge-text" class="ap-merge-text"></p>
+      <p class="ap-note">"Dùng tiến độ của tài khoản" sẽ thay thế tiến độ đang có trên máy này.</p>
+      <div class="ap-actions">
+        <button type="button" class="btn btn-primary" data-ap="merge-keep">Gộp vào tài khoản</button>
+        <button type="button" class="btn btn-secondary" data-ap="merge-use">Dùng tiến độ của tài khoản</button>
+      </div>
+      <button type="button" class="btn btn-ghost ap-cancel" data-ap="merge-cancel">Huỷ — đăng xuất</button>
+    </div>
+
+    <div data-ap="account" class="ap-account" hidden>
+      <div class="ap-profile">
+        <span class="ap-avatar" data-ap="avatar" aria-hidden="true"></span>
+        <div class="ap-who">
+          <p class="ap-name" data-ap="account-name" tabindex="-1"></p>
+          <p class="ap-status tnum">
+            <span class="ap-dot" data-ap="dot" data-state="off" aria-hidden="true"></span>
+            <span data-ap="account-status"></span>
+          </p>
+        </div>
+      </div>
+      <label class="ap-switch">
+        <span>Xoá dữ liệu trên máy này khi đăng xuất</span>
+        <input type="checkbox" role="switch" data-ap="clear-local" />
+      </label>
+      <div class="ap-actions">
+        <button type="button" class="btn btn-secondary" data-ap="logout">Đăng xuất</button>
+        <button type="button" class="btn btn-ghost" data-ap="logout-all">Đăng xuất mọi thiết bị</button>
       </div>
     </div>
 
-    <p data-ap="error" class="ap-error" aria-live="polite"></p>
-    <button type="submit" class="btn btn-primary ap-submit" data-ap="submit">Đăng nhập</button>
-    <p class="ap-note">Không có khôi phục mật khẩu qua email. Chỉ lưu tên đăng nhập và tiến độ học.</p>
-  </form>
-
-  <div data-ap="merge" class="ap-merge" role="group" aria-labelledby="ap-merge-title" hidden>
-    <h3 id="ap-merge-title" class="ap-merge-title" data-ap="merge-title" tabindex="-1">Chọn cách xử lý tiến độ</h3>
-    <p data-ap="merge-text" class="ap-merge-text"></p>
-    <p class="ap-note">"Dùng tiến độ của tài khoản" sẽ thay thế tiến độ đang có trên máy này.</p>
-    <div class="ap-actions">
-      <button type="button" class="btn btn-primary" data-ap="merge-keep">Gộp vào tài khoản</button>
-      <button type="button" class="btn btn-secondary" data-ap="merge-use">Dùng tiến độ của tài khoản</button>
+    <div data-ap="wipe-block" class="ap-wipe" hidden>
+      <button type="button" class="btn btn-ghost ap-wipe__btn" data-ap="wipe" aria-expanded="false" aria-controls="ap-wipe-confirm">
+        Xoá tiến độ trên máy
+      </button>
+      <div data-ap="wipe-confirm" id="ap-wipe-confirm" class="ap-wipe__confirm" role="group" aria-labelledby="ap-wipe-q" hidden>
+        <p id="ap-wipe-q" class="ap-note">
+          Xoá toàn bộ tiến độ và bài đã lưu trên máy này? Không hoàn tác được. Tiến độ đã đồng bộ lên tài khoản không bị xoá.
+        </p>
+        <div class="ap-actions">
+          <button type="button" class="btn btn-secondary ap-danger" data-ap="wipe-yes">Xoá tiến độ</button>
+          <button type="button" class="btn btn-secondary" data-ap="wipe-no">Giữ lại</button>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div data-ap="account" class="ap-account" hidden>
-    <p class="ap-name" data-ap="account-name"></p>
-    <p class="ap-status tnum" data-ap="account-status" aria-live="polite"></p>
-    <label class="ap-check">
-      <input type="checkbox" data-ap="clear-local" />
-      <span>Xoá dữ liệu trên máy này khi đăng xuất</span>
-    </label>
-    <div class="ap-actions">
-      <button type="button" class="btn btn-secondary" data-ap="logout">Đăng xuất</button>
-      <button type="button" class="btn btn-ghost" data-ap="logout-all">Đăng xuất mọi thiết bị</button>
-    </div>
-  </div>
-</section>
+  <p class="ap-notice" data-ap="notice" aria-live="polite"></p>
+</div>
 
 <style>
   .ap {
     max-width: 760px;
-    margin: 0 var(--gutter-r) var(--space-5) var(--gutter-l);
-    padding: var(--space-4);
+  }
+
+  .ap-card {
     display: grid;
     gap: var(--space-3);
+    padding: var(--space-4);
   }
 
   /* See mark-complete-button.astro's [hidden] comment. */
-  .ap-checking[hidden],
-  .ap-form[hidden],
-  .ap-merge[hidden],
-  .ap-account[hidden],
-  .ap-unavailable[hidden],
-  .ap-confirm[hidden] {
-    display: none;
-  }
-
-  .ap-title {
-    margin: 0;
+  .ap [hidden] {
+    display: none !important;
   }
 
   .ap-skeleton {
     display: block;
     height: 44px;
     border-radius: var(--radius-row);
+  }
+
+  .ap-unavailable {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+    font-size: var(--text-small);
+    color: var(--text-2);
+  }
+
+  .ap-unavailable::before {
+    content: '';
+    flex: none;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--text-3);
   }
 
   .ap-form,
@@ -107,28 +151,50 @@
     gap: var(--space-2);
   }
 
-  .ap-tabs {
-    display: flex;
-    gap: var(--space-2);
-    margin-bottom: var(--space-2);
+  /* Desktop: the form stays a readable width instead of stretching. */
+  .ap-form {
+    max-width: 420px;
   }
 
-  /* Chips are 32px visually; give the touch target 44px without growing the look. */
-  .ap-tabs .chip {
-    position: relative;
+  .ap-heading {
+    font-size: var(--text-headline);
+    font-weight: 700;
+    letter-spacing: var(--track-title);
   }
 
-  .ap-tabs .chip::after {
-    content: '';
-    position: absolute;
-    inset: -6px 0;
+  .ap-heading:focus-visible {
+    outline: 2px solid var(--volt-ink);
+    outline-offset: 4px;
+    border-radius: var(--radius-xs);
   }
 
-  /* The .field shell shows the focus ring (:focus-within); drop the global
-     ring on the bare input so it doesn't double up inside the shell. */
-  .ap .field input:focus-visible {
-    outline: none;
-    box-shadow: none;
+  /* Segmented control: two 44px buttons in a --surface-3 track. */
+  .ap-seg {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    padding: 3px;
+    margin: var(--space-2) 0;
+    border-radius: var(--radius-row);
+    background: var(--surface-3);
+  }
+
+  .ap-seg button {
+    min-height: 44px;
+    border: 0;
+    border-radius: calc(var(--radius-row) - 3px);
+    background: none;
+    color: var(--text-2);
+    font-size: var(--text-small);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color var(--dur-1), color var(--dur-1);
+  }
+
+  .ap-seg button[aria-pressed='true'] {
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: var(--glow), 0 0 0 1px var(--line-2);
   }
 
   .ap-label {
@@ -138,25 +204,28 @@
     color: var(--text-2);
   }
 
-  .ap-confirm {
-    display: grid;
-    gap: var(--space-2);
+  /* The .field shell shows the focus ring (:focus-within); drop the global
+     ring on the bare input so it doesn't double up inside the shell. */
+  .ap .field input:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
+  .ap .field:has(input[aria-invalid='true']) {
+    border-color: var(--danger);
   }
 
   .ap-hint,
   .ap-note {
+    margin: 0;
     font-size: var(--text-caption);
     line-height: var(--leading-normal);
-    color: var(--text-3);
-  }
-
-  .ap-unavailable {
-    margin: 0;
+    color: var(--text-2);
   }
 
   .ap-error {
     min-height: 1.2em;
-    margin-top: var(--space-1);
+    margin: var(--space-1) 0 0;
     font-size: var(--text-small);
     font-weight: 600;
     color: var(--danger);
@@ -166,18 +235,17 @@
     width: 100%;
   }
 
-  .ap-merge-title {
-    font-size: var(--text-headline);
-    font-weight: 700;
-  }
-
-  .ap-merge-title:focus-visible {
-    outline: 2px solid var(--volt-ink);
-    outline-offset: 4px;
-    border-radius: var(--radius-xs);
+  /* Merge: an in-section warning card, not a modal. */
+  .ap-merge {
+    padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
+    border-radius: var(--radius-row);
+    border: 1px solid var(--line-2);
+    border-left: 3px solid var(--volt-ink);
+    background: var(--surface-2);
   }
 
   .ap-merge-text {
+    margin: 0;
     font-size: var(--text-subhead);
     line-height: var(--leading-normal);
     overflow-wrap: anywhere;
@@ -190,8 +258,41 @@
     margin-top: var(--space-2);
   }
 
+  /* Equal-width side-by-side buttons. */
   .ap-actions .btn {
-    flex: 1 1 auto;
+    flex: 1 1 0;
+    min-width: 140px;
+  }
+
+  .ap-cancel {
+    justify-self: start;
+  }
+
+  .ap-profile {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .ap-avatar {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--surface-3);
+    color: var(--text);
+    font-size: var(--text-headline);
+    font-weight: 700;
+  }
+
+  .ap-who {
+    min-width: 0;
+  }
+
+  .ap-who p {
+    margin: 0;
   }
 
   .ap-name {
@@ -200,19 +301,67 @@
     overflow-wrap: anywhere;
   }
 
+  .ap-name:focus-visible {
+    outline: 2px solid var(--volt-ink);
+    outline-offset: 3px;
+    border-radius: var(--radius-xs);
+  }
+
   .ap-status {
-    font-size: var(--text-small);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font: 500 var(--text-micro) / 1.4 var(--font-mono);
     color: var(--text-2);
   }
 
-  .ap-status[data-tone='error'] {
+  .ap-status [data-ap='account-status'][data-tone='error'] {
     color: var(--danger);
     font-weight: 600;
   }
 
-  .ap-check {
+  .ap-dot {
+    flex: none;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--text-3);
+  }
+
+  .ap-dot[data-state='ok'],
+  .ap-dot[data-state='busy'] {
+    background: var(--volt-ink);
+  }
+
+  .ap-dot[data-state='error'] {
+    background: var(--danger);
+  }
+
+  .ap-dot[data-state='busy'] {
+    animation: ap-pulse 1.1s ease-in-out infinite;
+  }
+
+  @keyframes ap-pulse {
+    50% {
+      opacity: 0.25;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ap-dot[data-state='busy'] {
+      animation: none;
+    }
+  }
+
+  :global(:root[data-motion='reduce']) .ap-dot[data-state='busy'] {
+    animation: none;
+  }
+
+  /* Switch: native checkbox (keyboard, forms) drawn as a track + knob. */
+  .ap-switch {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: var(--space-3);
     min-height: 44px;
     font-size: var(--text-small);
@@ -220,21 +369,76 @@
     cursor: pointer;
   }
 
-  .ap-check input {
+  .ap-switch input {
+    appearance: none;
     flex: none;
-    width: 20px;
-    height: 20px;
-    accent-color: var(--volt-ink);
+    position: relative;
+    width: 44px;
+    height: 26px;
+    margin: 0;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-full);
+    background: var(--surface-3);
+    cursor: pointer;
+    transition: background-color var(--dur-2), border-color var(--dur-2);
   }
 
-  .ap-check input:focus-visible {
-    outline: 2px solid var(--volt-ink);
-    outline-offset: 2px;
+  .ap-switch input::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--text-3);
+    transition: transform var(--dur-2) var(--ease-snap), background-color var(--dur-2);
+  }
+
+  .ap-switch input:checked {
+    background: var(--volt-ink);
+    border-color: var(--volt-ink);
+  }
+
+  .ap-switch input:checked::after {
+    background: var(--surface);
+    transform: translateX(18px);
+  }
+
+  .ap-wipe {
+    display: grid;
+    gap: var(--space-2);
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--line);
+  }
+
+  .ap-wipe__btn,
+  .ap-danger {
+    color: var(--danger);
+  }
+
+  .ap-wipe__btn {
+    justify-self: start;
+  }
+
+  .ap-wipe__confirm {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .ap-notice {
+    margin: var(--space-3) 0 0;
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--text-2);
+  }
+
+  .ap-notice:empty {
+    display: none;
   }
 
   @media (min-width: 1024px) {
-    .ap {
-      margin-inline: var(--gutter-l) var(--gutter-r);
+    .ap-card {
       padding: var(--space-5);
     }
   }
@@ -242,6 +446,7 @@
 
 <script>
   import { getProgressSync } from '../../lib/progress-sync-singleton';
+  import { getProgressStore } from '../../lib/progress-store';
   import { attachAccountPanel, readAccountPanelElements } from '../../lib/account-sync-panel-controller';
   import { onPageLoad } from '../../lib/page-lifecycle';
 
@@ -250,6 +455,8 @@
     const els = root && readAccountPanelElements(root);
     if (!els) return;
 
-    return attachAccountPanel(els, getProgressSync());
+    return attachAccountPanel(els, getProgressSync(), {
+      clearLocalProgress: () => getProgressStore().clear(),
+    });
   });
 </script>

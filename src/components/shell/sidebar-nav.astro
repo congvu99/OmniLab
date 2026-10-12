@@ -48,6 +48,13 @@ const isDomainActive = (id: string) =>
           >
             <Icon name={item.icon} size={19} />
             <span>{item.label}</span>
+            {item.href === '/toi' && (
+              <span class="sidebar-account" data-sidebar-account hidden>
+                <span class="sidebar-account__dot" data-sidebar-account-dot aria-hidden="true" />
+                <span class="sidebar-account__name" data-sidebar-account-name />
+                <span class="sr-only" data-sidebar-account-label />
+              </span>
+            )}
           </a>
         </li>
       );
@@ -350,6 +357,61 @@ const isDomainActive = (id: string) =>
     white-space: nowrap;
   }
 
+  /* "Tôi" entry: account name + sync dot, only while signed in. */
+  .sidebar-account {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    margin-left: auto;
+    font: 500 11px var(--font-mono);
+    color: var(--text-3);
+  }
+
+  .sidebar-account[hidden] {
+    display: none;
+  }
+
+  .sidebar-account__name {
+    min-width: 0;
+    max-width: 9ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sidebar-account__dot {
+    flex: none;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--volt-ink);
+  }
+
+  .sidebar-account[data-state='error'] .sidebar-account__dot {
+    background: var(--danger);
+  }
+
+  .sidebar-account[data-state='busy'] .sidebar-account__dot {
+    animation: sidebar-account-pulse 1.1s ease-in-out infinite;
+  }
+
+  @keyframes sidebar-account-pulse {
+    50% {
+      opacity: 0.25;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sidebar-account[data-state='busy'] .sidebar-account__dot {
+      animation: none;
+    }
+  }
+
+  :global(:root[data-motion='reduce']) .sidebar-account[data-state='busy'] .sidebar-account__dot {
+    animation: none;
+  }
+
   .sidebar-count {
     margin-left: auto;
     font: 500 11px var(--font-mono);
@@ -367,8 +429,26 @@ const isDomainActive = (id: string) =>
   import { applyHue, parseDomainMeta } from '../../lib/domain-meta';
   import { applyModKeyLabel } from '../../lib/kbd-platform';
   import { onPageLoad } from '../../lib/page-lifecycle';
+  import { getProgressSync } from '../../lib/progress-sync-singleton';
+  import { sidebarAccountView } from '../../lib/account-sync-panel-view';
 
   const SAVED_SHOWN = 3;
+
+  // "Tôi" entry: shows the signed-in name + sync dot. Text via textContent only.
+  onPageLoad(() => {
+    const box = document.querySelector<HTMLElement>('[data-sidebar-account]');
+    const name = box?.querySelector<HTMLElement>('[data-sidebar-account-name]');
+    const label = box?.querySelector<HTMLElement>('[data-sidebar-account-label]');
+    if (!box || !name || !label) return;
+    return getProgressSync().subscribe((status) => {
+      const view = sidebarAccountView(status);
+      box.hidden = !view;
+      if (!view) return;
+      box.dataset.state = view.dot;
+      name.textContent = view.name;
+      label.textContent = `, ${view.label}`;
+    });
+  });
 
   onPageLoad(() => {
     applyModKeyLabel(document);

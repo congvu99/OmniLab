@@ -20,7 +20,8 @@ Tổng cộng 196 khối "Ví dụ đời sống", 97 minh hoạ SVG mới, 44 �
 - **Sidebar** (desktop ≥1024px): Điều hướng, lĩnh vực, bookmark, tiến độ toàn bộ
 - **Command palette** (⌘K / Ctrl+K): Tìm kiếm bài học, jump tab, với keyboard shortcut + mouse click
 - **Reader** (≥1280px): Table of contents scrollspy, progress ring, mark complete (motion: ring → disc → tick + spark), bookmark, next lesson
-- **Tiến độ & bookmark**: Lưu trong `localStorage` của máy; fallback in-memory ở private mode. "Học tiếp" nhớ vị trí cuộn.
+- **Tiến độ & bookmark**: Lưu trong `localStorage` của máy (`omnilab:v1:state`, schema v2); fallback in-memory ở private mode. "Học tiếp" nhớ vị trí cuộn.
+- **Tài khoản & đồng bộ** (`/toi`, mục Tài khoản): đăng ký bằng tên + mật khẩu, không cần email. Tiến độ vẫn lưu trên máy; đăng nhập thì gộp và đồng bộ giữa các thiết bị. Chưa đăng nhập, hoặc máy chủ đồng bộ tạm sập, thì học như bình thường.
 - **Tìm kiếm** (MiniSearch): Toàn văn tiếng Việt, gõ có dấu hay không dấu ("bo nho dem" = "bộ nhớ đệm"), index lazy-load
 - **Dark/light theme**: Mặc định theo hệ thống, đổi thủ công ở tab Tôi
 - **Installable**: PWA (manifest standalone) trên iPhone, nhưng **không** offline ở v1
@@ -36,9 +37,13 @@ pnpm test         # unit tests (vitest)
 pnpm check        # astro check (type + schema)
 pnpm build        # verify-fidelity rồi astro build ra dist/
 pnpm preview      # xem bản build
+pnpm check:server # type-check máy chủ đồng bộ (tsconfig.server.json)
+pnpm sync:dev     # máy chủ đồng bộ local: http://127.0.0.1:3001, dữ liệu ở ./.data
 ```
 
 `pnpm build` dừng lại nếu nội dung gốc của bất kỳ bài nào bị sửa (xem [scripts/verify-fidelity.mjs](scripts/verify-fidelity.mjs)).
+
+`pnpm dev` và `pnpm preview` không proxy `/api`, nên đăng nhập và đồng bộ không chạy được trong các lệnh này. Muốn thử đầy đủ: chạy `pnpm sync:dev` rồi tự proxy `/api` về cổng 3001, hoặc dùng VPS.
 
 ## Tài liệu
 
@@ -48,15 +53,18 @@ pnpm preview      # xem bản build
 | [docs/project-overview-pdr.md](docs/project-overview-pdr.md) | Mục tiêu, phạm vi, yêu cầu, quyết định |
 | [docs/codebase-summary.md](docs/codebase-summary.md) | Bản đồ thư mục, kiến trúc, nội dung, tìm kiếm |
 | [docs/code-standards.md](docs/code-standards.md) | Quy ước code, TypeScript, Astro, testing, git |
-| [docs/system-architecture.md](docs/system-architecture.md) | Build pipeline, localStorage, progress store, CSP |
+| [docs/system-architecture.md](docs/system-architecture.md) | Build pipeline, localStorage, máy chủ đồng bộ (API, merge, bảo mật), CSP |
 | [docs/content-authoring-guide.md](docs/content-authoring-guide.md) | MDX lesson, RealLife, Figure, thêm lĩnh vực |
 | [docs/illustration-style-guide.md](docs/illustration-style-guide.md) | SVG monoline style, grid, colors |
-| [docs/deployment-guide.md](docs/deployment-guide.md) | Railpack + Caddy, env, smoke test, checklist |
+| [docs/deployment-vps-guide.html](docs/deployment-vps-guide.html) | **Deploy chính**: VPS Docker Compose, máy chủ đồng bộ, backup, restore |
+| [docs/deployment-guide.md](docs/deployment-guide.md) | Railpack + Caddy (phương án cũ), env, smoke test |
 | [docs/project-roadmap.md](docs/project-roadmap.md) | v1 trạng thái (Studio restyle), ứng viên v2 |
 
 ## Deploy
 
-Site tĩnh (`dist/`), Railpack tự nhận Astro và phục vụ bằng Caddy theo [Caddyfile](Caddyfile). Chi tiết và checklist kiểm tra sau deploy: [docs/deployment-guide.md](docs/deployment-guide.md).
+**Production: VPS, Docker Compose.** Site tĩnh chạy bằng Caddy trong image, kèm máy chủ đồng bộ (`server/sync/`, Node 24 + `node:sqlite`) trên mạng Docker riêng, không mở cổng ra ngoài. Từng bước, checklist và backup: [docs/deployment-vps-guide.html](docs/deployment-vps-guide.html).
+
+**Railpack / Vibe Deploy Nhân Hòa: phương án cũ.** Chỉ phục vụ site tĩnh theo [Caddyfile](Caddyfile). Không chạy được máy chủ đồng bộ: `/api/*` trả 503 JSON, trang Tôi báo "Chưa kết nối được máy chủ đồng bộ", tiến độ trên máy vẫn dùng bình thường. Chi tiết: [docs/deployment-guide.md](docs/deployment-guide.md).
 
 ## Bản quyền và ghi công
 

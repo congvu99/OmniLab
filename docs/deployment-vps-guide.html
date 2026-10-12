@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Deploy OmniLab VPS</title>
-<meta name="description" content="Deploy site tĩnh OmniLab (Astro) lên VPS dùng chung Caddy bằng Docker Compose.">
+<meta name="description" content="Deploy OmniLab (site tĩnh Astro và máy chủ đồng bộ tài khoản) lên VPS dùng chung Caddy bằng Docker Compose.">
 <style>
 :root{
   --bg:#f7f6f2;--surface:#ffffff;--surface-2:#f0eee8;--text:#1d1c1a;--muted:#5d5a53;--border:#dedad0;
@@ -89,7 +89,7 @@ th{background:var(--surface-2)}
     <li><a href="#c3">3. Build &amp; chạy</a></li>
     <li><a href="#c4">4. Tên miền + kiểm tra</a></li>
     <li><a href="#c5">5. Chuyển từ Nhân Hòa</a></li>
-    <li><a href="#c6">6. Cập nhật &amp; vận hành</a></li>
+    <li><a href="#c6">6. Sao lưu, cập nhật &amp; vận hành</a></li>
     <li><a href="#c7">7. Xử lý sự cố</a></li>
     <li><a href="#q">Câu hỏi còn mở</a></li>
   </ol>
@@ -99,7 +99,7 @@ th{background:var(--surface-2)}
 <header class="hero">
   <button class="theme-toggle" type="button" id="themeToggle">Sáng / Tối</button>
   <h1>Deploy OmniLab lên VPS</h1>
-  <p>Site tĩnh Astro chạy trên VPS đang có BookSnap + LingoBrain, dùng chung Caddy. Bắt đầu khi code đã push lên GitHub. Không có DB: toàn bộ nội dung bài học nằm trong git, build thẳng vào image. Làm lần lượt chương 2 → 4, mất khoảng 10–15 phút.</p>
+  <p>Site tĩnh Astro và máy chủ đồng bộ tài khoản (sidecar) chạy trên VPS đang có BookSnap + LingoBrain, dùng chung Caddy. Bắt đầu khi code đã push lên GitHub. Nội dung bài học nằm trong git, build thẳng vào image. Máy chủ đồng bộ giữ một DB SQLite nhỏ (tài khoản và tiến độ đã đồng bộ), nên phải bật backup ở chương 6. Làm lần lượt chương 2 → 4, rồi chương 6. Khoảng 20–30 phút, chưa tính build lần đầu.</p>
 </header>
 
 <section id="vars">
@@ -130,22 +130,24 @@ th{background:var(--surface-2)}
   <div class="arrow">→</div>
   <div class="node"><b>Caddy chung</b><small>đã có sẵn, 80/443, HTTPS tự động, thêm HSTS</small></div>
   <div class="arrow">→</div>
-  <div class="node"><b>omnilab:8080</b><small>Caddy nhỏ trong image + <code>dist/</code>. Dùng đúng <code>Caddyfile</code> của repo (CSP, cache, 404 thật). Không mở cổng</small></div>
+  <div class="node"><b>omnilab:8080</b><small>Caddy nhỏ trong image + <code>dist/</code>. Dùng đúng <code>Caddyfile</code> của repo (CSP, cache, 404 thật). <code>/api/*</code> chuyển cho máy chủ đồng bộ. Không mở cổng</small></div>
 </div>
+<div class="box warn"><strong>Hai service, một mạng riêng</strong><code>app</code> (site tĩnh) ở mạng <code>web</code>. <code>sync</code> (Node + SQLite, alias <code>omnilab-sync:3000</code>) chỉ ở mạng <code>internal</code>, không <code>ports:</code>, không có đường ra ngoài. Chỉ <code>app</code> proxy <code>/api/*</code> tới <code>sync</code>.</div>
 <table>
   <tr><th>Dữ liệu</th><th>Trên VPS</th></tr>
   <tr><td>Nội dung bài học (<code>src/</code>, <code>content-sources/</code>), ảnh, icon</td><td>Đi theo <code>git clone</code> → build vào image. Không phải chuyển tay</td></tr>
-  <tr><td>Tiến độ đọc, bài đã lưu của người dùng</td><td>Nằm trong <b>localStorage trình duyệt</b> (<code>omnilab:v1:state</code>), gắn theo tên miền. Site không có nút xuất/nhập → xem <a href="#c5">chương 5</a></td></tr>
-  <tr><td>DB, file người dùng tải lên</td><td>Không có → không cần backup trên server</td></tr>
+  <tr><td>Tiến độ đọc, bài đã lưu khi chưa đăng nhập</td><td>Nằm trong <b>localStorage trình duyệt</b> (<code>omnilab:v1:state</code>), gắn theo tên miền. Không đi theo VPS. Đổi tên miền thì mất, xem <a href="#c5">chương 5</a></td></tr>
+  <tr><td>Tài khoản và tiến độ đã đồng bộ</td><td><b>Có DB</b>: <code>/srv/data/omnilab/omnilab.db</code> (SQLite, volume của <code>sync</code>), bản sao hằng ngày ở <code>backups/</code>. Mất file này là mất tài khoản. <b>Phải backup</b>, xem <a href="#c6">chương 6</a></td></tr>
 </table>
 
 <h2 id="c1"><span class="n">1</span>Repo đã sẵn sàng</h2>
 <table>
   <tr><th>File</th><th>Vai trò</th></tr>
-  <tr><td><code>Dockerfile</code></td><td>Tầng 1: Node 24 + pnpm 9.15.4 chạy <code>pnpm build</code> (có <code>verify-fidelity</code>). Tầng 2: <code>caddy:2-alpine</code> + <code>Caddyfile</code> + <code>dist/</code>, cổng 8080. Thiếu <code>SITE_URL</code> → build dừng</td></tr>
-  <tr><td><code>compose.yml</code></td><td>1 service <code>app</code>, mạng <code>web</code> alias <code>omnilab</code>, không <code>ports:</code>, filesystem chỉ đọc, RAM 128 MB</td></tr>
-  <tr><td><code>.dockerignore</code></td><td>Bỏ <code>node_modules</code>, <code>dist</code>, <code>docs</code>, <code>plans</code>, <code>tests</code>, <code>.git</code> khỏi build</td></tr>
-  <tr><td><code>deploy/deploy.sh</code></td><td>pull → build (tag = commit) → thay container → đợi trang chủ 200 → lỗi thì quay về bản cũ</td></tr>
+  <tr><td><code>Dockerfile</code></td><td>Ba stage. <code>build</code>: Node 24 + pnpm 9.15.4, <code>pnpm build</code> (có <code>verify-fidelity</code>). <code>sync</code>: Node 24 alpine, chỉ <code>server/sync/</code> và ba module thuần của <code>src/lib/</code>, không cần <code>SITE_URL</code>. <code>app</code>: <code>caddy:2-alpine</code> + <code>Caddyfile</code> + <code>dist/</code>, cổng 8080, stage cuối. Thiếu <code>SITE_URL</code> → build <code>app</code> dừng</td></tr>
+  <tr><td><code>compose.yml</code></td><td>2 service. <code>app</code>: mạng <code>web</code> alias <code>omnilab</code> + <code>internal</code>, không <code>ports:</code>, RAM 128 MB. <code>sync</code>: chỉ mạng <code>internal</code> alias <code>omnilab-sync</code>, không <code>ports:</code>, filesystem chỉ đọc, không quyền Linux, RAM 192 MB, dữ liệu <code>${OMNILAB_DATA_DIR:-/srv/data/omnilab}</code> → <code>/data</code>. Thiếu <code>SESSION_SECRET</code> → compose dừng</td></tr>
+  <tr><td><code>.dockerignore</code></td><td>Bỏ <code>node_modules</code>, <code>dist</code>, <code>docs</code>, <code>plans</code>, <code>tests</code>, <code>deploy</code>, <code>.git</code>, <code>.env*</code>, <code>data</code>, <code>*.db</code> khỏi build</td></tr>
+  <tr><td><code>deploy/deploy.sh</code></td><td>pull → build hai image <code>app</code> và <code>sync</code> (tag = commit) → thay container → đợi <code>/</code> và <code>/api/health</code> đều 200 → lỗi thì quay về bản cũ</td></tr>
+  <tr><td><code>deploy/backup-sync-db.sh</code></td><td>Backup DB đồng bộ, chạy trong container <code>sync</code>. Dùng cho cron ở <a href="#c6">chương 6</a></td></tr>
 </table>
 <div class="box warn"><strong>Kiểm tra</strong>Trang GitHub của repo phải thấy <code>Dockerfile</code>, <code>compose.yml</code> và thư mục <code>deploy/</code>. Chưa thấy = chưa push.</div>
 
@@ -157,24 +159,38 @@ cd /srv/apps/omnilab
 git log --oneline -1
 ls Dockerfile compose.yml Caddyfile deploy/
 printf 'SITE_URL=https://%s\n' "<span data-v="APP"></span>.<span data-v="DOMAIN"></span>" &gt; .env
-cat .env</code></pre></div>
+printf 'SESSION_SECRET=%s\n' "$(openssl rand -base64 48)" &gt;&gt; .env
+chmod 600 .env
+grep -c '^SESSION_SECRET=.\{32,\}' .env
+sudo mkdir -p /srv/data/omnilab
+sudo chown 1000:1000 /srv/data/omnilab
+sudo chmod 700 /srv/data/omnilab
+ls -ld /srv/data/omnilab</code></pre></div>
 <ul class="explain">
   <li><b>ls</b> in đủ <code>Caddyfile compose.yml Dockerfile</code> + <code>deploy.sh</code>. Báo <code>No such file</code> = chưa push hoặc dán thiếu dòng <code>git clone</code>.</li>
   <li><b>SITE_URL</b>: tên miền thật của site, dùng lúc build để <code>sitemap.xml</code> đúng domain. Không phải bí mật, chỉ cần đúng. Đổi tên miền sau này → sửa file này rồi build lại (<a href="#c6">chương 6</a>).</li>
+  <li><b>SESSION_SECRET</b>: khoá ký cookie đăng nhập. <code>openssl rand -base64 48</code> cho 64 ký tự; <code>deploy.sh</code> bắt buộc ≥ 32. Đừng đổi khi đã có người dùng: mọi phiên đăng nhập hết hiệu lực. Chạy lại khối này sẽ ghi đè <code>.env</code>, nên chỉ chạy một lần.</li>
+  <li><b>grep -c</b> phải in <code>1</code>. <code>chmod 600</code>: chỉ user deploy đọc được. <code>.env</code> không vào git và không vào image.</li>
+  <li><b>Thư mục dữ liệu</b> là volume của <code>sync</code>, chứa <code>omnilab.db</code> và <code>backups/</code>. Chủ sở hữu phải là uid 1000 (user <code>node</code> trong container). <code>ls -ld</code> phải in <code>drwx------ … 1000 1000</code>. Mode 700 nghĩa là mọi lệnh đụng file ở đây cần <code>sudo</code>. Muốn đặt chỗ khác: thêm <code>OMNILAB_DATA_DIR=/duong/dan</code> vào <code>.env</code>.</li>
 </ul>
 <h3>Làm lại từ đầu (clone lỗi / lỡ chạy bằng root)</h3>
 <div class="cmd"><span class="where">Server</span><pre><code>cd /srv/apps
+cp /srv/apps/omnilab/.env ~/omnilab.env.bak 2&gt;/dev/null
 sudo rm -rf /srv/apps/omnilab</code></pre></div>
-<p>Phải <code>cd /srv/apps</code> trước khi xoá (đứng trong thư mục bị xoá thì mọi lệnh sau báo <code>No such file</code>). Xong chạy lại khối lệnh đầu chương 2. Không mất gì vì site không có dữ liệu trên server.</p>
+<p>Phải <code>cd /srv/apps</code> trước khi xoá (đứng trong thư mục bị xoá thì mọi lệnh sau báo <code>No such file</code>). Xong chạy lại khối lệnh đầu chương 2. Nếu đã có người dùng: thay vì để khối <code>printf</code> tạo <code>SESSION_SECRET</code> mới, chạy <code>cp ~/omnilab.env.bak /srv/apps/omnilab/.env</code> để giữ khoá cũ, không ai bị đăng xuất. Dữ liệu DB nằm ở <code>/srv/data/omnilab</code>, ngoài thư mục repo, nên không bị xoá.</p>
 
 <h2 id="c3"><span class="n">3</span>Build &amp; chạy</h2>
 <div class="cmd"><span class="where">Server</span><pre><code>cd /srv/apps/omnilab
 bash deploy/deploy.sh
 docker compose ps
-docker compose logs --tail 20 app</code></pre></div>
+docker compose logs --tail 20 app
+docker compose logs --tail 5 sync</code></pre></div>
 <ul class="explain">
-  <li>Lần đầu 2–4 phút: tải Node + cài thư viện + <code>sharp</code> xử lý ảnh + build 58 trang. Các lần sau nhanh hơn nhờ cache. Log build có <code>58 page(s) built</code> và <code>sitemap-index.xml created</code>.</li>
-  <li>Kết thúc bằng <code>deploy ok: &lt;commit&gt;</code>. <code>ps</code>: <code>Up … (healthy)</code>.</li>
+  <li>Lần đầu vài phút: tải Node, cài thư viện, <code>sharp</code> xử lý ảnh, build site (khoảng 73 trang HTML). Image <code>sync</code> chỉ cài Node, không có npm package. Các lần sau nhanh hơn nhờ cache. Log build có <code>sitemap-index.xml created</code>.</li>
+  <li>Kết thúc bằng <code>deploy ok: &lt;commit&gt;</code>. <code>ps</code>: <code>app</code> và <code>sync</code> đều <code>Up … (healthy)</code>.</li>
+  <li>Log <code>sync</code> có <code>"message":"sync listening on 0.0.0.0:3000"</code>. Mỗi request là một dòng JSON, không có body, mật khẩu hay cookie.</li>
+  <li>Lần deploy đầu có sync, log có thể in <code>deploy.sh đã cập nhật, chạy lại bản mới</code>. Script tự chạy lại một lần, đây là bình thường.</li>
+  <li>Trước lần deploy đầu có sync, lưu header trang tĩnh để so sánh: <code>curl -sI -H 'Accept-Encoding: gzip' https://<span data-v="APP"></span>.<span data-v="DOMAIN"></span>/ | grep -vi '^date\|^etag\|^last-mod' &gt; base-home.txt</code> (làm tương tự với một bài học và một file <code>/_astro/*.css</code>). Sau deploy chạy lại và <code>diff</code> phải trống: header trang tĩnh không được đổi.</li>
   <li>Log app là JSON của Caddy (<code>"msg":"serving initial configuration"</code>). Không thấy lỗi <code>error</code> là được.</li>
   <li>Build dừng ở <code>FIDELITY VIOLATION</code>: nội dung bài học lệch với <code>content-sources/</code> → sửa trên Windows (<code>pnpm build</code> báo cùng lỗi), push, chạy lại.</li>
 </ul>
@@ -213,34 +229,73 @@ sudo ss -tlnp | grep -v 127.0.0.</code></pre></div>
   <li>Asset <code>/_astro/*</code>: <code>public, max-age=31536000, immutable</code>.</li>
   <li>Cổng mở ra ngoài chỉ 22, 80, 443. Thấy <code>8080</code> = có cổng lọt.</li>
 </ul>
+<h3>Máy chủ đồng bộ</h3>
+<div class="cmd"><span class="where">Server</span><pre><code>cd /srv/apps/omnilab
+docker compose ps
+docker network inspect web --format '{{range .Containers}}{{.Name}} {{end}}'
+docker network inspect omnilab_internal --format '{{.Internal}}'
+sudo ss -tlnp | grep -E ':3000\b' || echo "cổng 3000 không lộ"
+docker inspect $(docker compose ps -q sync) --format '{{.HostConfig.ReadonlyRootfs}} {{.Config.User}} {{.HostConfig.CapDrop}}'
+docker compose config | grep -c published</code></pre></div>
+<ul class="explain">
+  <li><code>ps</code>: <code>app</code> và <code>sync</code> đều <code>Up … (healthy)</code>.</li>
+  <li>Mạng <code>web</code> chỉ có container <code>…-app-1</code>, <b>không</b> có <code>sync</code>. <code>omnilab_internal</code> in <code>true</code>.</li>
+  <li><code>ss</code> không thấy cổng 3000 (in <code>cổng 3000 không lộ</code>). <code>config</code> đếm <code>published</code> phải in <code>0</code>: không service nào publish cổng.</li>
+  <li><code>true node [ALL]</code>: rootfs chỉ đọc, chạy bằng user <code>node</code>, bỏ hết quyền Linux.</li>
+</ul>
+<div class="cmd"><span class="where win">Windows</span><pre><code>curl.exe -si https://<span data-v="APP"></span>.<span data-v="DOMAIN"></span>/api/health
+curl.exe -si https://<span data-v="APP"></span>.<span data-v="DOMAIN"></span>/api/me</code></pre></div>
+<ul class="explain">
+  <li>Lệnh 1: <code>200</code>, body <code>{"ok":true}</code>, <code>Cache-Control: no-store</code>.</li>
+  <li>Lệnh 2 (chưa đăng nhập): <code>401</code>, body <code>{"code":"unauthorized"}</code>. Phải là JSON, không phải trang HTML.</li>
+</ul>
+<h3>Thử sập máy chủ đồng bộ</h3>
+<p>Nên làm một lần để chắc site vẫn sống khi sync hỏng.</p>
+<div class="cmd"><span class="where">Server</span><pre><code>cd /srv/apps/omnilab
+docker compose stop sync
+curl -si https://<span data-v="APP"></span>.<span data-v="DOMAIN"></span>/api/me | head -1
+curl -s -o /dev/null -w "%{http_code}\n" https://<span data-v="APP"></span>.<span data-v="DOMAIN"></span>/
+docker compose start sync</code></pre></div>
+<ul class="explain">
+  <li>Lệnh 2 in <code>HTTP/2 503</code> (dòng đầu của lệnh 1). Body là <code>{"code":"unavailable"}</code>, không cache. Lệnh 3 in <code>200</code>: site vẫn chạy.</li>
+  <li>Trình duyệt: mục Tài khoản ở tab Tôi báo "Chưa kết nối được máy chủ đồng bộ". Tiến độ trên máy vẫn dùng bình thường.</li>
+</ul>
+
 <ul class="check">
   <li>Mở trang trên trình duyệt, vào 1 bài, đánh dấu đọc/lưu → tải lại trang vẫn còn.</li>
+  <li>Tab Tôi, mục Tài khoản: đăng ký một tài khoản thử, đánh dấu một bài xong, tải lại trang: tiến độ vẫn còn.</li>
+  <li>Trình duyệt khác (hoặc cửa sổ ẩn danh), đăng nhập cùng tài khoản: thấy bài đã xong.</li>
   <li>Trang Tìm kiếm gõ 1 từ → có kết quả (đọc <code>search-index.json</code>).</li>
   <li>iPhone Safari: Thêm vào màn hình chính → mở được như app.</li>
 </ul>
 
 <h2 id="c5"><span class="n">5</span>Chuyển từ Nhân Hòa (Vibe Deploy)</h2>
-<p>Không có dữ liệu server để chuyển. Chỉ tiến độ đọc trong trình duyệt người dùng bị ảnh hưởng, vì nó gắn theo tên miền.</p>
+<p>Dữ liệu tài khoản và tiến độ đã đồng bộ nằm trong DB trên VPS, không liên quan đến Nhân Hòa. Tiến độ trên máy của người dùng thì gắn theo tên miền: đổi tên miền thì phần đó mất.</p>
 <table>
   <tr><th></th><th>Giữ tên miền cũ (trỏ DNS về VPS)</th><th>Tên miền mới (DuckDNS)</th></tr>
-  <tr><td>Tiến độ đọc, bài đã lưu</td><td>Giữ nguyên</td><td><b>Mất</b> (site không có xuất/nhập), người dùng bắt đầu lại</td></tr>
-  <tr><td>Cần làm</td><td>Chương 4 dùng tên miền cũ thay cho <code><span data-v="APP"></span>.<span data-v="DOMAIN"></span></code>; <code>.env</code> đặt <code>SITE_URL</code> = tên miền cũ; hạ TTL 300 giây trước 1 ngày → đổi bản ghi A sang <code><span data-v="IP"></span></code></td><td>Không cần gì thêm</td></tr>
+  <tr><td>Tiến độ đọc trên máy (chưa đăng nhập)</td><td>Giữ nguyên: cùng tên miền nên cùng localStorage</td><td><b>Mất</b>, người dùng bắt đầu lại trên máy</td></tr>
+  <tr><td>Tài khoản và tiến độ đã đồng bộ</td><td>Giữ nguyên (DB ở VPS)</td><td>Giữ nguyên, người dùng đăng nhập ở tên miền mới để lấy lại</td></tr>
+  <tr><td>Cần làm</td><td>Chương 4 dùng tên miền cũ thay cho <code><span data-v="APP"></span>.<span data-v="DOMAIN"></span></code>; <code>.env</code> đặt <code>SITE_URL</code> = tên miền cũ; hạ TTL 300 giây trước 1 ngày → đổi bản ghi A sang <code><span data-v="IP"></span></code></td><td>Không cần gì thêm. Báo người dùng đăng nhập lại ở tên miền mới</td></tr>
+  <tr><td>Trước khi đổi tên miền (khi VPS đã chạy)</td><td colspan="2">Nhắc người dùng đã có tài khoản đăng nhập một lần trên tên miền cũ, để tiến độ trên máy được đẩy lên tài khoản. Người chưa có tài khoản sẽ mất tiến độ trên máy khi đổi tên miền.</td></tr>
 </table>
 <p>Chuyển xong và chạy ổn vài ngày thì xoá app trên Vibe Deploy Nhân Hòa để không phải chạy 2 bản.</p>
 
-<h2 id="c6"><span class="n">6</span>Cập nhật &amp; vận hành</h2>
+<h2 id="c6"><span class="n">6</span>Sao lưu, cập nhật &amp; vận hành</h2>
 <h3>Phát hành bản mới (sau khi đã push)</h3>
 <div class="cmd"><span class="where win">Windows</span><pre><code>ssh vps "cd /srv/apps/omnilab &amp;&amp; bash deploy/deploy.sh"</code></pre></div>
 <ul class="explain">
   <li>Trước khi push: trên Windows chạy <code>pnpm test</code> và <code>pnpm build</code> (bắt lỗi fidelity sớm, khỏi đợi server build hỏng).</li>
   <li>Chỉ đổi <code>docs/</code>, <code>plans/</code>: không cần deploy.</li>
   <li>Không sửa file trực tiếp trên server (trừ <code>.env</code>).</li>
+  <li>Client và server deploy cùng lúc: <code>deploy.sh</code> build cả hai image, nên một lệnh là đủ. Không rollback code client về trước bản có schema v2: bản cũ không hiểu dữ liệu v2.</li>
 </ul>
 <table>
   <tr><th>Script in ra</th><th>Ý nghĩa</th><th>Làm gì</th></tr>
   <tr><td><code>deploy ok: …</code></td><td>Đang chạy commit mới</td><td>—</td></tr>
   <tr><td><code>already at …</code></td><td>Đã chạy commit mới nhất</td><td>Quên push? Hoặc build lại: <code>FORCE=1 bash deploy/deploy.sh</code></td></tr>
   <tr><td><code>deploy FAILED … rolled back</code></td><td>Bản mới không lên, site vẫn chạy bản cũ</td><td>Đọc log, sửa, push, chạy lại</td></tr>
+  <tr><td><code>deploy FAILED … chưa có bản cũ</code></td><td>Lần deploy đầu, chưa có bản nào để quay về. Script không hoàn tác gì</td><td><code>docker compose logs --tail 60 app sync</code>, sửa, chạy lại</td></tr>
+  <tr><td><code>deploy.sh đã cập nhật, chạy lại bản mới</code></td><td>Script vừa được kéo về và tự chạy lại một lần</td><td>Bình thường, không cần làm gì</td></tr>
   <tr><td>Build lỗi (script dừng trước bước thay container)</td><td>Lỗi <code>pnpm build</code></td><td>Site vẫn chạy bản cũ. Tái hiện bằng <code>pnpm build</code> trên Windows</td></tr>
 </table>
 <h3>Lệnh hay dùng (trong <code>/srv/apps/omnilab</code>)</h3>
@@ -248,10 +303,82 @@ sudo ss -tlnp | grep -v 127.0.0.</code></pre></div>
   <tr><th>Việc</th><th>Lệnh</th></tr>
   <tr><td>Trạng thái / log</td><td><code>docker compose ps</code> · <code>docker compose logs -f app</code></td></tr>
   <tr><td>Đổi <code>SITE_URL</code></td><td><code>nano .env</code> → <code>FORCE=1 bash deploy/deploy.sh</code> (giá trị nằm trong file build ra nên phải build lại)</td></tr>
-  <tr><td>Quay về bản cũ</td><td><code>docker images omnilab</code> → <code>IMAGE_TAG=<span class="v">ma-commit</span> docker compose up -d --no-build app</code></td></tr>
+  <tr><td>Quay về bản cũ</td><td><code>docker images omnilab</code> và <code>docker images omnilab-sync</code> → <code>IMAGE_TAG=<span class="v">ma-commit</span> docker compose up -d --no-build app sync</code> (cần cả hai image của commit đó)</td></tr>
+  <tr><td>Log máy chủ đồng bộ</td><td><code>docker compose logs -f sync</code></td></tr>
+  <tr><td>Đổi <code>SESSION_SECRET</code></td><td>Sửa <code>.env</code> → <code>docker compose up -d sync</code>. Mọi phiên đăng nhập hết hiệu lực</td></tr>
   <tr><td>Build lại từ đầu (nghi cache)</td><td><code>docker compose build --no-cache app</code> → <code>FORCE=1 bash deploy/deploy.sh</code></td></tr>
 </table>
-<div class="box"><strong>Giám sát</strong>Monitor miễn phí (UptimeRobot) gọi <code>https://<span data-v="APP"></span>.<span data-v="DOMAIN"></span>/</code> 5 phút/lần. Không cần backup server: mất VPS thì clone + deploy lại là đủ (chương 2–4).</div>
+<div class="box"><strong>Giám sát</strong>Monitor miễn phí (UptimeRobot) gọi <code>https://<span data-v="APP"></span>.<span data-v="DOMAIN"></span>/</code> 5 phút/lần. Nên thêm monitor thứ hai cho <code>https://<span data-v="APP"></span>.<span data-v="DOMAIN"></span>/api/health</code> (200 khi sync sống). Mất VPS thì clone + deploy lại (chương 2–4) khôi phục được site. <b>Tài khoản và tiến độ đồng bộ chỉ khôi phục được từ backup</b>, nên các mục dưới đây là bắt buộc.</div>
+
+<h3 id="backup">Sao lưu DB đồng bộ (bắt buộc)</h3>
+<p>Script <code>deploy/backup-sync-db.sh</code> chạy trong container <code>sync</code>: chụp snapshot nhất quán (<code>VACUUM INTO</code>) vào <code>/srv/data/omnilab/backups/omnilab-YYYY-MM-DD.db</code>, giữ 14 ngày. Container chạy cùng uid với DB nên không lỗi quyền.</p>
+<div class="cmd"><span class="where">Server</span><pre><code>cd /srv/apps/omnilab
+bash deploy/backup-sync-db.sh
+sudo ls -l /srv/data/omnilab/backups</code></pre></div>
+<ul class="explain">
+  <li>Kết quả: <code>backup ok /data/backups/omnilab-YYYY-MM-DD.db</code>. Đường dẫn <code>/data</code> là trong container; trên host là <code>/srv/data/omnilab/backups/</code>.</li>
+  <li>Chạy hai lần trong một ngày vẫn chỉ có một file: bản trong ngày bị ghi đè. Ghi qua file tạm rồi đổi tên nên lỗi giữa chừng không làm mất bản đã có.</li>
+  <li>File cũ hơn 14 ngày bị xoá. File khác trong thư mục không bị đụng tới.</li>
+  <li>Bản sao vẫn nằm trên cùng ổ đĩa VPS. Để có bản ngoài VPS, xem phần rclone bên dưới.</li>
+</ul>
+<h3>Chạy tự động mỗi đêm (cron)</h3>
+<div class="cmd"><span class="where">Server</span><pre><code>15 3 * * * cd /srv/apps/omnilab &amp;&amp; bash deploy/backup-sync-db.sh &gt;&gt; $HOME/omnilab-backup.log 2&gt;&amp;1</code></pre></div>
+<ul class="explain">
+  <li>Thêm dòng trên bằng <code>crontab -e</code> của user <code>deploy</code>. <code>15 3 * * *</code> theo giờ của VPS: xem bằng <code>timedatectl</code>. Tên file theo ngày Việt Nam, nên lệch múi giờ không đổi tên file.</li>
+  <li>Log ở <code>$HOME/omnilab-backup.log</code>. Hôm sau kiểm: <code>tail -n 3 ~/omnilab-backup.log</code> phải có <code>backup ok</code>.</li>
+  <li>Cron chạy bằng user <code>deploy</code>, nên user này phải thuộc nhóm docker (xem chương 7). Nếu sync đang dừng, lỗi ghi vào log; cần tự <code>docker compose start sync</code>.</li>
+</ul>
+<h3>Ra ngoài VPS (rclone, khuyến nghị)</h3>
+<p>Mất ổ đĩa VPS là mất cả bản backup. Đẩy bản sao sang kho khác (Backblaze B2, Google Drive, S3...) bằng rclone. Phần này chưa thử trên VPS.</p>
+<div class="cmd"><span class="where">Server</span><pre><code>sudo rclone config
+sudo rclone copy /srv/data/omnilab/backups &lt;remote&gt;:omnilab-backups</code></pre></div>
+<ul class="explain">
+  <li><code>&lt;remote&gt;</code> là tên đặt trong <code>rclone config</code>. Lệnh chạy bằng <code>sudo</code> vì thư mục mode 700 thuộc uid 1000.</li>
+  <li>Đưa vào cron của root (<code>sudo crontab -e</code>), chạy sau lệnh backup, ví dụ: <code>30 3 * * * rclone copy /srv/data/omnilab/backups &lt;remote&gt;:omnilab-backups</code>.</li>
+  <li>Kiểm sau lần chạy đầu: <code>sudo rclone ls &lt;remote&gt;:omnilab-backups</code>.</li>
+</ul>
+<h3>Kiểm một bản backup</h3>
+<div class="cmd"><span class="where">Server</span><pre><code>cd /srv/apps/omnilab
+docker compose exec -T sync node --input-type=module -e "import { DatabaseSync } from 'node:sqlite'; const d = new DatabaseSync('/data/backups/omnilab-<span class="v">YYYY-MM-DD</span>.db', { readOnly: true }); console.log(d.prepare('PRAGMA integrity_check').get().integrity_check, d.prepare('SELECT COUNT(*) AS n FROM users').get().n, 'tài khoản'); d.close();"</code></pre></div>
+<ul class="explain">
+  <li>Kết quả: <code>ok N tài khoản</code>. Phải là <code>ok</code>. File mở ở chế độ chỉ đọc, không đụng DB đang chạy.</li>
+</ul>
+<h3>Khôi phục (restore drill)</h3>
+<p>Làm ít nhất một lần, trước khi tin vào backup. Sync dừng trong vài giây đến một phút. Bản đang chạy được giữ trong thư mục <code>truoc-restore-…</code> để có thể quay lại.</p>
+<div class="cmd"><span class="where">Server</span><pre><code>cd /srv/apps/omnilab
+docker compose stop sync
+D=/srv/data/omnilab
+H=$D/truoc-restore-$(date +%Y%m%d-%H%M)
+sudo mkdir -p "$H"
+sudo sh -c "mv $D/omnilab.db* $H/"
+sudo cp $D/backups/omnilab-<span class="v">YYYY-MM-DD</span>.db $D/omnilab.db
+sudo chown 1000:1000 $D/omnilab.db
+docker compose start sync
+docker compose logs --tail 3 sync</code></pre></div>
+<ul class="explain">
+  <li>Dòng log cuối phải có <code>sync listening on 0.0.0.0:3000</code>.</li>
+  <li>Đăng nhập tài khoản có sẵn từ trước thời điểm backup: tiến độ đúng như lúc đó. Phiên cấp sau thời điểm backup không còn hợp lệ (401), đăng nhập lại là đúng.</li>
+  <li>Khi đã chắc bản restore đúng, xoá thư mục cũ: <code>sudo rm -rf $D/truoc-restore-…</code>.</li>
+</ul>
+<h3>Đặt lại mật khẩu, thu hồi phiên</h3>
+<p>Không có email nên không có quên mật khẩu tự động. Quản trị đặt lại bằng lệnh sau. Lệnh cũng tăng <code>session_version</code>, nên mọi thiết bị đang đăng nhập bị đăng xuất.</p>
+<div class="cmd"><span class="where">Server</span><pre><code>cd /srv/apps/omnilab
+docker compose exec -T -e U=<span class="v">ten_tai_khoan</span> -e P='<span class="v">mat-khau-moi</span>' sync node --input-type=module -e "
+import { DatabaseSync } from 'node:sqlite';
+import { hashPassword } from './server/sync/sync-auth.ts';
+const db = new DatabaseSync('/data/omnilab.db');
+db.exec('PRAGMA busy_timeout=3000');
+const hash = await hashPassword(process.env.P);
+const r = db.prepare('UPDATE users SET pass_hash = ?, session_version = session_version + 1 WHERE username = ?').run(hash, process.env.U);
+console.log(Number(r.changes) === 1 ? 'reset ok' : 'không có tài khoản này');
+db.close();"</code></pre></div>
+<ul class="explain">
+  <li>Tên tài khoản viết thường, đúng như lúc đăng ký. Kết quả: <code>reset ok</code> hoặc <code>không có tài khoản này</code>.</li>
+  <li>Lệnh không kiểm tra độ dài. Mật khẩu mới nên dài 8–128 ký tự, đúng quy tắc khi đăng ký. Nên dùng ký tự ASCII: nhập Unicode khác dạng chuẩn hoá có thể khiến người dùng không đăng nhập được.</li>
+  <li>Lệnh nằm trong lịch sử shell, và có thể thấy trong danh sách tiến trình trên host lúc đang chạy. Sau khi chạy, xoá dòng lệnh khỏi lịch sử (<code>history -d &lt;số dòng&gt;</code>).</li>
+  <li>Muốn chỉ đăng xuất mọi thiết bị mà không đổi mật khẩu: chạy lại lệnh với mật khẩu hiện tại.</li>
+  <li>Lệnh ghi thẳng vào DB đang chạy (WAL, <code>busy_timeout</code>), không cần dừng sync.</li>
+</ul>
 
 <h2 id="c7"><span class="n">7</span>Xử lý sự cố</h2>
 <table>
@@ -265,14 +392,26 @@ sudo ss -tlnp | grep -v 127.0.0.</code></pre></div>
   <tr><td>Trình duyệt vẫn thấy bài cũ</td><td>Cache HTML</td><td>HTML là <code>no-cache</code> nên tải lại là hết; PWA: đóng hẳn rồi mở lại</td></tr>
   <tr><td><code>fatal: destination path 'omnilab' already exists</code></td><td>Đã clone trước đó</td><td>Có <code>.git</code> → bỏ dòng clone. Không → <a href="#c2">làm lại từ đầu</a></td></tr>
   <tr><td><code>permission denied … docker.sock</code></td><td><code>deploy</code> chưa thuộc nhóm docker</td><td><code>sudo usermod -aG docker deploy</code> → <code>exit</code> → <code>ssh vps</code> lại</td></tr>
-  <tr><td>Đầy ổ đĩa</td><td>Cache build Node</td><td><code>docker builder prune -f</code>, <code>docker image prune -f</code></td></tr>
+  <tr><td>Đầy ổ đĩa</td><td>Cache build Node, hoặc thư mục backup lớn</td><td><code>docker builder prune -f</code>, <code>docker image prune -f</code>. Kiểm dung lượng: <code>sudo du -sh /srv/data/omnilab</code></td></tr>
+  <tr><td><code>SESSION_SECRET chưa đặt trong .env</code></td><td>Thiếu dòng trong <code>.env</code></td><td>Chạy lại dòng <code>printf 'SESSION_SECRET=…'</code> ở chương 2 (không đổi nếu đã có người dùng)</td></tr>
+  <tr><td><code>.env: SESSION_SECRET phải dài ≥ 32 ký tự</code></td><td>Dòng bị thiếu hoặc quá ngắn</td><td>Sửa dòng <code>SESSION_SECRET</code> trong <code>.env</code>, rồi chạy lại deploy</td></tr>
+  <tr><td><code>sync server failed to start: … EACCES</code> (log <code>sync</code>)</td><td><code>/srv/data/omnilab</code> không thuộc uid 1000</td><td><code>sudo chown 1000:1000 /srv/data/omnilab</code>, rồi <code>docker compose restart sync</code></td></tr>
+  <tr><td><code>/api/*</code> trả 503 <code>{"code":"unavailable"}</code></td><td>Sync dừng hoặc lỗi nội bộ</td><td><code>docker compose ps</code>, <code>docker compose logs --tail 50 sync</code></td></tr>
+  <tr><td>503 <code>{"code":"busy"}</code></td><td>Hàng đợi băm mật khẩu đầy (nhiều đăng nhập cùng lúc)</td><td>Chờ vài giây rồi thử lại. Kéo dài: xem tải VPS</td></tr>
+  <tr><td>429 <code>rate_limited</code> khi đăng nhập</td><td>Sai mật khẩu nhiều lần; server trả <code>Retry-After</code></td><td>Chờ đúng số giây đó. Restart sync xoá bộ đếm trong bộ nhớ</td></tr>
+  <tr><td>Tab Tôi báo "Chưa kết nối được máy chủ đồng bộ"</td><td>Sync dừng, hoặc site đang chạy trên Railpack (không có sync)</td><td>Trên VPS: chương 4, mục "Thử sập máy chủ đồng bộ". Trên Railpack: đúng như thiết kế</td></tr>
+  <tr><td>401 sau khi restore hoặc đổi <code>SESSION_SECRET</code></td><td>Phiên cũ không còn hợp lệ</td><td>Đăng nhập lại</td></tr>
+  <tr><td>Cron log: <code>backup failed: database not found</code></td><td>Sync chưa chạy lần nào, nên chưa có DB; hoặc sai đường dẫn</td><td><code>sudo ls /srv/data/omnilab</code>. Chạy sync, đăng ký một tài khoản rồi chạy lại backup</td></tr>
+  <tr><td>Cron log: lỗi <code>is not running</code></td><td>Container <code>sync</code> đang dừng</td><td><code>docker compose start sync</code>, rồi chạy <code>bash deploy/backup-sync-db.sh</code> bằng tay</td></tr>
 </table>
 
 <h2 id="q"><span class="n">?</span>Câu hỏi còn mở</h2>
 <ol>
-  <li>Tên miền lâu dài: giữ tên miền đang dùng ở Nhân Hòa (giữ tiến độ đọc của người dùng) hay chuyển DuckDNS?</li>
-  <li>Có muốn thêm nút xuất/nhập tiến độ đọc trước khi đổi tên miền không? Hiện không có cách chuyển.</li>
+  <li>Tên miền lâu dài: giữ tên miền đang dùng ở Nhân Hòa (giữ tiến độ đọc trên máy) hay chuyển DuckDNS? Tài khoản và tiến độ đã đồng bộ không phụ thuộc lựa chọn này.</li>
+  <li>Kho backup ngoài VPS: dùng remote nào cho rclone (chương 6)? Chưa chọn.</li>
+  <li>Tần suất backup: hiện một lần mỗi đêm (03:15). Có cần thêm lần thứ hai trong ngày không?</li>
 </ol>
+<p><b>Đã đóng:</b> nút xuất/nhập tiến độ không còn là điều kiện để đổi tên miền. Đồng bộ qua tài khoản thay thế cho việc đó (người đã đăng nhập không mất tiến độ). Xuất/nhập JSON chỉ còn là ưu tiên thấp, xem <code>docs/project-roadmap.md</code>.</p>
 </main>
 </div>
 <script>

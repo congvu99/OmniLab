@@ -8,14 +8,14 @@
 |-----------|---------|
 | **Framework** | Astro 7 (static) + MDX, vanilla TypeScript (islands) |
 | **Design** | Studio (dark-first, Volt signature, depth motion, command palette) |
-| **Deploy** | Railpack + Caddy (Vibe Deploy Nhân Hòa) |
+| **Deploy** | VPS Docker Compose (app + sync) là chính; Railpack + Caddy (Vibe Deploy Nhân Hòa) là phương án cũ |
 | **Nội dung** | 3 domain (kiến-trúc 27, tài-chính 23, nghề-tài-chính 14 bài), YAML + MDX |
-| **Lưu trữ** | localStorage (`omnilab:v1:state`) + fallback in-memory |
+| **Lưu trữ** | localStorage (`omnilab:v1:state`, payload v2) + fallback in-memory; tài khoản đồng bộ qua sidecar Node + SQLite (`server/sync/`) |
 | **Tìm kiếm** | MiniSearch + diacritic folding, index lazy-load |
 | **Icon** | 32-icon custom sprite (Studio monoline), no Lucide |
 | **Fonts** | Be Vietnam Pro + JetBrains Mono (@fontsource) |
 | **SVG** | 97 minh họa + 44 ảnh gốc |
-| **Lưu ý v1** | Offline không hỗ trợ; progress = localStorage (private mode = in-memory) |
+| **Lưu ý v1** | Offline không hỗ trợ; progress = localStorage (private mode = in-memory); đồng bộ chỉ khi đăng nhập và có sidecar |
 
 ## Cấu trúc thư mục
 
@@ -31,6 +31,7 @@ src/
 │   │   ├── learning-stats, domain-progress, up-next-list  # Home
 │   │   ├── domain-page-controls    # Domain filter chips
 │   │   ├── display-settings, storage-status  # /toi (Giao diện, Dữ liệu & ứng dụng; copy lưu trữ ở lib/storage-status-copy.ts, gợi ý cài chỉ iOS)
+│   │   ├── account-sync-panel      # /toi #tai-khoan: đăng ký/đăng nhập, gộp, đăng xuất (view + controller tách riêng)
 │   │   └── search-box, domain-nav, tab-bar, sidebar-nav
 │   ├── lesson/                     # Lesson components (RealLife, Figure, etc.)
 │   ├── shell/                      # Layout shells (app-layout, reader-layout)
@@ -43,6 +44,9 @@ src/
 │   ├── progress-store.ts, search-index.ts, lesson-id.ts, toc-scrollspy.ts
 │   ├── command-palette-logic.ts, command-palette-controller.ts  # (new)
 │   ├── user-prefs.ts, reduced-motion.ts  # prefs hiển thị (theme/cỡ chữ/chuyển động), helper reduced motion
+│   ├── progress-merge.ts           # mergeStates + stateHash: thuần, dùng chung client và server
+│   ├── progress-sync*.ts           # Engine đồng bộ client: engine, transfer, http, dirty, triggers, status, singleton, contract, types
+│   ├── account-sync-panel-*.ts     # View model (viewOf, errorText, validateAuthForm) + controller của panel tài khoản
 │   └── (domain-progress, complete-check-motion, reader-toast, etc.)
 ├── pages/: routes (home, hoc/*, linh-vuc, tim-kiem, da-luu, toi, gioi-thieu, 404)
 └── public/prefs-init.js  # pre-paint theme/prefs script (script ngoài, CSP)
@@ -51,6 +55,21 @@ src/
     ├── base.css        # Utilities (.btn, .card, .row, .kbd, etc.)
     ├── prose.css       # Lesson body + code syntax
     └── view-transitions.css  # Depth push transition
+
+server/sync/                        # Sidecar đồng bộ (Node 24, node:http + node:sqlite, 0 npm deps)
+├── sync-server-entry.ts            # Router, header, log, SIGTERM; `--dev` (cổng 3001), `--backup`
+├── sync-sqlite-store.ts            # Schema users/progress (WAL), sanitizeIncoming, mergeProgress
+├── sync-auth.ts                    # scrypt, limiter băm, cookie HMAC, throttle đăng nhập, cap đăng ký
+├── sync-http-helpers.ts            # HttpError, readBody (64 KB), parseJson, configFromEnv
+└── sync-backup.ts                  # VACUUM INTO → backups/omnilab-YYYY-MM-DD.db, giữ 14 ngày
+
+deploy/
+├── deploy.sh                       # git pull → build app + sync → gate / và /api/health → rollback
+└── backup-sync-db.sh               # Chạy --backup trong container sync (cron)
+
+Dockerfile                          # Stage build → sync → app (app là stage cuối, mặc định)
+compose.yml                         # Service app (web + internal) và sync (internal, không ports)
+Caddyfile                           # Static + /api/* proxy tới omnilab-sync:3000, 503 JSON khi sidecar không có
 ```
 
 ## Mô hình nội dung
@@ -71,7 +90,7 @@ src/
 
 ## Client state
 
-**localStorage key**: `omnilab:v1:state` (v:1, lessons{}, bookmarks[]).  
+**localStorage key**: `omnilab:v1:state` (payload v:2: `lessons{}`, `bookmarkMeta{}`, `owner?`; `bookmarks[]` là dẫn xuất). Chi tiết: [system-architecture.md](./system-architecture.md#máy-chủ-đồng-bộ-sync-sidecar).  
 **Fallback**: Private mode (localStorage throws) → in-memory (không persist).  
 **Store**: `createProgressStore(options)` injectable (testable).
 
@@ -87,15 +106,18 @@ src/
 - Shiki dual theme (light inline, dark `--shiki-dark-*` vars) + transformer `shiki-contrast-fixes.mjs` (đưa màu token về >=4.5:1)
 - Vite `assetsInlineLimit: 0` (all scripts external, CSP `script-src 'self'` no hashes)
 
-**Caddyfile** (Railpack):
+**Caddyfile** (repo, dùng cho cả VPS và Railpack):
 - Cache: `/_astro/*` immutable, mọi đường dẫn khác no-cache
-- CSP: `script-src 'self'`, `style-src 'unsafe-inline'` (Shiki chỉ)
+- CSP: `script-src 'self'`, `style-src 'unsafe-inline'`
 - Không SPA fallback (404 thực)
+- `/api/*` → `omnilab-sync:3000`; sidecar không có → 503 `{"code":"unavailable"}`
 
 ## Testing & Quality
 
-- **436 tests** (Vitest, 25 test files; no jsdom, injectable deps)
+- **Vitest** (`pnpm test`; no jsdom, injectable deps). Số lượng thay đổi theo thời điểm, không ghi cứng ở đây.
   - Icon names + paths, command palette logic/controller, search controller, progress store, toc-scrollspy, lesson reader model, token contrast, etc.
+  - Đồng bộ: `progress-merge`, migrate v2, `progress-sync` (engine), panel tài khoản, `sync-auth`, `sync-http-api` (end-to-end qua HTTP), `sync-backup`, `lesson-content` (id bài khớp regex)
+- Type-check server: `pnpm check:server` (`tsconfig.server.json`, không nằm trong `pnpm check`)
 - TypeScript: astro check (0 errors, schema valid)
 - Contrast: 55 token pairs verified ≥4.5:1 light/dark (Studio tokens: text/text-2/text-3/volt/volt-ink/domain hues/danger/success on all surfaces)
 - Build: verify:fidelity gate (content snapshot check) + astro build → dist/ (74 pages)

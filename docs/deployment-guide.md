@@ -1,4 +1,10 @@
-# Hướng dẫn deploy (Railpack + Vibe Deploy Nhân Hòa)
+# Hướng dẫn deploy (Railpack + Vibe Deploy Nhân Hòa) — phương án cũ
+
+> **Không dùng bản này cho production có tài khoản.** Deploy chính là VPS
+> bằng Docker Compose: xem [deployment-vps-guide.html](deployment-vps-guide.html).
+> Railpack/Vibe Deploy chỉ phục vụ site tĩnh. Không chạy được máy chủ đồng bộ
+> (sidecar), nên mọi `/api/*` trả 503 JSON. Trang Tôi báo "Chưa kết nối được
+> máy chủ đồng bộ", còn tiến độ trên máy vẫn dùng bình thường.
 
 Repo này build ra site tĩnh (Astro `output: 'static'`). Repo chỉ đảm bảo
 **build được bằng Railpack**; việc tạo app, gắn domain, TLS, git remote,
@@ -26,7 +32,7 @@ theo dõi uptime trên Vibe Deploy Nhân Hòa do người dùng tự làm.
 | `RAILPACK_NO_SPA` | `1` | **Dự phòng** nếu nền tảng bỏ qua `Caddyfile` custom và dùng static-file provider mặc định của Railpack — tắt SPA fallback để URL sai vẫn ra 404 thật thay vì trả `index.html`. |
 | `RAILPACK_SPA_OUTPUT_DIR` | `dist` | Dự phòng cùng lý do trên — chỉ đúng thư mục output nếu Railpack không tự nhận ra. |
 
-Không có secret nào khác cần thiết ở Phase 1 (chưa có API/DB).
+Không cần `SESSION_SECRET` ở đây: sidecar đồng bộ không chạy trên Railpack. Không có DB trên nền tảng này.
 
 ## 3. Caddyfile làm gì
 
@@ -42,6 +48,8 @@ File `Caddyfile` ở root ghi đè Caddyfile mặc định của Railpack:
   - **CSP**: `default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none';`
     - `script-src 'self'` (không hash): Tất cả component scripts ngoài file (Astro `vite.build.assetsInlineLimit: 0`), không inline `<script>` → không cần hash, CSP đơn giản hơn
     - `style-src 'unsafe-inline'`: Chỉ cho phép inline styles từ Shiki syntax highlighting trong code block (không có cách khác mà không inlining)
+- `/api/*` proxy tới `omnilab-sync:3000`. Trên Railpack không có host này, nên
+  dial lỗi và `handle_errors` trả 503 `{"code":"unavailable"}` (JSON, `no-store`).
 - `try_files {path} {path}.html {path}/index.html` + `handle_errors` →
   `/{status_code}.html` — **không** có SPA fallback (`/index.html` khi miss),
   nên URL sai luôn ra 404 thật, không bị nuốt bởi trang chủ.
@@ -82,6 +90,10 @@ curl -sI https://$DOMAIN/ | head -1
 # 7. Security header có mặt
 curl -sI https://$DOMAIN/ | grep -iE "x-content-type-options|referrer-policy|content-security-policy"
 # kỳ vọng: output có 3 header trên
+
+# 8. Sidecar không có trên nền tảng này: /api trả 503 JSON, không phải HTML
+curl -s -w "\n%{http_code}\n" https://$DOMAIN/api/me
+# kỳ vọng: {"code":"unavailable"} rồi 503
 ```
 
 **Nếu bước 2 trả `200` với nội dung trang chủ** (không phải trang 404 thật):
@@ -119,7 +131,7 @@ Trên iPhone/iPad với iOS 16+:
 4. Về home screen → tap icon OmniLab
    → Phải mở fullscreen (không browser chrome) ✅
    → Không có address bar ✅
-   → Tab bar nằm dưới với 4 items (home, domains, saved, search) ✅
+   → Tab bar nằm dưới với 5 tab (Học tiếp, Lĩnh vực, Tìm kiếm, Đã lưu, Tôi) ✅
 5. Scroll bài → Đánh dấu hoàn thành → % lĩnh vực cập nhật ngay ✅
 6. Tap "Lĩnh vực" tab → Phải hiện danh sách lĩnh vực
 7. Search: Tap "Tìm" tab → Gõ "cache" → Kết quả hiện
@@ -135,7 +147,8 @@ Trên iPhone/iPad với iOS 16+:
 **Lưu ý**:
 - Standalone mode cách biệt khỏi Safari (khác cache, khác localStorage)
 - Nếu sửa web rồi update, cần xóa app khỏi home screen + re-add để thấy version mới
-- Progress lưu localStorage (in-memory fallback private mode, không persist)
+- Progress lưu localStorage (in-memory fallback private mode, không persist). Không đồng bộ trên nền tảng này: tài khoản cần VPS
+- Tab Tôi → Tài khoản hiện "Chưa kết nối được máy chủ đồng bộ" là đúng, không phải lỗi build
 
 ## 5. Rollback
 
