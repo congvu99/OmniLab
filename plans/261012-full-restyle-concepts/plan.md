@@ -1,6 +1,6 @@
 # Full restyle — design concepts (chưa implement)
 
-Status: design-review (3 concepts ready, awaiting user choice) · Created 2026-10-12
+Status: done — user chose concept B "Studio" (see plans/261012-studio-implementation)
 
 ## Bối cảnh
 - Vòng redesign iOS (plans/261012-ios-native-redesign) bị user từ chối: "thiết kế ko thay đổi gì nhiều". User muốn làm lại TOÀN BỘ theo một phong cách mới: màu sắc, icon, typography, component, tương tác, chuyển động.

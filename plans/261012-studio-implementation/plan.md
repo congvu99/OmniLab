@@ -1,6 +1,6 @@
 # Implement concept B "Studio"
 
-Status: in-progress · Created 2026-10-12 · Branch: feat/studio-redesign (checkpoint 477e2a4)
+Status: done · Created 2026-10-12 · Shipped to main 2026-10-12
 
 ## Nguồn thiết kế (single source of truth)
 plans/261012-full-restyle-concepts/concept-b-studio/index.html + README.md. Implementation phải khớp concept: màu, font, icon, component, motion, bố cục iPhone + desktop.
