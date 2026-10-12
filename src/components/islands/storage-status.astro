@@ -1,8 +1,9 @@
 ---
 // "Dữ liệu & ứng dụng" status rows on /toi: whether progress survives a reload
-// (progress-store isPersistent) and the home-screen install tip (hidden once
-// the app already runs standalone). Server HTML is the neutral default; the
-// script fills in the real state on the client.
+// (progress-store isPersistent, wording in storage-status-copy.ts) and the
+// home-screen install tip, shown only on iPhone/iPad outside the installed
+// app. Server HTML is the neutral default (tip hidden, so other platforms
+// never flash it); the script fills in the real state on the client.
 import Icon from '../icon/icon.astro';
 ---
 
@@ -16,13 +17,13 @@ import Icon from '../icon/icon.astro';
       </div>
     </div>
   </li>
-  <li data-install-hint>
+  <li data-install-hint hidden>
     <div class="row">
       <span class="dom-ic"><Icon name="domains" size={21} /></span>
       <div class="tt">
         <b>Cài lên màn hình chính</b>
         <small class="ss__wrap">
-          Trên iPhone/iPad: bấm Chia sẻ, rồi chọn “Thêm vào MH chính”. Tiến độ sẽ được giữ bền hơn.
+          Trên iPhone/iPad: bấm Chia sẻ, rồi chọn “Thêm vào Màn hình chính”. Tiến độ sẽ không bị Safari tự xoá.
         </small>
       </div>
     </div>
@@ -49,10 +50,8 @@ import Icon from '../icon/icon.astro';
 <script>
   import { getProgressStore } from '../../lib/progress-store';
   import { onPageLoad } from '../../lib/page-lifecycle';
-
-  const isStandalone = () =>
-    window.matchMedia('(display-mode: standalone)').matches ||
-    (navigator as Navigator & { standalone?: boolean }).standalone === true;
+  import { isIosDevice, isStandaloneApp } from '../../lib/ios-hint';
+  import { storageStatusCopy } from '../../lib/storage-status-copy';
 
   onPageLoad(() => {
     const panel = document.querySelector<HTMLElement>('[data-storage-panel]');
@@ -61,16 +60,13 @@ import Icon from '../icon/icon.astro';
     const detail = panel.querySelector<HTMLElement>('[data-storage-detail]');
     const install = panel.querySelector<HTMLElement>('[data-install-hint]');
 
+    const ios = isIosDevice();
+    const standalone = isStandaloneApp();
     if (title && detail) {
-      if (getProgressStore().isPersistent) {
-        title.textContent = 'Lưu trữ bền';
-        detail.textContent = 'Tiến độ và mục đã lưu được giữ trên máy này sau khi đóng trình duyệt.';
-      } else {
-        title.textContent = 'Lưu trữ tạm thời';
-        detail.textContent =
-          'Trình duyệt đang chặn lưu trữ (chế độ riêng tư?). Tiến độ chỉ giữ đến khi đóng thẻ này.';
-      }
+      const copy = storageStatusCopy({ persistent: getProgressStore().isPersistent, ios, standalone });
+      title.textContent = copy.title;
+      detail.textContent = copy.detail;
     }
-    if (install) install.hidden = isStandalone();
+    if (install) install.hidden = !ios || standalone;
   });
 </script>

@@ -30,7 +30,7 @@ src/
 │   │   ├── bookmark-button         # Bookmark toggle, sync via store
 │   │   ├── learning-stats, domain-progress, up-next-list  # Home
 │   │   ├── domain-page-controls    # Domain filter chips
-│   │   ├── display-settings, storage-status  # /toi (Giao diện, Dữ liệu & ứng dụng)
+│   │   ├── display-settings, storage-status  # /toi (Giao diện, Dữ liệu & ứng dụng; copy lưu trữ ở lib/storage-status-copy.ts, gợi ý cài chỉ iOS)
 │   │   └── search-box, domain-nav, tab-bar, sidebar-nav
 │   ├── lesson/                     # Lesson components (RealLife, Figure, etc.)
 │   ├── shell/                      # Layout shells (app-layout, reader-layout)

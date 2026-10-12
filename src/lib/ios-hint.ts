@@ -8,15 +8,21 @@
  */
 const DISMISSED_KEY = 'omnilab:v1:ios-hint-dismissed';
 
-function isIosNonStandalone(): boolean {
-  const ua = navigator.userAgent;
+export function isIosDevice(): boolean {
   // iPadOS 13+ reports as "Macintosh" in the UA string but is touch-capable,
   // unlike a real Mac.
-  const isIos = /iP(hone|od|ad)/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  const isStandalone =
+  return /iP(hone|od|ad)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
+export function isStandaloneApp(): boolean {
+  return (
     window.matchMedia('(display-mode: standalone)').matches ||
-    (navigator as Navigator & { standalone?: boolean }).standalone === true;
-  return isIos && !isStandalone;
+    (navigator as Navigator & { standalone?: boolean }).standalone === true
+  );
+}
+
+function isIosNonStandalone(): boolean {
+  return isIosDevice() && !isStandaloneApp();
 }
 
 function isDismissed(): boolean {
