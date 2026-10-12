@@ -46,7 +46,7 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
         </button>
       </div>
       <p class="storage-warning" data-storage-warning hidden>
-        Trình duyệt đang chặn lưu trữ (chế độ riêng tư?) — tiến độ học sẽ không được lưu lại.
+        Trình duyệt đang chặn lưu trữ (chế độ riêng tư?) hoặc dữ liệu trên máy mới hơn bản này — tiến độ học sẽ không được lưu lại.
       </p>
       {largeTitle && <LargeTitleHeader title={largeTitle} />}
       <main id="main-content" class="app-main">
@@ -64,6 +64,10 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
       import { requestPersistentStorageIfStandalone } from '../lib/request-persistent-storage';
       import { initIosHint } from '../lib/ios-hint';
       import { getProgressStore } from '../lib/progress-store';
+      import { getProgressSync } from '../lib/progress-sync-singleton';
+
+      // Once per full page load (module scripts do not re-run on soft navigations).
+      getProgressSync();
 
       function init() {
         requestPersistentStorageIfStandalone();
@@ -73,7 +77,10 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
         // in-memory (see progress-store.ts), but nothing survives a reload —
         // let the user know rather than silently losing their progress.
         const warning = document.querySelector<HTMLElement>('[data-storage-warning]');
-        if (warning) warning.hidden = getProgressStore().isPersistent;
+        if (warning) {
+          const store = getProgressStore();
+          warning.hidden = store.isPersistent && !store.isWriteBlocked;
+        }
       }
 
       document.addEventListener('astro:page-load', init);

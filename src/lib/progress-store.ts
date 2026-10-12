@@ -27,6 +27,8 @@ import { createScrollThrottle } from './progress-scroll-throttle';
 export type { LessonId, LessonProgress, ProgressState };
 export { migrate };
 
+export type ProgressListener = (state: ProgressState, meta: { external: boolean }) => void;
+
 export interface StorageLike {
   getItem(key: string): string | null;
   setItem(key: string, value: string): void;
@@ -70,10 +72,15 @@ export interface ProgressStore {
   setOwner(owner: string | undefined): void;
   /** Drop all local progress and the owner (sign-out / account switch). */
   clear(): void;
-  /** Called immediately with the current state, then again on every change (in-page + cross-tab). */
-  subscribe(fn: (state: ProgressState) => void): () => void;
+  /**
+   * Called immediately with the current state, then again on every change (in-page + cross-tab).
+   * `meta.external` is true (synchronously, during the call) when the change was written by another tab.
+   */
+  subscribe(fn: ProgressListener): () => void;
   /** `false` when localStorage is unavailable/throws (e.g. Safari private mode) — state is in-memory only for this tab. */
   readonly isPersistent: boolean;
+  /** `true` when storage holds a NEWER schema this build must not overwrite: changes stay in memory for this tab only. */
+  readonly isWriteBlocked: boolean;
 }
 
 export interface CreateProgressStoreOptions {
@@ -147,10 +154,10 @@ export function createProgressStore(options: CreateProgressStoreOptions = {}): P
   }
 
   let state = readFromStorage();
-  const listeners = new Set<(state: ProgressState) => void>();
+  const listeners = new Set<ProgressListener>();
 
-  function notify() {
-    for (const fn of listeners) fn(state);
+  function notify(external = false) {
+    for (const fn of listeners) fn(state, { external });
   }
 
   function writeAndNotify(next: SyncState) {
@@ -205,7 +212,7 @@ export function createProgressStore(options: CreateProgressStoreOptions = {}): P
     // key === null means storage.clear() was called in another tab.
     if (event.key !== null && event.key !== STORAGE_KEY) return;
     state = readFromStorage();
-    notify();
+    notify(true);
   }
 
   eventTarget?.addEventListener('storage', handleStorageEvent);
@@ -213,6 +220,10 @@ export function createProgressStore(options: CreateProgressStoreOptions = {}): P
   return {
     get isPersistent() {
       return isPersistent;
+    },
+
+    get isWriteBlocked() {
+      return skipPersist;
     },
 
     get() {
@@ -280,7 +291,7 @@ export function createProgressStore(options: CreateProgressStoreOptions = {}): P
 
     subscribe(fn) {
       listeners.add(fn);
-      fn(state);
+      fn(state, { external: false });
       return () => listeners.delete(fn);
     },
   };

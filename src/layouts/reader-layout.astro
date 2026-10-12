@@ -85,6 +85,9 @@ const htmlStyle = domainAccentStyle(domainAccent, domainAccentDark);
     </script>
     <script>
       import { requestPersistentStorageIfStandalone } from '../lib/request-persistent-storage';
+      import { getProgressSync } from '../lib/progress-sync-singleton';
+
+      getProgressSync();
 
       // No iOS "Add to Home Screen" hint here (reader is full-bleed reading,
       // no room for a banner) — app-layout.astro's hint covers it on the 4

@@ -474,3 +474,15 @@ describe('applyRemote / setOwner / clear', () => {
     expect(l.doneUpdatedAt).toBeGreaterThan(7);
   });
 });
+
+describe('isWriteBlocked', () => {
+  it('is true only when storage holds a newer schema, which is then never overwritten', () => {
+    const storage = createFakeStorage();
+    storage.setItem('omnilab:v1:state', JSON.stringify({ v: 3, lessons: {} }));
+    const store = createProgressStore({ storage });
+    expect(store.isWriteBlocked).toBe(true);
+    store.markDone('a/b/c', true);
+    expect(JSON.parse(storage.getItem('omnilab:v1:state')).v).toBe(3);
+    expect(createProgressStore({ storage: createFakeStorage() }).isWriteBlocked).toBe(false);
+  });
+});

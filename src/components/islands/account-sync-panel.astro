@@ -1,0 +1,255 @@
+---
+// "Tài khoản & đồng bộ" panel on /da-luu: sign in / register, merge prompt
+// when this device holds another account's progress, sync status, logout.
+// Server-rendered shell; account-sync-panel-controller.ts toggles sections
+// by status and fills text via textContent only (never innerHTML). Initial
+// state is "checking" so the signed-out form never flashes for a signed-in
+// user while /api/me is pending.
+---
+
+<section class="ap card" data-account-panel aria-labelledby="ap-title">
+  <h2 class="eyebrow ap-title" id="ap-title">Tài khoản &amp; đồng bộ</h2>
+
+  <div data-ap="checking" class="ap-checking">
+    <span class="skeleton ap-skeleton"></span>
+    <span class="sr-only">Đang kiểm tra tài khoản…</span>
+  </div>
+
+  <p data-ap="unavailable" class="ap-note ap-unavailable" role="status" hidden></p>
+
+  <form data-ap="form" class="ap-form" novalidate hidden>
+    <div class="ap-tabs" role="group" aria-label="Chế độ">
+      <button type="button" class="chip" data-ap="login-tab" aria-pressed="true">Đăng nhập</button>
+      <button type="button" class="chip" data-ap="register-tab" aria-pressed="false">Tạo tài khoản</button>
+    </div>
+
+    <label class="ap-label" for="ap-username">Tên đăng nhập</label>
+    <div class="field">
+      <input id="ap-username" data-ap="username" type="text" name="username" autocomplete="username"
+        autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="32" aria-describedby="ap-hint" />
+    </div>
+    <p class="ap-hint" id="ap-hint">3-32 ký tự: chữ thường không dấu, số, . _ -</p>
+
+    <label class="ap-label" for="ap-password">Mật khẩu</label>
+    <div class="field">
+      <input id="ap-password" data-ap="password" type="password" name="password" autocomplete="current-password" maxlength="128" />
+    </div>
+
+    <div data-ap="confirm-row" class="ap-confirm" hidden>
+      <label class="ap-label" for="ap-confirm">Nhập lại mật khẩu</label>
+      <div class="field">
+        <input id="ap-confirm" data-ap="confirm" type="password" name="confirm" autocomplete="new-password" maxlength="128" />
+      </div>
+    </div>
+
+    <p data-ap="error" class="ap-error" aria-live="polite"></p>
+    <button type="submit" class="btn btn-primary ap-submit" data-ap="submit">Đăng nhập</button>
+    <p class="ap-note">Không có khôi phục mật khẩu qua email. Chỉ lưu tên đăng nhập và tiến độ học.</p>
+  </form>
+
+  <div data-ap="merge" class="ap-merge" role="group" aria-labelledby="ap-merge-title" hidden>
+    <h3 id="ap-merge-title" class="ap-merge-title" data-ap="merge-title" tabindex="-1">Chọn cách xử lý tiến độ</h3>
+    <p data-ap="merge-text" class="ap-merge-text"></p>
+    <p class="ap-note">"Dùng tiến độ của tài khoản" sẽ thay thế tiến độ đang có trên máy này.</p>
+    <div class="ap-actions">
+      <button type="button" class="btn btn-primary" data-ap="merge-keep">Gộp vào tài khoản</button>
+      <button type="button" class="btn btn-secondary" data-ap="merge-use">Dùng tiến độ của tài khoản</button>
+    </div>
+  </div>
+
+  <div data-ap="account" class="ap-account" hidden>
+    <p class="ap-name" data-ap="account-name"></p>
+    <p class="ap-status tnum" data-ap="account-status" aria-live="polite"></p>
+    <label class="ap-check">
+      <input type="checkbox" data-ap="clear-local" />
+      <span>Xoá dữ liệu trên máy này khi đăng xuất</span>
+    </label>
+    <div class="ap-actions">
+      <button type="button" class="btn btn-secondary" data-ap="logout">Đăng xuất</button>
+      <button type="button" class="btn btn-ghost" data-ap="logout-all">Đăng xuất mọi thiết bị</button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ap {
+    max-width: 760px;
+    margin: 0 var(--gutter-r) var(--space-5) var(--gutter-l);
+    padding: var(--space-4);
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  /* See mark-complete-button.astro's [hidden] comment. */
+  .ap-checking[hidden],
+  .ap-form[hidden],
+  .ap-merge[hidden],
+  .ap-account[hidden],
+  .ap-unavailable[hidden],
+  .ap-confirm[hidden] {
+    display: none;
+  }
+
+  .ap-title {
+    margin: 0;
+  }
+
+  .ap-skeleton {
+    display: block;
+    height: 44px;
+    border-radius: var(--radius-row);
+  }
+
+  .ap-form,
+  .ap-merge,
+  .ap-account {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .ap-tabs {
+    display: flex;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+  }
+
+  /* Chips are 32px visually; give the touch target 44px without growing the look. */
+  .ap-tabs .chip {
+    position: relative;
+  }
+
+  .ap-tabs .chip::after {
+    content: '';
+    position: absolute;
+    inset: -6px 0;
+  }
+
+  /* The .field shell shows the focus ring (:focus-within); drop the global
+     ring on the bare input so it doesn't double up inside the shell. */
+  .ap .field input:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
+  .ap-label {
+    margin-top: var(--space-2);
+    font-size: var(--text-caption);
+    font-weight: 600;
+    color: var(--text-2);
+  }
+
+  .ap-confirm {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .ap-hint,
+  .ap-note {
+    font-size: var(--text-caption);
+    line-height: var(--leading-normal);
+    color: var(--text-3);
+  }
+
+  .ap-unavailable {
+    margin: 0;
+  }
+
+  .ap-error {
+    min-height: 1.2em;
+    margin-top: var(--space-1);
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--danger);
+  }
+
+  .ap-submit {
+    width: 100%;
+  }
+
+  .ap-merge-title {
+    font-size: var(--text-headline);
+    font-weight: 700;
+  }
+
+  .ap-merge-title:focus-visible {
+    outline: 2px solid var(--volt-ink);
+    outline-offset: 4px;
+    border-radius: var(--radius-xs);
+  }
+
+  .ap-merge-text {
+    font-size: var(--text-subhead);
+    line-height: var(--leading-normal);
+    overflow-wrap: anywhere;
+  }
+
+  .ap-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+  }
+
+  .ap-actions .btn {
+    flex: 1 1 auto;
+  }
+
+  .ap-name {
+    font-size: var(--text-headline);
+    font-weight: 700;
+    overflow-wrap: anywhere;
+  }
+
+  .ap-status {
+    font-size: var(--text-small);
+    color: var(--text-2);
+  }
+
+  .ap-status[data-tone='error'] {
+    color: var(--danger);
+    font-weight: 600;
+  }
+
+  .ap-check {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: 44px;
+    font-size: var(--text-small);
+    color: var(--text-2);
+    cursor: pointer;
+  }
+
+  .ap-check input {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    accent-color: var(--volt-ink);
+  }
+
+  .ap-check input:focus-visible {
+    outline: 2px solid var(--volt-ink);
+    outline-offset: 2px;
+  }
+
+  @media (min-width: 1024px) {
+    .ap {
+      margin-inline: var(--gutter-l) var(--gutter-r);
+      padding: var(--space-5);
+    }
+  }
+</style>
+
+<script>
+  import { getProgressSync } from '../../lib/progress-sync-singleton';
+  import { attachAccountPanel, readAccountPanelElements } from '../../lib/account-sync-panel-controller';
+  import { onPageLoad } from '../../lib/page-lifecycle';
+
+  onPageLoad(() => {
+    const root = document.querySelector<HTMLElement>('[data-account-panel]');
+    const els = root && readAccountPanelElements(root);
+    if (!els) return;
+
+    return attachAccountPanel(els, getProgressSync());
+  });
+</script>

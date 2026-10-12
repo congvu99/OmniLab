@@ -35,12 +35,13 @@ export async function startServer(config: SyncConfig) {
   const sessionCookie = (u: string, sv: number) =>
     `${COOKIE}=${signSession({ u, sv, exp: Date.now() + COOKIE_MAX_AGE_S * 1000 }, config.secret)}; ${cookieAttrs}; Max-Age=${COOKIE_MAX_AGE_S}`;
   const clearCookie = `${COOKIE}=; ${cookieAttrs}; Max-Age=0`;
-
-  function authenticate(req: IncomingMessage): { username: string } {
+  // claimed: progress routes also need `X-Sync-User` == cookie user (a stale tab must not touch another account).
+  function authenticate(req: IncomingMessage, claimed = false): { username: string } {
     const match = /(?:^|;\s*)omnilab_session=([^;]+)/.exec(req.headers.cookie ?? '');
     const session = match ? verifySession(match[1], config.secret) : null;
     const user = session ? store.getUser(session.u) : undefined;
     if (!session || !user || user.session_version !== session.sv) throw new HttpError(401, 'unauthorized');
+    if (claimed && req.headers['x-sync-user'] !== user.username) throw new HttpError(401, 'unauthorized');
     return { username: user.username };
   }
 
@@ -122,9 +123,9 @@ export async function startServer(config: SyncConfig) {
       case 'GET /api/me':
         return send(200, { username: authenticate(req).username });
       case 'GET /api/progress':
-        return send(200, store.getProgress(authenticate(req).username));
+        return send(200, store.getProgress(authenticate(req, true).username));
       case 'PUT /api/progress': {
-        const { username } = authenticate(req);
+        const { username } = authenticate(req, true);
         const now = Date.now();
         const incoming = sanitizeIncoming(parseJson(await readBody(req)), now);
         if (!incoming) throw new HttpError(400, 'bad_request');

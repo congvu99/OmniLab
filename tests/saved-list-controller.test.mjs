@@ -285,7 +285,8 @@ describe('attachSavedList: count labels and row enrichments', () => {
   ];
 
   function setupEnriched(bookmarks) {
-    const store = createProgressStore({ storage: createFakeStorage() });
+    let tick = 1000;
+    const store = createProgressStore({ storage: createFakeStorage(), now: () => (tick += 10) });
     for (const id of bookmarks) store.toggleBookmark(id);
     const built = [];
     const template = {

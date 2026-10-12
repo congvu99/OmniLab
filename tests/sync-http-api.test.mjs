@@ -32,9 +32,14 @@ afterAll(async () => {
   rmSync(dir, { recursive: true, force: true });
 });
 
-async function call(method, path, { body, cookie, type = 'application/json', raw } = {}) {
+// cookie -> username, so progress calls carry the X-Sync-User claim the way the browser client does.
+const cookieUsers = new Map();
+
+async function call(method, path, { body, cookie, type = 'application/json', raw, user } = {}) {
   const headers = {};
   if (cookie) headers.cookie = cookie;
+  const claim = user === undefined ? cookieUsers.get(cookie) : user;
+  if (claim && path === '/api/progress') headers['x-sync-user'] = claim;
   if (body !== undefined || raw !== undefined) headers['content-type'] = type;
   const res = await fetch(base + path, {
     method,
@@ -55,7 +60,9 @@ async function register(name = `user${++counter}`) {
     body: { username: name, password: PASSWORD, confirm: PASSWORD },
   });
   expect(r.status).toBe(201);
-  return { name, cookie: cookieOf(r.res), r };
+  const cookie = cookieOf(r.res);
+  cookieUsers.set(cookie, name);
+  return { name, cookie, r };
 }
 
 const lessonId = (n) => `dom/mod/l${String(n).padStart(5, '0')}`;
@@ -337,5 +344,20 @@ describe('configFromEnv', () => {
     expect(configFromEnv(env, false).port).toBe(3000);
     expect(configFromEnv(env, true).port).toBe(3001);
     expect(configFromEnv({ ...env, PORT: '4000' }, false).port).toBe(4000);
+  });
+});
+
+describe('X-Sync-User claim', () => {
+  it('rejects progress GET/PUT whose claimed user differs from (or is missing for) the cookie user', async () => {
+    const a = await register();
+    const b = await register();
+    for (const user of [a.name, '', 'nobody']) {
+      expect((await call('GET', '/api/progress', { cookie: b.cookie, user })).json).toEqual({ code: 'unauthorized' });
+      const put = await call('PUT', '/api/progress', { cookie: b.cookie, user, body: { v: 2, lessons: {}, bookmarkMeta: {} } });
+      expect(put.status).toBe(401);
+    }
+    expect((await call('GET', '/api/progress', { cookie: b.cookie })).status).toBe(200);
+    // /api/me is the identity probe and needs no claim.
+    expect((await call('GET', '/api/me', { cookie: b.cookie })).json).toEqual({ username: b.name });
   });
 });
