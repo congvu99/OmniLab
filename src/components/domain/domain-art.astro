@@ -59,6 +59,22 @@ function tShape(): string {
   return s;
 }
 
+function pool(): string {
+  // Quỹ và đầu tư: many small contributions flowing into one pooled basket.
+  let s = '';
+  const cx = 240;
+  const cy = 46;
+  for (let i = 0; i < 7; i++) {
+    const y = 16 + i * 10;
+    s += `<circle cx="${40 + (i % 2) * 22}" cy="${y}" r="3" fill="currentColor" opacity=".55"/>`;
+    s += `<path d="M${50 + (i % 2) * 22},${y}C${150},${y} ${160},${cy} ${cx - 34},${cy}" fill="none" stroke="currentColor" opacity=".35"/>`;
+  }
+  s += `<circle cx="${cx}" cy="${cy}" r="30" fill="var(--surface)" stroke="currentColor"/>`;
+  s += `<path d="M${cx},${cy}V${cy - 30}A30,30 0 0 1 ${cx + 26},${cy + 15}Z" fill="currentColor" opacity=".9"/>`;
+  s += `<path d="M${cx},${cy}L${cx - 26},${cy + 15}" stroke="currentColor" opacity=".6"/>`;
+  return s;
+}
+
 function dots(): string {
   let s = '';
   for (let r = 0; r < 3; r++) {
@@ -69,7 +85,7 @@ function dots(): string {
   return s;
 }
 
-const motifs: Record<string, () => string> = { 'kien-truc': network, 'tai-chinh': growth, 'nghe-tai-chinh': tShape };
+const motifs: Record<string, () => string> = { 'kien-truc': network, 'tai-chinh': growth, 'nghe-tai-chinh': tShape, 'dau-tu-quy': pool };
 const body = (motifs[domainId] ?? dots)();
 ---
 

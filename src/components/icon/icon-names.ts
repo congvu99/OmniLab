@@ -15,10 +15,11 @@ const FALLBACK: IconName = 'domains';
 /**
  * External names (content YAML `icon:` values, former Lucide names used across
  * the app) -> concept icon. Domain YAML today: network, wallet,
- * briefcase-business.
+ * briefcase-business, chart-pie.
  */
 const ALIASES: Record<string, ResolvedIcon> = {
   'briefcase-business': { name: 'briefcase' },
+  'chart-pie': { name: 'pie' },
   layers: { name: 'domains' },
   'layout-grid': { name: 'domains' },
   'graduation-cap': { name: 'resume' },
