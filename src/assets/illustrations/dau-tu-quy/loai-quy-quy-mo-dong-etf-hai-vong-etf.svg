@@ -1,0 +1,42 @@
+<svg viewBox="0 0 360 300" width="100%" role="img" aria-labelledby="svg-dtq-etf-hai-vong-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-dtq-etf-hai-vong-title">ETF có hai vòng: vòng sơ cấp, tổ chức lớn đổi rổ cổ phiếu lấy lô chứng chỉ quỹ với quỹ ETF; vòng thứ cấp, nhà đầu tư mua bán chứng chỉ quỹ niêm yết trên sàn theo giá thị trường</title>
+
+  <defs>
+    <marker id="svg-dtq-etf-hai-vong-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1 1 L9 5 L1 9" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    </marker>
+    <marker id="svg-dtq-etf-hai-vong-arrow-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1 1 L9 5 L1 9" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    </marker>
+  </defs>
+
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13">
+    <text x="15" y="24" fill="var(--ink-2)">Vòng sơ cấp: lô lớn, chỉ tổ chức</text>
+    <text x="15" y="152" fill="var(--ink-2)">Vòng thứ cấp: trên sàn</text>
+  </g>
+
+  <rect x="15" y="36" width="110" height="74" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="235" y="36" width="110" height="74" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+
+  <line x1="130" y1="62" x2="230" y2="62" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-dtq-etf-hai-vong-arrow)" />
+  <line x1="230" y1="88" x2="130" y2="88" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-dtq-etf-hai-vong-arrow)" />
+
+  <rect x="15" y="168" width="110" height="64" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="235" y="168" width="110" height="64" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+
+  <line x1="130" y1="200" x2="230" y2="200" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-start="url(#svg-dtq-etf-hai-vong-arrow)" marker-end="url(#svg-dtq-etf-hai-vong-arrow)" />
+  <line x1="290" y1="112" x2="290" y2="166" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-dasharray="5 5" marker-end="url(#svg-dtq-etf-hai-vong-arrow-accent)" />
+
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" text-anchor="middle">
+    <text x="70" y="77" font-weight="700" fill="var(--ink)">Tổ chức lớn</text>
+    <text x="290" y="77" font-weight="700" fill="var(--ink)">Quỹ ETF</text>
+    <text x="180" y="56" fill="var(--ink)">rổ cổ phiếu</text>
+    <text x="180" y="108" fill="var(--ink)">lô CCQ</text>
+    <text x="70" y="205" font-weight="700" fill="var(--ink)">Nhà đầu tư</text>
+    <text x="290" y="205" font-weight="700" fill="var(--ink)">Sàn giao dịch</text>
+    <text x="180" y="192" fill="var(--ink)">giá thị trường</text>
+  </g>
+  <text x="282" y="144" text-anchor="end" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink-2)">niêm yết</text>
+
+  <text x="180" y="266" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-style="italic" fill="var(--ink-2)">Giá trên sàn có thể cao hoặc thấp hơn NAV</text>
+</svg>

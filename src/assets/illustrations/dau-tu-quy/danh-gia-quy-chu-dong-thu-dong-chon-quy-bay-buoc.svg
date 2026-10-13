@@ -1,0 +1,25 @@
+<svg viewBox="0 0 360 300" width="100%" role="img" aria-labelledby="svg-dgq-bay-buoc-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-dgq-bay-buoc-title">Bảy bước kiểm tra khi chọn quỹ, đi lần lượt từ trên xuống: cùng loại tài sản với chỉ số so sánh, lãi đã trừ phí, kỳ dài nhiều năm, có tính quỹ đã đóng không, phí và mức giao dịch, sụt giảm tối đa và độ bám chỉ số, không chọn chỉ vì đứng đầu một năm</title>
+
+  <path d="M180 38 V48 M180 76 V86 M180 114 V124 M180 152 V162 M180 190 V200 M180 228 V238" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+
+  <g fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2">
+    <rect x="20" y="10" width="320" height="28" rx="8" />
+    <rect x="20" y="48" width="320" height="28" rx="8" />
+    <rect x="20" y="86" width="320" height="28" rx="8" />
+    <rect x="20" y="124" width="320" height="28" rx="8" />
+    <rect x="20" y="162" width="320" height="28" rx="8" />
+    <rect x="20" y="200" width="320" height="28" rx="8" />
+  </g>
+  <rect x="20" y="238" width="320" height="28" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">
+    <text x="32" y="29">1. Cùng loại tài sản với chỉ số so sánh</text>
+    <text x="32" y="67">2. Lãi đã trừ phí</text>
+    <text x="32" y="105">3. Xem kỳ dài, nhiều năm</text>
+    <text x="32" y="143">4. Bảng so sánh có tính quỹ đã đóng?</text>
+    <text x="32" y="181">5. Phí và mức giao dịch của quỹ</text>
+    <text x="32" y="219">6. Sụt giảm tối đa, độ bám chỉ số</text>
+    <text x="32" y="257" font-weight="700">7. Không chọn chỉ vì đứng đầu 1 năm</text>
+  </g>
+</svg>

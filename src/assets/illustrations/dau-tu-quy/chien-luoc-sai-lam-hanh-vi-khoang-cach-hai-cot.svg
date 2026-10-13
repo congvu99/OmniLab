@@ -1,0 +1,20 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-cl-khoang-cach-hai-cot-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-cl-khoang-cach-hai-cot-title">Quỹ mở và ETF của Mỹ trong 10 năm đến 31/12/2025: lợi nhuận của quỹ là 9,9% mỗi năm, lợi nhuận nhà đầu tư thực nhận là 8,7% mỗi năm, chênh khoảng 1,2 điểm phần trăm mỗi năm</title>
+
+  <text x="180" y="20" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink-2)">Quỹ Mỹ, 10 năm đến 31/12/2025</text>
+
+  <rect x="70" y="60" width="80" height="110" rx="6" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <rect x="210" y="73.3" width="80" height="96.7" rx="6" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <path d="M150 60 H300" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" />
+  <path d="M50 170 H310" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="15" font-weight="700" text-anchor="middle">
+    <text x="110" y="52" fill="var(--accent)">9,9%</text>
+    <text x="250" y="65" fill="var(--ink)">8,7%</text>
+  </g>
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)" text-anchor="middle">
+    <text x="110" y="190">Quỹ (NAV)</text>
+    <text x="250" y="190">Nhà đầu tư</text>
+    <text x="180" y="212" fill="var(--danger)" font-weight="700">Chênh khoảng 1,2 điểm mỗi năm</text>
+  </g>
+</svg>

@@ -1,0 +1,36 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-dtq-phi-20-nam-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-dtq-phi-20-nam-title">Số giả định: 100 triệu đồng, lãi gộp 8% mỗi năm trong 20 năm, còn khoảng 466 triệu nếu không phí, 425 triệu nếu phí 0,5% mỗi năm, 387 triệu nếu phí 1%, 321 triệu nếu phí 2%; chênh giữa phí 0,5% và 2% là khoảng 104 triệu</title>
+
+  <defs>
+    <marker id="svg-dtq-phi-20-nam-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1 1 L9 5 L1 9" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    </marker>
+  </defs>
+
+  <text x="180" y="22" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">Số giả định: 100 triệu, 20 năm, lãi gộp 8%</text>
+
+  <line x1="174" y1="71.5" x2="350" y2="71.5" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" />
+  <line x1="314" y1="75" x2="314" y2="97" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" marker-start="url(#svg-dtq-phi-20-nam-arrow)" marker-end="url(#svg-dtq-phi-20-nam-arrow)" />
+
+  <rect x="14" y="60" width="72" height="130" rx="6" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="102" y="71.5" width="72" height="118.5" rx="6" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <rect x="190" y="82" width="72" height="108" rx="6" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="278" y="100.5" width="72" height="89.5" rx="6" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <line x1="8" y1="190" x2="356" y2="190" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" text-anchor="middle">
+    <text x="314" y="64" font-weight="700" fill="var(--accent)">−104 triệu</text>
+    <g font-weight="700" fill="var(--ink)">
+      <text x="50" y="84">466 triệu</text>
+      <text x="138" y="96">425 triệu</text>
+      <text x="226" y="106">387 triệu</text>
+      <text x="314" y="125">321 triệu</text>
+    </g>
+    <g fill="var(--ink)">
+      <text x="50" y="210">phí 0%</text>
+      <text x="138" y="210">phí 0,5%</text>
+      <text x="226" y="210">phí 1%</text>
+      <text x="314" y="210">phí 2%</text>
+    </g>
+  </g>
+</svg>

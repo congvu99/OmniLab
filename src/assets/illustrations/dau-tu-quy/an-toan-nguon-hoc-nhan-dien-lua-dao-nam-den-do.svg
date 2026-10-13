@@ -1,0 +1,29 @@
+<svg viewBox="0 0 360 300" width="100%" role="img" aria-labelledby="svg-an-toan-nam-den-do-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-an-toan-nam-den-do-title">Năm đèn đỏ của một lời mời đầu tư: hứa lãi chắc chắn, người lạ tự tìm đến, ép quyết định nhanh, không có giấy tờ, người bán không rõ có phép không</title>
+  <text x="180" y="24" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">Càng nhiều đèn đỏ, càng nên dừng lại</text>
+
+  <rect x="12" y="40" width="336" height="40" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <circle cx="36" cy="60" r="13" fill="color-mix(in srgb, var(--danger) 12%, transparent)" stroke="var(--danger)" stroke-width="2" />
+  <text x="36" y="65" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">1</text>
+  <text x="60" y="65" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Hứa lãi chắc chắn, không rủi ro</text>
+
+  <rect x="12" y="88" width="336" height="40" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <circle cx="36" cy="108" r="13" fill="color-mix(in srgb, var(--danger) 12%, transparent)" stroke="var(--danger)" stroke-width="2" />
+  <text x="36" y="113" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">2</text>
+  <text x="60" y="113" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Người lạ tự tìm đến mời bạn</text>
+
+  <rect x="12" y="136" width="336" height="40" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <circle cx="36" cy="156" r="13" fill="color-mix(in srgb, var(--danger) 12%, transparent)" stroke="var(--danger)" stroke-width="2" />
+  <text x="36" y="161" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">3</text>
+  <text x="60" y="161" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Ép quyết định ngay, sắp hết suất</text>
+
+  <rect x="12" y="184" width="336" height="40" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <circle cx="36" cy="204" r="13" fill="color-mix(in srgb, var(--danger) 12%, transparent)" stroke="var(--danger)" stroke-width="2" />
+  <text x="36" y="209" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">4</text>
+  <text x="60" y="209" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Không có giấy tờ, hợp đồng</text>
+
+  <rect x="12" y="232" width="336" height="40" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <circle cx="36" cy="252" r="13" fill="color-mix(in srgb, var(--danger) 12%, transparent)" stroke="var(--danger)" stroke-width="2" />
+  <text x="36" y="257" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">5</text>
+  <text x="60" y="257" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Người bán không rõ có phép không</text>
+</svg>

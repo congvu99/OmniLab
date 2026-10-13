@@ -1,0 +1,56 @@
+<svg viewBox="0 0 360 300" width="100%" role="img" aria-labelledby="svg-an-toan-bon-cau-hoi-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-an-toan-bon-cau-hoi-title">Bốn câu hỏi xác minh một lời mời đầu tư quỹ: công ty có tên ở cổng UBCKNN, có điều lệ và bản cáo bạch, ngân hàng giám sát là ai, NAV có được công bố công khai và đúng hạn không. Bất kỳ câu nào trả lời không hoặc không rõ thì dừng lại, chưa chuyển tiền</title>
+  <defs>
+    <marker id="svg-atbch-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
+    </marker>
+    <marker id="svg-atbch-arrow-stop" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--danger)" />
+    </marker>
+  </defs>
+
+  <rect x="8" y="10" width="196" height="46" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="106" y="29" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">
+    <tspan x="106" dy="0">① Công ty quản lý quỹ</tspan>
+    <tspan x="106" dy="18">có tên ở cổng UBCKNN?</tspan>
+  </text>
+  <path d="M106 58 V72" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-atbch-arrow)" />
+
+  <rect x="8" y="74" width="196" height="46" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="106" y="93" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">
+    <tspan x="106" dy="0">② Có điều lệ và bản</tspan>
+    <tspan x="106" dy="18">cáo bạch bằng văn bản?</tspan>
+  </text>
+  <path d="M106 122 V136" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-atbch-arrow)" />
+
+  <rect x="8" y="138" width="196" height="46" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="106" y="157" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">
+    <tspan x="106" dy="0">③ Ngân hàng giám sát</tspan>
+    <tspan x="106" dy="18">là ai, ghi rõ không?</tspan>
+  </text>
+  <path d="M106 186 V200" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-atbch-arrow)" />
+
+  <rect x="8" y="202" width="196" height="46" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="106" y="221" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">
+    <tspan x="106" dy="0">④ NAV có công bố</tspan>
+    <tspan x="106" dy="18">công khai, đúng hạn?</tspan>
+  </text>
+  <path d="M106 250 V264" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-atbch-arrow)" />
+
+  <rect x="8" y="266" width="196" height="28" rx="8" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <text x="106" y="285" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">Đủ cả 4: mới xét tiếp</text>
+
+  <path d="M205 33 H214" fill="none" stroke="var(--danger)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 3" marker-end="url(#svg-atbch-arrow-stop)" />
+  <path d="M205 97 H214" fill="none" stroke="var(--danger)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 3" marker-end="url(#svg-atbch-arrow-stop)" />
+  <path d="M205 161 H214" fill="none" stroke="var(--danger)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 3" marker-end="url(#svg-atbch-arrow-stop)" />
+  <path d="M205 225 H214" fill="none" stroke="var(--danger)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 3" marker-end="url(#svg-atbch-arrow-stop)" />
+
+  <rect x="218" y="10" width="134" height="238" rx="10" fill="color-mix(in srgb, var(--danger) 12%, transparent)" stroke="var(--danger)" stroke-width="2" />
+  <text x="285" y="105" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">
+    <tspan x="285" dy="0">Bất kỳ câu nào</tspan>
+    <tspan x="285" dy="18">trả lời “không”</tspan>
+    <tspan x="285" dy="18">hoặc “không rõ”:</tspan>
+    <tspan x="285" dy="22" font-weight="700">DỪNG LẠI,</tspan>
+    <tspan x="285" dy="18" font-weight="700">chưa chuyển tiền</tspan>
+  </text>
+</svg>

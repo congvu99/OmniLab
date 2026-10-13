@@ -1,0 +1,29 @@
+<svg viewBox="0 0 360 300" width="100%" role="img" aria-labelledby="svg-dtq-qlg-hang-rao-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-dtq-qlg-hang-rao-title">Dòng tiền quỹ đại chúng: tiền nhà đầu tư vào tài khoản phong tỏa rồi vào danh mục; Điều 110 đặt hàng rào tối đa 20% tài sản vào một tổ chức phát hành, 30% vào một nhóm công ty có quan hệ sở hữu, không cho vay hay bảo lãnh, vay ngắn hạn tối đa 5% NAV trong 30 ngày</title>
+
+  <rect x="12" y="14" width="120" height="44" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="170" y="14" width="178" height="44" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="12" y="92" width="336" height="190" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+
+  <line x1="132" y1="36" x2="168" y2="36" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" />
+  <polyline points="161,31 168,36 161,41" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <line x1="259" y1="60" x2="259" y2="90" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" />
+  <polyline points="254,83 259,90 264,83" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+
+  <rect x="26" y="134" width="308" height="30" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="26" y="170" width="308" height="30" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="26" y="206" width="308" height="30" rx="8" fill="var(--surface-2)" stroke="var(--danger)" stroke-width="2" />
+  <rect x="26" y="242" width="308" height="30" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">
+    <g text-anchor="middle">
+      <text x="72" y="41">Nhà đầu tư</text>
+      <text x="259" y="41">Tài khoản phong tỏa</text>
+      <text x="180" y="119" font-weight="700" fill="var(--accent)">Danh mục của quỹ</text>
+      <text x="180" y="154">Một tổ chức phát hành: tối đa 20% tài sản</text>
+      <text x="180" y="190">Nhóm công ty có quan hệ sở hữu: tối đa 30%</text>
+      <text x="180" y="226">Không cho vay, không bảo lãnh</text>
+      <text x="180" y="262">Vay ngắn hạn: tối đa 5% NAV, 30 ngày</text>
+    </g>
+  </g>
+</svg>

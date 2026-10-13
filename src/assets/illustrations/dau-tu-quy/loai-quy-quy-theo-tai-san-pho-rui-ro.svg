@@ -1,0 +1,21 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-dtq-pho-rui-ro-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-dtq-pho-rui-ro-title">Minh họa định tính: mức dao động của quỹ tiền tệ thường thấp nhất, quỹ trái phiếu và quỹ cân bằng ở mức trung bình, quỹ cổ phiếu cao nhất; mỗi loại có rủi ro chính riêng</title>
+
+  <line x1="14" y1="160" x2="346" y2="160" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+
+  <rect x="16" y="120" width="74" height="40" rx="6" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="104" y="80" width="74" height="80" rx="6" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="192" y="80" width="74" height="80" rx="6" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="280" y="40" width="64" height="120" rx="6" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" text-anchor="middle">
+    <text x="53" y="112" fill="var(--ink-2)">NAV lệch</text>
+    <text x="141" y="72" fill="var(--ink-2)">lãi suất</text>
+    <text x="229" y="72" fill="var(--ink-2)">pha trộn</text>
+    <text x="312" y="32" fill="var(--accent)" font-weight="700">thị trường</text>
+    <text x="53" y="184" fill="var(--ink)">Tiền tệ</text>
+    <text x="141" y="184" fill="var(--ink)">Trái phiếu</text>
+    <text x="229" y="184" fill="var(--ink)">Cân bằng</text>
+    <text x="312" y="184" fill="var(--ink)">Cổ phiếu</text>
+  </g>
+</svg>

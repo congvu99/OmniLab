@@ -1,0 +1,186 @@
+---
+domain: "dau-tu-quy"
+module: "danh-gia-quy"
+order: 1
+title: "Đo một quỹ: lợi nhuận, rủi ro và độ bám chỉ số"
+summary: "Một con số lãi chưa đủ để đánh giá quỹ. Bài này giải thích bằng ví dụ số: lãi mỗi năm, sụt giảm tối đa, độ lệch chuẩn, Sharpe, beta, độ bám chỉ số và lãi bạn thực nhận."
+source:
+  name: "OmniLab — Kiến thức quỹ và đầu tư"
+  author: "OmniLab (tổng hợp từ nguồn công khai)"
+  license: "Nội dung tự biên soạn của OmniLab"
+  snapshot: "dau-tu-quy/05-danh-gia-quy/01-chi-so-danh-gia.md"
+examplesReviewed: true
+---
+
+import svgNavVaTienThucNhan from '../../../../assets/illustrations/dau-tu-quy/danh-gia-quy-chi-so-danh-gia-nav-va-tien-thuc-nhan.svg?raw';
+import svgSutGiamCanHoi from '../../../../assets/illustrations/dau-tu-quy/danh-gia-quy-chi-so-danh-gia-sut-giam-can-hoi.svg?raw';
+
+<Disclaimer />
+
+# Đo một quỹ: lợi nhuận, rủi ro và độ bám chỉ số
+
+## Hai quỹ, hai con số
+
+Minh mở bảng so sánh trong ứng dụng đầu tư. Quỹ A ghi "+18% năm ngoái". Quỹ B ghi "+9%". Minh định chọn A ngay.
+
+Chị Thu nhìn qua vai Minh. "Em biết A lên bằng cách nào chưa? Nó có từng tụt một nửa rồi mới hồi lại không? Và em sẽ thực nhận được bao nhiêu trong số đó?"
+
+Minh im lặng. Em chỉ có đúng một con số.
+
+"Một con số chỉ là một lát cắt," chị Thu nói. "Muốn hiểu một quỹ, em cần bốn câu hỏi. Lãi bao nhiêu mỗi năm? Có lúc nào tụt sâu không? Lãi đó có đáng với độ xóc không? Và nếu là quỹ chỉ số, nó có bám sát chỉ số không?"
+
+Bài này đi qua từng câu, kèm phép tính nhỏ bạn tự làm được. Mọi số trong ví dụ đều là số giả định.
+
+## Câu 1: Lãi bao nhiêu mỗi năm?
+
+Khi quỹ chạy nhiều năm, ta quy về "mỗi năm" để so sánh. Cách quy chuẩn gọi là lợi nhuận năm hoá, tên tiếng Anh là CAGR (compound annual growth rate). Hiểu đơn giản: mức tăng đều mỗi năm, nếu lặp lại suốt kỳ, sẽ cho đúng kết quả cuối cùng.
+
+Ví dụ: một quỹ đi từ 100 lên 200 sau 5 năm. Tổng cộng tăng 100%. Chia cho 5 thành "20% mỗi năm" là sai. Nếu thật sự tăng 20% mỗi năm, 5 năm sau 100 đã thành khoảng 248,8, vì lãi năm sau tính trên số đã lớn hơn (xem lại [lãi kép](/hoc/dau-tu-quy/nen-tang/rui-ro-loi-nhuan-lai-kep)).
+
+Công thức: CAGR = (giá trị cuối ÷ giá trị đầu) mũ (1 ÷ số năm), rồi trừ 1. Ở đây: 2 mũ 0,2 trừ 1 ≈ 14,87% mỗi năm. Tăng 14,87% liên tiếp 5 năm sẽ ra đúng 200.
+
+Hai điều cần nhớ khi đọc một con số lãi:
+
+- **Luôn xem kỳ.** "+18% trong một năm" khác xa "14,87% mỗi năm trong 5 năm".
+- **Luôn xem lãi sau phí.** GIPS 2020 là bộ chuẩn trình bày kết quả đầu tư do CFA Institute ban hành. Theo GIPS, lợi suất "net" (sau phí) là lợi suất đã trừ phí quản lý và chi phí giao dịch. GIPS là chuẩn của các công ty quản lý, không phải quy định pháp luật Việt Nam. Với quỹ trong nước, hãy kiểm tra tài liệu quỹ xem số lãi đã trừ phí chưa (xem bài [đọc tài liệu quỹ](/hoc/dau-tu-quy/chi-phi-tai-lieu/doc-tai-lieu-quy)).
+
+<RealLife title="Tiền thuê phòng trọ">
+
+Phòng trọ của bạn lên giá từ 2 triệu lên 3 triệu sau 3 năm (số giả định), tức tăng 50%. Đừng chia 50% cho 3 thành "17% mỗi năm". Mức tăng đều mỗi năm để đi từ 2 lên 3 triệu là khoảng 14,5%, vì năm sau tăng trên giá đã cao hơn. → Đó là CAGR: một mức tăng đều thay cho hành trình thật.
+
+</RealLife>
+
+## Câu 2: Có lúc nào tụt sâu không?
+
+Lãi mỗi năm không cho biết hành trình. Hai quỹ có thể cùng lãi 8% mỗi năm, một quỹ đi êm, quỹ kia có năm mất gần một phần ba giá trị.
+
+**Sụt giảm tối đa** (max drawdown) là mức giảm lớn nhất từ một đỉnh xuống đáy kế tiếp, trước khi quỹ lập đỉnh mới. Ví dụ NAV từ 100 xuống 70: sụt giảm là 30%. Với 100 triệu, bạn nhìn thấy tài khoản còn 70 triệu.
+
+Điều nhiều người chưa nghĩ tới: từ 70 về lại 100 cần tăng 100 ÷ 70 − 1 = 42,9%, không phải 30%.
+
+| Quỹ giảm | Cần tăng bao nhiêu để về lại đỉnh |
+|---|---|
+| 10% | 11,1% |
+| 20% | 25% |
+| 30% | 42,9% |
+| 50% | 100% |
+
+Giảm càng sâu, đường về càng dài. Vì vậy sụt giảm tối đa đo trải nghiệm thật: khi tài khoản còn 70 triệu, bạn có giữ được bình tĩnh không? Nhiều người bán đúng lúc đó (xem bài [sai lầm hành vi](/hoc/dau-tu-quy/chien-luoc/sai-lam-hanh-vi)).
+
+<Figure
+  added
+  svg={svgSutGiamCanHoi}
+  alt="NAV giảm từ 100 xuống 70 và cần tăng 42,9% để về lại 100"
+  caption="Số giả định: giảm 30% từ đỉnh thì cần tăng khoảng 42,9% mới về lại đỉnh. Đường về luôn dài hơn đường xuống."
+/>
+
+Giới hạn: con số này phụ thuộc kỳ dữ liệu. Quỹ mới có 3 năm lịch sử có thể chưa gặp giai đoạn xấu nào, nên sụt giảm tối đa của nó trông nhẹ hơn thực tế.
+
+## Câu 3: Độ xóc bao nhiêu?
+
+**Độ lệch chuẩn** (standard deviation) cho biết lợi nhuận mỗi năm thường lệch bao xa so với mức trung bình của chính nó. Số càng lớn, quỹ càng "xóc".
+
+Ví dụ 4 năm, số giả định. Quỹ A lãi lần lượt 7%, 9%, 7%, 9%. Quỹ B lãi −4%, 20%, −4%, 20%. Cả hai đều trung bình cộng 8% mỗi năm. Cách tính độ lệch chuẩn:
+
+1. Lấy lãi từng năm trừ đi trung bình 8%. Quỹ A: −1, +1, −1, +1. Quỹ B: −12, +12, −12, +12.
+2. Bình phương các số đó. Quỹ A ra 1. Quỹ B ra 144.
+3. Lấy trung bình các số bình phương, rồi khai căn. Quỹ A: căn của 1 là 1. Quỹ B: căn của 144 là 12.
+
+Đọc kết quả: lãi của A thường chỉ lệch khoảng 1 điểm phần trăm quanh mức 8%. Lãi của B thường lệch khoảng 12 điểm.
+
+Còn một điều bất ngờ. 100 triệu sau 4 năm thành khoảng 136,0 triệu ở quỹ A, nhưng chỉ khoảng 132,7 triệu ở quỹ B, dù cả hai "trung bình 8%". Lãi hằng năm thật của A là khoảng 8,0%, của B khoảng 7,3%. Giảm rồi tăng luôn tốn kém hơn đi đều, như bảng ở trên đã cho thấy.
+
+<RealLife title="Hai tài xế công nghệ">
+
+Hai tài xế cùng kiếm trung bình 4 triệu mỗi tuần (số giả định). Anh Một tuần nào cũng quanh 4 triệu. Anh Hai tuần được 7 triệu, tuần chỉ còn 1 triệu. Trung bình bằng nhau, nhưng chỉ anh Hai khiến bạn khó lên kế hoạch trả tiền nhà. → Độ lệch chuẩn đo đúng sự thất thường đó.
+
+</RealLife>
+
+Bộ chuẩn GIPS 2020 yêu cầu, tại cuối mỗi năm, công bố độ lệch chuẩn của 36 tháng gần nhất. Con số này tính từ lợi suất từng tháng rồi quy ra năm. Khi so hai quỹ, hãy chắc chúng cùng kỳ và cùng cách tính.
+
+## Câu 4: Lãi có đáng với độ xóc không?
+
+**Tỷ số Sharpe** (Sharpe ratio) trả lời câu này. Nó do William F. Sharpe đề xuất trong bài "Mutual Fund Performance", Journal of Business, tháng 1/1966, trang 119–138 (lúc đầu gọi là "reward-to-variability", tạm hiểu là "phần thưởng trên độ dao động").
+
+Bằng lời thường: lấy phần lãi quỹ vượt mức lãi gần như không rủi ro, chia cho độ lệch chuẩn. Đó là "mỗi điểm xóc bạn chịu, quỹ thưởng thêm bao nhiêu điểm lãi".
+
+Ví dụ, số giả định, lấy mức lãi gần như không rủi ro là 4% mỗi năm:
+
+- Quỹ C lãi 8%, độ lệch chuẩn 10. Sharpe = (8 − 4) ÷ 10 = 0,40.
+- Quỹ D lãi 10%, độ lệch chuẩn 20. Sharpe = (10 − 4) ÷ 20 = 0,30.
+
+D lãi cao hơn, nhưng cứ chịu thêm 1 điểm xóc thì D chỉ thưởng 0,30 điểm lãi, còn C thưởng 0,40. Sharpe cao hơn nghĩa là hiệu quả hơn trên mỗi độ xóc.
+
+Có ba điều cần cẩn thận:
+
+- Sharpe tính từ quá khứ. Chính Sharpe lưu ý điều này trong bài năm 1994: dùng số quá khứ chưa hiệu chỉnh để thay cho dự báo tương lai là việc "đáng nghi ngờ nghiêm túc" (subject to serious question).
+- Sharpe không cho biết quỹ này hợp với các khoản khác của bạn ra sao.
+- Kết quả đổi theo kỳ đo. Đừng dùng Sharpe một mình, hãy đặt cạnh sụt giảm tối đa.
+
+**Beta** là khái niệm nâng cao, bài chỉ giới thiệu. Beta cho biết khi thị trường chung nhúc nhích 1 phần, quỹ thường nhúc nhích bao nhiêu phần. Ví dụ thị trường giảm 10%: quỹ beta 1 thường giảm khoảng 10%, beta 1,2 khoảng 12%, beta 0,5 khoảng 5%. Đây chỉ là ước chừng dựa trên quá khứ.
+
+> **Mẹo:** Trước khi nhìn con số lãi, hỏi ba câu: cùng kỳ chưa, đã trừ phí chưa, cùng loại tài sản chưa. Hai quỹ khác loại (ví dụ cổ phiếu và trái phiếu) thì so lãi không có nhiều ý nghĩa.
+
+## Câu 5: Quỹ chỉ số có bám sát chỉ số không?
+
+**Chỉ số** là một "bảng điểm" của một nhóm cổ phiếu, ví dụ VN30 do sở giao dịch công bố. **Quỹ chỉ số** cố gắng đi giống chỉ số đó. Câu hỏi là bám tốt đến đâu.
+
+**Chênh lệch bám sát** (tracking difference) là lợi suất toàn phần của quỹ trừ lợi suất toàn phần của chỉ số trong cùng một kỳ. Ví dụ: chỉ số tăng 15%, quỹ tăng 13,7%. Chênh lệch là 13,7 − 15 = −1,3 điểm phần trăm. Số âm nghĩa là quỹ kém chỉ số. Chỉ số chỉ là con số trên giấy, không phải trả phí; quỹ thì có. Phần −1,3 là cái giá của việc cầm quỹ thay vì cầm con số.
+
+**Sai số bám sát** (tracking error) là độ lệch chuẩn của chênh lệch đó, quy ra năm. Hiểu đơn giản: chênh lệch thay đổi nhiều hay ít qua các kỳ. Nó đo độ đều, không đo hơn kém. Ví dụ bốn năm, số giả định:
+
+- Quỹ M có chênh lệch −1,2; −1,3; −1,4; −1,3. Trung bình −1,3 và rất đều, sai số bám sát nhỏ.
+- Quỹ N có chênh lệch +1,7; −4,3; +0,7; −3,3. Trung bình cũng −1,3, nhưng lúc hơn lúc kém, sai số bám sát lớn.
+
+Như vậy chênh lệch bám sát cho biết quỹ hơn hay kém chỉ số, còn sai số bám sát cho biết quỹ bám đều hay thất thường. Các nhà cung cấp dữ liệu có thể tính khác nhau, nên chỉ so khi cùng nguồn, cùng phương pháp.
+
+## Câu 6: Bạn thực nhận được bao nhiêu?
+
+Đây là câu hỏi quan trọng nhất mà bảng so sánh thường không trả lời. NAV của quỹ không biết bạn mua và bán lúc nào.
+
+Ví dụ: Minh mua quỹ 100 triệu khi NAV là 100. Một năm sau NAV lên 200, Minh hứng khởi bỏ thêm 100 triệu. Năm sau NAV rớt về 100.
+
+- **Quỹ:** từ 100 lên 200 rồi về 100, sau hai năm lợi nhuận là 0%.
+- **Minh:** phần 100 triệu đầu hoà vốn, vẫn 100 triệu. Phần 100 triệu mua ở NAV 200 mất một nửa, còn 50 triệu. Tổng cộng bỏ vào 200 triệu, còn 150 triệu: lỗ 25%.
+
+<Figure
+  added
+  svg={svgNavVaTienThucNhan}
+  alt="NAV quỹ đi từ 100 lên 200 rồi về 100, trong khi người mua thêm ở đỉnh lỗ 25%"
+  caption="Số giả định: quỹ hoà vốn sau hai năm (0%), nhưng người bỏ thêm tiền ở đỉnh lỗ 25% trên tổng số đã bỏ vào."
+/>
+
+Có hai cách đo. **Lợi nhuận theo thời gian** (time-weighted return) là lãi của quỹ, không quan tâm bạn bỏ tiền lúc nào. **Lợi nhuận theo dòng tiền** (dollar-weighted hay money-weighted return) là lãi của chính bạn, có tính lúc nào và bao nhiêu tiền vào ra. Chuẩn GIPS 2020 mặc định trình bày kiểu thứ nhất. Kiểu thứ hai chỉ được dùng trong vài trường hợp đặc thù, ví dụ quỹ đóng, quỹ có thời hạn cố định, hoặc quỹ nắm nhiều tài sản khó bán.
+
+Hệ quả: số lãi trong tài liệu quỹ không phản ánh thời điểm bạn mua bán. Khoảng cách giữa hai con số này có thật và đã được đo ở thị trường Mỹ, xem bài [sai lầm hành vi](/hoc/dau-tu-quy/chien-luoc/sai-lam-hanh-vi). Tính chính xác lãi theo dòng tiền cần đủ dữ liệu vào ra, khá phức tạp, nên bài này chỉ dạy khái niệm.
+
+> **Mẹo:** Đặt lãi mỗi năm cạnh sụt giảm tối đa. Một quỹ lãi cao nhưng từng giảm 50% là một hành trình rất khác với quỹ lãi thấp hơn mà chỉ giảm 15%.
+
+## Tóm tắt nhanh
+
+- Một con số lãi chưa đủ. Hãy hỏi kỳ nào, đã trừ phí chưa, cùng loại tài sản chưa.
+- CAGR là mức tăng đều mỗi năm: 100 lên 200 sau 5 năm là khoảng 14,87% mỗi năm, không phải 20%.
+- Giảm 30% cần tăng 42,9% để về lại đỉnh. Sụt giảm tối đa cho biết bạn phải chịu được gì.
+- Độ lệch chuẩn đo độ xóc, Sharpe đo lãi trên mỗi độ xóc. Cả hai tính từ quá khứ.
+- Quỹ chỉ số: chênh lệch bám sát cho biết hơn hay kém chỉ số, sai số bám sát cho biết bám đều hay không.
+- Lãi của quỹ không phải lãi của bạn: thời điểm bạn bỏ tiền vào làm kết quả khác đi.
+
+## Thuật ngữ trong bài
+
+| Thuật ngữ | Nghĩa dễ hiểu |
+|---|---|
+| CAGR (lợi nhuận năm hoá) | Mức tăng đều mỗi năm cho ra đúng kết quả cuối cùng sau cả kỳ |
+| Sụt giảm tối đa (max drawdown) | Mức giảm lớn nhất từ đỉnh xuống đáy trước khi lập đỉnh mới |
+| Độ lệch chuẩn | Lãi mỗi năm thường lệch bao xa so với mức trung bình; càng lớn càng xóc |
+| Tỷ số Sharpe | Phần lãi vượt mức gần như không rủi ro, chia cho độ lệch chuẩn |
+| Beta | Khi thị trường nhúc nhích 1 phần, quỹ thường nhúc nhích bao nhiêu phần |
+| Chênh lệch bám sát (tracking difference) | Lãi toàn phần của quỹ trừ lãi toàn phần của chỉ số, cùng kỳ |
+| Sai số bám sát (tracking error) | Độ lệch chuẩn hằng năm của chênh lệch bám sát; đo độ đều |
+| Lãi theo thời gian và theo dòng tiền | Lãi của quỹ, và lãi của chính bạn có tính lúc bạn bỏ tiền vào ra |
+
+## Nguồn
+
+- [W. F. Sharpe — The Sharpe Ratio (định nghĩa, phiên bản 1966 và 1994)](https://web.stanford.edu/~wfsharpe/art/sr/SR.htm)
+- [GIPS Standards for Firms, edition 2020 (CFA Institute) — lợi suất net, độ lệch chuẩn 3 năm, time-weighted và money-weighted](https://www.gipsstandards.org/wp-content/uploads/2021/03/2020_gips_standards_firms.pdf)
+- [Vanguard UK — What affects index tracking? (đăng ngày 04/01/2026): chênh lệch bám sát và sai số bám sát](https://www.vanguard.co.uk/content/uk-aem/gb/en/professional/vanguard-365/investment-knowledge/etf-knowledge/what-affects-index-tracking)
+- Ví dụ tính toán về CAGR, sụt giảm, độ lệch chuẩn, Sharpe, beta, chênh lệch bám sát và lãi của người mua thêm ở đỉnh là số giả định do OmniLab tự tính. Các số này không lấy từ quỹ thật.

@@ -1,0 +1,24 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-cl-ham-gia-tri-dau-lo-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-cl-ham-gia-tri-dau-lo-title">Minh hoạ không có số: tính từ mốc giá mua, đường cảm giác phía lỗ dốc hơn phía lãi, nên mất một khoản gây đau nhiều hơn niềm vui khi được một khoản tương ứng</title>
+  <defs>
+    <marker id="svg-cl-hgt-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="var(--ink-2)" />
+    </marker>
+  </defs>
+
+  <path d="M16 110 H344" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-cl-hgt-arrow)" />
+  <path d="M180 208 V24" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" marker-end="url(#svg-cl-hgt-arrow)" />
+
+  <path d="M180 110 C 215 72, 270 54, 330 46" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M180 110 C 165 160, 130 186, 50 200" fill="none" stroke="var(--danger)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+  <circle cx="180" cy="110" r="5" fill="var(--ink)" />
+
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13">
+    <text x="190" y="18" fill="var(--ink-2)">Cảm giác</text>
+    <text x="344" y="130" text-anchor="end" font-weight="700" fill="var(--ink)">Lãi →</text>
+    <text x="16" y="130" font-weight="700" fill="var(--ink)">← Lỗ</text>
+    <text x="188" y="130" fill="var(--ink-2)">Giá mua</text>
+    <text x="70" y="176" font-weight="700" fill="var(--danger)">Lỗ đau hơn</text>
+    <text x="220" y="40" font-weight="700" fill="var(--accent)">Lãi vui chậm dần</text>
+  </g>
+</svg>

@@ -1,0 +1,34 @@
+# Lĩnh vực "Quỹ và đầu tư" — kiến thức nền về đầu tư và chứng chỉ quỹ cho
+# người mới, bối cảnh Việt Nam. OmniLab tự biên soạn từ nguồn công khai (văn
+# bản pháp luật, UBCKNN, SEC, nghiên cứu gốc). Cùng khuôn với nghe-tai-chinh:
+# không đặt `isFinance`; mỗi bài so 1:1 với snapshot markdown trong
+# content-sources/dau-tu-quy/ và tự chèn <Disclaimer /> trong MDX.
+id: dau-tu-quy
+title: Quỹ và đầu tư
+tagline: Đầu tư qua chứng chỉ quỹ từ gốc — cơ chế, pháp lý Việt Nam, phí, cách đánh giá và tránh bẫy.
+accent: "#A3245A"
+accentDark: "#FF8FBD"
+icon: chart-pie
+order: 4
+modules:
+  - id: nen-tang
+    title: Nền tảng đầu tư
+    order: 1
+  - id: quy-la-gi
+    title: Quỹ đầu tư là gì
+    order: 2
+  - id: loai-quy
+    title: Các loại quỹ
+    order: 3
+  - id: chi-phi-tai-lieu
+    title: Phí, thuế và tài liệu quỹ
+    order: 4
+  - id: danh-gia-quy
+    title: Đánh giá và chọn quỹ
+    order: 5
+  - id: chien-luoc
+    title: Chiến lược và hành vi
+    order: 6
+  - id: an-toan-nguon-hoc
+    title: An toàn và nguồn học
+    order: 7

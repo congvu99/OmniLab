@@ -1,0 +1,169 @@
+---
+domain: "dau-tu-quy"
+module: "loai-quy"
+order: 1
+title: "Quỹ mở, quỹ đóng, ETF và quỹ thành viên"
+summary: "Phân biệt các loại quỹ theo cách bạn mua và bán: bán lại cho quỹ hay bán cho người khác, giá theo NAV hay giá thị trường, kèm cơ chế tạo lập của ETF."
+source:
+  name: "OmniLab — Kiến thức quỹ và đầu tư"
+  author: "OmniLab (tổng hợp từ nguồn công khai)"
+  license: "Nội dung tự biên soạn của OmniLab"
+  snapshot: "dau-tu-quy/03-loai-quy/01-quy-mo-dong-etf.md"
+examplesReviewed: true
+---
+
+import svgEtfHaiVong from '../../../../assets/illustrations/dau-tu-quy/loai-quy-quy-mo-dong-etf-hai-vong-etf.svg?raw';
+
+<Disclaimer />
+
+# Quỹ mở, quỹ đóng, ETF và quỹ thành viên
+
+## Câu hỏi của Minh
+
+Minh mở một ứng dụng chứng khoán và thấy hàng loạt chữ lạ: quỹ mở, quỹ đóng, ETF. Anh gọi cho chị Thu.
+
+"Chị ơi, đều là quỹ cả, sao lại chia nhiều loại thế?"
+
+"Khác nhau ở hai câu hỏi thôi," chị Thu nói. "Một: muốn rút tiền thì em bán cho ai? Hai: bán theo giá nào? Trả lời được hai câu đó là em hiểu gần hết."
+
+Bài này đi qua từng loại quỹ theo hai câu hỏi ấy. Các ví dụ tính toán đều là số giả định.
+
+## Luật Việt Nam chia quỹ thế nào
+
+Theo Luật Chứng khoán 54/2019/QH14, quỹ đầu tư chứng khoán gồm hai nhóm (Điều 99 khoản 1). Luật này đã được sửa đổi bởi Luật 56/2024/QH15 và Luật 142/2025/QH15. Nội dung dưới đây theo văn bản hợp nhất, tính đến tháng 10/2026:
+
+- **Quỹ đại chúng:** bán chứng chỉ quỹ ra công chúng (Điều 4 khoản 38).
+- **Quỹ thành viên:** chỉ có từ 2 đến 99 thành viên góp vốn, và đều là nhà đầu tư chuyên nghiệp (Điều 4 khoản 41).
+
+Quỹ đại chúng lại chia tiếp thành **quỹ mở** và **quỹ đóng** (Điều 99 khoản 2). Luật còn định nghĩa riêng **quỹ hoán đổi danh mục (ETF)** và **quỹ đầu tư bất động sản**. Bạn nên đọc văn bản hợp nhất của luật để có bản mới nhất.
+
+Hai từ cần nhớ trước khi đi tiếp:
+
+- **Chứng chỉ quỹ (CCQ)** — hiểu đơn giản là "phần hùn" của bạn trong quỹ. Luật gọi đó là chứng khoán xác nhận quyền sở hữu một phần vốn góp của quỹ (Điều 4 khoản 4).
+- **NAV (giá trị tài sản ròng)** — tổng tài sản của quỹ trừ đi nợ. Chia cho số CCQ đang lưu hành thì ra NAV của một CCQ (cách tính theo định nghĩa của SEC, cơ quan quản lý chứng khoán Mỹ).
+
+Ví dụ: một quỹ có tài sản 105 tỷ đồng, nợ 5 tỷ đồng, đang có 10 triệu CCQ. NAV của quỹ là 100 tỷ đồng. NAV của một CCQ là 100 tỷ chia 10 triệu, tức 10.000 đồng.
+
+## Quỹ mở: luôn có người mua lại
+
+Luật định nghĩa quỹ mở là quỹ mà chứng chỉ quỹ **phải được mua lại theo yêu cầu của nhà đầu tư** (Điều 4 khoản 39). Nhà đầu tư có quyền yêu cầu mua lại này (Điều 101). Công ty quản lý quỹ mua lại theo tần suất và thời gian ghi trong Điều lệ quỹ (Điều 111 khoản 1). Công ty chỉ được tạm ngừng mua lại trong vài trường hợp luật nêu, ví dụ sự kiện bất khả kháng. Khi đó, công ty phải báo Ủy ban Chứng khoán Nhà nước (UBCKNN) trong 24 giờ (Điều 111 khoản 2 và 3).
+
+Hình dung quỹ mở như một cửa hàng thu mua: bạn mang hàng đến bán lại bất cứ khi nào cửa hàng mở cửa.
+
+Về giá, SEC mô tả quỹ mở ở thị trường Mỹ như sau. Bạn mua và bán theo **NAV của kỳ định giá kế tiếp**, cộng phí mua hoặc trừ phí bán nếu có. Vì vậy lúc đặt lệnh, bạn chưa biết giá chính xác. Mỗi quỹ ở Việt Nam có giờ chốt lệnh riêng, ghi trong bản cáo bạch.
+
+Ví dụ (số giả định): Minh bấm mua lúc 9 giờ sáng thứ Sáu. Anh không mua ở mức 10.000 đồng của hôm qua. Giá áp dụng là NAV của kỳ định giá kế tiếp. Giả sử kỳ đó NAV là 10.000 đồng và phí mua 1%. Mỗi CCQ Minh trả 10.100 đồng. Mua 1.000 CCQ hết 10,1 triệu đồng.
+
+Điểm mạnh: lúc nào cũng có đầu mối để bán lại. Điểm cần để ý: không biết giá chính xác khi đặt lệnh, và phí ảnh hưởng đáng kể đến lợi nhuận.
+
+<RealLife title="Đặt rau củ giao sáng mai">
+
+Bạn đặt rau lúc 9 giờ tối. Đại lý chốt giá theo chợ đầu mối sáng hôm sau. Bạn biết mình mua gì, nhưng giá cuối cùng chỉ rõ khi đơn được chốt. → Quỹ mở cũng vậy: bạn đặt lệnh trước, giá theo NAV của kỳ định giá kế tiếp.
+
+</RealLife>
+
+## Quỹ đóng: như bán đồ cũ trên chợ mạng
+
+Quỹ đóng là quỹ mà chứng chỉ quỹ **không được mua lại theo yêu cầu của nhà đầu tư** (Điều 4 khoản 40). Quỹ chào bán CCQ ra công chúng, sau đó CCQ được mua bán giữa các nhà đầu tư với nhau. Quỹ đóng chỉ được phát hành thêm khi tăng vốn, phải đủ điều kiện và được UBCKNN chấp thuận (Điều 112).
+
+Muốn thoát vốn, bạn phải tìm người mua, giống như đăng bán đồ cũ trên chợ mạng. Giá do người mua người bán thỏa thuận. Theo SEC, giá này có thể **cao hơn** giá trị tài sản (gọi là premium) hoặc **thấp hơn** (gọi là discount).
+
+Ví dụ: NAV là 10.000 đồng, nhưng giá thị trường chỉ 9.500 đồng. Đó là chiết khấu 5%. Nếu Minh cần tiền gấp, anh bán được 9.500 đồng cho mỗi CCQ, dù phần tài sản đứng sau CCQ đáng giá 10.000 đồng.
+
+## ETF: quỹ mở nhưng giao dịch như cổ phiếu
+
+Luật định nghĩa ETF (quỹ hoán đổi danh mục) là **quỹ mở**. Quỹ hình thành bằng cách nhận một rổ chứng khoán và đổi lại bằng chứng chỉ quỹ. CCQ của ETF được niêm yết và giao dịch trên sàn (Điều 4 khoản 42).
+
+Nghe lạ, nhưng cơ chế khá dễ hiểu nếu tách thành hai vòng. Phần mô tả dưới đây dựa trên tài liệu của SEC về thị trường Mỹ.
+
+**Vòng sơ cấp: chỉ tổ chức lớn.** Một số tổ chức lớn (SEC gọi là *authorized participant*, tạm dịch: đối tác được ủy quyền) làm việc trực tiếp với quỹ. Họ đưa quỹ một rổ chứng khoán và nhận về một lô lớn CCQ. Việc này gọi là **tạo lập**. Lô lớn ấy SEC gọi là *creation unit*, ví dụ trong tài liệu của SEC là 50.000 cổ phần. Làm ngược lại, trả lô CCQ để nhận lại rổ chứng khoán, gọi là **mua lại**. Thường việc đổi này trả bằng chính chứng khoán, không bằng tiền mặt.
+
+Ví dụ giả định: một ETF bám theo chỉ số gồm 30 cổ phiếu. Tổ chức lớn gom đủ 30 loại cổ phiếu theo đúng tỷ lệ của chỉ số, đưa cho quỹ, và nhận về một lô CCQ.
+
+**Vòng thứ cấp: ai cũng tham gia.** Nhà đầu tư cá nhân như Minh không đổi lô với quỹ. Anh mua bán CCQ ETF trên sàn với nhà đầu tư khác, ở giá thị trường trong phiên.
+
+<Figure
+  added
+  svg={svgEtfHaiVong}
+  alt="Hai vòng của ETF: tổ chức lớn đổi rổ cổ phiếu lấy lô chứng chỉ quỹ với quỹ, còn nhà đầu tư mua bán chứng chỉ quỹ trên sàn"
+  caption="Vòng sơ cấp (trên): chỉ tổ chức lớn đổi rổ cổ phiếu lấy lô CCQ với quỹ. Vòng thứ cấp (dưới): nhà đầu tư mua bán CCQ niêm yết trên sàn theo giá thị trường. Mô tả theo tài liệu của SEC (Mỹ)."
+/>
+
+Ở Việt Nam, thông tư hướng dẫn về quỹ (TT 98/2020/TT-BTC, đã được sửa đổi bởi TT 136/2025/TT-BTC) cũng có khái niệm **thành viên lập quỹ**. Đó là công ty chứng khoán hoặc ngân hàng lưu ký đã ký hợp đồng lập quỹ ETF với công ty quản lý quỹ (Điều 2 khoản 17). Chi tiết như quy mô một lô thì mỗi ETF ghi riêng và thông tư có thể đã đổi, nên hãy đọc bản cáo bạch và văn bản hợp nhất.
+
+<RealLife title="Thùng sỉ và gói lẻ">
+
+Nhà phân phối bán nguyên thùng cho đại lý lớn. Tiệm tạp hóa đầu hẻm bán lẻ từng gói cho bạn. Bạn không đặt nguyên thùng, chỉ mua gói lẻ ở tiệm. → Ở ETF, tổ chức lớn đổi theo "thùng" với quỹ, còn nhà đầu tư lẻ mua "gói lẻ" trên sàn.
+
+</RealLife>
+
+**Giá của ETF.** Vì giao dịch trên sàn, giá ETF do người mua và người bán quyết định, nên có thể cao hơn hoặc thấp hơn NAV (SEC). Trong phiên, quỹ còn công bố **iNAV**, tức giá trị tài sản ròng tham chiếu trong phiên. Theo TT 98/2020 (Điều 20 khoản 7), iNAV cập nhật ít nhất 15 giây một lần và chỉ để tham chiếu, không dùng để định giá giao dịch.
+
+Ví dụ: chị Thu mua ETF lúc 10 giờ sáng. iNAV là 10.000 đồng, giá khớp trên sàn là 10.050 đồng. Chị trả cao hơn giá trị tham chiếu 0,5%. Người mua ETF nên so giá sàn với iNAV trước khi đặt lệnh.
+
+ETF có thể bám theo một chỉ số hoặc do nhà quản lý chủ động chọn tài sản (SEC). Hai cách này sẽ được so sánh ở bài sau. ETF cũng không phải tiền gửi: tại Mỹ, SEC nêu rõ ETF không được bảo hiểm tiền gửi. Phần Việt Nam xem bài tiếp theo.
+
+## Quỹ thành viên: không dành cho đa số người mới
+
+Quỹ thành viên có từ 2 đến 99 thành viên, đều là nhà đầu tư chứng khoán chuyên nghiệp (Điều 4 khoản 41; Điều 113). Luật đặt tiêu chí cụ thể cho cá nhân là nhà đầu tư chuyên nghiệp (Điều 11 khoản 1). Cá nhân cần đạt một trong các điều kiện, ví dụ:
+
+- Có chứng chỉ hành nghề chứng khoán.
+- Nắm danh mục chứng khoán niêm yết hoặc đăng ký giao dịch từ 2 tỷ đồng trở lên, có công ty chứng khoán xác nhận.
+- Có thu nhập chịu thuế năm gần nhất từ 1 tỷ đồng trở lên.
+
+Hãy đọc đầy đủ điều khoản này nếu cần.
+
+Minh chưa có chứng chỉ hành nghề và danh mục của anh chưa tới mức đó. Quỹ thành viên vì vậy không phải sản phẩm của anh. Bạn chỉ cần biết loại quỹ này tồn tại, để không nhầm với quỹ đại chúng.
+
+## Quỹ đầu tư bất động sản
+
+Đây là quỹ đầu tư chứng khoán bỏ tiền chủ yếu vào bất động sản. Quỹ cũng có thể mua chứng khoán của công ty kinh doanh bất động sản. Điều kiện là doanh thu từ bất động sản chiếm tối thiểu 65% tổng doanh thu của công ty đó. Con số tính theo báo cáo tài chính năm gần nhất (Điều 4 khoản 43). Bài này chỉ giới thiệu khái niệm, không nói về quỹ cụ thể nào.
+
+## Quỹ hưu trí bổ sung tự nguyện
+
+Đây là loại khác, có khung pháp lý riêng, không nằm trong nhóm quỹ đầu tư chứng khoán ở bài này. Bạn xem phần phân biệt ở bài [Luật nói gì về quỹ và quyền của bạn](/hoc/dau-tu-quy/quy-la-gi/khung-phap-ly).
+
+## So sánh nhanh ba loại quỹ đại chúng
+
+| | Quỹ mở | Quỹ đóng | ETF |
+|---|---|---|---|
+| Bạn mua bán với ai | Chính quỹ, trực tiếp hoặc qua đại lý phân phối | Nhà đầu tư khác trên thị trường | Nhà đầu tư khác trên sàn; chỉ tổ chức lớn đổi lô với quỹ |
+| Giá theo gì | NAV kỳ định giá kế tiếp, cộng hoặc trừ phí | Giá thị trường, có thể cao hoặc thấp hơn NAV | Giá thị trường, có thể cao hoặc thấp hơn NAV |
+| Cách thoát vốn | Bán lại cho quỹ | Bán cho người khác | Bán trên sàn |
+| Điều cần để ý | Phí; chưa biết giá khi đặt lệnh | Giá thấp hơn giá trị tài sản | Chênh lệch giữa giá sàn và NAV |
+| Cơ sở trong luật | Điều 4 khoản 39 | Điều 4 khoản 40 | Điều 4 khoản 42 |
+
+> **Mẹo:** Trước khi mua bất kỳ quỹ nào, hỏi hai câu của chị Thu: "Mình sẽ bán cho ai?" và "Giá lúc bán tính theo gì?" Câu trả lời nằm trong bản cáo bạch của quỹ.
+
+> **Mẹo:** ETF giao dịch như cổ phiếu, nhưng bản chất vẫn là quỹ. Giá vẫn có thể giảm, vẫn có phí, và giá trên sàn có thể lệch khỏi NAV. Đừng chỉ nhìn tên gọi.
+
+## Tóm tắt nhanh
+
+- Luật chia quỹ đầu tư chứng khoán thành quỹ đại chúng (gồm quỹ mở và quỹ đóng) và quỹ thành viên.
+- Quỹ mở phải mua lại CCQ theo yêu cầu của nhà đầu tư; giá theo NAV của kỳ định giá kế tiếp.
+- Quỹ đóng không mua lại CCQ; bạn bán cho người khác ở giá thị trường, có thể thấp hơn NAV.
+- ETF là quỹ mở niêm yết trên sàn; chỉ tổ chức lớn đổi lô với quỹ, nhà đầu tư lẻ mua bán trên sàn.
+- Quỹ thành viên chỉ dành cho nhà đầu tư chuyên nghiệp, từ 2 đến 99 thành viên.
+- Hai câu hỏi dùng được cho mọi quỹ: bán cho ai, và giá tính theo gì.
+
+## Thuật ngữ trong bài
+
+| Thuật ngữ | Nghĩa dễ hiểu |
+|---|---|
+| Chứng chỉ quỹ (CCQ) | "Phần hùn" của bạn trong quỹ |
+| NAV | Tổng tài sản của quỹ trừ nợ; chia cho số CCQ thì ra NAV của một CCQ |
+| Premium, discount | Giá thị trường cao hơn hoặc thấp hơn NAV |
+| Tạo lập, mua lại (ETF) | Tổ chức lớn đổi rổ chứng khoán lấy lô CCQ, hoặc ngược lại |
+| iNAV | Giá trị tài sản ròng tham chiếu, công bố trong phiên giao dịch của ETF |
+| Nhà đầu tư chuyên nghiệp | Người đáp ứng tiêu chí do Luật Chứng khoán quy định, ví dụ có chứng chỉ hành nghề |
+
+## Nguồn
+
+- [Luật Chứng khoán — văn bản hợp nhất 102/VBHN-VPQH, đăng Công báo số 269 ngày 12/05/2026 (Điều 4, 11, 99, 101, 111, 112, 113)](https://cdn.thuvienphapluat.vn/uploads/Hoidapphapluat/2026/NNL/1105/2026_269_102_VBHN-VPQH.pdf)
+- [Thông tư 98/2020/TT-BTC hướng dẫn hoạt động và quản lý quỹ đầu tư chứng khoán (bản đã ghi chú sửa đổi bởi TT 136/2025/TT-BTC; Điều 2 khoản 5, 17; Điều 20 khoản 7)](https://luatvietnam.vn/tai-chinh/thong-tu-98-2020-huong-dan-hoat-dong-va-quan-ly-quy-dau-tu-chung-khoan-196328-d1.html)
+- [SEC Investor.gov — Mutual Funds](https://www.investor.gov/introduction-investing/investing-basics/investment-products/mutual-funds-and-exchange-traded-funds-etfs/mutual-funds)
+- [SEC Investor.gov — Exchange-Traded Funds (ETFs)](https://www.investor.gov/introduction-investing/basics/investment-products/exchange-traded-funds-etfs)
+- [SEC Investor.gov — Updated Investor Bulletin: Exchange-Traded Funds (ETFs)](https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins-24)
+- [SEC Investor.gov — Publicly Traded Closed-End Funds](https://www.investor.gov/introduction-investing/investing-basics/investment-products/closed-end-funds/publicly-traded-closed-end-funds)
+- [SEC Investor.gov — Investor Bulletin: Publicly Traded Closed-End Funds (định nghĩa premium, discount)](https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins/investor-bulletin-publicly-traded-closed-end-funds)
+- [SEC Investor.gov — Money Market Funds: Investor Bulletin, 04/11/2024 (định nghĩa NAV)](https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins/updated-12)

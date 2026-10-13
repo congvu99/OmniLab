@@ -1,0 +1,23 @@
+<svg viewBox="0 0 360 300" width="100%" role="img" aria-labelledby="svg-dtq-nt-rui-ro-so-khoan-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-dtq-nt-rui-ro-so-khoan-title">Hình minh hoạ: khi số khoản đầu tư tăng, rủi ro riêng của danh mục giảm nhanh rồi chậm dần, còn lại mức nền là rủi ro thị trường không giảm được</title>
+
+  <rect x="50" y="150" width="280" height="30" fill="var(--surface-2)" />
+  <polygon points="50,40 60,59.9 70,76.3 80,89.6 90,100.6 100,109.5 110,116.9 120,122.9 130,127.8 140,131.8 150,135.1 160,137.8 170,140 180,141.8 190,143.3 200,144.5 210,145.5 220,146.3 230,147 240,147.5 250,148 260,148.4 270,148.6 280,148.9 290,149.1 300,149.3 310,149.4 320,149.5 330,149.6 330,150 50,150" fill="color-mix(in srgb, var(--accent) 12%, transparent)" />
+  <line x1="50" y1="150" x2="330" y2="150" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" />
+
+  <line x1="50" y1="30" x2="50" y2="180" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+  <line x1="50" y1="180" x2="340" y2="180" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+  <polyline points="50,40 60,59.9 70,76.3 80,89.6 90,100.6 100,109.5 110,116.9 120,122.9 130,127.8 140,131.8 150,135.1 160,137.8 170,140 180,141.8 190,143.3 200,144.5 210,145.5 220,146.3 230,147 240,147.5 250,148 260,148.4 270,148.6 280,148.9 290,149.1 300,149.3 310,149.4 320,149.5 330,149.6" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+
+  <rect x="50" y="212" width="16" height="16" rx="4" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <rect x="50" y="238" width="16" height="16" rx="4" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13">
+    <text x="58" y="24" font-weight="700" fill="var(--ink)">Rủi ro cả danh mục</text>
+    <text x="50" y="198" fill="var(--ink)">1 khoản</text>
+    <text x="340" y="198" text-anchor="end" fill="var(--ink)">Nhiều khoản</text>
+    <text x="74" y="225" fill="var(--ink)">Rủi ro riêng: giảm được</text>
+    <text x="74" y="251" fill="var(--ink)">Rủi ro thị trường: vẫn còn</text>
+    <text x="50" y="284" font-style="italic" fill="var(--ink-2)">Hình minh hoạ ý tưởng, không phải số liệu thực</text>
+  </g>
+</svg>

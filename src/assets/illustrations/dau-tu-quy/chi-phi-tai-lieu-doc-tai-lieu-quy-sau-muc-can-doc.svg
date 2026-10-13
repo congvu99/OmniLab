@@ -1,0 +1,23 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-dtq-sau-muc-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-dtq-sau-muc-title">Sáu mục cần đọc trong bản cáo bạch và điều lệ quỹ: mục tiêu đầu tư, giới hạn đầu tư, rủi ro, phí, lịch giao dịch, thanh toán; phần phí được nhấn mạnh</title>
+
+  <text x="180" y="22" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">Sáu mục cần đọc trong bản cáo bạch</text>
+
+  <g fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2">
+    <rect x="14" y="40" width="160" height="48" rx="10" />
+    <rect x="186" y="40" width="160" height="48" rx="10" />
+    <rect x="14" y="100" width="160" height="48" rx="10" />
+    <rect x="14" y="160" width="160" height="48" rx="10" />
+    <rect x="186" y="160" width="160" height="48" rx="10" />
+  </g>
+  <rect x="186" y="100" width="160" height="48" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" text-anchor="middle" fill="var(--ink)">
+    <text x="94" y="69">1. Mục tiêu đầu tư</text>
+    <text x="266" y="69">2. Giới hạn đầu tư</text>
+    <text x="94" y="129">3. Rủi ro</text>
+    <text x="266" y="129" font-weight="700">4. Phí</text>
+    <text x="94" y="189">5. Lịch giao dịch</text>
+    <text x="266" y="189">6. Thanh toán</text>
+  </g>
+</svg>

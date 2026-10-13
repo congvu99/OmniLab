@@ -1,0 +1,21 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-dtq-qlg-ba-tang-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-dtq-qlg-ba-tang-title">Ba tầng văn bản về quỹ đầu tư chứng khoán: Luật Chứng khoán đặt nguyên tắc, Nghị định 155/2020 quy định chi tiết thi hành, Thông tư 98/2020 hướng dẫn hoạt động và quản lý quỹ</title>
+
+  <rect x="12" y="12" width="336" height="52" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <rect x="12" y="84" width="336" height="52" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="12" y="156" width="336" height="52" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+
+  <line x1="180" y1="66" x2="180" y2="82" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+  <polyline points="175,76 180,82 185,76" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <line x1="180" y1="138" x2="180" y2="154" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+  <polyline points="175,148 180,154 185,148" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" text-anchor="middle">
+    <text x="180" y="33" font-weight="700" fill="var(--ink)">Luật Chứng khoán 54/2019/QH14</text>
+    <text x="180" y="52" fill="var(--ink-2)">Nguyên tắc chung (Điều 99 đến 113 về quỹ)</text>
+    <text x="180" y="105" font-weight="700" fill="var(--ink)">Nghị định 155/2020/NĐ-CP</text>
+    <text x="180" y="124" fill="var(--ink-2)">Quy định chi tiết thi hành</text>
+    <text x="180" y="177" font-weight="700" fill="var(--ink)">Thông tư 98/2020/TT-BTC</text>
+    <text x="180" y="196" fill="var(--ink-2)">Hướng dẫn hoạt động và quản lý quỹ</text>
+  </g>
+</svg>

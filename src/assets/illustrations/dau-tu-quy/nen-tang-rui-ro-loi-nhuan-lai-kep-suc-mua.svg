@@ -1,0 +1,24 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-dtq-nt-suc-mua-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-dtq-nt-suc-mua-title">Sức mua của 100 triệu để yên khi lạm phát giả định 5,08% mỗi năm: khoảng 61 triệu sau 10 năm, 50 triệu sau 14 năm, 37 triệu sau 20 năm, tính theo giá hôm nay</title>
+
+  <line x1="40" y1="110" x2="270" y2="110" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" />
+
+  <rect x="45" y="50" width="50" height="120" rx="6" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="125" y="96.8" width="50" height="73.2" rx="6" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <rect x="205" y="110" width="50" height="60" rx="6" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <rect x="285" y="125.6" width="50" height="44.4" rx="6" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <line x1="30" y1="170" x2="345" y2="170" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" text-anchor="middle" fill="var(--ink)">
+    <text x="70" y="42">100 triệu</text>
+    <text x="150" y="89">61 triệu</text>
+    <text x="230" y="102" fill="var(--accent)">50 triệu</text>
+    <text x="310" y="118">37 triệu</text>
+  </g>
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" text-anchor="middle" fill="var(--ink)">
+    <text x="70" y="192">Hôm nay</text>
+    <text x="150" y="192">10 năm</text>
+    <text x="230" y="192">14 năm</text>
+    <text x="310" y="192">20 năm</text>
+  </g>
+</svg>

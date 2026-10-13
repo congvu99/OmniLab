@@ -1,0 +1,21 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-dgq-sut-giam-can-hoi-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-dgq-sut-giam-can-hoi-title">NAV giảm từ đỉnh 100 xuống đáy 70, tức giảm 30%; để quay lại đỉnh 100 cần tăng khoảng 42,9%, nhiều hơn mức đã giảm</title>
+
+  <rect x="150" y="58" width="140" height="34" rx="4" fill="color-mix(in srgb, var(--danger) 12%, transparent)" />
+
+  <path d="M24 170 H336" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+  <path d="M30 80 L70 66 L110 60 L150 58 L195 92 L240 84 L290 66 L330 58" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M150 58 H336" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" />
+  <path d="M150 92 H195" fill="none" stroke="var(--danger)" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 3" />
+
+  <path d="M150 64 V88" fill="none" stroke="var(--danger)" stroke-width="2" stroke-linecap="round" />
+  <path d="M144 82 L150 90 L156 82" fill="none" stroke="var(--danger)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+
+  <circle cx="150" cy="58" r="5" fill="var(--accent)" />
+  <circle cx="195" cy="92" r="5" fill="var(--danger)" />
+
+  <text x="24" y="30" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">Đỉnh: NAV 100</text>
+  <text x="205" y="112" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--danger)">Đáy: 70</text>
+  <text x="142" y="84" text-anchor="end" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--danger)">−30%</text>
+  <text x="180" y="198" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">Về lại 100 cần tăng +42,9%</text>
+</svg>

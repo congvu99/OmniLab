@@ -1,0 +1,22 @@
+<svg viewBox="0 0 360 300" width="100%" role="img" aria-labelledby="svg-dgq-phieu-song-sot-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-dgq-phieu-song-sot-title">Số giả định: 100 quỹ chủ động, sau 5 năm còn 80 quỹ còn sống vì 20 quỹ đã đóng hoặc sáp nhập, và 40 quỹ thắng chỉ số. Nếu chỉ đếm quỹ còn sống thì tỷ lệ thắng là 50%, nếu đếm cả quỹ đã đóng thì chỉ 40%</title>
+
+  <text x="180" y="20" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-style="italic" fill="var(--ink-2)">Số giả định, sau 5 năm</text>
+
+  <rect x="20" y="34" width="320" height="40" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="60" y="92" width="240" height="40" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="110" y="150" width="140" height="40" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+
+  <path d="M180 74 V92 M180 132 V150" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)" text-anchor="middle">
+    <text x="180" y="59">100 quỹ lúc đầu</text>
+    <text x="180" y="117">80 quỹ còn sống (20 đã đóng)</text>
+    <text x="180" y="175">40 quỹ thắng</text>
+  </g>
+
+  <rect x="20" y="208" width="320" height="30" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="20" y="248" width="320" height="30" rx="8" fill="color-mix(in srgb, var(--danger) 12%, transparent)" stroke="var(--danger)" stroke-width="2" />
+  <text x="180" y="228" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">Chỉ đếm quỹ còn sống: 40 ÷ 80 = 50%</text>
+  <text x="180" y="268" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--danger)">Đếm cả quỹ đã đóng: 40 ÷ 100 = 40%</text>
+</svg>

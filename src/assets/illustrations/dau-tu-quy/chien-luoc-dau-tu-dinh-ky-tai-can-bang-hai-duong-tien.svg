@@ -1,0 +1,20 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-cl-hai-duong-tien-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-cl-hai-duong-tien-title">Tỷ lệ tiền đã vào thị trường theo tháng: bỏ một lần thì 100% ngay từ đầu, chia đều 12 tháng thì tăng dần từng bước cho đến tháng 12 mới đạt 100%</title>
+
+  <text x="180" y="20" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink-2)">Tỷ lệ tiền đã vào thị trường</text>
+
+  <path d="M50 160 H73.33 V150 H96.67 V140 H120 V130 H143.33 V120 H166.67 V110 H190 V100 H213.33 V90 H236.67 V80 H260 V70 H283.33 V60 H306.67 V50 H330 V170 H50 Z" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="none" />
+  <path d="M50 160 H73.33 V150 H96.67 V140 H120 V130 H143.33 V120 H166.67 V110 H190 V100 H213.33 V90 H236.67 V80 H260 V70 H283.33 V60 H306.67 V50 H330" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M50 50 H330" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" />
+  <path d="M44 170 H336" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13">
+    <text x="42" y="54" text-anchor="end" fill="var(--ink-2)">100%</text>
+    <text x="42" y="174" text-anchor="end" fill="var(--ink-2)">0%</text>
+    <text x="50" y="192" text-anchor="middle" fill="var(--ink-2)">Tháng 0</text>
+    <text x="336" y="192" text-anchor="end" fill="var(--ink-2)">Tháng 12</text>
+    <text x="60" y="40" font-weight="700" fill="var(--accent)">Bỏ một lần: 100% ngay từ đầu</text>
+    <text x="60" y="84" font-weight="700" fill="var(--ink)">Chia 12 tháng:</text>
+    <text x="60" y="102" font-weight="700" fill="var(--ink)">tăng dần từng bước</text>
+  </g>
+</svg>

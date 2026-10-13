@@ -1,0 +1,19 @@
+<svg viewBox="0 0 360 300" width="100%" role="img" aria-labelledby="svg-an-toan-hoc-bon-chang-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-an-toan-hoc-bon-chang-title">Lộ trình học bốn chặng như bốn bậc thang: nền tảng, cơ chế quỹ, đọc tài liệu thật, và đi sâu tuỳ chọn, mỗi chặng kèm nguồn học gợi ý</title>
+
+  <rect x="12" y="12" width="294" height="60" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <text x="26" y="38" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">① Nền tảng</text>
+  <text x="26" y="58" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink-2)">SEC cơ bản · SRTC · Housel</text>
+
+  <rect x="26" y="84" width="294" height="60" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="40" y="110" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">② Cơ chế quỹ</text>
+  <text x="40" y="130" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink-2)">SEC về quỹ · TT 98 · Malkiel</text>
+
+  <rect x="40" y="156" width="294" height="60" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <text x="54" y="182" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">③ Tài liệu thật</text>
+  <text x="54" y="202" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink-2)">Điều lệ, bản cáo bạch · Graham</text>
+
+  <rect x="54" y="228" width="294" height="60" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" stroke-dasharray="6 5" />
+  <text x="68" y="254" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">④ Đi sâu (tuỳ chọn)</text>
+  <text x="68" y="274" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink-2)">SRTC · CFA · Kahneman</text>
+</svg>

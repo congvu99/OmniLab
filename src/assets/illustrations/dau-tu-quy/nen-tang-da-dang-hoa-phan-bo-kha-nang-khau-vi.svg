@@ -1,0 +1,32 @@
+<svg viewBox="0 0 360 300" width="100%" role="img" aria-labelledby="svg-dtq-nt-kha-nang-khau-vi-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-dtq-nt-kha-nang-khau-vi-title">Bảng bốn ô theo khả năng chịu rủi ro và khẩu vị rủi ro: Minh chịu được nhưng hay lo, bác Sáu thích liều nhưng cần tiền sớm; hai thứ này có thể lệch nhau</title>
+
+  <rect x="72" y="34" width="136" height="108" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" stroke-dasharray="4 4" />
+  <rect x="212" y="34" width="136" height="108" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <rect x="72" y="146" width="136" height="108" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="212" y="146" width="136" height="108" rx="10" fill="var(--surface-2)" stroke="var(--danger)" stroke-width="2.5" />
+
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" text-anchor="middle" fill="var(--ink)">
+    <text x="140" y="21" font-weight="700">Khẩu vị thấp</text>
+    <text x="280" y="21" font-weight="700">Khẩu vị cao</text>
+
+    <text x="36" y="86" font-weight="700">Khả năng</text>
+    <text x="36" y="104" font-weight="700">cao</text>
+    <text x="36" y="198" font-weight="700">Khả năng</text>
+    <text x="36" y="216" font-weight="700">thấp</text>
+
+    <text x="140" y="70" font-weight="700">Minh:</text>
+    <text x="140" y="90">chịu được,</text>
+    <text x="140" y="108">nhưng hay lo</text>
+
+    <text x="280" y="82">Dư sức và</text>
+    <text x="280" y="100">thoải mái</text>
+
+    <text x="140" y="192">Cả hai đều thấp:</text>
+    <text x="140" y="210">ưu tiên an toàn</text>
+
+    <text x="280" y="182" font-weight="700">Bác Sáu:</text>
+    <text x="280" y="200">thích liều,</text>
+    <text x="280" y="218">nhưng cần tiền sớm</text>
+  </g>
+</svg>

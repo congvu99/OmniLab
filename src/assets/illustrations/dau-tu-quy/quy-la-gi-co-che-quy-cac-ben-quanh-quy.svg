@@ -1,0 +1,41 @@
+<svg viewBox="0 0 360 300" width="100%" role="img" aria-labelledby="svg-dtq-qlg-cac-ben-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-dtq-qlg-cac-ben-title">Các bên quanh một quỹ đại chúng: nhà đầu tư góp tiền vào quỹ, công ty quản lý quỹ điều hành, ngân hàng giám sát kiểm tra và xác nhận NAV, đại hội nhà đầu tư quyết định việc lớn, UBCKNN quản lý từ bên ngoài</title>
+
+  <line x1="48" y1="68" x2="48" y2="120" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" />
+
+  <rect x="8" y="20" width="80" height="48" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" stroke-dasharray="4 4" />
+  <rect x="132" y="20" width="120" height="48" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="8" y="122" width="80" height="46" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="152" y="110" width="80" height="70" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+  <rect x="272" y="122" width="80" height="46" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" stroke-dasharray="4 4" />
+  <rect x="132" y="226" width="120" height="48" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+
+  <line x1="88" y1="145" x2="150" y2="145" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" />
+  <polyline points="143,140 150,145 143,150" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <line x1="192" y1="68" x2="192" y2="108" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+  <polyline points="187,101 192,108 197,101" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <line x1="192" y1="226" x2="192" y2="182" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" />
+  <polyline points="187,189 192,182 197,189" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <line x1="272" y1="145" x2="234" y2="145" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" />
+  <polyline points="241,140 234,145 241,150" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <line x1="88" y1="44" x2="130" y2="44" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" />
+  <polyline points="123,39 130,44 123,49" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)" text-anchor="middle">
+    <text x="48" y="40">Đại hội</text>
+    <text x="48" y="58">nhà đầu tư</text>
+    <text x="192" y="40">Công ty</text>
+    <text x="192" y="58">quản lý quỹ</text>
+    <text x="48" y="150">Nhà đầu tư</text>
+    <text x="192" y="141" font-weight="700" fill="var(--accent)">Quỹ</text>
+    <text x="192" y="159" fill="var(--accent)">(hũ chung)</text>
+    <text x="312" y="150">UBCKNN</text>
+    <text x="192" y="246">Ngân hàng</text>
+    <text x="192" y="264">giám sát</text>
+  </g>
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink-2)">
+    <text x="94" y="136">góp tiền</text>
+    <text x="200" y="92">điều hành</text>
+    <text x="200" y="208">xác nhận NAV</text>
+  </g>
+</svg>

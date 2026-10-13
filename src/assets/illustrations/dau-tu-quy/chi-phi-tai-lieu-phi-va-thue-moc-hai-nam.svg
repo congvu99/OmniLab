@@ -1,0 +1,21 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-dtq-moc-hai-nam-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-dtq-moc-hai-nam-title">Thuế khi bán chứng chỉ quỹ mở từ 01/07/2026: bán trước mốc 2 năm tính từ ngày mua thì chịu thuế 0,1% trên giá bán; từ 2 năm trở lên thì được miễn thuế</title>
+
+  <text x="180" y="30" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">Bán CCQ quỹ mở sau bao lâu?</text>
+
+  <rect x="30" y="64" width="150" height="70" rx="10" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2" />
+  <rect x="180" y="64" width="150" height="70" rx="10" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+
+  <line x1="30" y1="150" x2="330" y2="150" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+  <line x1="30" y1="144" x2="30" y2="156" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" />
+  <line x1="180" y1="144" x2="180" y2="156" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" />
+
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" text-anchor="middle">
+    <text x="105" y="94" font-weight="700" fill="var(--ink)">Thuế 0,1%</text>
+    <text x="105" y="114" fill="var(--ink)">trên giá bán</text>
+    <text x="255" y="94" font-weight="700" fill="var(--ink)">Miễn thuế</text>
+    <text x="255" y="114" fill="var(--ink)">CCQ quỹ mở</text>
+    <text x="30" y="180" text-anchor="start" fill="var(--ink)">Ngày mua</text>
+    <text x="180" y="180" fill="var(--ink)">Mốc 2 năm</text>
+  </g>
+</svg>

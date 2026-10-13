@@ -1,0 +1,126 @@
+---
+nguon: OmniLab — Kiến thức quỹ và đầu tư
+tac-gia: OmniLab (tổng hợp từ nguồn công khai)
+ngay-viet: 2026-10-13
+trang-thai: hoan-thanh
+---
+
+# Kẻ thù lớn nhất là chính mình: sai lầm hành vi
+
+## Chị Thu cũng từng bán sai lúc
+
+Quý nào Minh cũng chuyển tiền sang quỹ "đang đứng đầu bảng". Quý này sang quỹ này, quý sau sang quỹ khác. Minh thấy mình đang "quản lý tích cực".
+
+Chị Thu nghe xong, kể chuyện của chính chị. Nhiều năm trước, quỹ chị giữ giảm từ 100 xuống 80. Chị làm nghề phân tích đầu tư mà vẫn bán, vì không chịu nổi cảm giác nhìn nó tụt thêm. Chị tự nhủ sẽ mua lại khi nó về 100. "Em đoán chuyện gì xảy ra?" chị hỏi. "Chị lỗ 20% thật, trong khi nếu cứ để yên thì khi nó về 100 chị hoà vốn."
+
+"Hiểu biết không bảo vệ em khỏi cảm xúc," chị nói. "Cái bảo vệ em là một vài luật đặt ra trước."
+
+Bài này đi qua những sai lầm đã được nghiên cứu nhiều nhất. Mọi nghiên cứu dưới đây là của thị trường Mỹ, và chưa có bằng chứng tương đương đủ tin cậy cho Việt Nam mà OmniLab kiểm chứng được. Hãy dùng chúng như một tấm gương để soi mình, không phải để dự đoán quỹ trong nước.
+
+## Khoảng cách giữa lãi của quỹ và lãi của bạn
+
+Ở bài [đo một quỹ](/hoc/dau-tu-quy/danh-gia-quy/chi-so-danh-gia) ta thấy NAV không biết bạn mua bán lúc nào. Morningstar đã đo khoảng cách đó trong báo cáo "Mind the Gap" phát hành tháng 8/2026. Dữ liệu gồm gần 23.000 quỹ mở và ETF (quỹ chỉ số giao dịch trên sàn) ở Mỹ, từ 01/01/2016 đến 31/12/2025:
+
+- Lãi của quỹ (kiểu time-weighted): 9,9% mỗi năm.
+- Lãi nhà đầu tư thực nhận (kiểu dollar-weighted): 8,7% mỗi năm.
+- Chênh khoảng 1,2 điểm mỗi năm. Cộng cả 10 năm, nhà đầu tư bỏ lỡ khoảng 12% tổng lợi nhuận, Morningstar ước tính khoảng 3,8 nghìn tỷ USD.
+
+Hình dung với 100 triệu, số giả định, giữ 10 năm. Ở 9,9% mỗi năm, 100 triệu thành khoảng 257 triệu. Ở 8,7% mỗi năm, chỉ khoảng 230 triệu. Chênh gần 27 triệu.
+
+Khoảng cách khác nhau tuỳ nhóm quỹ (điểm phần trăm mỗi năm):
+
+| Nhóm quỹ ở Mỹ | Khoảng cách |
+|---|---|
+| Quỹ cổ phiếu Mỹ | 0,4 |
+| Quỹ chỉ số cổ phiếu Mỹ | 0,1 |
+| Quỹ phân bổ tài sản (allocation) | 0,7 |
+| Quỹ chỉ số (tất cả) | 1,1 |
+| Quỹ ngành (sector) | 1,2 |
+| Quỹ mở truyền thống | 1,2 |
+| ETF | 1,6 |
+
+Hai lưu ý. Thứ nhất, con số này đo tác động của thời điểm tiền vào ra, và không phải lần vào ra nào cũng là lỗi hành vi. Có người góp thêm theo lương, có người rút ra vì cần tiêu. Thứ hai, Morningstar nhận xét khoảng cách này giống với các lần ước tính trước. Nghĩa là nó không phải chuyện của một năm.
+
+## Sai lầm 1: giao dịch quá nhiều
+
+Barber và Odean (Journal of Finance, tập 55 số 2, năm 2000) nghiên cứu 66.465 hộ gia đình ở Mỹ, giai đoạn 1991–1996. Các hộ này tự mua bán cổ phiếu qua một công ty môi giới chiết khấu (môi giới thu phí thấp) lớn. Các hộ được chia thành 5 nhóm bằng nhau theo mức giao dịch:
+
+- Nhóm giao dịch nhiều nhất lãi 11,4% mỗi năm. Nhóm giao dịch ít nhất lãi 18,5%.
+- Thị trường lãi 17,9%. Trung bình các hộ là 16,4%.
+- Trung bình mỗi năm, một hộ bán ra và mua mới khoảng 75% giá trị danh mục (vòng quay danh mục).
+- Lợi suất trước chi phí của nhóm giao dịch nhiều và ít gần như bằng nhau. Phần chênh nằm ở chi phí giao dịch (chênh lệch giá mua bán và phí môi giới).
+
+Giới hạn: giai đoạn đã cũ và phí ngày nay khác. Nhưng cơ chế thì dễ thấy qua ví dụ số giả định. Lướt sóng 12 vòng mua bán mỗi năm, mỗi vòng tốn 0,3%, tức 3,6% mỗi năm chỉ riêng chi phí. Giả sử quỹ cho 8% mỗi năm trước chi phí. Giữ yên 10 năm, 100 triệu thành khoảng 215,9 triệu. Lướt sóng chỉ còn khoảng 4,4% mỗi năm, 100 triệu thành khoảng 153,8 triệu.
+
+## Sai lầm 2: đuổi theo quỹ đang nóng
+
+Sirri và Tufano (Journal of Finance, năm 1998; quỹ cổ phiếu Mỹ, dữ liệu 1971–1990) mô tả người mua quỹ đuổi theo lợi suất: đổ xô vào quỹ có lợi suất gần đây cao nhất, nhưng không rút khỏi quỹ kém. Ví dụ quỹ E và quỹ F trong bài [chủ động hay thụ động](/hoc/dau-tu-quy/danh-gia-quy/chu-dong-thu-dong-chon-quy) cho thấy vì sao một năm là mẫu quá ngắn.
+
+Hai sai lầm 1 và 2 hay đi cùng nhau: đuổi theo quỹ nóng nghĩa là phải bán quỹ cũ, mua quỹ mới, và mỗi vòng như vậy lại tốn chi phí. Cách Minh chuyển quỹ mỗi quý là ví dụ điển hình.
+
+## Sai lầm 3: ác cảm thua lỗ
+
+Kahneman và Tversky (Econometrica, tập 47 số 2, năm 1979) đề xuất lý thuyết triển vọng (prospect theory). Lý thuyết này mô tả cách con người thật sự chọn lựa khi kết quả không chắc chắn. Một ý chính: tính từ mốc ban đầu, đường cảm nhận giá trị dốc hơn ở phía lỗ so với phía lãi. Nói đơn giản, mất 1 triệu đau hơn được 1 triệu vui. Bài này không dùng hệ số bằng số nào, vì mức độ khác nhau tuỳ người và tuỳ nghiên cứu.
+
+Quay lại chuyện của chị Thu, số giả định:
+
+- **Giữ yên:** quỹ từ 100 xuống 80 rồi về 100, tài khoản từ 100 triệu xuống 80 triệu rồi về 100 triệu.
+- **Bán rồi chờ về 100 mới mua lại:** bán ở 80, cầm 80 triệu. Khi quỹ về 100, mua lại, giá trị vẫn 80 triệu. Mức lỗ 20% bị "đóng đinh". Nếu quỹ lên tiếp đến 120, bên giữ yên có 120 triệu còn chị Thu có 96 triệu.
+
+Chị Thu không sai ở chỗ bán. Có thể có lý do chính đáng để bán. Chị sai ở chỗ bán vì không chịu nổi cảm xúc, rồi đặt điều kiện mua lại chỉ vì muốn "gỡ" cho khỏi đau.
+
+## Sai lầm 4: thiên kiến quê nhà
+
+Rowland và Tesar viết một bài nghiên cứu cho NBER, một tổ chức nghiên cứu kinh tế của Mỹ (Working Paper 6733, năm 1998). Bài này nhắc lại kết quả của các nghiên cứu trước, như French và Poterba (năm 1991): nhà đầu tư ở các nước công nghiệp ngại giữ nhiều hơn một phần nhỏ tài sản ở nước ngoài. Đó gọi là **thiên kiến quê nhà** (home bias). Ví dụ trong cùng bài: cuối năm 1996, cổ phiếu nước ngoài chỉ chiếm khoảng 10% danh mục cổ phiếu của nhà đầu tư Mỹ (số của Tesar và Werner, 1997).
+
+Với Minh, nó có thể là chỉ chọn cổ phiếu và quỹ trong nước vì quen tên. Điều này không có nghĩa là nên hay không nên đầu tư nước ngoài. Chỉ là câu hỏi để tự soi: mình chọn vì có dữ liệu hay vì quen? Xem lại bài [đa dạng hoá và phân bổ tài sản](/hoc/dau-tu-quy/nen-tang/da-dang-hoa-phan-bo).
+
+## Luật cá nhân: viết ra trước khi cảm xúc đến
+
+Những gợi ý dưới đây là cách OmniLab rút ra từ các cơ chế ở trên, không phải kết luận của nghiên cứu nào:
+
+1. **Viết luật trước.** Mua vì sao, khi nào xem lại, trong tình huống nào mới bán. Viết lúc bình tĩnh.
+2. **Để việc đều đặn tự chạy.** Đầu tư định kỳ làm giảm số quyết định phải đưa ra (xem bài [đầu tư định kỳ và tái cân bằng](/hoc/dau-tu-quy/chien-luoc/dau-tu-dinh-ky-tai-can-bang)).
+3. **Tái cân bằng theo lịch, không theo cảm xúc.** Mỗi năm một lần, như bài trước.
+4. **Cộng chi phí mỗi lần mua bán.** Lướt sóng 12 vòng, mỗi vòng 0,3%, là 3,6% mỗi năm.
+5. **Đo lãi của chính mình**, không chỉ của quỹ.
+
+> **Mẹo:** Khi muốn mua hoặc bán vì một cảm xúc mạnh, hãy chờ một ngày rồi mở lại "luật" đã viết. Nếu luật nói không, hãy để yên.
+
+## Tóm tắt nhanh
+
+- Thị trường Mỹ, 10 năm đến 31/12/2025 (Morningstar, tháng 8/2026): quỹ lãi 9,9% mỗi năm, nhà đầu tư thực nhận 8,7% mỗi năm.
+- Nghiên cứu ở Mỹ giai đoạn 1991–1996 (Barber và Odean): nhóm giao dịch nhiều nhất lãi thấp hơn hẳn, phần chênh nằm ở chi phí giao dịch.
+- Người mua quỹ có xu hướng đuổi theo quỹ vừa có lãi cao (Sirri và Tufano, 1998).
+- Ác cảm thua lỗ: cùng một khoản, mất đau hơn được vui. Bán vì đau rồi chờ "gỡ" làm lỗ trở thành thật.
+- Thiên kiến quê nhà: ngại giữ tài sản ngoài nước, đôi khi chỉ vì quen.
+- Cách phòng: viết luật trước, đều đặn, tái cân bằng theo lịch, tính chi phí mua bán.
+
+## Thuật ngữ trong bài
+
+| Thuật ngữ | Nghĩa dễ hiểu |
+|---|---|
+| Khoảng cách hành vi (behavior gap) | Chênh giữa lãi của quỹ và lãi nhà đầu tư thực nhận |
+| Time-weighted / dollar-weighted | Lãi của quỹ / lãi của chính bạn có tính lúc bạn bỏ tiền vào ra |
+| Vòng quay danh mục (turnover) | Tỷ lệ danh mục bị bán đi mua lại mỗi năm |
+| Đuổi theo lợi suất (chase returns) | Dồn tiền vào quỹ vừa có lãi cao |
+| Ác cảm thua lỗ (loss aversion) | Mất một khoản đau hơn được một khoản tương ứng |
+| Thiên kiến quê nhà (home bias) | Ngại giữ tài sản ở nước ngoài, chỉ chọn cái quen |
+| FOMO | Sợ bỏ lỡ: muốn làm theo đám đông vì sợ thiệt |
+
+## Đọc thêm
+
+- ***Tư duy nhanh và chậm* (Daniel Kahneman)**, bản tiếng Việt do NXB Thế Giới và Alpha Books phát hành năm 2014 (theo bản ghi Thư viện số Quốc hội). *Vì sao nên đọc:* tác giả là đồng tác giả bài báo năm 1979 về lý thuyết triển vọng nói ở trên. *Giúp được gì:* bạn hiểu vì sao đầu óc phản ứng với mất mát và với đám đông, để nhận ra những lúc mình sắp làm theo cảm xúc.
+- ***Tâm lý học về tiền* (Morgan Housel)**, bản tiếng Việt do NXB Dân Trí và 1980 Books phát hành, dịch giả Hoàng Thị Minh Phúc. Thông tin ấn bản lấy theo trang sách trên Tiki. *Vì sao nên đọc:* sách kể nhiều câu chuyện về cách con người nghĩ và hành xử với tiền. *Giúp được gì:* bạn có thêm cách nghĩ về hành vi tiền bạc của mình. Hãy đọc để suy ngẫm, đừng coi đó là công thức đầu tư.
+
+## Nguồn
+
+- [Wealth Management — Investors miss out on 12% of fund returns over decade (Elaine Misonzhnik, 06/08/2026; tóm tắt Morningstar Mind the Gap 2026)](https://wealthmanagement.com/investing-strategies/investors-miss-out-on-12-of-fund-returns-over-decade)
+- [Kitces — Weekend reading for financial planners (8–9/8/2026), tóm tắt Mind the Gap](https://www.kitces.com/blog/weekend-reading-for-financial-planners-august-8-9-2026/)
+- [Barber, B. và Odean, T. (2000) — Trading Is Hazardous to Your Wealth, Journal of Finance 55(2)](https://faculty.haas.berkeley.edu/odean/papers%20current%20versions/Individual_Investor_Performance_Final.pdf)
+- [Sirri, E. và Tufano, P. (1998) — Costly Search and Mutual Fund Flows, Journal of Finance 53(5)](https://faculty.babson.edu/wp-content/uploads/2024/01/mutual-funds-JF-october-1998.pdf)
+- [Kahneman, D. và Tversky, A. (1979) — Prospect Theory: An Analysis of Decision under Risk, Econometrica (Econometric Society)](https://www.econometricsociety.org/publications/econometrica/1979/03/01/prospect-theory-analysis-decision-under-risk)
+- [NBER Working Paper 6733 (Rowland và Tesar, 1998) — nhắc nghiên cứu French và Poterba (1991) về thiên kiến quê nhà](https://www.nber.org/papers/w6733.pdf)
+- [Thư viện số Quốc hội — Tư duy nhanh và chậm (bản dịch tiếng Việt)](https://thuvienso.quochoi.vn/handle/11742/96559)
+- [Tiki — Tâm lý học về tiền (Morgan Housel; NXB Dân Trí, 1980 Books; dịch giả Hoàng Thị Minh Phúc)](https://tiki.vn/tam-ly-hoc-ve-tien-p75953557.html)
+- Ví dụ 100 triệu giữ 10 năm, chi phí lướt sóng 3,6% và chuyện bán ở 80 của chị Thu là số giả định do OmniLab tự tính. Số liệu nghiên cứu là của Mỹ, ghi theo kỳ dữ liệu trong bài, tính đến tháng 10/2026. Bản tiếng Việt của sách Housel nên được kiểm tra ấn bản ở nhà sách trước khi mua.

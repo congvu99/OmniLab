@@ -1,0 +1,21 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-dtq-lai-suat-ky-han-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-dtq-lai-suat-ky-han-title">Số giả định: khi lãi suất tăng 1 điểm phần trăm, NAV quỹ trái phiếu kỳ hạn ngắn giảm khoảng 1%, quỹ trái phiếu kỳ hạn dài giảm khoảng 4%</title>
+
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" text-anchor="middle">
+    <text x="180" y="22" font-size="14" font-weight="700" fill="var(--ink)">NAV giảm khi lãi suất tăng 1 điểm %</text>
+    <text x="180" y="40" font-size="13" font-style="italic" fill="var(--ink-2)">Số giả định</text>
+  </g>
+
+  <text x="40" y="62" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink-2)">NAV ban đầu: 10.000 đồng</text>
+  <line x1="30" y1="68" x2="330" y2="68" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4" />
+
+  <rect x="70" y="68" width="80" height="25" rx="6" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="210" y="68" width="80" height="100" rx="6" fill="color-mix(in srgb, var(--accent) 12%, transparent)" stroke="var(--accent)" stroke-width="2.5" />
+
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" text-anchor="middle">
+    <text x="110" y="113" font-size="15" font-weight="700" fill="var(--ink)">−1%</text>
+    <text x="250" y="188" font-size="15" font-weight="700" fill="var(--accent)">−4%</text>
+    <text x="110" y="210" font-size="13" fill="var(--ink)">Kỳ hạn ngắn</text>
+    <text x="250" y="210" font-size="13" fill="var(--ink)">Kỳ hạn dài</text>
+  </g>
+</svg>

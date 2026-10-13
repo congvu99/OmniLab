@@ -1,0 +1,26 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-cl-ty-trong-troi-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-cl-ty-trong-troi-title">Danh mục 60% cổ phiếu và 40% trái phiếu; sau khi cổ phiếu tăng 30% và trái phiếu giữ nguyên, tỷ trọng trôi thành khoảng 66 và 34; khi lệch từ 5 điểm trở lên thì tái cân bằng, bán bớt cổ phiếu mua trái phiếu để về lại 60 và 40</title>
+
+  <rect x="20" y="8" width="14" height="14" rx="3" fill="var(--accent)" />
+  <rect x="130" y="8" width="14" height="14" rx="3" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink)">
+    <text x="40" y="20">Cổ phiếu</text>
+    <text x="150" y="20">Trái phiếu</text>
+  </g>
+
+  <rect x="30" y="56" width="180" height="22" rx="6" fill="var(--accent)" />
+  <rect x="210" y="56" width="120" height="22" rx="6" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="30" y="106" width="198" height="22" rx="6" fill="var(--accent)" />
+  <rect x="228" y="106" width="102" height="22" rx="6" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="30" y="156" width="180" height="22" rx="6" fill="var(--accent)" />
+  <rect x="210" y="156" width="120" height="22" rx="6" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+
+  <path d="M210 102 V132" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 3" />
+
+  <g font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">
+    <text x="30" y="50">Ban đầu: 60/40</text>
+    <text x="30" y="100">Cổ phiếu +30%: trôi thành 66/34</text>
+    <text x="30" y="150">Tái cân bằng: về lại 60/40</text>
+  </g>
+  <text x="180" y="206" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink-2)">Lệch từ 5 điểm trở lên thì mới tái cân bằng</text>
+</svg>

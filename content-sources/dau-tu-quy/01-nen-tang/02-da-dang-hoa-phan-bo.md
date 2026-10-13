@@ -1,0 +1,157 @@
+---
+nguon: OmniLab — Kiến thức quỹ và đầu tư
+tac-gia: OmniLab (tổng hợp từ nguồn công khai)
+ngay-viet: 2026-10-13
+trang-thai: hoan-thanh
+---
+
+# Đa dạng hoá, phân bổ tài sản và khẩu vị rủi ro
+
+## Câu hỏi đúng hơn
+
+Vài tuần sau, Minh quay lại gặp chị Thu, hớn hở: "Em tính dồn hết 100 triệu vào cổ phiếu công ty em đang làm. Em hiểu công ty rất rõ!"
+
+Chị Thu hỏi lại: "Nếu công ty gặp chuyện, em mất việc và mất luôn khoản tiền đó cùng lúc thì sao?"
+
+Minh gãi đầu. Chị nói tiếp: "Câu hỏi đúng không phải là mua gì. Câu hỏi đúng là: chia tiền thế nào, cho mục tiêu nào, trong bao lâu, và em chịu nổi mức giảm bao nhiêu."
+
+Bài này trả lời từng ý trong câu hỏi đó.
+
+## Đa dạng hoá: đừng để một bất ngờ đánh gục tất cả
+
+**Đa dạng hoá** (diversification) là chia tiền vào nhiều khoản đầu tư khác nhau để giảm rủi ro chung. Investor.gov mô tả đúng như vậy, và nhấn mạnh hai cấp: đa dạng giữa các loại tài sản (như cổ phiếu, trái phiếu, tiền gửi) và đa dạng ngay trong từng loại (nhiều doanh nghiệp, nhiều ngành).
+
+Ví dụ giả định, dễ hình dung nhất là hai quán gần nhau. Quán nước mía đông khách khi trời nắng. Quán cà phê đông khách khi trời mưa. Trên 100 triệu vốn:
+
+| Thời tiết | Quán nước mía | Quán cà phê | Chia đôi 50/50 |
+|---|---|---|---|
+| Nắng nhiều | lãi 20% | lỗ 10% | lãi 5% |
+| Mưa nhiều | lỗ 10% | lãi 20% | lãi 5% |
+
+Dồn hết vào quán nước mía, bạn nhận 120 triệu hoặc 90 triệu, tuỳ trời. Chia đôi, bạn nhận 105 triệu dù trời nắng hay mưa. Hai quán "gỡ" cho nhau.
+
+Đây là ví dụ cực đoan, ngoài đời hiếm khi hai khoản ngược nhau hoàn toàn. Nhưng nó cho thấy ý tưởng của Harry Markowitz (bài báo năm 1952, giải Nobel năm 1990). Rủi ro của cả **danh mục** (tập hợp các khoản đầu tư bạn đang nắm) không chỉ phụ thuộc từng khoản. Nó còn phụ thuộc cách các khoản cùng lên xuống.
+
+### Hai loại rủi ro, chỉ một loại giảm được
+
+Giáo sư Aswath Damodaran (Đại học New York) chia rủi ro làm hai nhóm:
+
+- **Rủi ro riêng** của một doanh nghiệp: một dự án làm tốt hoặc kém hơn dự kiến, đối thủ cạnh tranh mạnh hoặc yếu hơn dự đoán. Nắm nhiều khoản đầu tư thì mỗi khoản chiếm tỷ trọng nhỏ, và tin tốt xấu riêng lẻ bù trừ nhau. Nhóm này giảm được.
+- **Rủi ro thị trường** (còn gọi rủi ro hệ thống): lãi suất, lạm phát, tin tức nền kinh tế. Nó tác động lên nhiều doanh nghiệp cùng lúc. Mua thêm cổ phiếu cũng không xoá được.
+
+Vậy nên đa dạng hoá không phải "phép màu xoá mọi rủi ro". Nó chỉ gỡ phần rủi ro mà một cú sốc riêng lẻ gây ra.
+
+Quỹ đầu tư, đối tượng chính của lĩnh vực này, là một cách để cùng lúc nắm nhiều khoản đầu tư với số tiền nhỏ. Các bài sau sẽ nói kỹ hơn.
+
+## Phân bổ tài sản: chia tiền vào các "giỏ"
+
+**Phân bổ tài sản** (asset allocation) là cách chia tiền giữa các loại tài sản chính:
+
+- **Cổ phiếu**: phần sở hữu một doanh nghiệp. Giá thường dao động mạnh.
+- **Trái phiếu**: khoản cho vay đổi lấy lãi, người phát hành hứa trả lại gốc vào ngày đáo hạn (ngày khoản vay hết hạn).
+- **Tiền gửi và tiền mặt**: dễ rút nhất, ít biến động giá nhất.
+
+Chia thế nào còn tuỳ khả năng chịu rủi ro và chân trời đầu tư của từng người (hai ý này nằm ở các mục sau). Ba cách chia dưới đây chỉ để minh hoạ, không phải khuyến nghị:
+
+| Cách chia (số giả định) | Tiền gửi | Trái phiếu | Cổ phiếu |
+|---|---|---|---|
+| Thận trọng | 60% | 30% | 10% |
+| Cân bằng | 30% | 30% | 40% |
+| Tăng trưởng | 10% | 20% | 70% |
+
+### Con số 93,6% nghĩa là gì, và không có nghĩa là gì
+
+Có lẽ bạn sẽ gặp câu: "Phân bổ tài sản quyết định 93,6% lợi nhuận." Câu này đến từ một nghiên cứu có thật, nhưng bị hiểu sai rất nhiều.
+
+Năm 1986, Brinson, Hood và Beebower công bố nghiên cứu về 91 quỹ hưu trí doanh nghiệp lớn của Mỹ, dùng số liệu theo quý trong giai đoạn 1974–1983. Kết quả: trung bình 93,6% mức lên xuống theo quý của mỗi quỹ được giải thích bởi lợi nhuận của "danh mục chính sách". Danh mục chính sách là kế hoạch phân bổ dài hạn mà quỹ đã chọn.
+
+Chú ý từ khoá: **mức lên xuống theo thời gian**. Con số này không nói phân bổ tài sản tạo ra 93,6% số tiền lãi. John Nuttall (bài viết năm 2000) đã gom hơn 50 lần trích dẫn nghiên cứu này. Ông thấy chỉ một trường hợp trích đúng, còn lại đều trích sai kết quả.
+
+Hãy quay lại hai quán ở trên. Hỏi "vì sao doanh thu quán nước mía lên xuống theo tháng?", câu trả lời "do trời nắng hay mưa" có thể giải thích gần hết. Nhưng câu trả lời đó không cho biết quán A lãi hơn quán B bao nhiêu, và cũng không cho biết mỗi tháng quán kiếm được bao nhiêu tiền.
+
+Ibbotson và Kaplan (năm 2000) tách riêng các câu hỏi đó. Họ dùng số liệu của 94 quỹ cân bằng (quỹ đầu tư cả cổ phiếu lẫn trái phiếu) và 58 quỹ hưu trí ở Mỹ:
+
+| Câu hỏi | Phần do phân bổ tài sản giải thích |
+|---|---|
+| Lợi nhuận của một quỹ lên xuống theo thời gian | khoảng 90% |
+| Vì sao quỹ này lãi hơn quỹ kia (khác biệt giữa các quỹ) | khoảng 40% |
+
+Hai câu hỏi khác nhau nên cho hai con số khác nhau. Phân bổ tài sản giải thích phần lớn nhịp lên xuống của một quỹ, nhưng chỉ giải thích khoảng 40% chênh lệch giữa các quỹ. Các nghiên cứu trên đều dùng dữ liệu thị trường Mỹ, nên không thể suy trực tiếp cho Việt Nam. Chúng mô tả quá khứ, không hứa hẹn kết quả cho riêng bạn.
+
+## Khả năng chịu rủi ro và khẩu vị rủi ro
+
+FINRA định nghĩa mức chịu rủi ro là lượng rủi ro bạn **sẵn sàng** và **có thể** chấp nhận. Hai chữ này khác nhau:
+
+- **Khả năng chịu rủi ro** (có thể): tính bằng con số. Bạn mất bao nhiêu mà cuộc sống vẫn ổn?
+- **Khẩu vị rủi ro** (sẵn sàng): tính bằng cảm giác. Bạn thấy thoải mái với mức biến động nào?
+
+FINRA viết: mức rủi ro bạn có thể chịu về mặt kỹ thuật không nhất thiết bằng mức bạn thấy thoải mái. Bốn yếu tố ảnh hưởng: mục tiêu đầu tư, chân trời thời gian, mức phụ thuộc vào số tiền đó (ví dụ tiền học phí, tiền mua nhà), và tính cách.
+
+Hai ví dụ giả định:
+
+- **Minh**: lương ổn, chưa ai phụ thuộc, 100 triệu là tiền nhàn rỗi. Khả năng chịu rủi ro khá cao. Nhưng thấy tài khoản giảm 10% là anh mất ngủ, nên khẩu vị thấp.
+- **Bác Sáu**: thích "làm liều", khẩu vị cao. Nhưng 200 triệu của bác để đóng học phí cho con sau 2 năm. Khả năng chịu rủi ro thấp, vì số tiền có hạn dùng rõ ràng.
+
+Khi hai thứ lệch nhau, hãy cân nhắc cả hai, đừng chỉ nhìn mức mình chịu được về mặt số học.
+
+## Chân trời đầu tư
+
+**Chân trời đầu tư** (time horizon), theo Investor.gov, là số tháng, năm hay thập kỷ bạn cần đầu tư để đạt mục tiêu tài chính. FINRA cho biết chân trời dài thì chịu được rủi ro cao hơn, vì bạn có hàng chục năm để bù đắp khoản lỗ. Chân trời ngắn thì cần tài sản an toàn và **thanh khoản** (dễ đổi ra tiền nhanh mà không bị thiệt) hơn.
+
+Hai khoản tiền, hai chân trời:
+
+- Tiền đóng học phí sau 1 năm: chân trời ngắn. Cần chắc chắn có đủ vào đúng ngày.
+- Tiền dành cho tuổi hưu sau 30 năm: chân trời dài. Có thời gian chờ giá hồi phục.
+
+## Quỹ dự phòng: nền móng đi cùng việc đầu tư
+
+Investor.gov khuyên lập kế hoạch trả dứt nợ lãi suất cao và xây quỹ dự phòng song song với việc đầu tư. Trang này gọi quỹ dự phòng là "rainy-day money" (tiền để dành cho ngày mưa). Lý do có hai.
+
+**Thứ nhất, nợ lãi cao.** Giả sử bạn đang nợ thẻ hay vay tiêu dùng lãi 20%/năm (số giả định). Trả bớt nợ giống như nhận một khoản lãi chắc chắn 20%/năm, cao hơn hầu hết kỳ vọng đầu tư. Investor.gov viết: không chiến lược đầu tư nào luôn sinh lời bằng, hoặc ít rủi ro hơn, việc trả hết nợ lãi cao. Investor.gov dẫn ví dụ thẻ tín dụng ở Mỹ có thể tính lãi 18% trở lên (thị trường Mỹ, chỉ để tham khảo).
+
+**Thứ hai, tránh bán tháo đúng lúc xấu.** Theo Investor.gov, quỹ dự phòng giúp bạn qua cú sốc tài chính mà không phải đi vay hay bán khoản đầu tư ngoài ý muốn. Ví dụ giả định: Minh đầu tư hết 100 triệu. Tháng sau mẹ nhập viện cần tiền, đúng lúc giá vừa giảm mạnh. Anh buộc phải bán ngay, và khoản lỗ trên giấy thành lỗ thật. FINRA cũng nhắc tính cả chi phí thường ngày (nhà ở, ăn uống, đi lại) lẫn chi phí bất thường hay khẩn cấp (sửa nhà, sửa xe, y tế). Nhờ vậy bạn biết khoản nào thật sự là tiền có thể mất.
+
+Về việc nên dành bao nhiêu tháng chi tiêu, bài này không đưa con số, vì chưa có nguồn đáng tin để chốt một mức chung. Cách thực tế: liệt kê chi tiêu bắt buộc mỗi tháng và các khoản khẩn cấp có thể xảy ra trong hoàn cảnh của bạn.
+
+> **Mẹo:** Trước khi chọn bất kỳ sản phẩm nào, hãy viết ra ba dòng: tiền này dùng cho mục tiêu gì, khi nào cần dùng, và nếu tài khoản giảm 20% bạn có còn ngủ ngon không. Ba dòng đó là nền để phân bổ tài sản.
+
+## Tóm tắt nhanh
+
+- Đa dạng hoá giảm rủi ro riêng của từng khoản, nhưng không xoá được rủi ro thị trường.
+- Phân bổ tài sản là chia tiền giữa cổ phiếu, trái phiếu, tiền gửi. Cách chia tuỳ mục tiêu, khả năng chịu rủi ro và chân trời.
+- Số 93,6% (Brinson, Hood, Beebower, 1986; 91 quỹ hưu trí Mỹ, 1974–1983) đo mức lên xuống theo thời gian, không phải phần tiền lãi.
+- Ibbotson và Kaplan (2000): khoảng 90% nhịp lên xuống theo thời gian, nhưng chỉ khoảng 40% chênh lệch giữa các quỹ.
+- Khả năng chịu rủi ro (theo số liệu) khác khẩu vị rủi ro (theo cảm giác). Cần cân nhắc cả hai.
+- Lo trả nợ lãi cao và xây quỹ dự phòng song song khi đầu tư, để không phải bán tài sản vào lúc xấu.
+
+## Thuật ngữ trong bài
+
+| Thuật ngữ | Nghĩa dễ hiểu |
+|---|---|
+| Đa dạng hoá (diversification) | Chia tiền vào nhiều khoản khác nhau để một bất ngờ không đánh gục tất cả. |
+| Rủi ro riêng | Rủi ro chỉ của một doanh nghiệp; giảm được bằng cách nắm nhiều khoản. |
+| Rủi ro thị trường | Rủi ro tác động nhiều doanh nghiệp cùng lúc (lãi suất, lạm phát...); không xoá được bằng đa dạng hoá. |
+| Phân bổ tài sản (asset allocation) | Cách chia tiền giữa cổ phiếu, trái phiếu, tiền gửi. |
+| Khả năng chịu rủi ro | Mức thua lỗ bạn có thể chịu về mặt số liệu mà cuộc sống vẫn ổn. |
+| Khẩu vị rủi ro | Mức biến động bạn cảm thấy thoải mái. |
+| Chân trời đầu tư (time horizon) | Khoảng thời gian bạn đầu tư để đạt một mục tiêu. |
+| Thanh khoản (liquidity) | Mức độ dễ đổi một tài sản ra tiền nhanh mà không bị thiệt. |
+
+## Đọc thêm
+
+- ***Bước đi ngẫu nhiên trên phố Wall* (Burton G. Malkiel)**, bản tiếng Việt năm 2009 của NXB Lao động – Xã hội (theo hồ sơ Thư viện số Quốc hội); bản tái bản năm 2021 của NXB Lao Động (theo trang sách trên Tiki). *Vì sao nên đọc:* sách bàn về đa dạng hoá, chi phí đầu tư và quỹ chỉ số, đúng những chủ đề các bài sau sẽ đi tiếp. *Giúp được gì:* bạn thấy ý tưởng đa dạng hoá ở dạng một cuốn sách hoàn chỉnh. Bạn cũng có sẵn nền để đọc các bài về phí và quỹ chỉ số.
+
+## Nguồn
+
+- [FINRA — Know your risk tolerance](https://www.finra.org/investors/insights/know-your-risk-tolerance)
+- [Investor.gov — Time Horizon (thuật ngữ)](https://www.investor.gov/introduction-investing/investing-basics/glossary/time-horizon)
+- [Investor.gov — Investor Bulletin 2026 (đa dạng hoá, phân bổ tài sản)](https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins/investorgov-tips-2026-investor-bulletin)
+- [Investor.gov — World Investor Week 2023 (nợ lãi cao, quỹ dự phòng)](https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-alerts/WorldInvestorWeek2023)
+- [Damodaran (NYU Stern) — Understanding Risk](https://pages.stern.nyu.edu/~adamodar/pdfiles/invphiloh/risk.pdf)
+- [Econlib — Harry Markowitz](https://www.econlib.org/library/Enc/bios/Markowitz.html)
+- [Brinson, Hood, Beebower — Determinants of Portfolio Performance, Financial Analysts Journal, 1986 (bản in lại 1995)](https://indexacapital.com/bundles/unaiadvisor/docs/papers/1986-Brinson-Determinants-of-Portfolio-Performance-I.pdf?v=241)
+- [Nuttall — bàn về các trích dẫn nghiên cứu Brinson, Hood, Beebower](https://publish.uwo.ca/~jnuttall/asset.html)
+- [Ibbotson & Kaplan — Does Asset Allocation Policy Explain 40, 90, or 100 Percent of Performance? (CFA Institute, tóm tắt)](https://rpc.cfainstitute.org/research/financial-analysts-journal/2000/does-asset-allocation-policy-explain-40-90-or-100-percent-of-performance)
+- [Ibbotson & Kaplan — bản working paper (RePEc)](https://ideas.repec.org/p/ysm/somwrk/ysm215.html)
+- [Tiki — Bước đi ngẫu nhiên trên phố Wall (kiểm tra bản tiếng Việt)](https://tiki.vn/sach-buoc-di-ngau-nhien-tren-pho-wall-tai-ban-p100395623.html)
+- [Thư viện số Quốc hội — Bước đi ngẫu nhiên trên phố Wall (hồ sơ nhà xuất bản, năm)](https://thuvienso.quochoi.vn/handle/11742/95306?mode=full)

@@ -1,0 +1,19 @@
+<svg viewBox="0 0 360 220" width="100%" role="img" aria-labelledby="svg-dgq-nav-tien-thuc-nhan-title" xmlns="http://www.w3.org/2000/svg">
+  <title id="svg-dgq-nav-tien-thuc-nhan-title">NAV của quỹ đi từ 100 lên 200 rồi về 100 nên quỹ hòa vốn sau hai năm, nhưng Minh bỏ thêm 100 triệu ở đỉnh nên tổng cộng bỏ vào 200 triệu, còn 150 triệu, tức lỗ 25%</title>
+
+  <text x="180" y="40" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" font-weight="700" fill="var(--ink)">Đỉnh 200: Minh mua thêm 100 triệu</text>
+
+  <path d="M50 140 L180 66 L310 140" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+  <line x1="180" y1="74" x2="180" y2="140" stroke="var(--ink-2)" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 5" />
+  <circle cx="50" cy="140" r="5" fill="var(--surface-2)" stroke="var(--accent)" stroke-width="2" />
+  <circle cx="180" cy="66" r="6" fill="var(--accent)" stroke="var(--accent)" stroke-width="2" />
+  <circle cx="310" cy="140" r="5" fill="var(--surface-2)" stroke="var(--accent)" stroke-width="2" />
+
+  <text x="20" y="165" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink-2)">Bắt đầu: 100</text>
+  <text x="340" y="165" text-anchor="end" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="13" fill="var(--ink-2)">Sau 2 năm: 100</text>
+
+  <rect x="20" y="178" width="150" height="34" rx="8" fill="var(--surface-2)" stroke="var(--ink-2)" stroke-width="2" />
+  <rect x="190" y="178" width="150" height="34" rx="8" fill="color-mix(in srgb, var(--danger) 12%, transparent)" stroke="var(--danger)" stroke-width="2" />
+  <text x="95" y="200" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--ink)">Quỹ: 0%</text>
+  <text x="265" y="200" text-anchor="middle" font-family="'Be Vietnam Pro', system-ui, sans-serif" font-size="14" font-weight="700" fill="var(--danger)">Minh: −25%</text>
+</svg>

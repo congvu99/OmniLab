@@ -1,0 +1,149 @@
+---
+nguon: OmniLab — Kiến thức quỹ và đầu tư
+tac-gia: OmniLab (tổng hợp từ nguồn công khai)
+ngay-viet: 2026-10-13
+trang-thai: hoan-thanh
+---
+
+# Luật nói gì về quỹ và quyền của bạn
+
+## Một điều luật lạ trong điều lệ quỹ
+
+Minh quyết định đọc thử điều lệ của một quỹ. Anh gặp những cụm như "theo Điều 110 Luật Chứng khoán", "nhà đầu tư chuyên nghiệp", "đại hội nhà đầu tư". Đọc được nửa trang là anh thấy choáng.
+
+Chị Thu trấn an: "Luật về quỹ xếp thành tầng. Em đọc từ trên xuống, mỗi tầng trả lời một câu hỏi khác nhau. Còn quyền của em thì chỉ có vài ý chính, chị chỉ cho."
+
+Bài này tóm tắt các ý chính đó, bằng ví dụ có con số. Đây là kiến thức phổ thông, không thay thế việc đọc văn bản gốc hay hỏi chuyên gia pháp lý.
+
+## Luật xếp thành ba tầng
+
+Quỹ đầu tư chứng khoán được điều chỉnh chủ yếu bởi Mục 1 và Mục 2 Chương VII (Điều 99 đến 113) của Luật Chứng khoán. Từ luật đi xuống:
+
+| Tầng | Văn bản | Nói về gì |
+|---|---|---|
+| Luật | Luật Chứng khoán 54/2019/QH14, đã được sửa đổi bởi Luật 56/2024/QH15 (hiệu lực 01/01/2025) và Luật 142/2025/QH15 (hiệu lực 01/03/2026) | Nguyên tắc chung: quỹ là gì, quyền của nhà đầu tư, các bên, hạn chế đầu tư |
+| Nghị định | Nghị định 155/2020/NĐ-CP, sửa đổi bởi Nghị định 245/2025/NĐ-CP | Quy định chi tiết thi hành một số điều của Luật Chứng khoán |
+| Thông tư | Thông tư 98/2020/TT-BTC, sửa đổi bởi Thông tư 136/2025/TT-BTC | Hướng dẫn hoạt động và quản lý quỹ đầu tư chứng khoán |
+
+Theo Điều 100 khoản 3 của Luật, Chính phủ quy định điều kiện, hồ sơ và thủ tục thành lập quỹ. Theo khoản 4, Bộ trưởng Bộ Tài chính quy định về hoạt động của quỹ.
+
+**Lưu ý về thời điểm:** nội dung bài này tính đến tháng 10/2026. Theo Bộ Tài chính (ngày 30/6/2026), dự án Luật sửa đổi Luật Chứng khoán dự kiến được trình Quốc hội tại kỳ họp tháng 10/2026, nên quy định có thể thay đổi. Văn bản pháp luật được sửa nhiều lần, hãy tìm bản hợp nhất mới nhất khi cần trích dẫn.
+
+## Lập quỹ đại chúng: phải đủ người, đủ tiền
+
+Một quỹ đại chúng không thể chào bán rồi muốn lập thì lập. Điều 108 của Luật đặt ba mốc:
+
+- Có ít nhất **100 nhà đầu tư** tham gia, không tính nhà đầu tư chuyên nghiệp (giải thích ở cuối bài). Điều kiện 100 người này không áp dụng cho quỹ ETF (quỹ hoán đổi danh mục).
+- Tổng số CCQ bán được ít nhất **50 tỷ đồng**.
+- Thời gian huy động tối đa **90 ngày**.
+
+Huy động xong, công ty quản lý quỹ báo cáo UBCKNN trong **10 ngày**, kèm xác nhận của ngân hàng giám sát. Nếu không đạt, phải hoàn tiền cho nhà đầu tư trong **15 ngày** và công ty quản lý quỹ chịu chi phí.
+
+Ví dụ giả định: Quỹ X chào bán 90 ngày, thu hút 120 nhà đầu tư nhưng chỉ bán được 42 tỷ đồng. Chưa đủ 50 tỷ nên chưa đạt. Số tiền được hoàn lại cho 120 người, vì suốt thời gian huy động tiền nằm trong tài khoản phong tỏa do ngân hàng giám sát kiểm soát.
+
+## Hàng rào đầu tư: Điều 110
+
+Luật không để công ty quản lý quỹ đầu tư thế nào cũng được. Điều 110 khoản 1 đặt các **hạn chế đầu tư** cho quỹ đại chúng.
+
+Hai từ cần biết trước. **Tổ chức phát hành** là doanh nghiệp hay đơn vị phát hành cổ phiếu, trái phiếu. **Chứng khoán đang lưu hành** là phần cổ phiếu, trái phiếu tổ chức đó đã phát hành và đang nằm trong tay nhà đầu tư.
+
+Bảng dưới đây kèm ví dụ giả định cho một quỹ có tổng tài sản 200 tỷ đồng và không có nợ, nên NAV cũng là 200 tỷ:
+
+| Quy tắc | Ví dụ giả định |
+|---|---|
+| Không đầu tư vào chứng chỉ quỹ của chính quỹ đó | Quỹ không dùng tiền của quỹ để mua chính CCQ của mình |
+| Không quá 10% tổng giá trị chứng khoán đang lưu hành của một tổ chức phát hành (trừ trái phiếu Chính phủ) | Công ty M có chứng khoán đang lưu hành tổng 1.000 tỷ: quỹ nắm tối đa 100 tỷ |
+| Không quá 20% tổng giá trị tài sản quỹ vào chứng khoán của một tổ chức phát hành (trừ trái phiếu Chính phủ) | Tối đa 40 tỷ vào Công ty M |
+| Quỹ đóng: tối đa 10% tài sản vào bất động sản (trừ quỹ bất động sản). Quỹ mở: không đầu tư vào bất động sản | Quỹ đóng có tổng tài sản 100 tỷ: tối đa 10 tỷ vào bất động sản |
+| Tối đa 30% tài sản vào nhóm công ty có quan hệ sở hữu với nhau (ví dụ công ty mẹ và các công ty con) | Tối đa 60 tỷ vào một nhóm công ty có quan hệ sở hữu với nhau |
+| Không cho vay, không bảo lãnh | Quỹ không cho ai vay tiền, không đứng ra bảo lãnh khoản vay |
+| Các hạn chế khác do Bộ Tài chính quy định | Xem Thông tư 98/2020 và các văn bản sửa đổi |
+
+Quỹ phải giữ cùng lúc cả hai giới hạn 10% và 20%. Vì vậy, với Công ty M ở trên, quỹ chỉ được nắm tối đa 40 tỷ, không phải 100 tỷ.
+
+Còn chuyện vay tiền? Quỹ chỉ được vay ngắn hạn để trả chi phí cần thiết hoặc thanh toán giao dịch CCQ với nhà đầu tư. Tổng các khoản vay tối đa **5% NAV** tại mọi thời điểm, thời hạn vay tối đa **30 ngày** (Điều 110 khoản 2). Với NAV 200 tỷ, đó là 10 tỷ. Khoản 3 và khoản 4 có quy định về trường hợp vượt mức vì biến động thị trường và thời hạn điều chỉnh (3 tháng). Điều kiện chi tiết nằm trong nguyên văn điều luật.
+
+Những hàng rào này giới hạn việc dồn quá nhiều tiền vào một nơi hoặc đem tiền quỹ đi cho vay. Chúng không bảo đảm quỹ có lãi.
+
+> **Mẹo:** Khi đọc điều lệ và bản cáo bạch của một quỹ, tìm mục "hạn chế đầu tư" và so với Điều 110. Nếu một quỹ ghi mức hạn chế nới rộng hơn luật cho phép, đó là điều cần hỏi lại công ty quản lý quỹ.
+
+## Quyền và nghĩa vụ của nhà đầu tư
+
+Điều 101 của Luật liệt kê quyền của người nắm CCQ, trong đó có:
+
+- Hưởng lợi từ quỹ theo tỷ lệ vốn góp.
+- Hưởng phần tài sản còn lại khi quỹ thanh lý.
+- Yêu cầu công ty quản lý quỹ mua lại CCQ của quỹ mở.
+- Khởi kiện công ty quản lý quỹ hoặc ngân hàng giám sát khi họ vi phạm.
+- Thực hiện quyền thông qua đại hội nhà đầu tư.
+- Chuyển nhượng CCQ theo điều lệ quỹ.
+
+Nghĩa vụ cũng đơn giản: chấp hành quyết định của đại hội nhà đầu tư và thanh toán đủ tiền mua CCQ.
+
+**Đại hội nhà đầu tư** (Điều 102) là cơ quan quyết định cao nhất của quỹ: bầu và bãi nhiệm Ban đại diện, quyết định thay công ty quản lý quỹ hay ngân hàng giám sát, mức phí, sửa điều lệ và giải thể quỹ.
+
+Hai quy định thú vị khác:
+
+- **Quỹ mở:** công ty quản lý quỹ mua lại CCQ theo tần suất và thời gian ghi trong điều lệ (Điều 111 khoản 1). Một số trường hợp được tạm ngừng mua lại, như bất khả kháng, hoặc chứng khoán trong danh mục bị đình chỉ giao dịch nên không tính được NAV (khoản 2). Khi đó công ty phải báo UBCKNN trong 24 giờ và mua lại tiếp khi sự việc chấm dứt (khoản 3).
+- **Quỹ đóng:** muốn tăng vốn phải được UBCKNN chấp thuận (Điều 112 khoản 1). Điều kiện gồm, ví dụ: lợi nhuận năm liền trước là số dương, và phương án phát hành thêm được đại hội nhà đầu tư thông qua.
+
+## Khi quỹ giải thể
+
+Điều 104 khoản 1 nêu các trường hợp giải thể quỹ, ví dụ:
+
+- Hết thời hạn hoạt động, hoặc đại hội nhà đầu tư quyết định giải thể sớm.
+- Công ty quản lý quỹ hoặc ngân hàng giám sát bị thu hồi giấy phép, giải thể hoặc phá sản mà không có đơn vị thay thế trong 2 tháng.
+- NAV của quỹ dưới 10 tỷ đồng liên tục trong 6 tháng.
+
+Tiền thu được, sau khi trừ chi phí giải thể, được trả theo thứ tự (khoản 4). Trước hết là nghĩa vụ tài chính với Nhà nước. Tiếp theo là các khoản phải trả cho công ty quản lý quỹ, ngân hàng giám sát và các khoản phải trả khác. Phần còn lại chia cho nhà đầu tư theo tỷ lệ vốn góp.
+
+Ví dụ giả định: một quỹ giải thể, sau khi trừ chi phí còn 50 tỷ đồng. Trả nghĩa vụ với Nhà nước 1 tỷ và khoản phải trả công ty quản lý quỹ, ngân hàng giám sát 2 tỷ, còn 47 tỷ. Quỹ có 4 triệu CCQ, Minh giữ 1.000 CCQ (0,025%), nên nhận khoảng 11,75 triệu đồng.
+
+## Nhà đầu tư chuyên nghiệp và quỹ thành viên
+
+Nếu bạn đọc điều lệ quỹ, sẽ thấy chữ "nhà đầu tư chuyên nghiệp". **Quỹ thành viên** là quỹ có từ 2 đến 99 thành viên góp vốn và chỉ gồm nhà đầu tư chuyên nghiệp (Luật CK, Điều 4 khoản 41 và Điều 113).
+
+Theo Điều 11 khoản 1, một cá nhân có thể được coi là nhà đầu tư chuyên nghiệp nếu thuộc một trong các trường hợp, ví dụ:
+
+- Có chứng chỉ hành nghề chứng khoán.
+- Nắm danh mục chứng khoán niêm yết hoặc đăng ký giao dịch từ 2 tỷ đồng trở lên, có xác nhận của công ty chứng khoán.
+- Có thu nhập chịu thuế năm gần nhất từ 1 tỷ đồng trở lên.
+
+Đây là bản rút gọn, điều kiện đi kèm nằm trong nguyên văn điều luật.
+
+Ví dụ giả định: anh Hùng có danh mục chứng khoán 1,5 tỷ đồng, thu nhập chịu thuế năm gần nhất 900 triệu đồng và không có chứng chỉ hành nghề. Anh chưa đạt hai ngưỡng tiền ở trên, nên với ba tiêu chí này anh chưa phải nhà đầu tư chuyên nghiệp.
+
+### Đừng nhầm với bảo hiểm hưu trí bổ sung
+
+Bảo hiểm hưu trí bổ sung (trước đây gọi là chương trình hưu trí bổ sung tự nguyện) thuộc một khung pháp lý riêng. Căn cứ là Luật Bảo hiểm xã hội 41/2024/QH15 và Nghị định 85/2026/NĐ-CP. Nghị định này có hiệu lực từ 10/5/2026 và thay Nghị định 88/2016/NĐ-CP (Điều 44 khoản 1). Nghị định ghi rõ không điều chỉnh hoạt động quản lý quỹ đầu tư chứng khoán (Điều 1 khoản 2). Bài này và cả lĩnh vực chỉ nói về quỹ đầu tư chứng khoán.
+
+## Tóm tắt nhanh
+
+- Luật về quỹ xếp ba tầng: Luật Chứng khoán, Nghị định 155/2020, Thông tư 98/2020. Cả ba đều đã được sửa đổi; hãy đọc bản hợp nhất.
+- Lập quỹ đại chúng cần ít nhất 100 nhà đầu tư, 50 tỷ đồng, huy động trong 90 ngày; không đạt phải hoàn tiền trong 15 ngày.
+- Điều 110 đặt hàng rào đầu tư. Quỹ nắm tối đa 10% chứng khoán đang lưu hành của một tổ chức phát hành, và đặt tối đa 20% tài sản vào tổ chức đó. Tối đa 30% vào một nhóm công ty có quan hệ sở hữu; không cho vay hay bảo lãnh.
+- Nhà đầu tư được hưởng lợi theo tỷ lệ vốn góp và bỏ phiếu ở đại hội nhà đầu tư. Bạn còn có quyền đòi mua lại CCQ quỹ mở và khởi kiện khi bị vi phạm.
+- Khi giải thể, tiền được trả theo thứ tự: Nhà nước, công ty quản lý quỹ và ngân hàng giám sát, rồi nhà đầu tư.
+- Tính đến tháng 10/2026, dự án sửa Luật Chứng khoán dự kiến được trình Quốc hội; hãy theo dõi văn bản mới.
+
+## Thuật ngữ trong bài
+
+| Thuật ngữ | Nghĩa dễ hiểu |
+|---|---|
+| UBCKNN | Ủy ban Chứng khoán Nhà nước, cơ quan thuộc Bộ Tài chính. |
+| Tổ chức phát hành | Doanh nghiệp hay đơn vị phát hành cổ phiếu, trái phiếu. |
+| Hạn chế đầu tư | Giới hạn luật đặt ra cho cách quỹ được đầu tư. |
+| Văn bản hợp nhất | Bản gộp các lần sửa đổi vào một văn bản, dễ đọc hơn. |
+| Quỹ thành viên | Quỹ có 2 đến 99 thành viên, chỉ gồm nhà đầu tư chuyên nghiệp. |
+| Nhà đầu tư chuyên nghiệp | Nhà đầu tư thoả điều kiện của Điều 11 Luật Chứng khoán. |
+| Giải thể quỹ | Chấm dứt hoạt động quỹ và chia lại tài sản còn lại. |
+
+## Nguồn
+
+- [Luật Chứng khoán (văn bản hợp nhất, Công báo số 269, 12/5/2026), Chương VII, Điều 4, 11, 99 đến 113](https://cdn.thuvienphapluat.vn/uploads/Hoidapphapluat/2026/NNL/1105/2026_269_102_VBHN-VPQH.pdf)
+- [Nghị định 245/2025/NĐ-CP sửa đổi Nghị định 155/2020/NĐ-CP (PDF)](https://legalzone.vn/wp-content/uploads/legal-sources/securities/nghi-dinh-245-2025-nd-cp-sua-doi-nghi-dinh-155-phan-1.pdf)
+- [Thông tư 98/2020/TT-BTC — toàn văn (CaseLaw)](https://caselaw.vn/van-ban-phap-luat/372169-thong-tu-so-98-2020-tt-btc-ngay-16-11-2020-cua-bo-truong-bo-tai-chinh-huong-dan-ve-hoat-dong-va-quan-ly-quy-dau-tu-chung-khoan)
+- [Thông tư 136/2025/TT-BTC sửa đổi Thông tư 98/2020 (LuatVietnam)](https://luatvietnam.vn/dau-tu/thong-tu-136-2025-tt-btc-sua-doi-bo-sung-mot-so-dieu-cua-thong-tu-98-2020-tt-btc-ngay-16-11-2020-cua-bo-truong-bo-tai-chinh-huong-dan-hoat-dong-va-quan-ly-quy-dau-tu-chung-khoan-422831-d1.html)
+- [Luật Bảo hiểm xã hội 41/2024/QH15 (LuatVietnam)](https://luatvietnam.vn/lao-dong/luat-bao-hiem-xa-hoi-2024-360809-d1.html)
+- [Nghị định 85/2026/NĐ-CP về bảo hiểm hưu trí bổ sung](https://ketoananpha.vn/nghi-dinh-85-2026-nd-cp)
+- [VietnamPlus — Dự án Luật Chứng khoán sửa đổi sẽ trình Quốc hội xem xét tại Kỳ họp tháng 10 (30/6/2026)](https://www.vietnamplus.vn/du-an-luat-chung-khoan-sua-doi-se-trinh-quoc-hoi-xem-xet-tai-ky-hop-thang-10-post1121425.vnp)
