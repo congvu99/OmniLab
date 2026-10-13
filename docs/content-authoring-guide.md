@@ -204,9 +204,9 @@ Dùng khi phát hiện lỗi trong **nội dung gốc** (dịch sai nghĩa, sai 
 </ReviewNote>
 ```
 
-## Lĩnh vực tự biên soạn (`nghe-tai-chinh`)
+## Lĩnh vực tự biên soạn (`nghe-tai-chinh`, `dau-tu-quy`)
 
-Khác với hai lĩnh vực dịch/chuyển đổi, nội dung `nghe-tai-chinh` do OmniLab tự viết. Quy ước:
+Khác với hai lĩnh vực dịch/chuyển đổi, nội dung `nghe-tai-chinh` và `dau-tu-quy` do OmniLab tự viết. Quy ước (ví dụ dưới đây lấy từ `nghe-tai-chinh`; `dau-tu-quy` khác ở các điểm ghi cuối mục):
 
 - **Nguồn "gốc" là snapshot markdown** trong `content-sources/nghe-tai-chinh/<NN-module>/<NN-slug>.md`. MDX = snapshot + `<Disclaimer />` + `<RealLife>`. Sửa nội dung chính thì sửa **cả hai** file, nếu không `verify:fidelity` báo lệch.
 - **Không đặt `isFinance`** trong YAML: cờ đó bật chiến lược so khớp với `content-sources/finance/index.html`. Thay vào đó mỗi bài tự chèn `<Disclaimer />` ngay dưới frontmatter (extractor bỏ qua component này).
@@ -215,3 +215,11 @@ Khác với hai lĩnh vực dịch/chuyển đổi, nội dung `nghe-tai-chinh` 
 - **Số khối `<RealLife>`:** 1–3 mỗi bài (thay cho 3–5), vì câu chuyện dẫn của Lan đã đóng vai ví dụ chính; mỗi bài có 1–2 `<Figure added>` trong `src/assets/illustrations/nghe-tai-chinh/`.
 - **Văn bản pháp luật:** ghi kèm văn bản sửa đổi còn hiệu lực (ví dụ Luật 56/2024/QH15 sửa Luật Chứng khoán) và khuyên đọc văn bản hợp nhất.
 - **Số liệu thời sự** (lãi suất, thuế suất, mức phạt cụ thể) chỉ ghi khi kèm văn bản/nguồn và ngày; ví dụ tính toán ghi "số giả định".
+
+### Riêng `dau-tu-quy` (Quỹ và đầu tư)
+
+- Nhân vật hư cấu: **Minh** (28 tuổi, kỹ sư phần mềm, lần đầu đầu tư) và **chị Thu** (nhiều năm làm phân tích đầu tư), giới thiệu ở `nen-tang/rui-ro-loi-nhuan-lai-kep`.
+- Ưu tiên **dễ hiểu**: câu ngắn, thuật ngữ giải thích bằng lời thường ở lần đầu, mỗi khái niệm chính có ví dụ số giả định. Mỗi bài có `## Tóm tắt nhanh` và `## Thuật ngữ trong bài`.
+- Không nêu tên quỹ, công ty quản lý quỹ, ngân hàng, app; được nêu cơ quan nhà nước, chỉ số do sở giao dịch công bố và tổ chức nghiên cứu.
+- Bằng chứng nước ngoài ghi rõ thị trường và kỳ dữ liệu (ví dụ "thị trường Mỹ, 10 năm đến 31/12/2025").
+- Hướng dẫn writer đầy đủ: `plans/261013-fund-investing-domain/writer-brief.md`.

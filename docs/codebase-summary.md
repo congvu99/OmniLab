@@ -9,12 +9,12 @@
 | **Framework** | Astro 7 (static) + MDX, vanilla TypeScript (islands) |
 | **Design** | Studio (dark-first, Volt signature, depth motion, command palette) |
 | **Deploy** | VPS Docker Compose (app + sync) là chính; Railpack + Caddy (Vibe Deploy Nhân Hòa) là phương án cũ |
-| **Nội dung** | 3 domain (kiến-trúc 27, tài-chính 23, nghề-tài-chính 14 bài), YAML + MDX |
+| **Nội dung** | 4 domain (kiến-trúc 27, tài-chính 23, nghề-tài-chính 14, đầu-tư-quỹ 14 bài), YAML + MDX |
 | **Lưu trữ** | localStorage (`omnilab:v1:state`, payload v2) + fallback in-memory; tài khoản đồng bộ qua sidecar Node + SQLite (`server/sync/`) |
 | **Tìm kiếm** | MiniSearch + diacritic folding, index lazy-load |
-| **Icon** | 32-icon custom sprite (Studio monoline), no Lucide |
+| **Icon** | 33-icon custom sprite (Studio monoline), no Lucide |
 | **Fonts** | Be Vietnam Pro + JetBrains Mono (@fontsource) |
-| **SVG** | 97 minh họa + 44 ảnh gốc |
+| **SVG** | 123 minh họa + 44 ảnh gốc |
 | **Lưu ý v1** | Offline không hỗ trợ; progress = localStorage (private mode = in-memory); đồng bộ chỉ khi đăng nhập và có sidecar |
 
 ## Cấu trúc thư mục
@@ -37,7 +37,7 @@ src/
 │   ├── shell/                      # Layout shells (app-layout, reader-layout)
 │   └── domain/                     # Domain cards, headers, art
 ├── content/
-│   ├── domains/: kien-truc.yaml, tai-chinh.yaml, nghe-tai-chinh.yaml
+│   ├── domains/: kien-truc.yaml, tai-chinh.yaml, nghe-tai-chinh.yaml, dau-tu-quy.yaml
 │   └── lessons/: MDX by domain/module/slug
 ├── layouts/                        # Astro layouts (app-layout, reader-layout)
 ├── lib/
@@ -78,13 +78,14 @@ Caddyfile                           # Static + /api/* proxy tới omnilab-sync:3
 - `kien-truc`: 27 bài, 4 modules, CC BY 4.0
 - `tai-chinh`: 23 bài, 1 module (12 tuần), license pending
 - `nghe-tai-chinh`: 14 bài, 7 modules (tổng quan + 6 nhóm kỹ năng), OmniLab tự biên soạn; snapshot ở `content-sources/nghe-tai-chinh/`, mỗi bài tự chèn `<Disclaimer />` (domain không đặt `isFinance`)
+- `dau-tu-quy`: 14 bài, 7 modules (nền tảng, quỹ là gì, loại quỹ, phí–thuế–tài liệu, đánh giá, chiến lược, an toàn–nguồn học), cùng khuôn với `nghe-tai-chinh`; snapshot ở `content-sources/dau-tu-quy/`, nhân vật hư cấu Minh và chị Thu
 
 **Lessons** (MDX):
 - Path: `src/content/lessons/{domain}/{module}/{NN-slug}.mdx`
 - Lesson ID (bất biến): `{domain}/{module}/{slug}`
 - URL: `/hoc/{domain}/{module}/{slug}`
 - Frontmatter: domain, module, order, title, summary, source (snapshot), examplesReviewed (false→true by fact-check agent)
-- 196 khối RealLife (≤ 90 tiếng = âm tiết, bài ngắn 1-2 khối; `nghe-tai-chinh` 1–3 khối/bài vì câu chuyện dẫn đã mang ví dụ)
+- 221 khối RealLife (≤ 90 tiếng = âm tiết, bài ngắn 1-2 khối; `nghe-tai-chinh` và `dau-tu-quy` 1–3 khối/bài vì câu chuyện dẫn đã mang ví dụ)
 
 **Verify-fidelity**: Gate trong `pnpm build`, loại bỏ `<RealLife>`, `<Figure added>`, `<Disclaimer>` → so sánh snapshot giữ nguyên nội dung gốc.
 

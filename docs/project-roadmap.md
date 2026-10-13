@@ -1,5 +1,14 @@
 # Lộ trình dự án
 
+## Lĩnh vực "Quỹ và đầu tư" (2026-10-13)
+
+Trạng thái: 14 bài (7 module × 2), 26 SVG, 25 khối RealLife. Nghiên cứu 6 nhóm + fact-check độc lập 4 nhóm; báo cáo trong `plans/261013-fund-investing-domain/reports/`.
+
+Việc còn mở:
+- Văn bản pháp luật đổi nhanh trong 2026 (Luật Thuế TNCN 109/2025 + NĐ 253/2026; TT 136/2025 sửa TT 98/2020; dự thảo sửa Luật Chứng khoán dự kiến hiệu lực 2027). Rà lại các bài `quy-la-gi`, `chi-phi-tai-lieu`, `an-toan-nguon-hoc` khi có văn bản mới.
+- Số liệu thời sự có ngày (CPI 9/2026, Morningstar 2026): cập nhật theo kỳ phát hành mới.
+
+
 ## Tài khoản và đồng bộ tiến độ (2026-10-12)
 
 Trạng thái: code và test xong trên nhánh `feat/progress-sync`. Chưa deploy. Trước khi coi là xong cần làm checklist VPS (chương 4, 6 trong [deployment-vps-guide.html](deployment-vps-guide.html)).
@@ -26,9 +35,9 @@ Trạng thái: v1 code đầy đủ + Studio redesign (dark-first graphite, Volt
 
 | Hạng mục | Kết quả |
 |---|---|
-| Lĩnh vực / module / bài | 3 / 13 (Kiến trúc 4, Tài chính 6, Tài chính nghề 7) / 64 (27 + 23 + 14) |
-| Ví dụ đời sống (`<RealLife>`) | 196 khối, cả 64 bài `examplesReviewed: true` sau fact-check agent |
-| Minh hoạ | 97 SVG mới (inline, theo theme; 19 cho `nghe-tai-chinh`) + 44 ảnh gốc có ghi nguồn |
+| Lĩnh vực / module / bài | 4 / 20 (Kiến trúc 4, Tài chính 6, Tài chính nghề 7, Quỹ và đầu tư 7) / 78 (27 + 23 + 14 + 14) |
+| Ví dụ đời sống (`<RealLife>`) | 221 khối, cả 78 bài `examplesReviewed: true` sau fact-check agent |
+| Minh hoạ | 123 SVG mới (inline, theo theme; 19 cho `nghe-tai-chinh`, 26 cho `dau-tu-quy`) + 44 ảnh gốc có ghi nguồn |
 | Giao diện | iOS 26 (Apple HIG): grouped background, glass material bar, radius 22/16/12, Be Vietnam Pro, 44px tap target, ≥4.5:1 contrast |
 | Desktop 3 cột | >=1024px sidebar (264px) + main (68ch) | >=1280px + reader aside (296px, sticky, scroll independent); TOC scrollspy, progress, actions |
 | Tiến độ, bookmark, Học tiếp | `localStorage` (`omnilab:v1:state`, payload v2 từ 2026-10-12), fallback in-memory ở private mode; islands bind + sync |

@@ -2,15 +2,16 @@
 
 App học tập đa lĩnh vực, giao diện kiểu ứng dụng iPhone (ưu tiên mobile, có bản desktop). Nội dung gốc được giữ nguyên, bổ sung ví dụ đời sống và minh hoạ SVG để dễ hiểu hơn.
 
-Có 3 lĩnh vực:
+Có 4 lĩnh vực:
 
 | Lĩnh vực | Số bài | Nguồn |
 |---|---|---|
 | Kiến trúc hệ thống | 27 | Bản dịch tiếng Việt của [The System Design Primer](https://github.com/donnemartin/system-design-primer) |
 | Tài chính cá nhân | 23 | Lộ trình nền tảng tài chính 12 tuần (sổ tay thực hành) |
 | Nghề tài chính | 14 | OmniLab tự biên soạn: 6 nhóm kỹ năng ngoài kiến thức tài chính (dữ liệu, vĩ mô, pháp lý, hành vi, giao tiếp, phân tích ngành), mỗi nhóm một bài "hiểu nhanh" và một bài quy trình học, nguồn và sách tiếng Việt nên đọc |
+| Quỹ và đầu tư | 14 | OmniLab tự biên soạn: đầu tư qua chứng chỉ quỹ cho người mới — nền tảng, cơ chế và pháp lý quỹ ở Việt Nam, các loại quỹ, phí và thuế (Luật Thuế TNCN 2025), đánh giá quỹ, chiến lược và hành vi, nhận diện lừa đảo, nguồn học |
 
-Tổng cộng 196 khối "Ví dụ đời sống", 97 minh hoạ SVG mới, 44 ảnh gốc.
+Tổng cộng 221 khối "Ví dụ đời sống", 123 minh hoạ SVG mới, 44 ảnh gốc.
 
 ## Tính năng
 
@@ -70,5 +71,6 @@ pnpm sync:dev     # máy chủ đồng bộ local: http://127.0.0.1:3001, dữ l
 
 - Nội dung Kiến trúc hệ thống: The System Design Primer — Donne Martin và cộng đồng, giấy phép [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Ảnh gốc giữ nguyên chú thích nguồn.
 - Nội dung Tài chính cá nhân: giấy phép chưa xác định (chờ chủ sở hữu xác nhận).
+- Nội dung Quỹ và đầu tư: OmniLab tự biên soạn từ nguồn công khai (văn bản pháp luật Việt Nam qua Công báo, SEC, FINRA, nghiên cứu gốc của Vanguard, Morningstar, Barber & Odean...), mỗi bài ghi nguồn ở cuối; nghiên cứu 2 vòng và fact-check độc lập 2026-10-13 (báo cáo trong `plans/261013-fund-investing-domain/reports/`). Văn bản pháp luật và thuế ghi "tính đến tháng 10/2026".
 - Nội dung Nghề tài chính: OmniLab tự biên soạn từ nguồn công khai (CFA Institute, WEF, ACCA, IMF, văn bản pháp luật Việt Nam), mỗi bài ghi nguồn ở cuối; đã qua fact-check độc lập 2026-10-01 (3 báo cáo trong `plans/261001-finance-expert-skills-domain/reports/`).
 - Nội dung chỉ nhằm mục đích học tập, không phải tư vấn tài chính hay đầu tư.

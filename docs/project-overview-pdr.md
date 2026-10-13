@@ -64,6 +64,7 @@ Nền tảng học tập mã nguồn mở, bền vững, cho developer Việt. �
 | Kiến trúc hệ thống | `kien-truc` | 27 | Nền tảng (6), Đánh đổi (5), Chủ đề (10), Bài tập (8) | CC BY 4.0 |
 | Tài chính cá nhân | `tai-chinh` | 23 | 12 tuần (23 bài) | Chờ xác nhận |
 | Nghề tài chính | `nghe-tai-chinh` | 14 | Tổng quan (2), 6 nhóm kỹ năng × 2 bài | Nội dung tự biên soạn của OmniLab |
+| Quỹ và đầu tư | `dau-tu-quy` | 14 | 7 module × 2 bài | Nội dung tự biên soạn của OmniLab |
 
 **Quy trình**: Writer agent viết `<RealLife>` + SVG → Fact-check agent review (examplesReviewed: true). User ủy quyền 2026-09-28, tất cả 50 bài đã review ✓
 
@@ -122,6 +123,7 @@ Nền tảng học tập mã nguồn mở, bền vững, cho developer Việt. �
 | Kiến trúc hệ thống (27 bài + SVG minh hoạ) | CC BY 4.0 (Donne Martin, system-design-primer.com) |
 | Tài chính cá nhân (23 bài) | **Chờ xác nhận** |
 | Nghề tài chính (14 bài) | Tự biên soạn; trích dẫn nguồn công khai trong từng bài |
+| Quỹ và đầu tư (14 bài) | Tự biên soạn; trích dẫn nguồn công khai trong từng bài |
 | App code (Astro, scripts) | TBD (MIT/Apache 2.0 likely) |
 
 ## Câu hỏi mở
