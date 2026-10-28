@@ -48,6 +48,28 @@
 		}
 	}
 
+	# --- Lesson audio ---
+	# Written by the tts worker, mounted read-only into the app at /srv/audio
+	# (compose). Only manifest.json and file names matching AUDIO_FILE_PATTERN
+	# (src/lib/audio-manifest.ts) are served; everything else under /audio is a
+	# bare 404 (handle_errors). Without the mount (Railpack, no tts) the manifest
+	# is a 404 too, so the player stays hidden.
+	# Nested handles: allowlisted names first, everything else 404, without
+	# relying on how same-named directives get sorted. The path is not
+	# stripped (root is the parent of audio/), so handle_errors still sees
+	# /audio/* and answers the bare 404 below. AUDIO_ROOT only exists to try
+	# this Caddyfile on a dev machine (a dir that contains audio/).
+	handle /audio/* {
+		@audioFile path_regexp ^/audio/(manifest\.json|[a-z0-9-]+\.[a-z0-9-]+\.[a-z0-9-]+\.[0-9a-f]{12}\.m4a)$
+		handle @audioFile {
+			root * {$AUDIO_ROOT:/srv}
+			file_server
+		}
+		handle {
+			error 404
+		}
+	}
+
 	# --- Cache headers ---
 	# Astro fingerprints /_astro/* assets by content hash, so they are safe to
 	# cache forever. Everything else (clean-URL HTML, JSON indexes, manifest,
@@ -57,7 +79,19 @@
 	@astroAssets path /_astro/*
 	header @astroAssets Cache-Control "public, max-age=31536000, immutable"
 
-	@notHashed not path /_astro/* /api/*
+	# Audio file names carry the audio key, so a name never changes content.
+	# Content-Type is forced (not left to the OS MIME table): Safari needs
+	# audio/mp4 to play. manifest.json stays no-cache via @notHashed.
+	@audioMedia path_regexp ^/audio/.+\.m4a$
+	header @audioMedia {
+		Content-Type "audio/mp4"
+		Cache-Control "public, max-age=31536000, immutable"
+	}
+
+	@notHashed {
+		not path /_astro/* /api/*
+		not path_regexp ^/audio/.+\.m4a$
+	}
 	header @notHashed Cache-Control "no-cache"
 
 	# --- Security headers (all responses) ---
@@ -82,6 +116,7 @@
 		# ever rendered from user input (the account island writes the username
 		# with textContent), so inline-style injection has no attack path.
 		# Fonts are self-hosted.
+		# Lesson <audio> is same-origin (/audio/*), covered by default-src 'self'.
 		Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none';"
 		# reverse_proxy adds Via on /api responses; deferred here so it runs last.
 		-Via
@@ -106,6 +141,16 @@
 			header Content-Type "application/json"
 			# \{ escapes the placeholder opener so the JSON survives the replacer.
 			respond `\{"code":"unavailable"}` 503
+		}
+
+		# Audio: bare 404, never the HTML 404 page (root may point at the audio
+		# mount here). Headers already set for .m4a (audio/mp4, immutable) are
+		# overwritten so a 404 is neither typed as audio nor cached.
+		@audio path /audio/*
+		handle @audio {
+			header Cache-Control "no-store"
+			header Content-Type "text/plain; charset=utf-8"
+			respond 404
 		}
 
 		handle {

@@ -30,7 +30,26 @@ USER node
 EXPOSE 3000
 CMD ["node", "server/sync/sync-server-entry.ts"]
 
-# Stage 3 (last, default): phục vụ dist bằng đúng Caddyfile của repo (CSP, cache, 404 thật, /health)
+# Stage 3: TTS worker (lesson audio). Same zero-deps Node pin as sync; ffmpeg is
+# installed in this image only. Copies exactly what the entry imports at runtime
+# plus the speech scripts produced by the site build, so `--target tts` pulls the
+# `build` stage and needs the SITE_URL build arg too. No port, no HTTP
+# HEALTHCHECK: the worker serves nothing; its state is in the logs and the manifest.
+# The Gemini key is runtime env only (compose), never a build arg.
+FROM node:24.15-alpine AS tts
+RUN apk add --no-cache ffmpeg
+ENV NODE_ENV=production
+WORKDIR /app
+COPY package.json ./
+COPY server/tts ./server/tts
+COPY src/lib/speech-script-contract.ts src/lib/audio-manifest.ts src/lib/progress-state.ts ./src/lib/
+COPY --from=build /app/dist/tts-scripts.json ./tts-scripts.json
+# /data/audio is the only writable path (bind mount in compose); uid 1000 = node.
+RUN mkdir -p /data/audio && chown node:node /data/audio
+USER node
+CMD ["node", "server/tts/tts-worker-entry.ts"]
+
+# Stage 4 (last, default): phục vụ dist bằng đúng Caddyfile của repo (CSP, cache, 404 thật, /health)
 FROM caddy:2-alpine AS app
 ENV PORT=8080
 WORKDIR /srv

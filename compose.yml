@@ -14,7 +14,12 @@ services:
       web:
         aliases: [omnilab]
       internal: {}
+    volumes:
+      # Lesson audio: only the published part (manifest.json + .m4a), read-only.
+      # Not under /data (tmpfs). The app never sees work/ nor the sync data dir.
+      - ${OMNILAB_AUDIO_DIR:-/srv/data/omnilab-audio}/public:/srv/audio:ro
     # service_started: the static site never waits for (or depends on) sync health.
+    # No depends_on tts: the site never waits for the audio worker either.
     depends_on:
       sync:
         condition: service_started
@@ -47,8 +52,49 @@ services:
       retries: 3
     mem_limit: 192m
 
+  tts:
+    # Optional lesson-audio worker. Pulls the `build` stage (speech scripts), hence SITE_URL.
+    build:
+      context: .
+      target: tts
+      args:
+        SITE_URL: ${SITE_URL:?SITE_URL chưa đặt trong .env}
+    image: omnilab-tts:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs: [/tmp]
+    # Outbound only (Gemini API): never on `web` or `internal`, never published (no ports:).
+    networks: [egress]
+    volumes:
+      # Own host dir, separate from the sync data; must be owned by uid 1000 (and its public/).
+      - ${OMNILAB_AUDIO_DIR:-/srv/data/omnilab-audio}:/data/audio
+    environment:
+      # Empty = unset: no key -> the worker only cleans up and sleeps; other empties -> code defaults.
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      TTS_VOICE: ${TTS_VOICE:-}
+      TTS_MODEL: ${TTS_MODEL:-}
+      TTS_STYLE: ${TTS_STYLE:-}
+      TTS_MAX_CHUNK_CHARS: ${TTS_MAX_CHUNK_CHARS:-}
+      TTS_CHARS_PER_SEC: ${TTS_CHARS_PER_SEC:-}
+      TTS_MIN_INTERVAL_MS: ${TTS_MIN_INTERVAL_MS:-}
+      TTS_RESCAN_MINUTES: ${TTS_RESCAN_MINUTES:-}
+      TTS_RETAIN_OLD_HOURS: ${TTS_RETAIN_OLD_HOURS:-}
+      TTS_RETAIN_REMOVED_DAYS: ${TTS_RETAIN_REMOVED_DAYS:-}
+      TTS_FAILED_RETRY_DAYS: ${TTS_FAILED_RETRY_DAYS:-}
+    # SIGTERM aborts the in-flight request and ffmpeg; no half-written files are left.
+    stop_grace_period: 20s
+    # Node worker + one ffmpeg AAC encode (PCM streamed into stdin, `-threads 1`).
+    mem_limit: 256m
+    # Half a vCPU: an encode never starves Caddy/sync on a 1 vCPU VPS. pids: node + ffmpeg threads, with room.
+    cpus: 0.5
+    pids_limit: 64
+
 networks:
   web:
     external: true
   internal:
     internal: true
+  # Plain bridge with Internet access, used by tts only.
+  egress: {}

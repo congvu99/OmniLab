@@ -16,3 +16,4 @@ data
 .data
 *.db
 *.db-*
+.tts-samples
