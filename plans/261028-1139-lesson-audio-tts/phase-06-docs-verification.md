@@ -1,7 +1,7 @@
 ---
 phase: 6
 title: "Phase 6: Docs verification"
-status: in-progress
+status: completed
 priority: P2
 effort: "0.75d"
 dependencies: [1, 2, 3, 4, 5]
@@ -70,8 +70,8 @@ Tài liệu viết tiếng Việt có dấu, câu đầy đủ; không ghi mã p
 - [x] project-roadmap, content-authoring-guide
 - [x] Gate đầy đủ + kiểm sau build + kiểm bí mật
 - [x] Docker build các target: chưa kiểm tra (máy dev không có Docker), người dùng chạy trên VPS
-- [ ] Commit và push `main` (không force)
-- [ ] Báo cáo cuối
+- [x] Commit và push `main` (không force)
+- [x] Báo cáo cuối
 
 ## Success criteria
 

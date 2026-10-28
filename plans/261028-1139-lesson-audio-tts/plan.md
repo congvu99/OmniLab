@@ -65,7 +65,7 @@ Thứ tự: (1 ∥ 2) → 3 → 4; phase 5 chỉ cần phase 2 nên chạy song 
 - [x] Gate xanh: `pnpm verify:fidelity`, `pnpm test`, `pnpm check`, `pnpm check:server`, `pnpm build`.
 - [ ] Thiếu `GEMINI_API_KEY`, worker dừng, hoặc deploy Railpack: site chạy bình thường, nút nghe ẩn; `docker build .` vẫn ra site tĩnh.
 - [ ] API key chỉ nằm trong `.env` trên VPS và `.env.local` máy dev; không có trong git, `dist/`, image, log, env của ffmpeg; request gửi `store: false`.
-- [ ] Code đã commit và push `main` (không force) sau khi gate xanh.
+- [x] Code đã commit và push `main` (không force) sau khi gate xanh.
 
 Ngoài phạm vi: trả phí Gemini; chọn giọng trong app; nghe offline; chữ chạy theo giọng; viết lại bài bằng LLM; phát tiếp khi chuyển trang (audio dừng khi điều hướng, đã chấp nhận); cache theo từng đoạn khi sửa bài; bản tóm tắt player ở aside.
 
