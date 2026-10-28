@@ -14,6 +14,8 @@
     "check": "astro check",
     "check:server": "tsc -p tsconfig.server.json",
     "sync:dev": "node server/sync/sync-server-entry.ts --dev",
+    "tts:sample": "node --env-file-if-exists=.env.local server/tts/tts-sample-cli.ts",
+    "tts:dev": "node --env-file-if-exists=.env.local server/tts/tts-worker-entry.ts --dev",
     "test": "vitest run",
     "migrate:system-design": "node scripts/migrate-system-design.mjs",
     "migrate:finance": "node scripts/migrate-finance-html.mjs",

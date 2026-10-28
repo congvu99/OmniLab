@@ -10,5 +10,5 @@
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "include": ["server/**/*.ts", "src/lib/progress-state.ts", "src/lib/progress-merge.ts", "src/lib/progress-sync-types.ts"]
+  "include": ["server/**/*.ts", "src/lib/progress-state.ts", "src/lib/progress-merge.ts", "src/lib/progress-sync-types.ts", "src/lib/speech-script-contract.ts", "src/lib/audio-manifest.ts"]
 }
