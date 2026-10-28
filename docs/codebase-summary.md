@@ -8,9 +8,10 @@
 |-----------|---------|
 | **Framework** | Astro 7 (static) + MDX, vanilla TypeScript (islands) |
 | **Design** | Studio (dark-first, Volt signature, depth motion, command palette) |
-| **Deploy** | VPS Docker Compose (app + sync) là chính; Railpack + Caddy (Vibe Deploy Nhân Hòa) là phương án cũ |
+| **Deploy** | VPS Docker Compose (app + sync + tts) là chính; Railpack + Caddy (Vibe Deploy Nhân Hòa) là phương án cũ |
 | **Nội dung** | 4 domain (kiến-trúc 27, tài-chính 23, nghề-tài-chính 14, đầu-tư-quỹ 14 bài), YAML + MDX |
 | **Lưu trữ** | localStorage (`omnilab:v1:state`, payload v2) + fallback in-memory; tài khoản đồng bộ qua sidecar Node + SQLite (`server/sync/`) |
+| **Nghe bài** | Bản nghe Gemini TTS do sidecar `tts` tạo nền, Caddy phục vụ `/audio/*`; trình phát ẩn khi chưa có. Vị trí nghe dở: `omnilab:v1:audio` (không đồng bộ) |
 | **Tìm kiếm** | MiniSearch + diacritic folding, index lazy-load |
 | **Icon** | 33-icon custom sprite (Studio monoline), no Lucide |
 | **Fonts** | Be Vietnam Pro + JetBrains Mono (@fontsource) |
@@ -32,6 +33,7 @@ src/
 │   │   ├── domain-page-controls    # Domain filter chips
 │   │   ├── display-settings, storage-status  # /toi (Giao diện, Dữ liệu & ứng dụng; copy lưu trữ ở lib/storage-status-copy.ts, gợi ý cài chỉ iOS)
 │   │   ├── account-sync-panel      # /toi #tai-khoan: đăng ký/đăng nhập, gộp, đăng xuất (view + controller tách riêng)
+│   │   ├── lesson-audio-player, lesson-audio-mini-bar  # Trình phát bản nghe: card dưới tiêu đề + thanh nhỏ bám đáy; chung một controller
 │   │   └── search-box, domain-nav, tab-bar, sidebar-nav
 │   ├── lesson/                     # Lesson components (RealLife, Figure, etc.)
 │   ├── shell/                      # Layout shells (app-layout, reader-layout)
@@ -47,8 +49,11 @@ src/
 │   ├── progress-merge.ts           # mergeStates + stateHash: thuần, dùng chung client và server
 │   ├── progress-sync*.ts           # Engine đồng bộ client: engine, transfer, http, dirty, triggers, status, singleton, contract, types
 │   ├── account-sync-panel-*.ts     # View model (viewOf, errorText, validateAuthForm) + controller của panel tài khoản
+│   ├── speech-script-*.ts          # Build: MDX → văn bản đọc (contract, extract, text, queries); `scriptHash`. contract thuần, worker import trực tiếp
+│   ├── audio-manifest.ts           # Hợp đồng `manifest.json` + tên file `.m4a`: thuần, dùng chung worker và trình duyệt
+│   ├── audio-*.ts                  # Trình phát: logic thuần, controller, binding DOM, lưu vị trí (`omnilab:v1:audio`), tải manifest
 │   └── (domain-progress, complete-check-motion, reader-toast, etc.)
-├── pages/: routes (home, hoc/*, linh-vuc, tim-kiem, da-luu, toi, gioi-thieu, 404)
+├── pages/: routes (home, hoc/*, linh-vuc, tim-kiem, da-luu, toi, gioi-thieu, 404) + `tts-scripts.json` (văn bản đọc cho worker, không dùng ở client)
 └── public/prefs-init.js  # pre-paint theme/prefs script (script ngoài, CSP)
 └── styles/
     ├── tokens.css      # Studio color/motion/typography tokens
@@ -63,13 +68,24 @@ server/sync/                        # Sidecar đồng bộ (Node 24, node:http +
 ├── sync-http-helpers.ts            # HttpError, readBody (64 KB), parseJson, configFromEnv
 └── sync-backup.ts                  # VACUUM INTO → backups/omnilab-YYYY-MM-DD.db, giữ 14 ngày
 
+server/tts/                         # Sidecar tạo bản nghe (Node 24 + ffmpeg, 0 npm deps); cấu hình: tts-config.ts, mặc định: tts-defaults.ts
+├── tts-worker-entry.ts             # SIGTERM, CLI `--dev --once --only --retry-failed <id|all>`, log JSON
+├── tts-cycle.ts                    # Một vòng chạy: GC, chọn bài, dừng cả vòng khi lỗi chung (contract, upstream, quota phút, lỗi lặp)
+├── tts-worker.ts, tts-chunk-synth.ts  # Xử lý một bài / một đoạn: nhịp request, kiểm thời lượng, thử lại, lưu đoạn, nén, công bố
+├── tts-common.ts                   # Helper dùng chung trong server/tts
+├── tts-work-plan.ts, tts-schedule.ts  # audioKey + hàng đợi + state.json; giờ ngủ tới 0h Los Angeles, backoff
+├── chunk-packer.ts, audio-encode.ts, wav-pcm.ts  # Chia đoạn theo mục, ghép PCM + nén AAC, đọc WAV
+├── audio-store.ts, audio-gc.ts     # Bố cục `public/` + `work/` ghi bền; dọn dẹp an toàn
+├── gemini-tts-client.ts, gemini-quota.ts  # Gọi Gemini, phân loại 429
+└── tts-sample-cli.ts               # `pnpm tts:sample`: thử giọng, đo ký tự/giây
+
 deploy/
-├── deploy.sh                       # git pull → build app + sync → gate / và /api/health → rollback
+├── deploy.sh                       # git pull → build app + sync (+ tts, lỗi chỉ WARN) → gate / và /api/health → rollback
 └── backup-sync-db.sh               # Chạy --backup trong container sync (cron)
 
-Dockerfile                          # Stage build → sync → app (app là stage cuối, mặc định)
-compose.yml                         # Service app (web + internal) và sync (internal, không ports)
-Caddyfile                           # Static + /api/* proxy tới omnilab-sync:3000, 503 JSON khi sidecar không có
+Dockerfile                          # Stage build → sync → tts → app (app là stage cuối, mặc định)
+compose.yml                         # Service app (web + internal), sync (internal, không ports), tts (egress, không ports)
+Caddyfile                           # Static + /api/* proxy tới omnilab-sync:3000 (503 JSON khi sidecar không có) + /audio/* allowlist
 ```
 
 ## Mô hình nội dung
@@ -112,13 +128,15 @@ Caddyfile                           # Static + /api/* proxy tới omnilab-sync:3
 - CSP: `script-src 'self'`, `style-src 'unsafe-inline'`
 - Không SPA fallback (404 thực)
 - `/api/*` → `omnilab-sync:3000`; sidecar không có → 503 `{"code":"unavailable"}`
+- `/audio/*` → chỉ `manifest.json` và file `.m4a` đúng mẫu; không có mount (Railpack) → 404, trình phát ẩn. Chi tiết: [system-architecture.md](./system-architecture.md#bản-nghe-bài-học-sidecar-tts)
 
 ## Testing & Quality
 
 - **Vitest** (`pnpm test`; no jsdom, injectable deps). Số lượng thay đổi theo thời điểm, không ghi cứng ở đây.
   - Icon names + paths, command palette logic/controller, search controller, progress store, toc-scrollspy, lesson reader model, token contrast, etc.
   - Đồng bộ: `progress-merge`, migrate v2, `progress-sync` (engine), panel tài khoản, `sync-auth`, `sync-http-api` (end-to-end qua HTTP), `sync-backup`, `lesson-content` (id bài khớp regex)
-- Type-check server: `pnpm check:server` (`tsconfig.server.json`, không nằm trong `pnpm check`)
+  - Bản nghe: trích văn bản đọc (`speech-script-*`, gồm quét toàn bộ bài), `audio-manifest`, logic/controller/lưu vị trí của trình phát (audio giả kiểu Safari), và worker `tts-*` (lịch, chia đoạn, kế hoạch, kho ghi bền, dọn dẹp, nén, quota, client Gemini bằng fetch giả: không test nào gọi mạng). Test nén bằng ffmpeg thật tự bỏ qua khi máy không có ffmpeg
+- Type-check server: `pnpm check:server` (`tsconfig.server.json`, gồm `server/**` và các module dùng chung `speech-script-contract.ts`, `audio-manifest.ts`; không nằm trong `pnpm check`)
 - TypeScript: astro check (0 errors, schema valid)
 - Contrast: 55 token pairs verified ≥4.5:1 light/dark (Studio tokens: text/text-2/text-3/volt/volt-ink/domain hues/danger/success on all surfaces)
 - Build: verify:fidelity gate (content snapshot check) + astro build → dist/ (74 pages)

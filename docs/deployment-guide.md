@@ -4,7 +4,9 @@
 > bằng Docker Compose: xem [deployment-vps-guide.html](deployment-vps-guide.html).
 > Railpack/Vibe Deploy chỉ phục vụ site tĩnh. Không chạy được máy chủ đồng bộ
 > (sidecar), nên mọi `/api/*` trả 503 JSON. Trang Tôi báo "Chưa kết nối được
-> máy chủ đồng bộ", còn tiến độ trên máy vẫn dùng bình thường.
+> máy chủ đồng bộ", còn tiến độ trên máy vẫn dùng bình thường. Cũng không có
+> bản nghe bài học (sidecar `tts` chỉ chạy trên VPS): `/audio/manifest.json`
+> trả 404 và trình phát ẩn.
 
 Repo này build ra site tĩnh (Astro `output: 'static'`). Repo chỉ đảm bảo
 **build được bằng Railpack**; việc tạo app, gắn domain, TLS, git remote,
@@ -32,7 +34,7 @@ theo dõi uptime trên Vibe Deploy Nhân Hòa do người dùng tự làm.
 | `RAILPACK_NO_SPA` | `1` | **Dự phòng** nếu nền tảng bỏ qua `Caddyfile` custom và dùng static-file provider mặc định của Railpack — tắt SPA fallback để URL sai vẫn ra 404 thật thay vì trả `index.html`. |
 | `RAILPACK_SPA_OUTPUT_DIR` | `dist` | Dự phòng cùng lý do trên — chỉ đúng thư mục output nếu Railpack không tự nhận ra. |
 
-Không cần `SESSION_SECRET` ở đây: sidecar đồng bộ không chạy trên Railpack. Không có DB trên nền tảng này.
+Không cần `SESSION_SECRET` ở đây: sidecar đồng bộ không chạy trên Railpack. Không có DB trên nền tảng này. Cũng không cần `GEMINI_API_KEY`: sidecar `tts` không chạy ở đây, nên không có bản nghe.
 
 ## 3. Caddyfile làm gì
 
@@ -50,6 +52,9 @@ File `Caddyfile` ở root ghi đè Caddyfile mặc định của Railpack:
     - `style-src 'unsafe-inline'`: Chỉ cho phép inline styles từ Shiki syntax highlighting trong code block (không có cách khác mà không inlining)
 - `/api/*` proxy tới `omnilab-sync:3000`. Trên Railpack không có host này, nên
   dial lỗi và `handle_errors` trả 503 `{"code":"unavailable"}` (JSON, `no-store`).
+- `/audio/*` chỉ phục vụ `manifest.json` và file `.m4a` đúng mẫu tên, từ thư
+  mục mount `/srv/audio`. Railpack không có mount này, nên mọi `/audio/*` là
+  404 trống (không phải trang HTML 200) và trình phát trên trang bài ẩn.
 - `try_files {path} {path}.html {path}/index.html` + `handle_errors` →
   `/{status_code}.html` — **không** có SPA fallback (`/index.html` khi miss),
   nên URL sai luôn ra 404 thật, không bị nuốt bởi trang chủ.
@@ -94,6 +99,10 @@ curl -sI https://$DOMAIN/ | grep -iE "x-content-type-options|referrer-policy|con
 # 8. Sidecar không có trên nền tảng này: /api trả 503 JSON, không phải HTML
 curl -s -w "\n%{http_code}\n" https://$DOMAIN/api/me
 # kỳ vọng: {"code":"unavailable"} rồi 503
+
+# 9. Không có bản nghe trên nền tảng này: 404 trống, không phải HTML 200
+curl -s -o /dev/null -w "%{http_code}\n" https://$DOMAIN/audio/manifest.json
+# kỳ vọng: 404 (trình phát ở trang bài ẩn)
 ```
 
 **Nếu bước 2 trả `200` với nội dung trang chủ** (không phải trang 404 thật):
@@ -149,6 +158,7 @@ Trên iPhone/iPad với iOS 16+:
 - Nếu sửa web rồi update, cần xóa app khỏi home screen + re-add để thấy version mới
 - Progress lưu localStorage (in-memory fallback private mode, không persist). Không đồng bộ trên nền tảng này: tài khoản cần VPS
 - Tab Tôi → Tài khoản hiện "Chưa kết nối được máy chủ đồng bộ" là đúng, không phải lỗi build
+- Trang bài không có trình phát "Nghe bài" là đúng, không phải lỗi build
 
 ## 5. Rollback
 

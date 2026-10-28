@@ -195,6 +195,8 @@ pnpm build            # Full build → verify:fidelity + astro build → dist/ (
 
 **Server (`server/sync/`)**: Node 24, chạy TypeScript bằng type stripping, nên chỉ dùng cú pháp erasable (không `enum`, không `namespace`, không parameter properties). Import tương đối giữ đuôi `.ts`. Module dùng chung với client (`src/lib/progress-state.ts`, `progress-merge.ts`, `progress-sync-types.ts`) phải là thuần, không DOM, không `window`. File mới nên dưới 200 dòng.
 
+**Server (`server/tts/`)**: cùng quy ước với `server/sync/` (Node 24, type stripping, cú pháp erasable, import `.ts`, không npm dependency). Thêm: `speech-script-contract.ts` và `audio-manifest.ts` dùng chung giữa build, worker và trình duyệt nên phải thuần (không DOM, `window`, `astro:content`); tiến trình con (ffmpeg) chỉ nhận env tối thiểu (`PATH`), không bao giờ nhận `GEMINI_API_KEY`; khoá API chỉ đi vào header `x-goog-api-key`, không vào log, tên file hay thông báo lỗi (đã che). Ngưỡng vận hành không để người vận hành chỉnh nằm ở `server/tts/tts-config.ts`; mặc định giọng/model/cỡ đoạn nằm ở `server/tts/tts-defaults.ts`. Đổi quy tắc đọc ở bộ trích phải tăng `SPEECH_EXTRACTOR_VERSION`; đổi cách ghép hoặc nén audio phải tăng `AUDIO_PIPELINE_VERSION` (cả hai làm mọi bản nghe được tạo lại).
+
 ## Git & Commit
 
 **Format**: `<type>(<scope>): <subject>`
@@ -242,6 +244,8 @@ Added explicit .foo[hidden] { display: none; }.
 ## Performance
 
 **JS budget**: ≤30KB gzip/page. Home/domain/lesson: 6–7KB. Search: 13KB (includes MiniSearch).
+
+**Nợ đã biết (mở)**: trang bài hiện tải 37,5KB gzip (đo mọi JS của một trang bài, gồm `prefs-init.js`), vượt budget. Mức nền trước trình phát nghe bài đã là 32,8KB; trình phát thêm ~4,35KB. Budget chưa được nâng; việc giảm phần nền theo dõi ở [project-roadmap.md](./project-roadmap.md). Component mới trên trang bài phải đo lại và không làm nợ này lớn thêm.
 
 **Lazy-load**: search-index.json chỉ load trên /tim-kiem (first keystroke).
 

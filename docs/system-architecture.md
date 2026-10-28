@@ -25,12 +25,13 @@ OmniLab là app học tập tĩnh (Astro 7). Trang và nội dung là file tĩnh
 └───────────────────────────────────────────────────────────┘
          ↓ HTTPS (Caddy chung trên VPS) ↓
 ┌───────────────────────────────────────────────────────────┐
-│ Docker Compose trên VPS: app (Caddy + dist/) + sync       │
+│ Docker Compose trên VPS: app (Caddy + dist/) + sync + tts │
 ├───────────────────────────────────────────────────────────┤
 │ • dist/ (output Astro build), Caddyfile của repo          │
 │ • Cache: /_astro/* immutable, còn lại no-cache            │
 │ • CSP: script-src 'self', style-src 'unsafe-inline'       │
 │ • /api/* → sync (mạng internal); sync lỗi → 503 JSON      │
+│ • /audio/* → thư mục bản nghe (chỉ đọc) do tts ghi        │
 │ • Không SPA fallback (404 thật)                           │
 └───────────────────────────────────────────────────────────┘
 (Railpack / Vibe Deploy, phương án cũ: chỉ site tĩnh, /api luôn 503)
@@ -85,6 +86,8 @@ OmniLab là app học tập tĩnh (Astro 7). Trang và nội dung là file tĩnh
 
 **Prefs hiển thị** (`omnilab:prefs`, JSON, tách khỏi state tiến độ): `{ "v": 1, "theme": "system|light|dark", "textSize": "s|m|l", "motion": "system|reduce" }`. `src/lib/user-prefs.ts` parse an toàn (JSON hỏng/giá trị lạ → mặc định từng trường), ghi, `subscribePrefs` (storage event đa tab). `public/prefs-init.js` (plain script, `<script is:inline src>` đầu `<head>` trong `base-head.astro`, trước CSS) đọc cùng key, đặt `<html data-theme data-text-size data-motion>` + `theme-color`; theo dõi `matchMedia` (theme=system), storage event, event `omnilab:prefs-changed` (ghi cục bộ từ trang /toi) và `astro:after-swap` (ClientRouter thay thuộc tính `<html>`).
 
+**Vị trí nghe bài** (`omnilab:v1:audio`, JSON, tách khỏi state tiến độ): `{ v, rate, byLesson: { [id]: { t, key, at } } }` gồm tốc độ phát chung và vị trí nghe dở từng bài (giữ 50 bài mới nhất). Chỉ nằm trên máy, **không** đồng bộ qua tài khoản và không đi vào `mergeStates`. Đọc/ghi: `src/lib/audio-position-store.ts`.
+
 **Fallback**: Nếu localStorage throw (Safari private mode) → lưu in-memory (không persist). Hiển thị cảnh báo.
 
 **Store** (`progress-store.ts`): Factory injectable (testable), singleton được gọi bởi mọi island. Phương thức: `markDone()`, `visit()`, `saveScroll()`, `toggleBookmark()`, `lastUnfinished()`, `subscribe()`, `isPersistent`, `isWriteBlocked`. Đồng bộ dùng thêm `applyRemote()` (gộp, không thay thế), `setOwner()`, `clear()`.
@@ -118,7 +121,7 @@ Trình duyệt ──HTTPS──► Caddy chung (VPS)
 | Header trang tĩnh | Không đổi (CSP, cache, `-Server`, `-Via`). Kiểm bằng so sánh header trước/sau deploy |
 | Railpack / Vibe Deploy | Không có sidecar: mọi `/api/*` là 503, site vẫn chạy |
 
-`Dockerfile` có ba stage theo thứ tự `build` → `sync` → `app`. `app` là stage cuối để `docker build .` không kèm `--target` (host kiểu Railpack) vẫn ra site tĩnh. Stage `sync` chỉ copy `server/sync/` và ba module thuần trong `src/lib/` (`progress-state.ts`, `progress-merge.ts`, `progress-sync-types.ts`), không cần `SITE_URL`.
+`Dockerfile` có bốn stage theo thứ tự `build` → `sync` → `tts` → `app`. `app` là stage cuối để `docker build .` không kèm `--target` (host kiểu Railpack) vẫn ra site tĩnh; compose luôn chỉ định `target` rõ ràng. Stage `sync` chỉ copy `server/sync/` và ba module thuần trong `src/lib/` (`progress-state.ts`, `progress-merge.ts`, `progress-sync-types.ts`), không cần `SITE_URL`. Stage `tts`: xem [Bản nghe bài học](#bản-nghe-bài-học-sidecar-tts).
 
 ### Schema trạng thái v2
 
@@ -215,7 +218,51 @@ ErrorCode (12 mã, khai báo trong `src/lib/progress-sync-types.ts`):
 
 ### Sao lưu
 
-`server/sync/sync-backup.ts`, chạy bằng `node server/sync/sync-server-entry.ts --backup`: `VACUUM INTO` ra file tạm, rồi đổi tên thành `backups/omnilab-YYYY-MM-DD.db` (ngày theo múi giờ Việt Nam). Giữ 14 ngày. Cron, restore và reset mật khẩu: [deployment-vps-guide.html](./deployment-vps-guide.html), chương 6.
+`server/sync/sync-backup.ts`, chạy bằng `node server/sync/sync-server-entry.ts --backup`: `VACUUM INTO` ra file tạm, rồi đổi tên thành `backups/omnilab-YYYY-MM-DD.db` (ngày theo múi giờ Việt Nam). Giữ 14 ngày. Cron, restore và reset mật khẩu: [deployment-vps-guide.html](./deployment-vps-guide.html), chương 6. Bản nghe bài học không nằm trong backup này: sinh lại được từ bài học, chỉ tốn lại hạn mức Gemini.
+
+## Bản nghe bài học (sidecar tts)
+
+Mỗi bài có thể có một bản nghe (một file `.m4a`) do giọng Gemini TTS đọc. Bản nghe là phần thêm: không có thì site và trình phát vẫn hoạt động, trình phát ẩn. Chi tiết hành vi nằm trong code; mục này chỉ ghi luồng, lý do và ranh giới.
+
+Code: `src/lib/speech-script-*.ts` và `src/pages/tts-scripts.json.ts` (build), `server/tts/` (worker), `src/lib/audio-*.ts` và `src/components/islands/lesson-audio-*.astro` (trình phát).
+
+### Luồng
+
+```
+build (astro)  MDX ─► speech-script-extract ─► dist/tts-scripts.json  (+ data-script-hash trên <article> của trang bài)
+                                                   │ COPY vào image tts
+VPS compose    tts (Node 24 + ffmpeg, mạng egress) ──► Gemini TTS (khoá chỉ ở header, store:false)
+                 │ PCM từng đoạn (fsync): <audio dir>/work/…
+                 └─► <audio dir>/public/{manifest.json, <bài>.<khoá>.m4a}
+               app (Caddy, mount <audio dir>/public chỉ đọc) ── /audio/* ──► trình duyệt
+trình duyệt    GET /audio/manifest.json: có bản cho bài → hiện trình phát; 404 hoặc thiếu bài → ẩn
+<audio dir> = ${OMNILAB_AUDIO_DIR:-/srv/data/omnilab-audio} trên host, /data/audio trong container tts
+```
+
+- **Văn bản đọc** sinh lúc build bằng bộ trích cố định, không dùng LLM, tách riêng khỏi `mdxToPlainText` (thứ nuôi tìm kiếm). Bài nào bộ trích lỗi thì bị bỏ khỏi `tts-scripts.json` kèm cảnh báo `[tts-scripts]` trong log build; bài đó chỉ mất bản nghe, không làm hỏng build. Quy tắc khối nào được đọc: [content-authoring-guide.md](./content-authoring-guide.md#bản-nghe).
+- **Hai mã băm.** `scriptHash` = hash văn bản đọc + phiên bản bộ trích (`SPEECH_EXTRACTOR_VERSION`), tính lúc build, gắn vào trang bài (`data-script-hash`). `audioKey` = `scriptHash` + model + giọng + style + cỡ đoạn + phiên bản ghép/nén, tính ở worker (`computeAudioKey`, `server/tts/tts-work-plan.ts`). Tách hai mã để trang biết "bản nghe này có khớp chữ đang hiển thị không" mà không cần biết cấu hình giọng; còn đổi giọng/model chỉ làm lệch `audioKey` (worker tạo lại, chữ trên trang không đổi nên trang vẫn coi là khớp). Tên file `.m4a` chứa 12 ký tự đầu của `audioKey`, nên nội dung một tên file không bao giờ đổi và cache được vĩnh viễn.
+- **Lệch `scriptHash`** (bài vừa sửa, worker chưa tạo lại xong): trang vẫn phát bản cũ kèm nhãn "Bản nghe của phiên bản trước". Nút theo heading chỉ gắn cho heading còn tồn tại với cùng cấp.
+- **Mốc theo heading.** `##` là ranh giới đoạn gửi Gemini nên mốc chính xác. `###` là mốc gần đúng, ước theo tỉ lệ ký tự trong mục `##` chứa nó (kẹp về đầu đoạn), không tốn thêm request. Phần nội dung trước `##` đầu tiên là mục "Mở đầu" (id `:intro`, không có nút heading). 13 bài không có `##` vẫn có nút `###`.
+- **Hàng đợi một request một lần.** Worker gửi tuần tự, cách nhau `TTS_MIN_INTERVAL_MS`, lưu từng đoạn PCM (fsync, kèm `meta.json` có hash văn bản và số byte) rồi mới nén AAC bằng ffmpeg và công bố. Container bị tạo lại giữa chừng thì chạy tiếp từ đoạn đầu tiên thiếu hoặc sai. Sửa bài là tạo lại cả bài (không có cache theo từng đoạn): đã cân nhắc và chấp nhận tốn lại số request của cả bài để đơn giản hoá, xem [content-authoring-guide.md](./content-authoring-guide.md#bản-nghe).
+- **Hạn mức free tier.** 429 tính theo ngày thì worker ngủ tới 0h giờ Los Angeles cộng độ trễ ngẫu nhiên ngắn (khoảng 14–15h giờ Việt Nam), trạng thái `pausedUntil` nằm trong `work/state.json` nên qua được restart. 429 theo phút thì chờ `retryDelay` rồi thử lại; 429 không phân loại được thì thử vài lần liên tiếp rồi coi như hạn mức ngày. Phân loại theo chuỗi con của `quotaId`: `server/tts/gemini-quota.ts`. Một lần deploy có thể làm lãng phí một request đang chạy (SIGTERM huỷ request đó, và nó có thể đã bị tính vào hạn mức). Đợt tạo đầu khoảng 450–500 request cho toàn bộ bài; ở 10–20 request/ngày là khoảng 23–50 ngày, các bài tự lên dần.
+- **Kiểm audio.** Phản hồi 200 mà thiếu audio được thử lại có giới hạn. Thời lượng thật so với ước theo ký tự/giây (`TTS_CHARS_PER_SEC`) phải trong khoảng [0,5×; 2×]; ngoài khoảng thì tạo lại đúng một lần và giữ bản gần 1 hơn. Bài vẫn lỗi thì ghi `failed` trong `state.json`, tự thử lại sau `TTS_FAILED_RETRY_DAYS` (7 ngày) hoặc khi chạy `--retry-failed <lessonId>` / `--retry-failed all`. Ngưỡng nằm ở `server/tts/tts-config.ts`.
+- **Lỗi chung dừng cả vòng, không đánh lỗi từng bài** (`server/tts/tts-chunk-synth.ts`). Lý do: hạn mức free tier rất ít, một lỗi cấu hình không được đốt request cho mọi bài rồi khoá chúng 7 ngày. Khoá sai (`auth`), request/định dạng không khớp (`contract`: 4xx không phải chặn nội dung, WAV sai định dạng; request ghim `response_format.mime_type = audio/wav`), 5xx/mạng sau 8 lần (`upstream`), 429 theo phút 10 lần liên tiếp (`quota_minute`): vòng dừng với `idle` tương ứng, vòng quét sau thử lại. Hai bài liên tiếp lỗi cùng lý do trong một vòng cũng dừng vòng (`repeated_failure`, log `failure_streak`). Chỉ lỗi riêng của bài (nội dung bị chặn, thiếu audio sau nhiều lần) mới ghi `failed`.
+- **Dọn dẹp an toàn** (`server/tts/audio-gc.ts`). Lý do: `tts-scripts.json` hỏng hoặc rỗng (thường do build lỗi) không được phép xoá cả kho audio đã tốn nhiều ngày hạn mức. Văn bản đọc rỗng, hỏng hoặc sai cấu trúc: không dọn gì, log `scripts_invalid`, ngủ (không crash-loop). Văn bản đọc làm mất nhiều hơn max(5 bài, 10% số bài đang có bản nghe): `gc_refused`, giữ nguyên manifest và file. Bài biến mất thật được giữ bản nghe 30 ngày (`TTS_RETAIN_REMOVED_DAYS`), file mồ côi lúc khôi phục manifest hỏng cũng vậy; file bị thay thế giữ 24 giờ (`TTS_RETAIN_OLD_HOURS`) để trình duyệt đang mở bản cũ vẫn tải được; kiểm tham chiếu manifest ngay trước khi xoá. Kho nhỏ vẫn gỡ được tối đa 5 bài bị xoá thật; vượt ngưỡng chỉ khiến file được giữ lại, không gây hại.
+- **Không phụ thuộc deploy site.** `deploy/deploy.sh` build image `tts` riêng; build hoặc khởi động `tts` lỗi chỉ in `WARN` và giữ container `tts` cũ, không chặn cổng sức khoẻ của site. Thư mục audio trên host (và `public/`) chưa có hoặc không thuộc uid 1000 cũng chỉ in `WARN` kèm lệnh `install -d`. `app` không `depends_on` `tts`.
+
+### Ranh giới triển khai
+
+| Thành phần | Cấu hình (theo `compose.yml`, `Dockerfile`, `Caddyfile`) |
+|---|---|
+| `tts` | Chỉ mạng `egress` (bridge thường, có ra Internet; không `web`, không `internal`), không `ports:`; `read_only`, `cap_drop: [ALL]`, `no-new-privileges`; user `node` (uid 1000); `mem_limit` 256 MB, `cpus` 0,5, `pids_limit` 64 (ffmpeg `-threads 1`, PCM đưa thẳng vào stdin); `stop_grace_period` 20 s; không healthcheck (không phục vụ gì, trạng thái nằm ở log và manifest). Chỉ service này nhận `GEMINI_API_KEY`; tiến trình con ffmpeg chỉ nhận `PATH` |
+| Thư mục audio | Riêng, tách khỏi dữ liệu sync (`OMNILAB_DATA_DIR`). `tts` mount cả thư mục; `app` chỉ mount `public/` vào `/srv/audio` ở chế độ chỉ đọc, không thấy `work/` |
+| Dockerfile stage `tts` | Cùng bản Node alpine với `sync`, thêm ffmpeg (chỉ ở image này), `COPY` đúng các file entry import lúc chạy + `tts-scripts.json` từ stage `build` (vì vậy build `tts` cần `SITE_URL`). Khoá API là biến môi trường lúc chạy, không phải build arg |
+| Caddy `/audio/*` | Chỉ trả `manifest.json` và tên file đúng mẫu `AUDIO_FILE_PATTERN` (`src/lib/audio-manifest.ts`); mọi đường dẫn khác dưới `/audio` là 404 trống, `no-store`. `.m4a` đặt `Content-Type: audio/mp4` cố định (Safari cần), `immutable`; `manifest.json` `no-cache`. CSP không đổi: `<audio>` cùng origin nằm trong `default-src 'self'` |
+| Railpack | Không có mount, nên `/audio/manifest.json` là 404 và trình phát ẩn; Caddyfile dùng chung vẫn chạy |
+
+### Điều khoản free tier
+
+Gemini free tier cho phép Google dùng nội dung gửi lên để cải thiện sản phẩm. Vì vậy chỉ gửi bài học công khai. Với EEA/UK/CH điều khoản có vùng xám; chủ dự án đã chấp nhận ngày 2026-10-28. Ghi nhận cho người vận hành nằm ở [deployment-vps-guide.html](./deployment-vps-guide.html) (chương 8).
 
 ## Tìm kiếm (MiniSearch)
 
@@ -253,6 +300,8 @@ Reader layout (`src/layouts/reader-layout.astro`) cung cấp aside slot dành ch
 **Dark mode**: `:root[data-theme="dark"]` do prefs-init đặt từ lựa chọn ở /toi (Sáng/Tối/Theo hệ thống); không còn `@media (prefers-color-scheme)` trong CSS, không JS = sáng. Shiki: light colors inline, dark trong `--shiki-dark-*` vars, apply trong `prose.css`; `src/lib/shiki-contrast-fixes.mjs` thay 2 màu github-* dưới AA (cam light, comment dark). `rehype-wrap-tables.mjs` bọc bảng trong vùng cuộn và đổi ô `<th>` rỗng (góc bảng so sánh) thành `<td>` để không sửa nội dung bài.
 
 ## Security (CSP)
+
+Bản nghe: `<audio>` tải `/audio/*` cùng origin nên không cần sửa CSP (`default-src 'self'`); Caddyfile có ghi chú tại chỗ.
 
 **Caddyfile** (`Content-Security-Policy`):
 ```

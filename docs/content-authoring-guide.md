@@ -204,6 +204,36 @@ Dùng khi phát hiện lỗi trong **nội dung gốc** (dịch sai nghĩa, sai 
 </ReviewNote>
 ```
 
+## Bản nghe
+
+Mỗi bài có thể được đọc thành tiếng (Gemini TTS). Văn bản đọc **sinh tự động** từ MDX bằng bộ quy tắc cố định, không dùng LLM và không cần tác giả làm gì thêm. Nhưng cách bạn viết ảnh hưởng tới bản nghe, nên cần biết khối nào được đọc. Nguồn sự thật của quy tắc: `src/lib/speech-script-extract.ts` và `src/lib/speech-script-text.ts` (có test cho từng quy tắc).
+
+| Thành phần trong bài | Cách đọc |
+|---|---|
+| Tiêu đề bài (`title` trong frontmatter) | Đọc đầu tiên, một câu. Heading đầu bài trùng tiêu đề không đọc lại |
+| `<Disclaimer />` (hoặc lĩnh vực `isFinance`) | Đọc **một lần** ngay sau tiêu đề (chữ lấy từ `src/lib/disclaimer-copy.ts`, giống trên trang); khối trong thân bài không đọc lại |
+| Đoạn văn, danh sách, trích dẫn | Mỗi đoạn/mục một câu đọc; link đọc chữ hiển thị; `inline code` đọc nguyên chữ; ảnh markdown, chú thích chân trang và `<sup>` bị bỏ |
+| Heading `##` | Đọc tên mục, mở một mục trong danh sách mục của trình phát, có nút "Nghe từ mục này" (mốc **chính xác**) |
+| Heading `###` | Đọc tên, tạo mốc có nút "Nghe từ đây" (mốc **gần đúng**, ước theo tỉ lệ ký tự trong mục `##` chứa nó). Bài không có `##` vẫn có nút `###` |
+| Khối code (```) | Không đọc nội dung; thay bằng câu "Đoạn mã, xem trên màn hình." |
+| Bảng | Mỗi dòng dữ liệu một câu dạng "Tên cột: giá trị; Tên cột: giá trị"; ô trống bị bỏ. Nên đặt tên cột có nghĩa vì chúng được đọc ra |
+| `<Figure>` | Chỉ đọc `caption`. `alt` và `credit` không đọc |
+| `<RealLife title="…">` | Đọc "Ví dụ đời sống: <title>" rồi nội dung |
+| `<Note title="…">` | Đọc title rồi nội dung |
+| `<TranslatorNote>` | Đọc nội dung |
+| `<ReviewNote>` | **Không đọc** (ghi chú hiệu đính về nguồn, không phải nội dung bài) |
+| `<details>`, `<summary>`, `<a>` | Đọc nội dung |
+
+Hệ quả khi viết:
+
+- **Viết caption `<Figure>` đủ nghĩa**, vì đó là phần duy nhất của hình được đọc; người nghe không thấy hình.
+- Nội dung chỉ nằm trong code, bảng không có tiêu đề cột rõ, hoặc trong `alt` sẽ không đến được người nghe. Cần ý gì thì nói ra trong văn xuôi.
+- **Sửa chữ được đọc làm đổi `scriptHash` của bài, và cả bài được tạo lại** (không có cache theo từng đoạn), tốn lại số request Gemini của cả bài trong hạn mức free tier rất thấp. Trong lúc chờ, trang vẫn phát bản cũ kèm nhãn "Bản nghe của phiên bản trước". Sửa phần **không** được đọc (nội dung khối code, `alt`, `<ReviewNote>`, `credit`) không đổi `scriptHash`, không tốn request. Vì vậy gom các sửa chữ lặt vặt thành một lần commit.
+- Đổi heading thì id mục/mốc đổi; nút theo heading chỉ gắn khi heading còn tồn tại cùng cấp trên trang.
+- Dùng một thẻ JSX mới trong MDX: bộ trích đọc nội dung của nó nhưng in cảnh báo `[tts-scripts] unknown JSX <Tên> …` ở log build. Hãy thêm quy tắc đọc cho thẻ đó vào `src/lib/speech-script-text.ts` (bảng `JSX_READING`) và test.
+- Bộ trích lỗi ở một bài (ví dụ MDX không parse được) thì bài đó chỉ mất bản nghe: build không dừng, log in `[tts-scripts] skipped <id>: …`. Log build có dòng `[tts-scripts]` là dấu hiệu cần xem.
+- Đổi **quy tắc đọc** (cách đọc bảng, câu thay cho code, …): bắt buộc tăng `SPEECH_EXTRACTOR_VERSION` trong `src/lib/speech-script-contract.ts`; việc này làm mọi bài được tạo lại.
+
 ## Lĩnh vực tự biên soạn (`nghe-tai-chinh`, `dau-tu-quy`)
 
 Khác với hai lĩnh vực dịch/chuyển đổi, nội dung `nghe-tai-chinh` và `dau-tu-quy` do OmniLab tự viết. Quy ước (ví dụ dưới đây lấy từ `nghe-tai-chinh`; `dau-tu-quy` khác ở các điểm ghi cuối mục):

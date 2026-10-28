@@ -1,5 +1,18 @@
 # Lộ trình dự án
 
+## Nghe bài học (2026-10-28)
+
+Trạng thái: code và test xong, chưa deploy. Bài có bản nghe hiện trình phát (card + thanh nhỏ); bản nghe do sidecar `tts` trên VPS tự tạo bằng Gemini TTS free tier. Thiết kế và ranh giới: [system-architecture.md](./system-architecture.md#bản-nghe-bài-học-sidecar-tts); vận hành: [deployment-vps-guide.html](./deployment-vps-guide.html), chương 8.
+
+Ngoài phạm vi (đã chốt): gói trả phí Gemini, chọn giọng trong app, nghe offline, chữ chạy theo giọng, viết lại bài bằng LLM, phát tiếp khi chuyển trang (audio dừng khi điều hướng), cache theo từng đoạn khi sửa bài (sửa bài là tạo lại cả bài).
+
+Việc còn mở:
+- Hiệu chỉnh bằng khoá thật (chủ dự án chạy `pnpm tts:sample`): chốt giọng (`TTS_VOICE` hiện là giá trị tạm), cỡ đoạn, `TTS_CHARS_PER_SEC`, hạn mức thực tế mỗi ngày (RPD/RPM) của model TTS, chuỗi `quotaId` thật của 429, và việc lỗi 5xx hoặc phản hồi thiếu audio có bị tính vào hạn mức không.
+- Chạy checklist VPS ([chương 8.4](./deployment-vps-guide.html#c8)): header `/audio`, ranh giới mạng, SIGTERM thật qua `docker stop`, ffmpeg và múi giờ Los Angeles trong image alpine, dung lượng ổ đĩa (cần ≥ 1 GB), `docker build` các target, rollback `tts`. Máy dev không có Docker hay ffmpeg nên các mục này chưa kiểm.
+- Kiểm trên iPhone thật (Safari): bấm mục trước khi audio tải xong, giữ tốc độ sau khi tua, màn hình khoá. Chưa nghe thử AAC thật từ worker: tiếng click ở chỗ nối đoạn, độ lệch mốc `###`.
+- Đợt tạo đầu: khoảng 450–500 request cho toàn bộ bài; ở 10–20 request/ngày là khoảng 23–50 ngày. Các bài lên dần, không cần thao tác.
+- Nợ ngân sách JS (mở, chưa xử lý): trang bài tải 37,5 KB gzip, vượt ngân sách 30 KB trong [code-standards.md](./code-standards.md#performance). Mức nền trước tính năng này đã là 32,8 KB (lớn nhất: `search-index-client` 6,3 KB, `client` 4,3 KB, `progress-sync-singleton` 3,7 KB); trình phát thêm khoảng 4,35 KB gzip. Ngân sách giữ nguyên, chưa nâng. Hướng giảm (ý tưởng, chưa đánh giá): tách phần nền (tìm kiếm, đồng bộ) khỏi trang bài hoặc tải chậm; trình phát không tải chậm được vì khi mọi bài đều có bản nghe thì vẫn phải tải chừng đó.
+
 ## Lĩnh vực "Quỹ và đầu tư" (2026-10-13)
 
 Trạng thái: 14 bài (7 module × 2), 26 SVG, 25 khối RealLife. Nghiên cứu 6 nhóm + fact-check độc lập 4 nhóm; báo cáo trong `plans/261013-fund-investing-domain/reports/`.

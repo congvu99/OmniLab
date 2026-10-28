@@ -91,6 +91,7 @@ th{background:var(--surface-2)}
     <li><a href="#c5">5. Chuyển từ Nhân Hòa</a></li>
     <li><a href="#c6">6. Sao lưu, cập nhật &amp; vận hành</a></li>
     <li><a href="#c7">7. Xử lý sự cố</a></li>
+    <li><a href="#c8">8. Bản nghe bài học (tts)</a></li>
     <li><a href="#q">Câu hỏi còn mở</a></li>
   </ol>
 </nav>
@@ -132,21 +133,22 @@ th{background:var(--surface-2)}
   <div class="arrow">→</div>
   <div class="node"><b>omnilab:8080</b><small>Caddy nhỏ trong image + <code>dist/</code>. Dùng đúng <code>Caddyfile</code> của repo (CSP, cache, 404 thật). <code>/api/*</code> chuyển cho máy chủ đồng bộ. Không mở cổng</small></div>
 </div>
-<div class="box warn"><strong>Hai service, một mạng riêng</strong><code>app</code> (site tĩnh) ở mạng <code>web</code>. <code>sync</code> (Node + SQLite, alias <code>omnilab-sync:3000</code>) chỉ ở mạng <code>internal</code>, không <code>ports:</code>, không có đường ra ngoài. Chỉ <code>app</code> proxy <code>/api/*</code> tới <code>sync</code>.</div>
+<div class="box warn"><strong>Ba service, ba mạng</strong><code>app</code> (site tĩnh) ở mạng <code>web</code>. <code>sync</code> (Node + SQLite, alias <code>omnilab-sync:3000</code>) chỉ ở mạng <code>internal</code>, không <code>ports:</code>, không có đường ra ngoài. Chỉ <code>app</code> proxy <code>/api/*</code> tới <code>sync</code>. <code>tts</code> (tạo bản nghe bài học, tuỳ chọn, <a href="#c8">chương 8</a>) chỉ ở mạng <code>egress</code>: có đường ra Internet để gọi Gemini, không <code>ports:</code>, không thấy <code>web</code> hay <code>internal</code>.</div>
 <table>
   <tr><th>Dữ liệu</th><th>Trên VPS</th></tr>
   <tr><td>Nội dung bài học (<code>src/</code>, <code>content-sources/</code>), ảnh, icon</td><td>Đi theo <code>git clone</code> → build vào image. Không phải chuyển tay</td></tr>
   <tr><td>Tiến độ đọc, bài đã lưu khi chưa đăng nhập</td><td>Nằm trong <b>localStorage trình duyệt</b> (<code>omnilab:v1:state</code>), gắn theo tên miền. Không đi theo VPS. Đổi tên miền thì mất, xem <a href="#c5">chương 5</a></td></tr>
   <tr><td>Tài khoản và tiến độ đã đồng bộ</td><td><b>Có DB</b>: <code>/srv/data/omnilab/omnilab.db</code> (SQLite, volume của <code>sync</code>), bản sao hằng ngày ở <code>backups/</code>. Mất file này là mất tài khoản. <b>Phải backup</b>, xem <a href="#c6">chương 6</a></td></tr>
+  <tr><td>Bản nghe bài học (<code>manifest.json</code>, file <code>.m4a</code>)</td><td>Thư mục riêng <code>/srv/data/omnilab-audio</code> (volume của <code>tts</code>). <b>Không nằm trong backup DB</b>: sinh lại được từ bài học, chỉ tốn lại hạn mức Gemini. Xem <a href="#c8">chương 8</a></td></tr>
 </table>
 
 <h2 id="c1"><span class="n">1</span>Repo đã sẵn sàng</h2>
 <table>
   <tr><th>File</th><th>Vai trò</th></tr>
-  <tr><td><code>Dockerfile</code></td><td>Ba stage. <code>build</code>: Node 24 + pnpm 9.15.4, <code>pnpm build</code> (có <code>verify-fidelity</code>). <code>sync</code>: Node 24 alpine, chỉ <code>server/sync/</code> và ba module thuần của <code>src/lib/</code>, không cần <code>SITE_URL</code>. <code>app</code>: <code>caddy:2-alpine</code> + <code>Caddyfile</code> + <code>dist/</code>, cổng 8080, stage cuối. Thiếu <code>SITE_URL</code> → build <code>app</code> dừng</td></tr>
-  <tr><td><code>compose.yml</code></td><td>2 service. <code>app</code>: mạng <code>web</code> alias <code>omnilab</code> + <code>internal</code>, không <code>ports:</code>, RAM 128 MB. <code>sync</code>: chỉ mạng <code>internal</code> alias <code>omnilab-sync</code>, không <code>ports:</code>, filesystem chỉ đọc, không quyền Linux, RAM 192 MB, dữ liệu <code>${OMNILAB_DATA_DIR:-/srv/data/omnilab}</code> → <code>/data</code>. Thiếu <code>SESSION_SECRET</code> → compose dừng</td></tr>
+  <tr><td><code>Dockerfile</code></td><td>Bốn stage. <code>build</code>: Node 24 + pnpm 9.15.4, <code>pnpm build</code> (có <code>verify-fidelity</code>). <code>sync</code>: Node 24 alpine, chỉ <code>server/sync/</code> và ba module thuần của <code>src/lib/</code>, không cần <code>SITE_URL</code>. <code>tts</code>: Node 24 alpine + ffmpeg (chỉ image này), <code>server/tts/</code> và <code>tts-scripts.json</code> lấy từ stage <code>build</code>, nên build <code>tts</code> cần <code>SITE_URL</code>. <code>app</code>: <code>caddy:2-alpine</code> + <code>Caddyfile</code> + <code>dist/</code>, cổng 8080, <b>stage cuối</b> (host kiểu Railpack build <code>docker build .</code> phải ra site tĩnh). Thiếu <code>SITE_URL</code> → build <code>app</code> dừng</td></tr>
+  <tr><td><code>compose.yml</code></td><td>3 service. <code>app</code>: mạng <code>web</code> alias <code>omnilab</code> + <code>internal</code>, không <code>ports:</code>, RAM 128 MB, mount <code>${OMNILAB_AUDIO_DIR:-/srv/data/omnilab-audio}/public</code> → <code>/srv/audio</code> chỉ đọc. <code>sync</code>: chỉ mạng <code>internal</code> alias <code>omnilab-sync</code>, không <code>ports:</code>, filesystem chỉ đọc, không quyền Linux, RAM 192 MB, dữ liệu <code>${OMNILAB_DATA_DIR:-/srv/data/omnilab}</code> → <code>/data</code>. <code>tts</code>: chỉ mạng <code>egress</code>, không <code>ports:</code>, filesystem chỉ đọc, không quyền Linux, RAM 256 MB, thư mục audio → <code>/data/audio</code>. Thiếu <code>SESSION_SECRET</code> → compose dừng</td></tr>
   <tr><td><code>.dockerignore</code></td><td>Bỏ <code>node_modules</code>, <code>dist</code>, <code>docs</code>, <code>plans</code>, <code>tests</code>, <code>deploy</code>, <code>.git</code>, <code>.env*</code>, <code>data</code>, <code>*.db</code> khỏi build</td></tr>
-  <tr><td><code>deploy/deploy.sh</code></td><td>pull → build hai image <code>app</code> và <code>sync</code> (tag = commit) → thay container → đợi <code>/</code> và <code>/api/health</code> đều 200 → lỗi thì quay về bản cũ</td></tr>
+  <tr><td><code>deploy/deploy.sh</code></td><td>pull → build hai image <code>app</code> và <code>sync</code> (tag = commit), rồi build <code>tts</code> riêng (lỗi chỉ in <code>WARN</code>, giữ container <code>tts</code> cũ) → thay container → đợi <code>/</code> và <code>/api/health</code> đều 200 (không xét <code>tts</code>) → lỗi thì quay về bản cũ</td></tr>
   <tr><td><code>deploy/backup-sync-db.sh</code></td><td>Backup DB đồng bộ, chạy trong container <code>sync</code>. Dùng cho cron ở <a href="#c6">chương 6</a></td></tr>
 </table>
 <div class="box warn"><strong>Kiểm tra</strong>Trang GitHub của repo phải thấy <code>Dockerfile</code>, <code>compose.yml</code> và thư mục <code>deploy/</code>. Chưa thấy = chưa push.</div>
@@ -172,6 +174,7 @@ ls -ld /srv/data/omnilab</code></pre></div>
   <li><b>SESSION_SECRET</b>: khoá ký cookie đăng nhập. <code>openssl rand -base64 48</code> cho 64 ký tự; <code>deploy.sh</code> bắt buộc ≥ 32. Đừng đổi khi đã có người dùng: mọi phiên đăng nhập hết hiệu lực. Chạy lại khối này sẽ ghi đè <code>.env</code>, nên chỉ chạy một lần.</li>
   <li><b>grep -c</b> phải in <code>1</code>. <code>chmod 600</code>: chỉ user deploy đọc được. <code>.env</code> không vào git và không vào image.</li>
   <li><b>Thư mục dữ liệu</b> là volume của <code>sync</code>, chứa <code>omnilab.db</code> và <code>backups/</code>. Chủ sở hữu phải là uid 1000 (user <code>node</code> trong container). <code>ls -ld</code> phải in <code>drwx------ … 1000 1000</code>. Mode 700 nghĩa là mọi lệnh đụng file ở đây cần <code>sudo</code>. Muốn đặt chỗ khác: thêm <code>OMNILAB_DATA_DIR=/duong/dan</code> vào <code>.env</code>.</li>
+  <li><b>Bản nghe (tuỳ chọn)</b>: <code>GEMINI_API_KEY</code>, thư mục audio riêng và các biến <code>TTS_*</code> cấu hình ở <a href="#c8">chương 8</a>. Không có chúng, deploy vẫn chạy: <code>tts</code> chỉ dọn dẹp và ngủ, trình phát ẩn. Nên tạo thư mục audio trước lần <code>deploy.sh</code> đầu có <code>tts</code>.</li>
 </ul>
 <h3>Làm lại từ đầu (clone lỗi / lỡ chạy bằng root)</h3>
 <div class="cmd"><span class="where">Server</span><pre><code>cd /srv/apps
@@ -187,7 +190,8 @@ docker compose logs --tail 20 app
 docker compose logs --tail 5 sync</code></pre></div>
 <ul class="explain">
   <li>Lần đầu vài phút: tải Node, cài thư viện, <code>sharp</code> xử lý ảnh, build site (khoảng 73 trang HTML). Image <code>sync</code> chỉ cài Node, không có npm package. Các lần sau nhanh hơn nhờ cache. Log build có <code>sitemap-index.xml created</code>.</li>
-  <li>Kết thúc bằng <code>deploy ok: &lt;commit&gt;</code>. <code>ps</code>: <code>app</code> và <code>sync</code> đều <code>Up … (healthy)</code>.</li>
+  <li>Kết thúc bằng <code>deploy ok: &lt;commit&gt;</code>. <code>ps</code>: <code>app</code> và <code>sync</code> đều <code>Up … (healthy)</code>. <code>tts</code> chỉ <code>Up</code> (không có healthcheck vì không phục vụ cổng nào; trạng thái xem ở log, <a href="#c8">chương 8</a>).</li>
+  <li><code>WARN: tts build failed, keeping previous tts container</code> (hoặc <code>tts start failed</code>): site vẫn deploy bình thường, chỉ bản nghe chưa cập nhật. Xem log build rồi sửa, chạy lại; không cần làm gì gấp.</li>
   <li>Log <code>sync</code> có <code>"message":"sync listening on 0.0.0.0:3000"</code>. Mỗi request là một dòng JSON, không có body, mật khẩu hay cookie.</li>
   <li>Lần deploy đầu có sync, log có thể in <code>deploy.sh đã cập nhật, chạy lại bản mới</code>. Script tự chạy lại một lần, đây là bình thường.</li>
   <li>Trước lần deploy đầu có sync, lưu header trang tĩnh để so sánh: <code>curl -sI -H 'Accept-Encoding: gzip' https://<span data-v="APP"></span>.<span data-v="DOMAIN"></span>/ | grep -vi '^date\|^etag\|^last-mod' &gt; base-home.txt</code> (làm tương tự với một bài học và một file <code>/_astro/*.css</code>). Sau deploy chạy lại và <code>diff</code> phải trống: header trang tĩnh không được đổi.</li>
@@ -305,6 +309,7 @@ docker compose start sync</code></pre></div>
   <tr><td>Đổi <code>SITE_URL</code></td><td><code>nano .env</code> → <code>FORCE=1 bash deploy/deploy.sh</code> (giá trị nằm trong file build ra nên phải build lại)</td></tr>
   <tr><td>Quay về bản cũ</td><td><code>docker images omnilab</code> và <code>docker images omnilab-sync</code> → <code>IMAGE_TAG=<span class="v">ma-commit</span> docker compose up -d --no-build app sync</code> (cần cả hai image của commit đó)</td></tr>
   <tr><td>Log máy chủ đồng bộ</td><td><code>docker compose logs -f sync</code></td></tr>
+  <tr><td>Log và vận hành bản nghe</td><td><code>docker compose logs -f tts</code>, chi tiết ở <a href="#c8">chương 8</a></td></tr>
   <tr><td>Đổi <code>SESSION_SECRET</code></td><td>Sửa <code>.env</code> → <code>docker compose up -d sync</code>. Mọi phiên đăng nhập hết hiệu lực</td></tr>
   <tr><td>Build lại từ đầu (nghi cache)</td><td><code>docker compose build --no-cache app</code> → <code>FORCE=1 bash deploy/deploy.sh</code></td></tr>
 </table>
@@ -404,11 +409,126 @@ db.close();"</code></pre></div>
   <tr><td>Cron log: lỗi <code>is not running</code></td><td>Container <code>sync</code> đang dừng</td><td><code>docker compose start sync</code>, rồi chạy <code>bash deploy/backup-sync-db.sh</code> bằng tay</td></tr>
 </table>
 
+<h2 id="c8"><span class="n">8</span>Bản nghe bài học (<code>tts</code>)</h2>
+<p>Service <code>tts</code> đọc <code>tts-scripts.json</code> (sinh lúc build), gọi Gemini TTS để đọc từng bài, nén thành <code>.m4a</code> và ghi vào thư mục audio. <code>app</code> phục vụ file đó ở <code>/audio/*</code>. Luồng và lý do thiết kế: <a href="system-architecture.md">system-architecture.md</a>, mục "Bản nghe bài học". Đây là phần tuỳ chọn: thiếu <code>GEMINI_API_KEY</code> thì site chạy bình thường và trình phát ẩn.</p>
+<div class="box warn"><strong>Hạn mức free tier quyết định tốc độ</strong>Đợt tạo đầu khoảng 450–500 request cho toàn bộ bài. Ở 10–20 request/ngày (hạn mức free tier của model TTS, xem AI Studio) là khoảng 23–50 ngày; bài nào xong thì bài đó hiện trình phát, không cần làm gì thêm. Bài mới deploy hoặc bài vừa sửa được worker tự nhận ra ở vòng quét kế tiếp.</div>
+
+<h3>8.1 Chuẩn bị (một lần)</h3>
+<div class="cmd"><span class="where">Server</span><pre><code>df -h /srv
+sudo install -d -o 1000 -g 1000 -m 755 /srv/data/omnilab-audio /srv/data/omnilab-audio/public
+ls -ld /srv/data/omnilab-audio /srv/data/omnilab-audio/public
+cd /srv/apps/omnilab
+nano .env</code></pre></div>
+<ul class="explain">
+  <li><b>df -h</b>: cần còn trống ít nhất 1 GB (đỉnh khoảng 300 MB PCM đang tạo dở, khoảng 280 MB AAC, cộng bản cũ trong thời gian giữ).</li>
+  <li><b>install -d</b>: tạo cả thư mục audio và <code>public/</code> thuộc uid 1000 (user <code>node</code> trong container). Phải làm <b>trước</b> khi <code>up</code>: nếu chưa có, Docker tự tạo <code>public/</code> thuộc root và <code>tts</code> không ghi được. <code>ls -ld</code> phải in <code>1000 1000</code> cho cả hai. Muốn đặt chỗ khác: <code>OMNILAB_AUDIO_DIR=/duong/dan</code> trong <code>.env</code> (thư mục này tách khỏi <code>OMNILAB_DATA_DIR</code> của sync).</li>
+  <li><b>.env</b>: thêm <code>GEMINI_API_KEY=…</code> (lấy ở Google AI Studio, project free tier) và, nếu đã chọn giọng, <code>TTS_VOICE=…</code>. Không dán key vào lệnh <code>printf</code>/chat/log (sẽ vào lịch sử shell). Khoá chỉ nằm trong <code>.env</code> (đã <code>chmod 600</code>), không vào git, image hay log. Chạy <code>docker compose config</code> sẽ in cả key, nên đừng dán đầu ra đó ra ngoài.</li>
+  <li>Sau đó <code>bash deploy/deploy.sh</code> (chương 3). Mạng <code>egress</code> do compose tự tạo.</li>
+  <li><code>tts</code> cần ra được Internet (<code>generativelanguage.googleapis.com</code>); VPS chặn đường ra thì <code>tts</code> chỉ báo <code>retryable</code>.</li>
+</ul>
+
+<h3>8.2 Biến môi trường</h3>
+<p>Compose chỉ chuyển các biến dưới đây vào container <code>tts</code>. Để trống hoặc không đặt thì dùng mặc định trong code (<code>server/tts/tts-config.ts</code>, <code>server/tts/tts-defaults.ts</code>). Giá trị sai (ngoài khoảng) làm worker thoát mã 2 với thông báo <code>tts worker: TTS_… must be …</code> trong log; vì <code>restart: unless-stopped</code> nên container lặp lại cho tới khi sửa <code>.env</code>.</p>
+<table>
+  <tr><th>Biến</th><th>Mặc định</th><th>Ý nghĩa</th></tr>
+  <tr><td><code>GEMINI_API_KEY</code></td><td>(không có)</td><td>Khoá API. Thiếu: worker chỉ dọn dẹp, log <code>idle_no_key</code> một lần, không tạo bản nghe</td></tr>
+  <tr><td><code>TTS_VOICE</code></td><td><code>Charon</code> (tạm)</td><td>Tên giọng, <code>[A-Za-z0-9_-]</code> tối đa 64 ký tự. Giá trị mặc định chỉ là tạm cho tới khi chủ dự án chọn giọng sau khi nghe mẫu (<code>pnpm tts:sample</code>). <b>Đổi giọng làm mọi bài được tạo lại dần</b></td></tr>
+  <tr><td><code>TTS_MODEL</code></td><td><code>gemini-3.8-flash-tts</code></td><td>Model TTS. Đổi model cũng tạo lại mọi bài</td></tr>
+  <tr><td><code>TTS_STYLE</code></td><td>"Giọng nam trầm, ấm, đọc rõ ràng, nhịp vừa phải."</td><td>Chỉ dẫn phong cách đọc; nên ngắn (style dài dễ làm giọng trôi). Đổi style cũng tạo lại mọi bài</td></tr>
+  <tr><td><code>TTS_MAX_CHUNK_CHARS</code></td><td><code>1800</code> (500–4000)</td><td>Số ký tự tối đa mỗi request. Đổi giá trị cũng tạo lại mọi bài</td></tr>
+  <tr><td><code>TTS_CHARS_PER_SEC</code></td><td><code>14</code> (1–100)</td><td>Tốc độ đọc ước tính để kiểm thời lượng audio. Chỉ ảnh hưởng kiểm tra, không tạo lại bài. Giá trị tạm chờ hiệu chỉnh bằng khoá thật</td></tr>
+  <tr><td><code>TTS_MIN_INTERVAL_MS</code></td><td><code>30000</code> (0–86400000)</td><td>Khoảng cách tối thiểu giữa hai request (tránh vượt hạn mức theo phút)</td></tr>
+  <tr><td><code>TTS_RESCAN_MINUTES</code></td><td><code>60</code> (1–1440)</td><td>Chu kỳ quét bài mới/sửa và dọn dẹp; cũng là lúc worker thức dậy khi đang ngủ vì hạn mức</td></tr>
+  <tr><td><code>TTS_RETAIN_OLD_HOURS</code></td><td><code>24</code> (0–8760)</td><td>Giờ giữ file bản nghe cũ sau khi bị thay thế (trình duyệt đang mở bản cũ vẫn tải được)</td></tr>
+  <tr><td><code>TTS_RETAIN_REMOVED_DAYS</code></td><td><code>30</code> (1–3650)</td><td>Ngày giữ bản nghe của bài đã biến mất khỏi site</td></tr>
+  <tr><td><code>TTS_FAILED_RETRY_DAYS</code></td><td><code>7</code> (1–365)</td><td>Sau bao lâu bài lỗi tự được thử lại</td></tr>
+</table>
+<p>Thay đổi <code>.env</code> có hiệu lực sau <code>docker compose up -d tts</code> (hoặc lần <code>deploy.sh</code> kế tiếp). Mỗi lần đổi giọng, model, style hay cỡ đoạn, bài nào cũng tốn lại toàn bộ số request của nó, trong khi hạn mức rất thấp: chỉ đổi khi thực sự cần.</p>
+
+<h3>8.3 Vận hành</h3>
+<div class="cmd"><span class="where">Server</span><pre><code>cd /srv/apps/omnilab
+docker compose logs -f tts
+docker compose logs --tail 50 tts | grep -E '"event":"(lesson_ready|paused|lesson_failed|failure_streak|contract_failed|upstream_unavailable|gc_refused|scripts_invalid)"'
+docker compose exec tts node server/tts/tts-worker-entry.ts --retry-failed <span class="v">domain/module/slug</span>
+docker compose exec tts node server/tts/tts-worker-entry.ts --retry-failed all</code></pre></div>
+<ul class="explain">
+  <li>Mỗi sự kiện là một dòng JSON (<code>t</code>, <code>event</code>, …). Log không chứa khoá hay chữ của bài.</li>
+  <li>Khởi động đúng: sự kiện <code>start</code> có <code>"hasKey":true</code>, rồi <code>cycle</code> (số bài chờ), <code>chunk_ok</code> từng đoạn, <code>lesson_ready</code> khi xong một bài.</li>
+  <li><b>--retry-failed</b>: chỉ ghi file yêu cầu; worker đang chạy nhận ở đầu vòng sau (log <code>retry_requested</code>), không xoá <code>state.json</code> bằng tay. <code>domain/module/slug</code> là id bài, như ở URL <code>/hoc/…</code>. <code>--retry-failed all</code> thử lại mọi bài đang lỗi (dùng sau khi sửa một lỗi chung đã làm nhiều bài <code>lesson_failed</code>).</li>
+  <li>Chạy tay một bài (<code>--once</code>, <code>--only &lt;id&gt;</code>): dừng <code>tts</code> trước (<code>docker compose stop tts</code>) để không có hai tiến trình cùng ghi <code>state.json</code>, rồi <code>docker compose run --rm tts node server/tts/tts-worker-entry.ts --once --only <span class="v">domain/module/slug</span></code>, xong <code>docker compose start tts</code>. Cách chạy này chưa thử trên VPS.</li>
+</ul>
+<table>
+  <tr><th>Sự kiện log</th><th>Ý nghĩa</th><th>Làm gì</th></tr>
+  <tr><td><code>lesson_ready</code></td><td>Một bài xong, đã vào manifest</td><td>—</td></tr>
+  <tr><td><code>paused</code> / <code>quota</code></td><td>Hết hạn mức ngày: worker ngủ tới 0h giờ Los Angeles (khoảng 14–15h giờ Việt Nam, cộng vài phút) rồi chạy tiếp từ đoạn dở. Hạn mức phút thì chờ vài chục giây rồi thử lại (tối đa 10 lần liên tiếp, quá thì <code>quota_minute_exhausted</code>: dừng vòng, thử lại ở vòng quét sau)</td><td>Bình thường. Không cần bỏ tạm dừng bằng tay: nó tự hết. <code>quota_body</code> (một lần mỗi lần chạy) là thân phản hồi 429 đã che khoá, để chốt loại hạn mức</td></tr>
+  <tr><td><code>chunk_outlier</code>, <code>chunk_outlier_kept</code></td><td>Thời lượng một đoạn lệch quá nhiều so với ước tính: tạo lại một lần; nếu vẫn lệch giữ bản gần hợp lý hơn</td><td>Thường bỏ qua. Lệch nhiều và lặp lại: xem lại <code>TTS_CHARS_PER_SEC</code></td></tr>
+  <tr><td><code>no_audio_retry</code>, <code>retryable</code></td><td>Phản hồi thiếu audio hoặc lỗi 5xx/mạng; đang thử lại có giới hạn</td><td>Kéo dài: kiểm đường ra Internet và trạng thái Gemini</td></tr>
+  <tr><td><code>lesson_failed</code></td><td>Bài lỗi bền (bị từ chối, thiếu audio sau nhiều lần…); tự thử lại sau 7 ngày</td><td>Đọc <code>reason</code>; muốn thử ngay: <code>--retry-failed</code></td></tr>
+  <tr><td><code>failure_streak</code></td><td>Hai bài liên tiếp lỗi cùng lý do trong một vòng: gần như chắc là lỗi chung, worker dừng vòng để không khoá thêm bài</td><td>Đọc <code>reason</code>, sửa nguyên nhân, rồi <code>--retry-failed all</code></td></tr>
+  <tr><td><code>upstream_unavailable</code></td><td>Lỗi 5xx/mạng 8 lần liên tiếp ở một đoạn: dừng cả vòng (không sang bài khác), vòng quét sau chạy tiếp từ đoạn dở</td><td>Kiểm mạng và trạng thái Gemini</td></tr>
+  <tr><td><code>contract_failed</code></td><td>Request hoặc định dạng audio không khớp với worker (400 sai trường, 404 model, audio không phải WAV 16-bit mono…): lỗi chung, không ghi bài nào là lỗi, dừng vòng tới vòng quét sau</td><td>Đọc <code>reason</code> và <code>body</code>; thường cần sửa <code>TTS_MODEL</code> hoặc code client rồi deploy lại</td></tr>
+  <tr><td><code>auth_failed</code></td><td>Khoá sai, bị thu hồi hoặc không có quyền</td><td>Sửa <code>GEMINI_API_KEY</code> trong <code>.env</code>, <code>docker compose up -d tts</code></td></tr>
+  <tr><td><code>encode_failed</code></td><td>Nén ffmpeg lỗi (đầy đĩa, quyền ghi…). Các đoạn đã tạo được giữ</td><td>Sửa nguyên nhân; vòng sau nén lại, không tốn thêm request</td></tr>
+  <tr><td><code>scripts_invalid</code></td><td><code>tts-scripts.json</code> hỏng hoặc rỗng (thường do build site lỗi). Worker không dọn gì, không tạo gì, ngủ</td><td>Kiểm build rồi deploy lại. Audio đã có được giữ nguyên</td></tr>
+  <tr><td><code>gc_refused</code></td><td>Dọn dẹp bị chặn vì danh sách bài mất đột ngột nhiều hơn max(5 bài, 10% số bài đang có bản nghe)</td><td>Thường là build lỗi hoặc đổi cấu trúc bài. Không file nào bị xoá, nên không gây hại; kiểm lại build và <code>tts-scripts.json</code></td></tr>
+  <tr><td><code>idle_no_key</code></td><td>Chưa có <code>GEMINI_API_KEY</code></td><td>Thêm key nếu muốn có bản nghe</td></tr>
+</table>
+<ul class="explain">
+  <li><b>Giữ file</b>: file bản nghe bị thay thế giữ 24 giờ; bản nghe của bài biến mất khỏi site giữ 30 ngày. Bản tạo dở nằm ở <code>work/</code>, tối đa 2 thư mục.</li>
+  <li><b>Backup</b>: thư mục audio không nằm trong backup DB (chương 6). Mất thì worker tạo lại, tốn lại hạn mức Gemini; không cần backup riêng trừ khi muốn tránh chờ lại hàng chục ngày.</li>
+  <li><b>Deploy</b>: mỗi lần <code>deploy.sh</code> thay container <code>tts</code> (nhận SIGTERM, huỷ request đang chạy, có thể đã bị tính vào hạn mức). Đoạn đã lưu không mất; deploy dồn dập tốn hạn mức vô ích.</li>
+  <li><b>Sửa bài</b> (đổi chữ đọc): cả bài được tạo lại; trong lúc chờ, trang phát bản cũ kèm nhãn "Bản nghe của phiên bản trước".</li>
+</ul>
+
+<h3>8.4 Kiểm sau khi có bản nghe đầu tiên</h3>
+<p>Chưa có bài nào xong thì <code>/audio/manifest.json</code> trả 404 (bình thường). Các mục sau chưa được kiểm trên VPS ở thời điểm viết tài liệu; làm lần đầu và ghi lại kết quả.</p>
+<div class="cmd"><span class="where">Server</span><pre><code>cd /srv/apps/omnilab
+H=https://<span data-v="APP"></span>.<span data-v="DOMAIN"></span>
+F=$(sudo ls /srv/data/omnilab-audio/public | grep '\.m4a$' | head -1)
+curl -sI $H/audio/manifest.json | grep -iE 'HTTP|cache-control|content-type'
+curl -sI $H/audio/$F | grep -iE 'HTTP|cache-control|content-type|accept-ranges|content-encoding'
+curl -s -o /dev/null -w "%{http_code}\n" -H "Range: bytes=0-99" $H/audio/$F
+curl -s -o /dev/null -w "%{http_code}\n" $H/audio/work/state.json
+docker compose exec app ls /srv/audio
+docker network inspect web --format '{{range .Containers}}{{.Name}} {{end}}'
+docker compose exec tts node -e "fetch('https://generativelanguage.googleapis.com').then(r=>console.log(r.status))"</code></pre></div>
+<ul class="explain">
+  <li>Manifest: <code>200</code>, <code>no-cache</code>, <code>application/json</code>. File <code>.m4a</code>: <code>Content-Type: audio/mp4</code> (đúng một dòng), <code>immutable</code>, <code>Accept-Ranges: bytes</code>, không có <code>Content-Encoding</code>. Range: <code>206</code>. <code>/audio/work/state.json</code>: <code>404</code>.</li>
+  <li><code>ls /srv/audio</code> chỉ có <code>manifest.json</code> và các file <code>.m4a</code>, không có <code>work</code>. Mạng <code>web</code> không có container <code>tts</code>. Lệnh <code>fetch</code> in một mã HTTP bất kỳ: chứng tỏ <code>tts</code> ra được Internet.</li>
+  <li>Image: <code>docker run --rm omnilab-tts:latest ffmpeg -version</code> chạy được; <code>docker inspect omnilab-tts:latest --format '{{.Config.Env}}'</code> không có khoá.</li>
+  <li><code>docker compose restart tts</code> giữa lúc đang tạo một bài: log cho thấy chạy tiếp từ đoạn dở, không tạo lại đoạn đã có.</li>
+</ul>
+<ul class="check">
+  <li>iPhone thật (Safari): mở bài đã có bản nghe, bấm Nghe: phát ngay.</li>
+  <li>Bấm "Nghe từ mục này" ở một heading <code>##</code> khi chưa phát: phát từ đúng đầu mục. Bấm "Nghe từ đây" ở heading <code>###</code>: phát gần mốc (gần đúng).</li>
+  <li>Đổi tốc độ 1,5x rồi bấm mục khác: tốc độ giữ nguyên.</li>
+  <li>Khoá màn hình: điều khiển phát/dừng/tua trên màn hình khoá hoạt động. Tải lại trang: trình phát khôi phục vị trí đã nghe dở (không tự phát).</li>
+</ul>
+
+<h3>8.5 Điều khoản free tier</h3>
+<div class="box warn"><strong>Google có thể dùng nội dung gửi lên</strong>Gemini API free tier cho phép Google dùng nội dung gửi lên để cải thiện sản phẩm. Vì vậy chỉ gửi bài học công khai (đúng với nội dung OmniLab). Với người dùng ở EEA, Anh, Thuỵ Sĩ, điều khoản free tier có vùng xám; chủ dự án đã chấp nhận việc này vào ngày 2026-10-28. Không đặt <code>GEMINI_API_KEY</code> thì không có gì được gửi đi (trình phát ẩn).</div>
+
+<h3>8.6 Sự cố bản nghe</h3>
+<table>
+  <tr><th>Hiện tượng</th><th>Nguyên nhân</th><th>Xử lý</th></tr>
+  <tr><td>Log <code>tts</code>: <code>EACCES</code> khi ghi <code>public/</code> hoặc <code>work/</code>; <code>/srv/data/omnilab-audio/public</code> thuộc root</td><td>Thư mục audio chưa tạo trước, hoặc không thuộc uid 1000</td><td><code>sudo chown -R 1000:1000 /srv/data/omnilab-audio</code> rồi <code>docker compose restart tts</code> (hoặc lệnh <code>install -d</code> ở 8.1)</td></tr>
+  <tr><td><code>WARN: … chưa có hoặc không thuộc uid 1000</code> khi deploy</td><td><code>deploy.sh</code> kiểm thư mục audio và <code>public/</code> trước khi build; chỉ cảnh báo, không chặn deploy</td><td>Chạy đúng lệnh <code>sudo install -d -o 1000 -g 1000 …</code> in trong dòng <code>WARN</code>, rồi <code>docker compose restart tts</code></td></tr>
+  <tr><td><code>auth_failed</code> ngay request đầu</td><td>Khoá sai, hết hiệu lực, hoặc project không bật Gemini API</td><td>Tạo khoá mới ở AI Studio, sửa <code>.env</code>, <code>docker compose up -d tts</code></td></tr>
+  <tr><td>Liên tục <code>retryable</code>, không có <code>chunk_ok</code></td><td><code>tts</code> không ra được Internet (tường lửa, DNS) hoặc Gemini sự cố</td><td>Chạy lệnh <code>fetch</code> ở 8.4; kiểm <code>docker network inspect omnilab_egress</code></td></tr>
+  <tr><td><code>idle_no_key</code></td><td>Thiếu <code>GEMINI_API_KEY</code></td><td>Thêm vào <code>.env</code> rồi <code>docker compose up -d tts</code></td></tr>
+  <tr><td>Container <code>tts</code> khởi động lại liên tục, log <code>tts worker: TTS_… must be …</code></td><td>Biến <code>TTS_*</code> sai định dạng hoặc ngoài khoảng</td><td>Sửa <code>.env</code> theo bảng 8.2</td></tr>
+  <tr><td><code>encode_failed</code></td><td>Đầy đĩa hoặc ffmpeg lỗi</td><td><code>df -h /srv</code>; sau khi sửa, vòng kế tiếp nén lại không tốn request</td></tr>
+  <tr><td>Site chạy nhưng không có trình phát ở bài nào</td><td>Chưa có bài nào xong (manifest 404), hoặc <code>app</code> không mount được <code>public/</code></td><td>Kiểm <code>docker compose exec app ls /srv/audio</code> và log <code>tts</code> (<code>lesson_ready</code>)</td></tr>
+  <tr><td><code>WARN: tts build failed</code> khi deploy</td><td>Lỗi build image <code>tts</code> (mạng, <code>apk</code>)</td><td>Site vẫn lên, <code>tts</code> cũ vẫn chạy. Đọc log build, sửa, chạy lại <code>deploy.sh</code></td></tr>
+  <tr><td>Muốn bỏ hẳn bản nghe</td><td>—</td><td>Xoá <code>GEMINI_API_KEY</code> khỏi <code>.env</code> (worker ngủ), hoặc <code>docker compose stop tts</code>. Trình phát vẫn hiện cho bài đã có file trong <code>public/</code></td></tr>
+</table>
+
 <h2 id="q"><span class="n">?</span>Câu hỏi còn mở</h2>
 <ol>
   <li>Tên miền lâu dài: giữ tên miền đang dùng ở Nhân Hòa (giữ tiến độ đọc trên máy) hay chuyển DuckDNS? Tài khoản và tiến độ đã đồng bộ không phụ thuộc lựa chọn này.</li>
   <li>Kho backup ngoài VPS: dùng remote nào cho rclone (chương 6)? Chưa chọn.</li>
   <li>Tần suất backup: hiện một lần mỗi đêm (03:15). Có cần thêm lần thứ hai trong ngày không?</li>
+  <li>Bản nghe: giọng cuối (<code>TTS_VOICE</code>), hạn mức thực tế mỗi ngày (RPD) của model TTS trên project của chủ dự án, và dung lượng ổ đĩa còn trống trên VPS (cần ≥ 1 GB) chưa được xác nhận.</li>
 </ol>
 <p><b>Đã đóng:</b> nút xuất/nhập tiến độ không còn là điều kiện để đổi tên miền. Đồng bộ qua tài khoản thay thế cho việc đó (người đã đăng nhập không mất tiến độ). Xuất/nhập JSON chỉ còn là ưu tiên thấp, xem <code>docs/project-roadmap.md</code>.</p>
 </main>
