@@ -24,6 +24,15 @@ describe('icon names', () => {
     }
   });
 
+  it('ships the lesson audio player glyphs as monoline markup', () => {
+    for (const name of ['play', 'pause', 'skip-back-15', 'skip-forward-15', 'headphones']) {
+      expect(ICON_NAMES, name).toContain(name);
+      expect(ICON_PATHS[name], name).toMatch(/^<(path|rect|circle) /);
+      // Monoline set: stroke only, never a hard-coded fill or colour.
+      expect(ICON_PATHS[name], name).not.toMatch(/fill=|stroke=|#[0-9a-f]{3}/i);
+    }
+  });
+
   it('resolves every domain YAML icon to a concrete (non-fallback) glyph', () => {
     for (const f of readdirSync(DOMAINS_DIR).filter((x) => x.endsWith('.yaml'))) {
       const icon = readFileSync(path.join(DOMAINS_DIR, f), 'utf8').match(/^icon:\s*(\S+)/m)?.[1];

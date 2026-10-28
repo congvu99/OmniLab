@@ -4,7 +4,9 @@
 // header (eyebrow, h1, dek, meta strip), collapsible TOC (inline <1280px;
 // sticky aside with progress ring + TOC + actions at >=1280px), <Disclaimer>
 // for isFinance-domain lessons, MDX body, source/license attribution,
-// completion card + next-lesson navigation.
+// completion card + next-lesson navigation. The "Nghe bài" card and mini bar
+// only render for lessons with a speech script (data-script-hash) and stay
+// hidden until /audio/manifest.json has audio for the lesson.
 import { getCollection, render } from 'astro:content';
 import ReaderLayout from '../../../../layouts/reader-layout.astro';
 import { lessonMdxComponents } from '../../../../components/lesson/mdx-components';
@@ -17,9 +19,12 @@ import NextLessonCard from '../../../../components/lesson/next-lesson-card.astro
 import MarkCompleteButton from '../../../../components/islands/mark-complete-button.astro';
 import BookmarkButton from '../../../../components/islands/bookmark-button.astro';
 import ReaderProgressTracker from '../../../../components/islands/reader-progress-tracker.astro';
+import LessonAudioPlayer from '../../../../components/islands/lesson-audio-player.astro';
+import LessonAudioMiniBar from '../../../../components/islands/lesson-audio-mini-bar.astro';
 import { lessonIdOf } from '../../../../lib/lesson-id';
 import { computeReadingMinutes, getAdjacent, getDomain, getLessonsByDomain, getModules } from '../../../../lib/content-queries';
 import { cleanSummary, findTitleDuplicate, needsHeadingFiller } from '../../../../lib/lesson-reader-model';
+import { getLessonSpeechScript } from '../../../../lib/speech-script-queries';
 
 export async function getStaticPaths() {
   const lessons = await getCollection('lessons');
@@ -44,6 +49,9 @@ const currentModule = modules.find((m) => m.id === moduleId);
 const { next } = await getAdjacent(lessonId);
 const domainLessons = await getLessonsByDomain(domainId);
 const position = Math.max(1, domainLessons.findIndex((l) => l.id === lessonId) + 1);
+// Same memoized extraction as /tts-scripts.json, so the page hash matches the worker's.
+const queriedLesson = domainLessons.find((l) => l.id === lessonId);
+const speechScript = queriedLesson ? await getLessonSpeechScript(queriedLesson) : null;
 
 // The reader header renders the title as the page <h1>. A body heading that
 // repeats it (first heading only) is hidden so the title is never shown twice;
@@ -87,6 +95,7 @@ const needsFiller = needsHeadingFiller(visibleHeadings);
     data-lesson-id={lessonId}
     data-domain={domainId}
     data-examples-reviewed={lesson.data.examplesReviewed ? 'true' : 'false'}
+    data-script-hash={speechScript?.scriptHash}
   >
     {hideDuplicateCss && <style is:inline set:html={hideDuplicateCss} />}
     <LessonHeader
@@ -102,6 +111,7 @@ const needsFiller = needsHeadingFiller(visibleHeadings);
       examplesReviewed={lesson.data.examplesReviewed}
       cover={lesson.data.cover}
     />
+    {speechScript && <LessonAudioPlayer lessonTitle={lesson.data.title} domainTitle={domain.data.title} />}
     {needsFiller && <h2 class="sr-only lesson-filler-heading">Nội dung bài</h2>}
     <LessonToc headings={toc} />
     {domain.data.isFinance && <Disclaimer />}
@@ -117,6 +127,7 @@ const needsFiller = needsHeadingFiller(visibleHeadings);
     <MarkCompleteButton lessonId={lessonId} domainId={domainId} domainTitle={domain.data.title} />
     <NextLessonCard next={nextLink} domainHref={domainHref} />
   </article>
+  {speechScript && <LessonAudioMiniBar />}
 </ReaderLayout>
 
 <style>

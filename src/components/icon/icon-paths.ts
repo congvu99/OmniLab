@@ -54,6 +54,15 @@ export const ICON_PATHS = {
     '<path d="M4.25 9.75a11 11 0 0 1 3.4-2.2M19.75 9.75A11 11 0 0 0 11 6.8M7.5 13.25a6.5 6.5 0 0 1 2.25-1.4M16.5 13.25a6.5 6.5 0 0 0-1.9-1.2M12 17.25v.01M4.5 4.5l15 15"/>',
   pie: '<path d="M11 5.75A7.25 7.25 0 1 0 18.25 13H11z"/><path d="M13 3.75A7.25 7.25 0 0 1 20.25 11H13z"/>',
   user: '<circle cx="12" cy="8.5" r="3.5"/><path d="M5.25 19.25c.6-3.4 3.25-5.25 6.75-5.25s6.15 1.85 6.75 5.25"/>',
+  // Lesson audio player (play/pause, 15-second skips, "listen" affordance).
+  play: '<path d="M7.75 5.6v12.8a.75.75 0 0 0 1.14.64l10.2-6.4a.75.75 0 0 0 0-1.28l-10.2-6.4a.75.75 0 0 0-1.14.64z"/>',
+  pause: '<rect x="6.75" y="5.25" width="3.5" height="13.5" rx="1"/><rect x="13.75" y="5.25" width="3.5" height="13.5" rx="1"/>',
+  'skip-back-15':
+    '<path d="M4.75 12A7.25 7.25 0 1 0 6.9 6.87L4.75 9"/><path d="M4.75 4.75V9H9M9.25 10.25l1.25-.75v5.25M15.25 9.5h-2.5l-.3 2.55a1.6 1.6 0 1 1-.05 2.25"/>',
+  'skip-forward-15':
+    '<path d="M19.25 12A7.25 7.25 0 1 1 17.1 6.87L19.25 9"/><path d="M19.25 4.75V9H15M9.25 10.25l1.25-.75v5.25M15.25 9.5h-2.5l-.3 2.55a1.6 1.6 0 1 1-.05 2.25"/>',
+  headphones:
+    '<path d="M4.75 15.5V12a7.25 7.25 0 0 1 14.5 0v3.5"/><rect x="4.75" y="13.75" width="3.5" height="5.5" rx="1.25"/><rect x="15.75" y="13.75" width="3.5" height="5.5" rx="1.25"/>',
 } as const;
 
 export type IconName = keyof typeof ICON_PATHS;

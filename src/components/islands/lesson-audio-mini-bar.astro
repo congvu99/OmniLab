@@ -1,0 +1,148 @@
+---
+// Fixed mini player, shown by audio-player-binding.ts only while audio plays
+// and the "Nghe bài" card is off screen. Second `[data-audio-ui]` copy bound to
+// the same controller as the card (play/pause, back 15 s, chapter, time).
+// <1024px it sits above the dock (same selector as reader-toast.astro) and
+// drops to the bottom edge when the dock auto-hides; z-index stays below
+// overlays and the toast. Appears instantly under reduced motion.
+import Icon from '../icon/icon.astro';
+import { PLAYER_MESSAGES } from '../../lib/audio-player-logic';
+---
+
+<div class="lam" data-audio-mini hidden>
+  <div class="lam__bar" role="group" aria-label="Trình phát thu gọn" data-audio-ui="mini">
+    <button type="button" class="lam__btn lam__btn--main tap-scale" data-audio-action="toggle" aria-label={PLAYER_MESSAGES.play}>
+      <Icon name="play" size={20} stroke-width={1.75} class="lam__ic-play" />
+      <Icon name="pause" size={20} stroke-width={1.75} class="lam__ic-pause" />
+    </button>
+    <button type="button" class="lam__btn" data-audio-action="back" aria-label="Lùi 15 giây">
+      <Icon name="skip-back-15" size={24} />
+    </button>
+    <div class="lam__text">
+      <span class="lam__title" data-audio-now-title></span>
+      <span class="lam__time tnum" data-audio-time></span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .lam {
+    position: fixed;
+    inset: auto 0 calc(var(--space-3) + env(safe-area-inset-bottom));
+    z-index: var(--z-nav);
+    display: flex;
+    justify-content: center;
+    padding: 0 var(--space-3);
+    pointer-events: none;
+  }
+
+  .lam[hidden] {
+    display: none;
+  }
+
+  /* <1024px with the dock showing: sit above it instead of under it. */
+  @media (max-width: 1023.98px) {
+    :global(body:has([data-tab-bar]:not([data-scroll-hidden='true'], [data-hidden='true']))) .lam {
+      bottom: calc(var(--shell-tabbar-h) + var(--shell-tabbar-gap) + env(safe-area-inset-bottom) + var(--space-3));
+    }
+  }
+
+  /* >=1024px: centre over the reading column, not the whole viewport. */
+  @media (min-width: 1024px) {
+    .lam {
+      left: var(--shell-sidebar-w);
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .lam {
+      right: var(--shell-aside-w);
+    }
+  }
+
+  .lam__bar {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    width: min(440px, 100%);
+    padding: 6px 14px 6px 6px;
+    border-radius: var(--radius-dock);
+    background: var(--dock);
+    color: var(--dock-text-strong);
+    border: 1px solid var(--dock-line);
+    box-shadow: var(--dock-shadow);
+    animation: lam-in var(--dur-3) var(--ease);
+  }
+
+  @keyframes lam-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+  }
+
+  .lam__btn {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-full);
+    color: var(--dock-text);
+  }
+
+  .lam__btn--main {
+    background: var(--volt);
+    color: var(--on-volt);
+  }
+
+  .lam__ic-pause,
+  [data-playing='true'] .lam__ic-play {
+    display: none;
+  }
+
+  [data-playing='true'] .lam__ic-pause {
+    display: block;
+  }
+
+  .lam__text {
+    display: grid;
+    min-width: 0;
+    line-height: 1.3;
+  }
+
+  .lam__title {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: var(--text-small);
+    font-weight: 600;
+  }
+
+  .lam__time {
+    font: 400 var(--text-micro) var(--font-mono);
+    color: var(--dock-text);
+  }
+
+  .lam__btn:focus-visible {
+    outline-color: var(--dock-accent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lam__bar {
+      animation: none;
+    }
+  }
+
+  :global(:root[data-motion='reduce']) .lam__bar {
+    animation: none;
+  }
+
+  /* While the bar shows, extend the page so it never covers the last lines. */
+  :global(.reader-content:has([data-audio-mini]:not([hidden]))::after) {
+    content: '';
+    display: block;
+    height: 64px;
+  }
+</style>

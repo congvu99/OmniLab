@@ -1,0 +1,177 @@
+---
+// "Nghe bài" card (all widths, between the lesson header and the TOC).
+// Rendered hidden; audio-player-binding.ts reveals it only when
+// /audio/manifest.json has this lesson, so Railpack / `pnpm dev` show nothing.
+// Holds the page's single <audio preload="metadata">, the <template>s for
+// chapter rows and heading buttons (cloned, so scoped styles still apply) and
+// a polite live region kept outside the hidden card.
+import Icon from '../icon/icon.astro';
+import { formatRate, PLAYBACK_RATES, PLAYER_MESSAGES, DEFAULT_PLAYBACK_RATE } from '../../lib/audio-player-logic';
+
+interface Props {
+  lessonTitle: string;
+  domainTitle: string;
+}
+
+const { lessonTitle, domainTitle } = Astro.props;
+---
+
+<div
+  class="lap card"
+  role="group"
+  aria-label="Nghe bài"
+  data-audio-player
+  data-audio-ui="card"
+  data-lesson-title={lessonTitle}
+  data-domain-title={domainTitle}
+  hidden
+>
+  <div class="lap__head">
+    <span class="lap__tile" aria-hidden="true"><Icon name="headphones" size={16} stroke-width={2} /></span>
+    <span class="lap__title">Nghe bài</span>
+    <span class="lap__meta tnum" data-audio-duration></span>
+  </div>
+  <p class="lap__note" data-audio-note hidden>
+    <Icon name="info" size={16} stroke-width={1.75} />
+    <span>Bản nghe của phiên bản trước</span>
+  </p>
+  <div class="lap__controls">
+    <button type="button" class="lap__btn" data-audio-action="back" aria-label="Lùi 15 giây">
+      <Icon name="skip-back-15" size={26} />
+    </button>
+    <button type="button" class="lap__btn lap__btn--main tap-scale" data-audio-action="toggle" aria-label={PLAYER_MESSAGES.play}>
+      <Icon name="play" size={22} stroke-width={1.75} class="lap__ic-play" />
+      <Icon name="pause" size={22} stroke-width={1.75} class="lap__ic-pause" />
+    </button>
+    <button type="button" class="lap__btn" data-audio-action="forward" aria-label="Tới 15 giây">
+      <Icon name="skip-forward-15" size={26} />
+    </button>
+    <label class="lap__rate">
+      <span class="sr-only">Tốc độ</span>
+      <select data-audio-rate>
+        {PLAYBACK_RATES.map((r) => <option value={String(r)} selected={r === DEFAULT_PLAYBACK_RATE}>{formatRate(r)}</option>)}
+      </select>
+    </label>
+  </div>
+  <div class="bar lap__bar" aria-hidden="true"><i></i></div>
+  <p class="lap__time tnum" data-audio-time>0:00 / 0:00</p>
+  <p class="lap__error" data-audio-error hidden>{PLAYER_MESSAGES.error}</p>
+  <details class="lap__list">
+    <summary>
+      <span>Danh sách mục</span>
+      <span class="lap__meta tnum" data-audio-chapter-count></span>
+      <Icon name="chevron-down" size={18} stroke-width={1.75} class="lap__chevron" />
+    </summary>
+    <ol data-audio-chapters></ol>
+  </details>
+  <audio preload="metadata" data-audio-el></audio>
+  <template data-audio-chapter-template>
+    <li>
+      <button type="button" class="lap__ch">
+        <span class="lap__ch-time tnum" data-audio-chapter-time></span>
+        <span data-audio-chapter-title></span>
+        <span class="sr-only" data-audio-chapter-approx> (gần đúng)</span>
+      </button>
+    </li>
+  </template>
+  <template data-audio-heading-template>
+    <button type="button" class="btn btn-secondary btn-sm lap-heading-btn">
+      <Icon name="headphones" size={16} stroke-width={1.75} />
+      <span data-audio-heading-label></span>
+    </button>
+  </template>
+</div>
+<p class="sr-only" aria-live="polite" data-audio-live></p>
+
+<style>
+  .lap { display: grid; gap: var(--space-3); margin: var(--space-5) 0 0; padding: var(--space-4); }
+  /* An unconditional `display` would otherwise beat the UA's [hidden] rule. */
+  .lap[hidden], .lap [hidden] { display: none; }
+  .lap__head, .lap__note, .lap__controls, .lap__list summary { display: flex; align-items: center; gap: 10px; }
+  .lap__tile {
+    flex: none; display: grid; place-items: center; width: 28px; height: 28px;
+    border-radius: var(--radius-sm); background: var(--volt); color: var(--on-volt);
+  }
+  .lap__title { font-weight: 600; font-size: var(--text-subhead); }
+  .lap__meta { margin-left: auto; font: 500 var(--text-label) var(--font-mono); color: var(--text-3); }
+  .lap__note, .lap__time, .lap__error { margin: 0; font-size: var(--text-caption); }
+  .lap__note { color: var(--text-2); }
+  .lap__error { color: var(--danger); }
+  .lap__time { font-family: var(--font-mono); color: var(--text-3); }
+  .lap__btn {
+    display: grid; place-items: center; width: 44px; height: 44px; border-radius: var(--radius-row); color: var(--text-2);
+    transition: background-color var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+  }
+  .lap__btn--main { width: 52px; height: 52px; border-radius: var(--radius-full); background: var(--volt); color: var(--on-volt); }
+  .lap__ic-pause, [data-playing='true'] .lap__ic-play { display: none; }
+  [data-playing='true'] .lap__ic-pause { display: block; }
+  .lap__rate { margin-left: auto; }
+  .lap__rate select {
+    min-height: 44px; padding: 0 10px; border: 1px solid var(--line-strong); border-radius: var(--radius-row);
+    background: var(--surface-2); font: 500 var(--text-small) var(--font-mono); cursor: pointer;
+  }
+  .lap__bar { --p: var(--audio-progress, 0%); }
+  .lap__list { border-top: 1px solid var(--line); margin: 0 calc(-1 * var(--space-4)) calc(-1 * var(--space-4)); }
+  .lap__list summary {
+    min-height: 48px; padding: 0 var(--space-4); cursor: pointer; list-style: none;
+    font-weight: 600; font-size: var(--text-subhead);
+  }
+  .lap__list summary::-webkit-details-marker { display: none; }
+  .lap__chevron { flex: none; color: var(--text-3); transition: transform var(--dur-2) var(--ease); }
+  .lap__list[open] .lap__chevron { transform: rotate(180deg); }
+  .lap__list ol { list-style: none; margin: 0; padding: 0 6px 6px; }
+  .lap__list li { margin: 0; padding: 0; }
+  .lap__ch {
+    display: flex; align-items: baseline; gap: 14px; width: 100%; min-height: 44px; padding: 11px 8px;
+    border-radius: var(--radius-sm); color: var(--text-2); text-align: left; font-size: var(--text-subhead); line-height: 1.35;
+  }
+  /* ### marks sit one level in (their position is approximate). */
+  .lap__ch[data-depth='3'] { padding-left: 30px; font-size: var(--text-small); }
+  .lap__ch-time { flex: none; width: 44px; font: 500 var(--text-micro) var(--font-mono); color: var(--text-3); }
+  .lap__ch[aria-current='true'] { color: var(--text); background: var(--surface-2); font-weight: 600; }
+  .lap__ch[aria-current='true'] .lap__ch-time { color: var(--volt-ink); }
+  .lap__list summary:focus-visible, .lap__ch:focus-visible { outline-offset: -2px; }
+  .lap-heading-btn { margin: 0 0 var(--space-3); }
+  @media (hover: hover) {
+    .lap__btn:not(.lap__btn--main):hover, .lap__ch:hover { background: var(--surface-2); color: var(--text); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lap__chevron { transition: none; }
+  }
+  :global(:root[data-motion='reduce']) .lap__chevron { transition: none; }
+</style>
+
+<script>
+  import { onPageLoad } from '../../lib/page-lifecycle';
+  import { bindLessonAudioPlayer } from '../../lib/audio-player-binding';
+  import type { MediaSessionAdapter } from '../../lib/audio-player-logic';
+
+  const ARTWORK = [
+    { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+    { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+  ];
+
+  /** Lock-screen / headset controls; undefined where the API is missing. */
+  function browserMediaSession(): MediaSessionAdapter | undefined {
+    if (!('mediaSession' in navigator)) return undefined;
+    const session = navigator.mediaSession;
+    return {
+      setMetadata(meta) {
+        session.metadata = meta && typeof MediaMetadata === 'function' ? new MediaMetadata({ ...meta, artwork: ARTWORK }) : null;
+      },
+      setActionHandler(action, handler) {
+        try {
+          session.setActionHandler(action, handler ? (details) => handler({ seekTime: details.seekTime }) : null);
+        } catch {
+          // Older browsers throw for actions they do not support; the others still work.
+        }
+      },
+      setPositionState: (state) => session.setPositionState?.(state),
+      setPlaybackState(state) {
+        session.playbackState = state;
+      },
+    };
+  }
+
+  onPageLoad(() => bindLessonAudioPlayer(browserMediaSession()));
+</script>
