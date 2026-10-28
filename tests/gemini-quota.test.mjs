@@ -72,3 +72,24 @@ describe('classifyQuota', () => {
     expect(classifyQuota([body([{ quotaId: DAY_ID }])]).scope).toBe('day');
   });
 });
+
+describe('classifyQuota without details (Interactions API message only)', () => {
+  const messageBody = (message) => JSON.stringify({ error: { message, code: 'too_many_requests' } });
+
+  it('"requests per day" is the daily quota and ignores the retry hint', () => {
+    const message =
+      'Rate limit exceeded for model gemini-3.8-flash-tts (limit: 10 requests per day on Free Tier). ' +
+      'Please retry in 22h35m50s or upgrade your tier at https://ai.dev/rate-limit.';
+    expect(classifyQuota(messageBody(message))).toEqual({ scope: 'day', zeroQuota: false, quotaIds: [] });
+  });
+
+  it('"per minute" is the minute quota and parses the retry hint', () => {
+    const message = 'Rate limit exceeded (limit: 3 requests per minute on Free Tier). Please retry in 1m5.5s.';
+    expect(classifyQuota(messageBody(message))).toEqual({ scope: 'minute', retryAfterMs: 65_500, zeroQuota: false, quotaIds: [] });
+    expect(classifyQuota(messageBody('3 requests per minute.'))).toEqual({ scope: 'minute', zeroQuota: false, quotaIds: [] });
+  });
+
+  it('a message naming neither window stays unknown', () => {
+    expect(classifyQuota(messageBody('Rate limit exceeded. Please retry in 30s.')).scope).toBe('unknown');
+  });
+});
