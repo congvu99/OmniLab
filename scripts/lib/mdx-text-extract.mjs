@@ -46,7 +46,7 @@ const JSX_TEXT_ATTRS = {
  * cooked string, then run it through the HTML text extractor since it may
  * itself contain markup.
  */
-function jsxAttrValueText(attr) {
+export function jsxAttrValueText(attr) {
   if (typeof attr.value === 'string') return textFromHtmlFragment(attr.value);
   if (attr.value && typeof attr.value === 'object') {
     const expr = attr.value.data?.estree?.body?.[0]?.expression;

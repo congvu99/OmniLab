@@ -4,18 +4,15 @@
 // src/pages/hoc/[domain]/[module]/[slug].astro). Not part of the original
 // source: verify-fidelity strips this subtree entirely.
 // Concept ".note" treatment with the info glyph, so it reads as a quiet
-// caution rather than an alarm.
+// caution rather than an alarm. The wording lives in src/lib/disclaimer-copy.ts
+// so the lesson audio reads exactly the same sentence.
 import Icon from '../icon/icon.astro';
+import { DISCLAIMER_LABEL, DISCLAIMER_TEXT } from '../../lib/disclaimer-copy';
 ---
 
 <div class="disclaimer" role="note">
   <Icon name="info" size={20} stroke-width={1.75} aria-hidden="true" class="disclaimer__icon" />
-  <p>
-    <strong>Miễn trừ trách nhiệm:</strong> nội dung mang tính giáo dục, không
-    phải tư vấn đầu tư hay khuyến nghị mua/bán sản phẩm tài chính cụ thể.
-    Kiểm tra lại số liệu, quy định pháp luật và điều kiện sản phẩm tại nguồn
-    chính thức trước khi quyết định.
-  </p>
+  <p><strong>{DISCLAIMER_LABEL}</strong> {DISCLAIMER_TEXT}</p>
 </div>
 
 <style>
